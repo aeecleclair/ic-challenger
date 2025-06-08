@@ -167,7 +167,7 @@ export const useAuth = () => {
     if (token !== null) {
       setIsTokenQueried(true);
     } else {
-      if (!["/login", "/recover", "/register"].includes(pathname ?? "")) {
+      if (pathname != "/login") {
         router.replace("/login");
       }
     }

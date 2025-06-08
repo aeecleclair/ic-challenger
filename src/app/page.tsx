@@ -20,32 +20,31 @@ import { toast } from "../components/ui/use-toast";
 import { StatusDialog } from "../components/custom/StatusDialog";
 import { Button } from "../components/ui/button";
 import { RegisteringCompleteDialog } from "../components/home/RegisteringCompleteDialog";
+import { AppSidebar } from "../components/home/AppSideBar/AppSidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../components/ui/breadcrumb";
+import { Separator } from "../components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "../components/ui/sidebar";
+import { Calendar, CalendarCurrentDate, CalendarDayView, CalendarMonthView, CalendarNextTrigger, CalendarPrevTrigger, CalendarTodayTrigger, CalendarViewTrigger, CalendarWeekView, CalendarYearView } from "../components/custom/FullScreenCalendar";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { fr } from "date-fns/locale";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
   const { me, isFetched, refetch } = useParticipant();
   const { me: user, isAdmin } = useUser();
-  const { team, createTeam, refetchTeam, isLoading: isTeamLoading } = useTeam();
-  const [isOpened, setIsOpened] = useState(false);
-  const [isEndDialogOpened, setIsEndDialogOpened] = useState(true);
   const searchParams = useSearchParams();
-  const newInviteToken = searchParams.get("invite");
-  const checkoutIntentId = searchParams.get("checkoutIntentId");
-  const code = searchParams.get("code");
-  const orderId = searchParams.get("orderId");
-  const { inviteToken, setInviteToken } = useInviteTokenStore();
   const router = useRouter();
-  const { information } = useInformation();
-  const [isLoading, setIsLoading] = useState(false);
-
-  if (
-    newInviteToken !== null &&
-    inviteToken !== newInviteToken &&
-    typeof window !== "undefined"
-  ) {
-    setInviteToken(newInviteToken);
-    router.replace("/");
-  }
 
   if (isTokenQueried && token === null) {
     router.replace("/login");
@@ -60,121 +59,108 @@ const Home = () => {
     }
   }
 
-  if (isFetched && me === undefined && !isOpened) {
-    setIsOpened(true);
-  }
-
-  if (inviteToken !== undefined && !isOpened) {
-    setIsOpened(true);
-  }
-
-  if (me !== undefined && team === undefined && !isOpened) {
-    setIsOpened(true);
-  }
-
   return (
     <>
-      {code === "succeeded" && (
-        <StatusDialog
-          isOpened={isEndDialogOpened}
-          setIsOpened={setIsEndDialogOpened}
-          title="Paiement effectué"
-          description="Votre paiement a été effectué avec succès. Vous pouvez terminer votre inscription, si ce n'est pas encore le cas."
-          status="SUCCESS"
-          callback={() => {
-            refetch();
-            setIsEndDialogOpened(false);
-            router.replace("/");
-          }}
-        />
-      )}
-      {code === "refused" && (
-        <StatusDialog
-          isOpened={isEndDialogOpened}
-          setIsOpened={setIsEndDialogOpened}
-          title="Paiement refusé"
-          description="Votre paiement a été refusé. Vous pouvez réessayer de payer, si le problème persiste, veuillez nous contacter."
-          status="ERROR"
-          callback={() => {
-            setIsEndDialogOpened(false);
-            router.replace("/");
-          }}
-        />
-      )}
-      {team?.validation_progress === 100 && (
-        <RegisteringCompleteDialog
-          isOpened={isEndDialogOpened}
-          setIsOpened={setIsEndDialogOpened}
-        />
-      )}
-      {isFetched && me === undefined && isOpened && user && (
-        <>
-          <CreateParticipant
-            isOpened={isOpened}
-            setIsOpened={setIsOpened}
-            user={user}
-          />
-          <>
-            {(information?.raid_registering_end_date
-              ? getDaysLeft(information?.raid_registering_end_date) < 0
-              : false) && (
-              <WarningDialog
-                isOpened={isEndDialogOpened}
-                setIsOpened={setIsEndDialogOpened}
-                isLoading={false}
-                title="Inscriptions terminées"
-                description="Les inscriptions sont terminées. Si vous ne l'avez pas encore fait, nous vous invitons à prendre contact avec l'organisation pour connaître les étapes à suivre."
-                validateLabel="Continuer"
-                callback={() => setIsEndDialogOpened(false)}
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mr-2 data-[orientation=vertical]:h-4"
               />
-            )}
-          </>
-        </>
-      )}
-      {isFetched && me && team === undefined && !isTeamLoading && (
-        <WarningDialog
-          isOpened={isEndDialogOpened}
-          setIsOpened={setIsEndDialogOpened}
-          isLoading={isLoading}
-          title="Aucune équipe trouvée"
-          description="Vous n'êtes pas encore inscrit dans une équipe. Vous pouvez en créer une. Si vous avez reçu un lien d'invitation, vous pouvez l'utiliser pour rejoindre une équipe."
-          validateLabel="Créer une équipe"
-          width="w-[140px]"
-          callback={() => {
-            setIsLoading(true);
-            createTeam(
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="#">
+                      Building Your Application
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          </header>
+          <Calendar
+            locale={fr}
+            events={[
               {
-                name: `Équipe de ${me.firstname} ${me.name}`,
+                id: "1",
+                start: new Date("2024-08-26T09:30:00Z"),
+                end: new Date("2024-08-26T14:30:00Z"),
+                title: "event A",
+                color: "pink",
               },
-              () => {
-                refetchTeam();
-                setIsEndDialogOpened(false);
-                setIsLoading(false);
-                toast({
-                  title: "Votre équipe a été créée avec succès",
-                });
+              {
+                id: "2",
+                start: new Date("2024-08-26T10:00:00Z"),
+                end: new Date("2024-08-26T10:30:00Z"),
+                title: "event B",
+                color: "blue",
               },
-            );
-          }}
-        />
-      )}
-      {inviteToken !== undefined && (
-        <JoinTeamDialog isOpened={isOpened} setIsOpened={setIsOpened} />
-      )}
-      <TopBar />
-      <main className="flex flex-col items-center mt-4">
-        <div className="w-full px-10 max-md:px-8">
-          <TeamCard team={team} />
-        </div>
-        <div className="grid lg:grid-cols-2 gap-10 w-full p-10 grid-cols-1 max-lg:p-8 max-lg:gap-8">
-          <ParticipantCard participant={team?.captain} isCaptain />
-          {team?.second !== null ? (
-            <ParticipantCard participant={team?.second} isCaptain={false} />
-          ) : (
-            <EmptyParticipantCard team={team} />
-          )}
-        </div>
-      </main>
+            ]}
+          >
+            <div className="h-dvh py-6 flex flex-col">
+              <div className="flex px-6 items-center gap-2 mb-6">
+                <CalendarViewTrigger
+                  className="aria-[current=true]:bg-accent"
+                  view="day"
+                >
+                  Day
+                </CalendarViewTrigger>
+                <CalendarViewTrigger
+                  view="week"
+                  className="aria-[current=true]:bg-accent"
+                >
+                  Week
+                </CalendarViewTrigger>
+                <CalendarViewTrigger
+                  view="month"
+                  className="aria-[current=true]:bg-accent"
+                >
+                  Month
+                </CalendarViewTrigger>
+                <CalendarViewTrigger
+                  view="year"
+                  className="aria-[current=true]:bg-accent"
+                >
+                  Year
+                </CalendarViewTrigger>
+
+                <span className="flex-1" />
+
+                <CalendarCurrentDate locale={fr} />
+
+                <CalendarPrevTrigger>
+                  <ChevronLeft size={20} />
+                  <span className="sr-only">Previous</span>
+                </CalendarPrevTrigger>
+
+                <CalendarTodayTrigger>Today</CalendarTodayTrigger>
+
+                <CalendarNextTrigger>
+                  <ChevronRight size={20} />
+                  <span className="sr-only">Next</span>
+                </CalendarNextTrigger>
+
+                {/* <ModeToggle /> */}
+              </div>
+
+              <div className="flex-1 overflow-auto px-6 relative">
+                <CalendarDayView />
+                <CalendarWeekView />
+                <CalendarMonthView />
+                <CalendarYearView />
+              </div>
+            </div>
+          </Calendar>
+        </SidebarInset>
+      </SidebarProvider>
     </>
   );
 };
