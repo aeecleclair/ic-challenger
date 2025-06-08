@@ -1,0 +1,33 @@
+name: Lint and format
+
+on:
+  pull_request:
+    types: [opened, edited, ready_for_review, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Configure Dotenv
+        run: |
+          echo NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL} >> .env
+        env:
+          NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Format
+        run: npx prettier . --check
