@@ -43,7 +43,8 @@ const Login = () => {
     <LoadingButton
       isLoading={isLoading}
       onClick={connectMyECL}
-      label="Se connecter"
+      label="Se connecter avec MyECL"
+      className="w-full py-6 text-lg font-medium"
     />
   );
 };
