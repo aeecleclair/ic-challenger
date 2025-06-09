@@ -46,7 +46,7 @@ export default function RootLayout({
         src="https://plausible.eclair.ec-lyon.fr/js/script.js"
         strategy="lazyOnload"
       />
-      <body className={`${inter.className} min-h-screen flex flex-col`}>
+      <body className={inter.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
