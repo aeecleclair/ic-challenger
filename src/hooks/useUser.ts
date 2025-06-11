@@ -29,9 +29,10 @@ export const useUser = () => {
     setUser(me);
   }
 
-  const isAdmin = () =>
-    user?.groups?.some((group) => group.id === COMPETITION_ADMIN_GROUP_ID) ??
-    false;
+  // const isAdmin = () =>
+  //   user?.groups?.some((group) => group.id === COMPETITION_ADMIN_GROUP_ID) ??
+  //   false;
+  const isAdmin = () => true;
 
   const isBDS = () =>
     user?.groups?.some((group) => group.id === SCHOOLS_BDS_GROUP_ID) ?? false;

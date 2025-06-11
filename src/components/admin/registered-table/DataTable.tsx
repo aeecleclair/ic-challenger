@@ -18,7 +18,6 @@ import {
 } from "@tanstack/react-table";
 
 import { DataTableToolbar } from "./DataTableToolbar";
-import { DataTablePagination } from "./DataTablePagination";
 import {
   Table,
   TableBody,
@@ -28,8 +27,9 @@ import {
   TableRow,
 } from "../../ui/table";
 import { useRouter, useSearchParams } from "next/navigation";
-import { TeamPreview } from "@/src/api/hyperionSchemas";
 import { toast } from "../../ui/use-toast";
+import { Participant } from "./Columns";
+import { DataTablePagination } from "./DataTablePagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -72,41 +72,22 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  function onTeamSelect(row: Row<TData>) {
-    if (table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) {
-      if ((row.original as TeamPreview).second) {
-        toast({
-          title: "Sélection impossible",
-          description: "Impossible de fusionner une équipe complète",
-        });
-        return;
-      }
-      row.toggleSelected(!row.getIsSelected());
-      return;
-    }
-    const id = (row.original as TeamPreview).id;
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    current.set("teamId", id);
-    const query = current.toString();
-    router.replace(`/admin/teams?${query}`);
-  }
-
-  React.useEffect(() => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    const page = current.get("page");
-    if (page) {
-      let index = Number(page);
-      if (index < 0) {
-        index = 0;
-      } else if (index > table.getPageCount()) {
-        index = table.getPageCount() - 1;
-      }
-      table.setPageIndex(index);
-    }
-  }, [searchParams, table]);
+  // React.useEffect(() => {
+  //   const current = new URLSearchParams(Array.from(searchParams.entries()));
+  //   const page = current.get("page");
+  //   if (page) {
+  //     let index = Number(page);
+  //     if (index < 0) {
+  //       index = 0;
+  //     } else if (index > table.getPageCount()) {
+  //       index = table.getPageCount() - 1;
+  //     }
+  //     table.setPageIndex(index);
+  //   }
+  // }, [searchParams, table]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 m-6">
       <DataTableToolbar table={table} />
       <div className="rounded-md border">
         <Table>
@@ -134,7 +115,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onTeamSelect(row)}
+                  // onClick={() => onTeamSelect(row)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

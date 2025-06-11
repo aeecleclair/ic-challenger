@@ -18,8 +18,6 @@ import { MergeIcon, UserRoundMinusIcon } from "lucide-react";
 import { WarningDialog } from "../../custom/WarningDialog";
 import { useState } from "react";
 import { useAdminTeam } from "@/src/hooks/useAdminTeam";
-import { TeamPreview } from "@/src/api/hyperionSchemas";
-import { RemoveMemberDialog } from "./RemoveMemberDialog";
 import { useTeams } from "@/src/hooks/useTeams";
 
 interface DataTableRowActionsProps<TData> {
@@ -29,53 +27,8 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
-  const {
-    deleteTeam,
-    isDeleteLoading,
-    kickMember,
-    isKickLoading,
-    refetchTeam,
-  } = useAdminTeam((row.original as TeamPreview).id);
-  const { refetchTeams } = useTeams();
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isRemoveMemberDialogOpen, setIsRemoveMemberDialogOpen] =
-    useState(false);
   return (
     <>
-      {isDeleteDialogOpen && (
-        <WarningDialog
-          isOpened={isDeleteDialogOpen}
-          setIsOpened={setIsDeleteDialogOpen}
-          isLoading={isDeleteLoading}
-          title={`Suppression de l'équipe ${(row.original as TeamPreview).name}`}
-          description="Etes-vous sûr de vouloir supprimer cette équipe ?"
-          validateLabel="Supprimer"
-          callback={() => {
-            deleteTeam(() => {
-              refetchTeam();
-              refetchTeams();
-              setIsDeleteDialogOpen(false);
-            });
-          }}
-        />
-      )}
-      {isRemoveMemberDialogOpen && (
-        <RemoveMemberDialog
-          isOpened={isRemoveMemberDialogOpen}
-          setIsOpened={setIsRemoveMemberDialogOpen}
-          isLoading={isKickLoading}
-          title={`Retirer un membre de l'équipe ${(row.original as TeamPreview).name}`}
-          team={row.original as TeamPreview}
-          validateLabel="Retirer"
-          callback={(participantId) => {
-            kickMember(participantId, () => {
-              refetchTeam();
-              refetchTeams();
-              setIsRemoveMemberDialogOpen(false);
-            });
-          }}
-        />
-      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -87,7 +40,7 @@ export function DataTableRowActions<TData>({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[180px]">
-          {row.getValue("second") === null ? (
+          {/* {row.getValue("second") === null ? (
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
@@ -105,7 +58,6 @@ export function DataTableRowActions<TData>({
             <DropdownMenuItem
               onClick={(e) => {
                 e.stopPropagation();
-                setIsRemoveMemberDialogOpen(true);
               }}
             >
               Retirer un member
@@ -119,14 +71,13 @@ export function DataTableRowActions<TData>({
             className="text-destructive"
             onClick={(e) => {
               e.stopPropagation();
-              setIsDeleteDialogOpen(true);
             }}
           >
             {"Supprimer l'équipe"}
             <DropdownMenuShortcut>
               <HiTrash className="h-4 w-4" />
             </DropdownMenuShortcut>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
