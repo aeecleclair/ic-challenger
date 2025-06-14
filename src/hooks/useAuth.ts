@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import { stringify } from "qs";
 import {
@@ -14,7 +14,6 @@ import { useParticipantStore } from "../stores/particpant";
 import { useInviteTokenStore } from "../stores/inviteTokenStore";
 import { useQuery } from "@tanstack/react-query";
 import { useCodeVerifierStore } from "../stores/codeVerifier";
-import { is } from "date-fns/locale";
 import { toast } from "../components/ui/use-toast";
 
 const clientId: string = "RaidRegistering";
@@ -166,10 +165,10 @@ export const useAuth = () => {
     if (typeof window === "undefined") return null;
     if (token !== null) {
       setIsTokenQueried(true);
-    } else {
-      if (pathname != "/login") {
-        router.replace("/login");
-      }
+    // } else {
+    //   if (pathname != "/login") {
+    //     router.replace("/login");
+    //   }
     }
     setIsLoading(false);
     return token;

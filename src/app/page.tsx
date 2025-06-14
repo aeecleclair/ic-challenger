@@ -57,9 +57,9 @@ const Home = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // if (isTokenQueried && token === null) {
-  //   router.replace("/login");
-  // }
+  if (isTokenQueried && token === null) {
+    router.replace("/login");
+  }
 
   // if (isAdmin() && typeof window !== "undefined") {
   //   const redirection = searchParams.get("redirect");
