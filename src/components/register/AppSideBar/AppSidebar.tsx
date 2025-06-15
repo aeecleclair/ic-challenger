@@ -13,6 +13,7 @@ import {
 } from "../../ui/sidebar";
 import { NavUser } from "./NavUser";
 import { TimelineStep } from "./TimelineStep";
+import { RegisterState } from "@/src/infra/registerState";
 
 export function AppSidebar({
   state,
@@ -47,19 +48,21 @@ export function AppSidebar({
               <TimelineStep
                 key={index}
                 label={subtitle}
-                description={
-                  state.stepDone > index
-                    ? "Terminé"
-                    : "En cours"
-                }
+                description={state.stepDone > index ? "Terminé" : "En cours"}
                 isCompleted={state.stepDone > index}
               />
             ))}
-            <TimelineItemLabel>Récapitulatif</TimelineItemLabel>
+            <TimelineItemLabel>Confirmation</TimelineItemLabel>
             <TimelineStep
-              label="Récapitulatif"
+              label="Validation du BDS"
               description="En cours"
-              isCompleted={state.stepDone >= 4}
+              isCompleted={false}
+            />
+            <TimelineItemLabel>Paiement</TimelineItemLabel>
+            <TimelineStep
+              label="Validation de paiement"
+              description="En cours"
+              isCompleted={false}
             />
           </Timeline>
         </div>

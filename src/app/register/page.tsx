@@ -25,7 +25,7 @@ const Register = () => {
     stepDone: 0,
     headerTitle: "Inscription",
     headerSubtitle: "Informations",
-    allHeaderSubtitles: ["Informations", "Participation", "Package"],
+    allHeaderSubtitles: ["Informations", "Participation", "Package", "Récapitulatif"],
     pageFields: {
       Informations: ["phone"],
       Participation: ["status"],

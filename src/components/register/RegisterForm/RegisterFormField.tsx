@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Button } from "../../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RegisterState } from "@/src/infra/registerState";
+import { SummaryCard } from "./SummaryCard";
 
 interface RegisterFormFieldProps {
   form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
@@ -58,6 +59,7 @@ export const RegisterFormField = ({
           <ParticipationCard form={form} onChange={handleParticipationChange} />
           {showSportFields && <SportCard form={form} sports={sports} />}
           <PackageCard form={form} />
+          <SummaryCard form={form} />
         </CarouselContent>
       </Carousel>
 
@@ -92,20 +94,20 @@ export const RegisterFormField = ({
                   if (!isValid) {
                     return;
                   }
-                  api?.scrollNext();
-                  setState({
-                    ...state,
-                    currentStep: Math.min(3, state.currentStep + 1),
-                    headerSubtitle:
-                      state.allHeaderSubtitles[
-                        Math.min(3, state.currentStep + 1)
-                      ],
-                    stepDone: Math.max(
-                      state.stepDone,
-                      Math.min(3, state.currentStep + 1),
-                    ),
-                  });
                 }
+                api?.scrollNext();
+                setState({
+                  ...state,
+                  currentStep: Math.min(3, state.currentStep + 1),
+                  headerSubtitle:
+                    state.allHeaderSubtitles[
+                      state.currentStep + 1
+                    ],
+                  stepDone: Math.max(
+                    state.stepDone,
+                    state.currentStep + 1,
+                  ),
+                });
               });
             }}
           >
