@@ -12,9 +12,6 @@ export const registeringFormSchema = z
       .regex(/^\+?[0-9\s]+$/, {
         message: "Veuillez renseigner un numéro de téléphone valide",
       }),
-    sex: z.enum(["masculin", "féminin"], {
-      required_error: "Veuillez sélectionner une option",
-    }),
     status: z.enum(
       ["sport", "cheerleader", "fanfaron", "cameraman", "volunteer"],
       {
@@ -29,6 +26,9 @@ export const registeringFormSchema = z
         team: z.string().optional(),
         team_leader: z.boolean().optional(),
         license_number: z.string().optional(),
+        sex: z.enum(["masculin", "féminin"], {
+          required_error: "Veuillez sélectionner une option",
+        }),
       })
       .optional(),
     package: z.enum(["light", "full"], {

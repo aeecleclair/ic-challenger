@@ -1,7 +1,5 @@
 import { StyledFormField } from "../../custom/StyledFormField";
 import { Input } from "../../ui/input";
-import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
-import { Label } from "../../ui/label";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
 import { registeringFormSchema } from "@/src/forms/registering";
@@ -22,7 +20,7 @@ export const InformationCard = ({ form }: InformationCardProps) => {
         Complément d&apos;information te concernant
       </h2>
       <div
-        className="w-full grid gap-8 lg:gap-12 lg:w-1/2"
+        className="w-full grid gap-8 lg:gap-12 lg:w-2/3"
         style={{ gridTemplateRows: "auto 1fr" }}
       >
         <StyledFormField
@@ -33,27 +31,6 @@ export const InformationCard = ({ form }: InformationCardProps) => {
             <Input placeholder="+33 6 12 34 56 78" {...field} />
           )}
         />
-        <StyledFormField
-          form={form}
-          label="Sexe"
-          id="sex"
-          input={(field) => (
-            <RadioGroup
-              onValueChange={field.onChange}
-              defaultValue={field.value}
-              value={field.value}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="masculin" id="masculin" />
-                <Label htmlFor="masculin">Masculin</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="féminin" id="féminin" />
-                <Label htmlFor="féminin">Féminin</Label>
-              </div>
-            </RadioGroup>
-          )}
-        />{" "}
       </div>
       <div className="text-md text-muted-foreground">
         <p>

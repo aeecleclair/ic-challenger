@@ -16,6 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/src/components/ui/sidebar";
+import { RegisterState } from "@/src/infra/registerState";
 import { useState } from "react";
 
 const Register = () => {
@@ -26,11 +27,11 @@ const Register = () => {
     headerSubtitle: "Informations",
     allHeaderSubtitles: ["Informations", "Participation", "Package"],
     pageFields: {
-      Informations: ["phone", "sex"],
+      Informations: ["phone"],
       Participation: ["status"],
       Package: ["package", "party", "bottle", "tShirt"],
-      Sport: ["sport.id"],
-    },
+      Sport: ["sport.id", "sport.sex"],
+    } as const,
   });
   return (
     <SidebarProvider>

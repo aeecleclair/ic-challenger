@@ -10,6 +10,7 @@ import { PackageCard } from "./PackageCard";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { RegisterState } from "@/src/infra/registerState";
 
 interface RegisterFormFieldProps {
   form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
@@ -31,6 +32,7 @@ export const RegisterFormField = ({
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const status = form.watch("status");
   const showSportFields = status === "sport";
+
   const handleParticipationChange = (value: string) => {
     const isSport = value === "sport";
     const newSubtitles = [...state.allHeaderSubtitles];
@@ -49,9 +51,9 @@ export const RegisterFormField = ({
   };
 
   return (
-    <div className="gap-6 p-8 w-full flex flex-col h-[calc(100vh-12rem)] rounded-lg lg:w-3/5">
-      <Carousel setApi={setApi}>
-        <CarouselContent className="h-[calc(100vh-16rem)]">
+    <div className="gap-6 p-8 w-full flex flex-col h-[calc(100vh-12rem)] rounded-lg lg:w-1/2">
+      <Carousel setApi={setApi} opts={{ watchDrag: false }}>
+        <CarouselContent className="h-[calc(100vh-16rem)]" draggable={false}>
           <InformationCard form={form} />
           <ParticipationCard form={form} onChange={handleParticipationChange} />
           {showSportFields && <SportCard form={form} sports={sports} />}
@@ -59,7 +61,7 @@ export const RegisterFormField = ({
         </CarouselContent>
       </Carousel>
 
-      <div className="flex justify-end mt-4 gap-4">
+      <div className="flex justify-center mt-4 gap-4">
         <Button
           variant="outline"
           size="icon"
@@ -85,7 +87,7 @@ export const RegisterFormField = ({
                 if (!result) {
                   const shouldBeValid = state.pageFields[state.headerSubtitle];
                   const isValid = shouldBeValid.every(
-                    (field) => !form.formState.errors.hasOwnProperty(field),
+                    (field) => !form.getFieldState(field).invalid
                   );
                   if (!isValid) {
                     return;

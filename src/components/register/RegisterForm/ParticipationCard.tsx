@@ -26,7 +26,7 @@ export const ParticipationCard = ({ form, onChange }: ParticipationCardProps) =>
             }}
             defaultValue={field.value}
             value={field.value}
-            className="grid gap-8 mt-8 w-full lg:w-2/3"
+            className="grid gap-8 mt-8 w-full lg:w-3/4"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="sport" id="sport" />

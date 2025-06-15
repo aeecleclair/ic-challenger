@@ -1,5 +1,6 @@
 import { StyledFormField } from "../../custom/StyledFormField";
 import { Label } from "../../ui/label";
+import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
 import { registeringFormSchema } from "@/src/forms/registering";
@@ -29,7 +30,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
         id="sport.id"
         input={(field) => (
           <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className="w-full lg:w-1/2">
+            <SelectTrigger className="w-full lg:w-2/3">
               <SelectValue placeholder="Sélectionnez un sport" />
             </SelectTrigger>
             <SelectContent>
@@ -45,11 +46,33 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
 
       <StyledFormField
         form={form}
+        label="Catégorie"
+        id="sport.sex"
+        input={(field) => (
+          <RadioGroup
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            value={field.value}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="masculin" id="masculin" />
+              <Label htmlFor="masculin">Masculin</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="féminin" id="féminin" />
+              <Label htmlFor="féminin">Féminin</Label>
+            </div>
+          </RadioGroup>
+        )}
+      />
+
+      <StyledFormField
+        form={form}
         label="Sport"
         id="sport.team"
         input={(field) => (
           <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className="w-full  lg:w-1/2">
+            <SelectTrigger className="w-full  lg:w-2/3">
               <SelectValue placeholder="Équipe" />
             </SelectTrigger>
             <SelectContent>
@@ -85,7 +108,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
         form={form}
         label="Numéro de licence"
         id="sport.license_number"
-        input={(field) => <Input {...field} className=" lg:w-1/2 w-full" />}
+        input={(field) => <Input {...field} className=" lg:w-2/3 w-full" />}
       />
     </CardTemplate>
   );
