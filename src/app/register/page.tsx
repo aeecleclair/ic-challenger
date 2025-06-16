@@ -10,6 +10,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/src/components/ui/breadcrumb";
+import { useAuth } from "../../hooks/useAuth";
+import { useRouter } from "next/navigation";
 import { Separator } from "@/src/components/ui/separator";
 import {
   SidebarInset,
@@ -20,12 +22,24 @@ import { RegisterState } from "@/src/infra/registerState";
 import { useState } from "react";
 
 const Register = () => {
+  const { isTokenQueried, token } = useAuth();
+  const router = useRouter();
+
+  if (isTokenQueried && token === null) {
+    router.replace("/login");
+  }
+
   const [state, setState] = useState<RegisterState>({
     currentStep: 0,
     stepDone: 0,
     headerTitle: "Inscription",
     headerSubtitle: "Informations",
-    allHeaderSubtitles: ["Informations", "Participation", "Package", "Récapitulatif"],
+    allHeaderSubtitles: [
+      "Informations",
+      "Participation",
+      "Package",
+      "Récapitulatif",
+    ],
     pageFields: {
       Informations: ["phone"],
       Participation: ["status"],
