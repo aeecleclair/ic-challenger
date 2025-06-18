@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../../ui/sidebar";
-import { NavUser } from "./NavUser";
+import { NavUser } from "../../custom/NavUser";
 import { TimelineStep } from "./TimelineStep";
 import { RegisterState } from "@/src/infra/registerState";
 

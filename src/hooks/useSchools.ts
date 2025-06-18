@@ -1,4 +1,4 @@
-import { useGetCompetitionSchools } from "@/src/api/hyperionComponents";
+import { useGetSchools } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 
@@ -11,7 +11,7 @@ export const useSchools = () => {
     isLoading,
     refetch: refetchSchools,
     error,
-  } = useGetCompetitionSchools(
+  } = useGetSchools(
     {
       headers: {
         Authorization: `Bearer ${token}`,

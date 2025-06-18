@@ -1,26 +1,23 @@
 "use client";
-import { ChevronRight, Plus, type LucideIcon } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../../ui/collapsible";
+import { Plus } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-} from "../../ui/sidebar";
+} from "../../../ui/sidebar";
 
-import { useSchools } from "@/src/hooks/useSchools";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { useRouter } from "next/navigation";
 
-export function NavSports() {
-  const { schools, error } = useSchools();
+export function NavSchools() {
+  const { sportSchools } = useSportSchools();
+  const router = useRouter();
+
+  const handleAddSchool = () => {
+    router.push("/admin/schools/create");
+  };
 
   return (
     <SidebarGroup>
@@ -28,15 +25,15 @@ export function NavSports() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <a href="/schools/add">
+            <div onClick={handleAddSchool}>
               <Plus className="mr-2 h-4 w-4" />
               <span>Ajouter une école</span>
-            </a>
+            </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        {schools && (
+        {sportSchools && (
           <>
-            {schools.map((school) => (
+            {sportSchools.map((school) => (
               <SidebarMenuItem key={school.school_id}>
                 <SidebarMenuButton asChild>
                   <a href={school.school_id}>

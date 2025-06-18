@@ -1,32 +1,26 @@
 import { z } from "zod";
 
 export const schoolFormSchema = z.object({
-  name_fr: z
+  schools: z
     .string({
       required_error: "Veuillez renseigner le nom de l'école",
     })
-    .min(1, {
-      message: "Veuillez renseigner le nom de l'école",
-    }),
-  status: z.enum(["external", "local", "centrale"], {
-    required_error: "Veuillez sélectionner un statut",
-  }),
-  ffsuCode: z.string({
-    required_error: "Veuillez renseigner le code FFSU",
-  }),
-  quotaSport: z.number().min(1, {
-    message: "Le quota doit être supérieur à 0",
-  }),
-  quotaBySport: z.record(
-    z.string(),
-    z.number().min(1, {
-      message: "Le quota doit être supérieur à 0",
-    }),
-  ),
-  quotaResidence: z
-    .number()
-    .min(1, {
-      message: "Le quota doit être supérieur à 0",
-    })
-    .optional(),
+    .uuid("Le format de l'ID de l'école est invalide"),
+  fromLyon: z.boolean(),
+  activated: z.boolean(),
+  athleteQuota: z.number({
+    required_error: "Veuillez renseigner le quota d'athlètes",
+  }).min(0, "Le quota d'athlètes doit être supérieur ou égal à 0"),
+  cameramanQuota: z.number({
+    required_error: "Veuillez renseigner le quota de cameramen",
+  }).min(0, "Le quota de cameramen doit être supérieur ou égal à 0"),
+  cheerleaderQuota: z.number({
+    required_error: "Veuillez renseigner le quota de pompom",
+  }).min(0, "Le quota de pompom doit être supérieur ou égal à 0"),
+  fanfareQuota: z.number({
+    required_error: "Veuillez renseigner le quota de fanfare",
+  }).min(0, "Le quota de fanfare doit être supérieur ou égal à 0"),
+  nonAthleteQuota: z.number({
+    required_error: "Veuillez renseigner le quota de non-athlètes",
+  }).min(0, "Le quota de non-athlètes doit être supérieur ou égal à 0"),
 });
