@@ -1,19 +1,11 @@
 "use client";
 import * as React from "react";
 import {
-  BookOpen,
-  Bot,
   Command,
-  Frame,
   LifeBuoy,
-  Map,
-  PieChart,
   Send,
-  Settings2,
-  SquareTerminal,
 } from "lucide-react";
-import { NavSchools } from "./Sports/NavSchools";
-import { NavProjects } from "./NavProject";
+import { NavSchools } from "./Schools/NavSchools";
 import { NavSecondary } from "./NavSecondary";
 import {
   Sidebar,
@@ -25,13 +17,9 @@ import {
   SidebarMenuItem,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
+import { NavSports } from "./Sports/NavSports";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navSecondary: [
     {
       title: "Support",
@@ -42,23 +30,6 @@ const data = {
       title: "Feedback",
       url: "#",
       icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
@@ -84,7 +55,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavSchools />
-        <NavProjects projects={data.projects} />
+        <NavSports />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

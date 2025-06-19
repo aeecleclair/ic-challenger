@@ -15,17 +15,27 @@ export function NavSchools() {
   const { sportSchools } = useSportSchools();
   const router = useRouter();
 
-  const handleAddSchool = () => {
-    router.push("/admin/schools/create");
+  const handleClick = (path: string) => {
+    router.push(`/admin/schools${path}`);
   };
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Écoles</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        <div
+          onClick={() => handleClick("")}
+          className="cursor-pointer hover:underline"
+        >
+          Écoles
+        </div>
+      </SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <div onClick={handleAddSchool}>
+            <div
+              onClick={() => handleClick("/create")}
+              className="cursor-pointer flex items-center"
+            >
               <Plus className="mr-2 h-4 w-4" />
               <span>Ajouter une école</span>
             </div>
@@ -36,9 +46,12 @@ export function NavSchools() {
             {sportSchools.map((school) => (
               <SidebarMenuItem key={school.school_id}>
                 <SidebarMenuButton asChild>
-                  <a href={school.school_id}>
-                    <span>{school.school.name}</span>
-                  </a>
+                  <div
+                    onClick={() => handleClick(`?school_id=${school.school_id}`)}
+                    className="cursor-pointer flex items-center"
+                  >
+                    {school.school.name}
+                  </div>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
