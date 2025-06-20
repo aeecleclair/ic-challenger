@@ -6,24 +6,31 @@ import { z } from "zod";
 import { sportFormSchema } from "@/src/forms/sport";
 import { useSports } from "@/src/hooks/useSports";
 import { SportsForm } from "@/src/components/home/AppSideBar/Sports/SportsForm";
+import { Sport } from "@/src/api/hyperionSchemas";
+import Link from "next/link";
 
-const Dashboard = () => {
-  const { createSport, isCreateLoading: isLoading } = useSports();
+interface SportDetailProps {
+  sport: Sport;
+}
+
+const SportDetail = ({ sport }: SportDetailProps) => {
+  const { updateSport, isUpdateLoading: isLoading } = useSports();
 
   const form = useForm<z.infer<typeof sportFormSchema>>({
     resolver: zodResolver(sportFormSchema),
     defaultValues: {
-      name: "",
-      teamSize: 1,
-      sportCategory: "masculine",
-      substituteMax: 0,
-      activated: true,
+      name: sport.name,
+      teamSize: sport.team_size,
+      sportCategory: sport.sport_category ?? undefined,
+      substituteMax: sport.substitute_max ?? 0,
+      activated: sport.activated,
     },
     mode: "onChange",
   });
 
   function onSubmit(values: z.infer<typeof sportFormSchema>) {
-    createSport(
+    updateSport(
+      sport.id,
       {
         name: values.name,
         team_size: values.teamSize,
@@ -36,18 +43,22 @@ const Dashboard = () => {
       },
     );
   }
-
   return (
-    <div className="flex h-full w-full flex-col p-6">
-      <span className="text-2xl font-bold mb-4">Ajouter un sport</span>
-      <SportsForm 
+    <div className="flex w-full flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-2xl font-bold">Modifer un sport</span>
+        <Link href="/admin/sports" className="text-sm text-primary hover:underline">
+          Retour à la liste
+        </Link>
+      </div>
+      <SportsForm
         form={form}
         isLoading={isLoading}
         onSubmit={onSubmit}
-        submitLabel=" Ajouter le sport"
+        submitLabel="Modifer le sport"
       />
     </div>
   );
 };
 
-export default Dashboard;
+export default SportDetail;
