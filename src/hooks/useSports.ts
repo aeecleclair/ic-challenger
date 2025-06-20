@@ -1,10 +1,14 @@
 import {
   useGetCompetitionSports,
+  usePatchCompetitionParticipantsUserIdSportsSportIdValidate,
+  usePatchCompetitionSportsSportId,
   usePostCompetitionSports,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
+import { ErrorType } from "../utils/errorTyping";
+import { SportBase, SportEdit } from "../api/hyperionSchemas";
 
 export const useSports = () => {
   const { token, isTokenExpired } = useAuth();
@@ -27,18 +31,16 @@ export const useSports = () => {
     },
   );
 
-  const { mutate: mutateCompetitionSchool, isPending: isLoading } = usePostCompetitionSports();
+  const { mutate: mutateCreateSport, isPending: isCreateLoading } =
+    usePostCompetitionSports();
 
-  const createSport = (
-    params: Parameters<typeof mutateCompetitionSchool>[0],
-    callback: () => void,
-  ) => {
-    return mutateCompetitionSchool(
+  const createSport = (body: SportBase, callback: () => void) => {
+    return mutateCreateSport(
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: params.body,
+        body: body,
       },
       {
         onSuccess: () => {
@@ -53,8 +55,46 @@ export const useSports = () => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du sport",
-            description:
-              "Une erreur est survenue, veuillez réessayer plus tard",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  const { mutate: mutateUpdateSport, isPending: isUpdateLoading } =
+    usePatchCompetitionSportsSportId();
+
+  const updateSport = (
+    sportId: string,
+    body: SportEdit,
+    callback: () => void,
+  ) => {
+    return mutateUpdateSport(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: body,
+        pathParams: {
+          sportId,
+        },
+      },
+      {
+        onSuccess: () => {
+          refetchSchools();
+          toast({
+            title: "Sport modifiée",
+            description: "Le sport a été modifiée avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la modification du sport",
+            description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
         },
@@ -66,7 +106,9 @@ export const useSports = () => {
     sports,
     createSport,
     error,
-    isLoading,
+    isCreateLoading,
+    isUpdateLoading,
+    updateSport,
     refetchSchools,
   };
 };

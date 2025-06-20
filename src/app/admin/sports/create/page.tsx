@@ -20,9 +20,8 @@ import { sportFormSchema, sportCategories } from "@/src/forms/sport";
 import { useSports } from "@/src/hooks/useSports";
 
 const Dashboard = () => {
-  const { createSport, isLoading } = useSports?.() || { isLoading: false };
-  const [submitting, setSubmitting] = useState(false);
-  
+  const { createSport, isCreateLoading: isLoading } = useSports();
+
   const form = useForm<z.infer<typeof sportFormSchema>>({
     resolver: zodResolver(sportFormSchema),
     defaultValues: {
@@ -36,23 +35,20 @@ const Dashboard = () => {
   });
 
   function onSubmit(values: z.infer<typeof sportFormSchema>) {
-      createSport(
-        {
-          body: {
-            name: values.name,
-            team_size: values.teamSize,
-            sport_category: values.sportCategory,
-            substitute_max: values.substituteMax,
-            activated: values.activated,
-          },
-        }, 
-        () => {
-          form.reset();
-          setSubmitting(false);
-        },
-      );
-    }
-  
+    createSport(
+      {
+        name: values.name,
+        team_size: values.teamSize,
+        sport_category: values.sportCategory,
+        substitute_max: values.substituteMax,
+        activated: values.activated,
+      },
+      () => {
+        form.reset();
+      },
+    );
+  }
+
   return (
     <div className="flex h-full w-full flex-col p-6">
       <span className="text-2xl font-bold mb-4">Ajouter un sport</span>
@@ -123,24 +119,10 @@ const Dashboard = () => {
             />
           </div>
 
-          <StyledFormField
-            form={form}
-            label="Activé"
-            id="activated"
-            input={(field) => (
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </div>
-            )}
-          />
-
           <LoadingButton
             type="submit"
             className="w-full mt-6"
-            isLoading={isLoading || submitting}
+            isLoading={isLoading}
           >
             Ajouter le sport
           </LoadingButton>
