@@ -14765,27 +14765,11 @@ export const useGetCinemaSessionsSessionIdPoster = <TData = undefined,>(
   });
 };
 
-export type GetCompetitionSportsQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
-export type GetCompetitionSportsError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
+export type GetCompetitionSportsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetCompetitionSportsResponse = Schemas.Sport[];
 
-export type GetCompetitionSportsRequestBody =
-  Schemas.BodyGetSportsCompetitionSportsGet;
-
-export type GetCompetitionSportsVariables = {
-  body?: GetCompetitionSportsRequestBody;
-  queryParams?: GetCompetitionSportsQueryParams;
-} & HyperionContext["fetcherOptions"];
+export type GetCompetitionSportsVariables = HyperionContext["fetcherOptions"];
 
 export const fetchGetCompetitionSports = (
   variables: GetCompetitionSportsVariables,
@@ -14794,9 +14778,9 @@ export const fetchGetCompetitionSports = (
   hyperionFetch<
     GetCompetitionSportsResponse,
     GetCompetitionSportsError,
-    GetCompetitionSportsRequestBody,
+    undefined,
     {},
-    GetCompetitionSportsQueryParams,
+    {},
     {}
   >({ url: "/competition/sports", method: "get", ...variables, signal });
 
@@ -14942,7 +14926,7 @@ export type PatchCompetitionSportsSportIdError = Fetcher.ErrorWrapper<{
 }>;
 
 export type PatchCompetitionSportsSportIdVariables = {
-  body: Schemas.SportEdit;
+  body?: Schemas.SportEdit;
   pathParams: PatchCompetitionSportsSportIdPathParams;
 } & HyperionContext["fetcherOptions"];
 
@@ -15007,7 +14991,7 @@ export const fetchDeleteCompetitionSportsSportId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     DeleteCompetitionSportsSportIdError,
     undefined,
     {},
@@ -15023,7 +15007,7 @@ export const fetchDeleteCompetitionSportsSportId = (
 export const useDeleteCompetitionSportsSportId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       DeleteCompetitionSportsSportIdError,
       DeleteCompetitionSportsSportIdVariables
     >,
@@ -15032,7 +15016,7 @@ export const useDeleteCompetitionSportsSportId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     DeleteCompetitionSportsSportIdError,
     DeleteCompetitionSportsSportIdVariables
   >({
@@ -15192,25 +15176,10 @@ export const usePostCompetitionEditions = (
   });
 };
 
-export type GetCompetitionEditionsActiveQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
+export type GetCompetitionEditionsActiveError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetCompetitionEditionsActiveError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type GetCompetitionEditionsActiveRequestBody =
-  Schemas.BodyGetActiveEditionCompetitionEditionsActiveGet;
-
-export type GetCompetitionEditionsActiveVariables = {
-  body?: GetCompetitionEditionsActiveRequestBody;
-  queryParams?: GetCompetitionEditionsActiveQueryParams;
-} & HyperionContext["fetcherOptions"];
+export type GetCompetitionEditionsActiveVariables =
+  HyperionContext["fetcherOptions"];
 
 /**
  * Get the currently active competition edition.
@@ -15223,9 +15192,9 @@ export const fetchGetCompetitionEditionsActive = (
   hyperionFetch<
     Schemas.CompetitionEdition | null,
     GetCompetitionEditionsActiveError,
-    GetCompetitionEditionsActiveRequestBody,
+    undefined,
     {},
-    GetCompetitionEditionsActiveQueryParams,
+    {},
     {}
   >({
     url: "/competition/editions/active",
@@ -15348,7 +15317,7 @@ export type PatchCompetitionEditionsEditionIdError = Fetcher.ErrorWrapper<{
 }>;
 
 export type PatchCompetitionEditionsEditionIdVariables = {
-  body: Schemas.CompetitionEditionEdit;
+  body?: Schemas.CompetitionEditionEdit;
   pathParams: PatchCompetitionEditionsEditionIdPathParams;
 } & HyperionContext["fetcherOptions"];
 
@@ -15394,27 +15363,11 @@ export const usePatchCompetitionEditionsEditionId = (
   });
 };
 
-export type GetCompetitionGroupsQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
-export type GetCompetitionGroupsError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
+export type GetCompetitionGroupsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetCompetitionGroupsResponse = Schemas.Group[];
 
-export type GetCompetitionGroupsRequestBody =
-  Schemas.BodyGetGroupsCompetitionGroupsGet;
-
-export type GetCompetitionGroupsVariables = {
-  body?: GetCompetitionGroupsRequestBody;
-  queryParams?: GetCompetitionGroupsQueryParams;
-} & HyperionContext["fetcherOptions"];
+export type GetCompetitionGroupsVariables = HyperionContext["fetcherOptions"];
 
 export const fetchGetCompetitionGroups = (
   variables: GetCompetitionGroupsVariables,
@@ -15423,9 +15376,9 @@ export const fetchGetCompetitionGroups = (
   hyperionFetch<
     GetCompetitionGroupsResponse,
     GetCompetitionGroupsError,
-    GetCompetitionGroupsRequestBody,
+    undefined,
     {},
-    GetCompetitionGroupsQueryParams,
+    {},
     {}
   >({ url: "/competition/groups", method: "get", ...variables, signal });
 
@@ -15929,13 +15882,6 @@ export type GetCompetitionSchoolsSchoolIdQuotasPathParams = {
   schoolId: string;
 };
 
-export type GetCompetitionSchoolsSchoolIdQuotasQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type GetCompetitionSchoolsSchoolIdQuotasError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
@@ -15943,13 +15889,8 @@ export type GetCompetitionSchoolsSchoolIdQuotasError = Fetcher.ErrorWrapper<{
 
 export type GetCompetitionSchoolsSchoolIdQuotasResponse = Schemas.Quota[];
 
-export type GetCompetitionSchoolsSchoolIdQuotasRequestBody =
-  Schemas.BodyGetQuotasForSchoolCompetitionSchoolsSchoolIdQuotasGet;
-
 export type GetCompetitionSchoolsSchoolIdQuotasVariables = {
-  body?: GetCompetitionSchoolsSchoolIdQuotasRequestBody;
   pathParams: GetCompetitionSchoolsSchoolIdQuotasPathParams;
-  queryParams?: GetCompetitionSchoolsSchoolIdQuotasQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchGetCompetitionSchoolsSchoolIdQuotas = (
@@ -15959,9 +15900,9 @@ export const fetchGetCompetitionSchoolsSchoolIdQuotas = (
   hyperionFetch<
     GetCompetitionSchoolsSchoolIdQuotasResponse,
     GetCompetitionSchoolsSchoolIdQuotasError,
-    GetCompetitionSchoolsSchoolIdQuotasRequestBody,
+    undefined,
     {},
-    GetCompetitionSchoolsSchoolIdQuotasQueryParams,
+    {},
     GetCompetitionSchoolsSchoolIdQuotasPathParams
   >({
     url: "/competition/schools/{schoolId}/quotas",
@@ -16153,7 +16094,7 @@ export type PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasError =
   }>;
 
 export type PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables = {
-  body: Schemas.QuotaEdit;
+  body?: Schemas.QuotaEdit;
   pathParams: PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasPathParams;
 } & HyperionContext["fetcherOptions"];
 
@@ -16266,27 +16207,11 @@ export const useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   });
 };
 
-export type GetCompetitionSchoolsQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
-export type GetCompetitionSchoolsError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
+export type GetCompetitionSchoolsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetCompetitionSchoolsResponse = Schemas.SchoolExtension[];
 
-export type GetCompetitionSchoolsRequestBody =
-  Schemas.BodyGetSchoolsCompetitionSchoolsGet;
-
-export type GetCompetitionSchoolsVariables = {
-  body?: GetCompetitionSchoolsRequestBody;
-  queryParams?: GetCompetitionSchoolsQueryParams;
-} & HyperionContext["fetcherOptions"];
+export type GetCompetitionSchoolsVariables = HyperionContext["fetcherOptions"];
 
 export const fetchGetCompetitionSchools = (
   variables: GetCompetitionSchoolsVariables,
@@ -16295,9 +16220,9 @@ export const fetchGetCompetitionSchools = (
   hyperionFetch<
     GetCompetitionSchoolsResponse,
     GetCompetitionSchoolsError,
-    GetCompetitionSchoolsRequestBody,
+    undefined,
     {},
-    GetCompetitionSchoolsQueryParams,
+    {},
     {}
   >({ url: "/competition/schools", method: "get", ...variables, signal });
 
@@ -16394,7 +16319,7 @@ export type PostCompetitionSchoolsError = Fetcher.ErrorWrapper<{
 }>;
 
 export type PostCompetitionSchoolsVariables = {
-  body: Schemas.SchoolExtension;
+  body: Schemas.SchoolExtensionBase;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchPostCompetitionSchools = (
@@ -16404,7 +16329,7 @@ export const fetchPostCompetitionSchools = (
   hyperionFetch<
     Schemas.SchoolExtension,
     PostCompetitionSchoolsError,
-    Schemas.SchoolExtension,
+    Schemas.SchoolExtensionBase,
     {},
     {},
     {}
@@ -16445,7 +16370,7 @@ export type PatchCompetitionSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
 }>;
 
 export type PatchCompetitionSchoolsSchoolIdVariables = {
-  body: Schemas.SchoolExtensionEdit;
+  body?: Schemas.SchoolExtensionEdit;
   pathParams: PatchCompetitionSchoolsSchoolIdPathParams;
 } & HyperionContext["fetcherOptions"];
 
@@ -16689,13 +16614,6 @@ export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdPathParams = {
   sportId: string;
 };
 
-export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdError =
   Fetcher.ErrorWrapper<{
     status: 422;
@@ -16705,13 +16623,8 @@ export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdError =
 export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdResponse =
   Schemas.Team[];
 
-export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdRequestBody =
-  Schemas.BodyGetSportTeamsForSchoolAndSportCompetitionTeamsSchoolsSchoolIdSportsSportIdGet;
-
 export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdVariables = {
-  body?: GetCompetitionTeamsSchoolsSchoolIdSportsSportIdRequestBody;
   pathParams: GetCompetitionTeamsSchoolsSchoolIdSportsSportIdPathParams;
-  queryParams?: GetCompetitionTeamsSchoolsSchoolIdSportsSportIdQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchGetCompetitionTeamsSchoolsSchoolIdSportsSportId = (
@@ -16721,9 +16634,9 @@ export const fetchGetCompetitionTeamsSchoolsSchoolIdSportsSportId = (
   hyperionFetch<
     GetCompetitionTeamsSchoolsSchoolIdSportsSportIdResponse,
     GetCompetitionTeamsSchoolsSchoolIdSportsSportIdError,
-    GetCompetitionTeamsSchoolsSchoolIdSportsSportIdRequestBody,
+    undefined,
     {},
-    GetCompetitionTeamsSchoolsSchoolIdSportsSportIdQueryParams,
+    {},
     GetCompetitionTeamsSchoolsSchoolIdSportsSportIdPathParams
   >({
     url: "/competition/teams/schools/{schoolId}/sports/{sportId}",
@@ -16834,21 +16747,13 @@ export const useGetCompetitionTeamsSchoolsSchoolIdSportsSportId = <
   });
 };
 
-export type PostCompetitionTeamsQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type PostCompetitionTeamsError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
 export type PostCompetitionTeamsVariables = {
-  body: Schemas.BodyCreateTeamCompetitionTeamsPost;
-  queryParams?: PostCompetitionTeamsQueryParams;
+  body: Schemas.TeamInfo;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchPostCompetitionTeams = (
@@ -16858,9 +16763,9 @@ export const fetchPostCompetitionTeams = (
   hyperionFetch<
     Schemas.Team,
     PostCompetitionTeamsError,
-    Schemas.BodyCreateTeamCompetitionTeamsPost,
+    Schemas.TeamInfo,
     {},
-    PostCompetitionTeamsQueryParams,
+    {},
     {}
   >({ url: "/competition/teams", method: "post", ...variables, signal });
 
@@ -16893,22 +16798,14 @@ export type PatchCompetitionTeamsTeamIdPathParams = {
   teamId: string;
 };
 
-export type PatchCompetitionTeamsTeamIdQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type PatchCompetitionTeamsTeamIdError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
 export type PatchCompetitionTeamsTeamIdVariables = {
-  body: Schemas.BodyEditTeamCompetitionTeamsTeamIdPatch;
+  body?: Schemas.TeamEdit;
   pathParams: PatchCompetitionTeamsTeamIdPathParams;
-  queryParams?: PatchCompetitionTeamsTeamIdQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchPatchCompetitionTeamsTeamId = (
@@ -16918,9 +16815,9 @@ export const fetchPatchCompetitionTeamsTeamId = (
   hyperionFetch<
     void,
     PatchCompetitionTeamsTeamIdError,
-    Schemas.BodyEditTeamCompetitionTeamsTeamIdPatch,
+    Schemas.TeamEdit,
     {},
-    PatchCompetitionTeamsTeamIdQueryParams,
+    {},
     PatchCompetitionTeamsTeamIdPathParams
   >({
     url: "/competition/teams/{teamId}",
@@ -16958,25 +16855,13 @@ export type DeleteCompetitionTeamsTeamIdPathParams = {
   teamId: string;
 };
 
-export type DeleteCompetitionTeamsTeamIdQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type DeleteCompetitionTeamsTeamIdError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
-export type DeleteCompetitionTeamsTeamIdRequestBody =
-  Schemas.BodyDeleteTeamCompetitionTeamsTeamIdDelete;
-
 export type DeleteCompetitionTeamsTeamIdVariables = {
-  body?: DeleteCompetitionTeamsTeamIdRequestBody;
   pathParams: DeleteCompetitionTeamsTeamIdPathParams;
-  queryParams?: DeleteCompetitionTeamsTeamIdQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchDeleteCompetitionTeamsTeamId = (
@@ -16986,9 +16871,9 @@ export const fetchDeleteCompetitionTeamsTeamId = (
   hyperionFetch<
     void,
     DeleteCompetitionTeamsTeamIdError,
-    DeleteCompetitionTeamsTeamIdRequestBody,
+    undefined,
     {},
-    DeleteCompetitionTeamsTeamIdQueryParams,
+    {},
     DeleteCompetitionTeamsTeamIdPathParams
   >({
     url: "/competition/teams/{teamId}",
@@ -17026,13 +16911,6 @@ export type PostCompetitionSportsSportIdParticipatePathParams = {
   sportId: string;
 };
 
-export type PostCompetitionSportsSportIdParticipateQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type PostCompetitionSportsSportIdParticipateError =
   Fetcher.ErrorWrapper<{
     status: 422;
@@ -17040,9 +16918,8 @@ export type PostCompetitionSportsSportIdParticipateError =
   }>;
 
 export type PostCompetitionSportsSportIdParticipateVariables = {
-  body: Schemas.BodyJoinTeamCompetitionSportsSportIdParticipatePost;
+  body?: Schemas.ParticipantInfo;
   pathParams: PostCompetitionSportsSportIdParticipatePathParams;
-  queryParams?: PostCompetitionSportsSportIdParticipateQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchPostCompetitionSportsSportIdParticipate = (
@@ -17052,9 +16929,9 @@ export const fetchPostCompetitionSportsSportIdParticipate = (
   hyperionFetch<
     Schemas.Participant,
     PostCompetitionSportsSportIdParticipateError,
-    Schemas.BodyJoinTeamCompetitionSportsSportIdParticipatePost,
+    Schemas.ParticipantInfo,
     {},
-    PostCompetitionSportsSportIdParticipateQueryParams,
+    {},
     PostCompetitionSportsSportIdParticipatePathParams
   >({
     url: "/competition/sports/{sportId}/participate",
@@ -17431,13 +17308,6 @@ export type GetCompetitionSportsSportIdMatchesPathParams = {
   sportId: string;
 };
 
-export type GetCompetitionSportsSportIdMatchesQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type GetCompetitionSportsSportIdMatchesError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
@@ -17445,13 +17315,8 @@ export type GetCompetitionSportsSportIdMatchesError = Fetcher.ErrorWrapper<{
 
 export type GetCompetitionSportsSportIdMatchesResponse = Schemas.Match[];
 
-export type GetCompetitionSportsSportIdMatchesRequestBody =
-  Schemas.BodyGetMatchesForSportAndEditionCompetitionSportsSportIdMatchesGet;
-
 export type GetCompetitionSportsSportIdMatchesVariables = {
-  body?: GetCompetitionSportsSportIdMatchesRequestBody;
   pathParams: GetCompetitionSportsSportIdMatchesPathParams;
-  queryParams?: GetCompetitionSportsSportIdMatchesQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchGetCompetitionSportsSportIdMatches = (
@@ -17461,9 +17326,9 @@ export const fetchGetCompetitionSportsSportIdMatches = (
   hyperionFetch<
     GetCompetitionSportsSportIdMatchesResponse,
     GetCompetitionSportsSportIdMatchesError,
-    GetCompetitionSportsSportIdMatchesRequestBody,
+    undefined,
     {},
-    GetCompetitionSportsSportIdMatchesQueryParams,
+    {},
     GetCompetitionSportsSportIdMatchesPathParams
   >({
     url: "/competition/sports/{sportId}/matches",
@@ -17572,22 +17437,14 @@ export type PostCompetitionSportsSportIdMatchesPathParams = {
   sportId: string;
 };
 
-export type PostCompetitionSportsSportIdMatchesQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type PostCompetitionSportsSportIdMatchesError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
 export type PostCompetitionSportsSportIdMatchesVariables = {
-  body: Schemas.BodyCreateMatchCompetitionSportsSportIdMatchesPost;
+  body: Schemas.MatchBase;
   pathParams: PostCompetitionSportsSportIdMatchesPathParams;
-  queryParams?: PostCompetitionSportsSportIdMatchesQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchPostCompetitionSportsSportIdMatches = (
@@ -17597,9 +17454,9 @@ export const fetchPostCompetitionSportsSportIdMatches = (
   hyperionFetch<
     Schemas.Match,
     PostCompetitionSportsSportIdMatchesError,
-    Schemas.BodyCreateMatchCompetitionSportsSportIdMatchesPost,
+    Schemas.MatchBase,
     {},
-    PostCompetitionSportsSportIdMatchesQueryParams,
+    {},
     PostCompetitionSportsSportIdMatchesPathParams
   >({
     url: "/competition/sports/{sportId}/matches",
@@ -17644,10 +17501,6 @@ export type GetCompetitionSchoolsSchoolIdMatchesQueryParams = {
    * @format uuid
    */
   sport_id: string;
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
 };
 
 export type GetCompetitionSchoolsSchoolIdMatchesError = Fetcher.ErrorWrapper<{
@@ -17657,11 +17510,7 @@ export type GetCompetitionSchoolsSchoolIdMatchesError = Fetcher.ErrorWrapper<{
 
 export type GetCompetitionSchoolsSchoolIdMatchesResponse = Schemas.Match[];
 
-export type GetCompetitionSchoolsSchoolIdMatchesRequestBody =
-  Schemas.BodyGetMatchesForSchoolSportAndEditionCompetitionSchoolsSchoolIdMatchesGet;
-
 export type GetCompetitionSchoolsSchoolIdMatchesVariables = {
-  body?: GetCompetitionSchoolsSchoolIdMatchesRequestBody;
   pathParams: GetCompetitionSchoolsSchoolIdMatchesPathParams;
   queryParams: GetCompetitionSchoolsSchoolIdMatchesQueryParams;
 } & HyperionContext["fetcherOptions"];
@@ -17673,7 +17522,7 @@ export const fetchGetCompetitionSchoolsSchoolIdMatches = (
   hyperionFetch<
     GetCompetitionSchoolsSchoolIdMatchesResponse,
     GetCompetitionSchoolsSchoolIdMatchesError,
-    GetCompetitionSchoolsSchoolIdMatchesRequestBody,
+    undefined,
     {},
     GetCompetitionSchoolsSchoolIdMatchesQueryParams,
     GetCompetitionSchoolsSchoolIdMatchesPathParams
@@ -17790,22 +17639,14 @@ export type PatchCompetitionMatchesMatchIdPathParams = {
   matchId: string;
 };
 
-export type PatchCompetitionMatchesMatchIdQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type PatchCompetitionMatchesMatchIdError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
 export type PatchCompetitionMatchesMatchIdVariables = {
-  body: Schemas.BodyEditMatchCompetitionMatchesMatchIdPatch;
+  body?: Schemas.MatchEdit;
   pathParams: PatchCompetitionMatchesMatchIdPathParams;
-  queryParams?: PatchCompetitionMatchesMatchIdQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchPatchCompetitionMatchesMatchId = (
@@ -17815,9 +17656,9 @@ export const fetchPatchCompetitionMatchesMatchId = (
   hyperionFetch<
     void,
     PatchCompetitionMatchesMatchIdError,
-    Schemas.BodyEditMatchCompetitionMatchesMatchIdPatch,
+    Schemas.MatchEdit,
     {},
-    PatchCompetitionMatchesMatchIdQueryParams,
+    {},
     PatchCompetitionMatchesMatchIdPathParams
   >({
     url: "/competition/matches/{matchId}",
@@ -17855,25 +17696,13 @@ export type DeleteCompetitionMatchesMatchIdPathParams = {
   matchId: string;
 };
 
-export type DeleteCompetitionMatchesMatchIdQueryParams = {
-  /**
-   * @default false
-   */
-  exclude_external?: boolean;
-};
-
 export type DeleteCompetitionMatchesMatchIdError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
-export type DeleteCompetitionMatchesMatchIdRequestBody =
-  Schemas.BodyDeleteMatchCompetitionMatchesMatchIdDelete;
-
 export type DeleteCompetitionMatchesMatchIdVariables = {
-  body?: DeleteCompetitionMatchesMatchIdRequestBody;
   pathParams: DeleteCompetitionMatchesMatchIdPathParams;
-  queryParams?: DeleteCompetitionMatchesMatchIdQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 export const fetchDeleteCompetitionMatchesMatchId = (
@@ -17883,9 +17712,9 @@ export const fetchDeleteCompetitionMatchesMatchId = (
   hyperionFetch<
     void,
     DeleteCompetitionMatchesMatchIdError,
-    DeleteCompetitionMatchesMatchIdRequestBody,
+    undefined,
     {},
-    DeleteCompetitionMatchesMatchIdQueryParams,
+    {},
     DeleteCompetitionMatchesMatchIdPathParams
   >({
     url: "/competition/matches/{matchId}",
