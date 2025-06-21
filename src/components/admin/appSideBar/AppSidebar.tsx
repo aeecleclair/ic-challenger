@@ -1,11 +1,7 @@
 "use client";
 import * as React from "react";
-import {
-  Command,
-  LifeBuoy,
-  Send,
-} from "lucide-react";
-import { NavSchools } from "./Schools/NavSchools";
+import { Command, LifeBuoy, Send } from "lucide-react";
+import { NavSchools } from "./schools/NavSchools";
 import { NavSecondary } from "./NavSecondary";
 import {
   Sidebar,
@@ -17,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
-import { NavSports } from "./Sports/NavSports";
+import { NavSports } from "./sports/NavSports";
 
 const data = {
   navSecondary: [

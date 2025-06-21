@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar } from "@/src/components/home/AppSideBar/AppSidebar";
+import { AppSidebar } from "@/src/components/admin/appSideBar/AppSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,

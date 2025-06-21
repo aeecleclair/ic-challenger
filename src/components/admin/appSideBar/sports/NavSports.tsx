@@ -73,7 +73,7 @@ export function NavSports() {
                   <SidebarMenuItem key={sport.id}>
                     <SidebarMenuButton asChild>
                       <div
-                        onClick={() => handleClick(`?school_id=${sport.id}`)}
+                        onClick={() => handleClick(`?sport_id=${sport.id}`)}
                         className={`"cursor-pointer flex items-center ${sport.activated ? "" : "text-muted-foreground"}`}
                       >
                         {sport.name}{" "}

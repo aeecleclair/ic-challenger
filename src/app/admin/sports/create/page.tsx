@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { sportFormSchema } from "@/src/forms/sport";
 import { useSports } from "@/src/hooks/useSports";
-import { SportsForm } from "@/src/components/home/AppSideBar/Sports/SportsForm";
+import { SportsForm } from "@/src/components/admin/appSideBar/sports/SportsForm";
 
 const Dashboard = () => {
   const { createSport, isCreateLoading: isLoading } = useSports();
@@ -40,7 +40,7 @@ const Dashboard = () => {
   return (
     <div className="flex h-full w-full flex-col p-6">
       <span className="text-2xl font-bold mb-4">Ajouter un sport</span>
-      <SportsForm 
+      <SportsForm
         form={form}
         isLoading={isLoading}
         onSubmit={onSubmit}

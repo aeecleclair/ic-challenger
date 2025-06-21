@@ -20,7 +20,7 @@ import { toast } from "../components/ui/use-toast";
 import { StatusDialog } from "../components/custom/StatusDialog";
 import { Button } from "../components/ui/button";
 import { RegisteringCompleteDialog } from "../components/home/RegisteringCompleteDialog";
-import { AppSidebar } from "../components/home/AppSideBar/AppSidebar";
+import { AppSidebar } from "../components/admin/appSideBar/AppSidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,

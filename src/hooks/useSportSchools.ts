@@ -1,10 +1,12 @@
 import {
   useGetCompetitionSchools,
   usePostCompetitionSchools,
+  usePatchCompetitionSchoolsSchoolId,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
+import { SchoolExtensionEdit } from "../api/hyperionSchemas";
 
 export const useSportSchools = () => {
   const { token, isTokenExpired } = useAuth();
@@ -27,7 +29,8 @@ export const useSportSchools = () => {
     },
   );
 
-  const { mutate: mutateCompetitionSchool, isPending: isLoading } = usePostCompetitionSchools();
+  const { mutate: mutateCompetitionSchool, isPending: isLoading } =
+    usePostCompetitionSchools();
 
   const createCompetitionSchool = (
     params: Parameters<typeof mutateCompetitionSchool>[0],
@@ -62,11 +65,53 @@ export const useSportSchools = () => {
     );
   };
 
+  const { mutate: mutatePatchCompetitionSchool, isPending: isUpdateLoading } =
+    usePatchCompetitionSchoolsSchoolId();
+
+  const updateCompetitionSchool = (
+    schoolId: string,
+    body: SchoolExtensionEdit,
+    callback: () => void,
+  ) => {
+    return mutatePatchCompetitionSchool(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          schoolId: schoolId,
+        },
+        body: body,
+      },
+      {
+        onSuccess: () => {
+          refetchSchools();
+          toast({
+            title: "École mise à jour",
+            description: "L'école a été mise à jour avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la mise à jour",
+            description:
+              "Une erreur est survenue, veuillez réessayer plus tard",
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
   return {
     sportSchools,
     createCompetitionSchool,
+    updateCompetitionSchool,
     error,
     isLoading,
+    isUpdateLoading,
     refetchSchools,
   };
 };

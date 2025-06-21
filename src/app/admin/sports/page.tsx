@@ -1,18 +1,18 @@
 "use client";
 
-import SportCard from "@/src/components/admin/sports/SportCard";
+import SportCard from "@/src/components/admin/appSideBar/sports/SportCard";
 import { useSports } from "@/src/hooks/useSports";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
-import SportDetail from "@/src/components/home/AppSideBar/Sports/SportDetail";
+import SportDetail from "@/src/components/admin/appSideBar/sports/SportDetail";
 
 const Dashboard = () => {
   const router = useRouter();
   const { sports } = useSports();
 
   const searchParam = useSearchParams();
-  const schoolId = searchParam.get("school_id");
+  const schoolId = searchParam.get("sport_id");
 
   const sport = sports?.find((s) => s.id === schoolId);
   return (
@@ -35,7 +35,7 @@ const Dashboard = () => {
                     key={sport.id}
                     sport={sport}
                     onClick={() => {
-                      router.push(`/admin/sports?sport_id${sport.id}`);
+                      router.push(`/admin/sports?sport_id=${sport.id}`);
                     }}
                   />
                 ))}
