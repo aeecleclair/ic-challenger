@@ -16,10 +16,7 @@ interface SchoolCardProps {
   onClick?: () => void;
 }
 
-export const SchoolCard = ({
-  school,
-  onClick,
-}: SchoolCardProps) => {
+export const SchoolCard = ({ school, onClick }: SchoolCardProps) => {
   const formattedName = formatSchoolName(school.school.name);
 
   return (
@@ -33,8 +30,8 @@ export const SchoolCard = ({
           <Badge variant="secondary">
             {school.from_lyon ? "Lyonnaise" : "Externe"}
           </Badge>
-          <Badge variant={school.activated ? "default" : "outline"}>
-            {school.activated ? "Activée" : "Désactivée"}
+          <Badge variant={school.active ? "default" : "outline"}>
+            {school.active ? "Activée" : "Désactivée"}
           </Badge>
         </div>
       </CardHeader>

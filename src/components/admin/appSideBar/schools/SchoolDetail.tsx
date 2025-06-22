@@ -18,7 +18,7 @@ interface SchoolDetailProps {
 }
 
 const SchoolDetail = ({ school }: SchoolDetailProps) => {
-  const { schools } = useSchools();
+  const { filteredSchools } = useSchools();
   const { updateCompetitionSchool, isUpdateLoading: isLoading } =
     useSportSchools();
 
@@ -27,13 +27,8 @@ const SchoolDetail = ({ school }: SchoolDetailProps) => {
     defaultValues: {
       schools: school.school_id,
       fromLyon: school.from_lyon,
-      athleteQuota: school.general_quota.athlete_quota ?? 0,
-      cameramanQuota: school.general_quota.cameraman_quota ?? 0,
-      cheerleaderQuota: school.general_quota.pompom_quota ?? 0,
-      fanfareQuota: school.general_quota.fanfare_quota ?? 0,
-      nonAthleteQuota: school.general_quota.non_athlete_quota ?? 0,
-
-      activated: school.activated,
+      active: school.active,
+      inscription_enabled: school.inscription_enabled,
     },
     mode: "onChange",
   });
@@ -41,7 +36,8 @@ const SchoolDetail = ({ school }: SchoolDetailProps) => {
   function onSubmit(values: z.infer<typeof schoolFormSchema>) {
     const body: SchoolExtensionEdit = {
       from_lyon: values.fromLyon,
-      activated: values.activated,
+      active: values.active,
+      inscription_enabled: values.inscription_enabled,
     };
     updateCompetitionSchool(school.school_id, body, () => {
       form.reset();
@@ -63,7 +59,7 @@ const SchoolDetail = ({ school }: SchoolDetailProps) => {
         isLoading={isLoading}
         onSubmit={onSubmit}
         submitLabel="Modifer l'école"
-        schools={schools || []}
+        schools={filteredSchools || []}
       />
     </div>
   );

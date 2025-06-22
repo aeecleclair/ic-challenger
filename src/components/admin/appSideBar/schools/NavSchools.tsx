@@ -84,7 +84,7 @@ export function NavSchools() {
                       <DropdownMenuContent side="right" align="start">
                         <DropdownMenuItem onClick={() => {}}>
                           <span>
-                            {/* {sport.activated ? "Désactiver" : "Activer"} */}
+                            {/* {sport.active ? "Désactiver" : "Activer"} */}
                           </span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>

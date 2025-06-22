@@ -10,7 +10,6 @@ import SchoolDetail from "@/src/components/admin/appSideBar/schools/SchoolDetail
 
 const Dashboard = () => {
   const router = useRouter();
-  const { schools } = useSchools();
   const { sportSchools } = useSportSchools();
 
   const searchParam = useSearchParams();

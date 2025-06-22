@@ -6,7 +6,7 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { SchoolExtensionEdit } from "../api/hyperionSchemas";
+import { SchoolExtensionBase, SchoolExtensionEdit } from "../api/hyperionSchemas";
 
 export const useSportSchools = () => {
   const { token, isTokenExpired } = useAuth();
@@ -33,7 +33,7 @@ export const useSportSchools = () => {
     usePostCompetitionSchools();
 
   const createCompetitionSchool = (
-    params: Parameters<typeof mutateCompetitionSchool>[0],
+    body: SchoolExtensionBase,
     callback: () => void,
   ) => {
     return mutateCompetitionSchool(
@@ -41,7 +41,7 @@ export const useSportSchools = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: params.body,
+        body: body,
       },
       {
         onSuccess: () => {

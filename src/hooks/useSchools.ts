@@ -12,6 +12,7 @@ import { CoreSchoolBase, CoreSchoolUpdate } from "../api/hyperionSchemas";
 export const useSchools = () => {
   const { token, isTokenExpired } = useAuth();
   const { isAdmin } = useUser();
+  const NoSchoolId = "dce19aa2-8863-4c93-861e-fb7be8f610ed";
 
   const {
     data: schools,
@@ -106,8 +107,13 @@ export const useSchools = () => {
     );
   };
 
+  const filteredSchools = schools?.filter(
+    (school) => school.id !== NoSchoolId,
+  );
+
   return {
     schools,
+    filteredSchools,
     createSchool,
     updateSchool,
     error,

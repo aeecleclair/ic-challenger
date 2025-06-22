@@ -16,7 +16,6 @@ import { schoolFormSchema } from "@/src/forms/schools";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { CoreSchool } from "@/src/api/hyperionSchemas";
 
-
 interface SchoolsFormProps {
   form: UseFormReturn<z.infer<typeof schoolFormSchema>>;
   isLoading: boolean;
@@ -26,12 +25,11 @@ interface SchoolsFormProps {
 }
 
 export const SchoolsForm = ({
-    form,
-    isLoading,
-    onSubmit,
-    schools,
-    }: SchoolsFormProps
-) => {
+  form,
+  isLoading,
+  onSubmit,
+  schools,
+}: SchoolsFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -56,36 +54,20 @@ export const SchoolsForm = ({
           )}
         />
 
-        <div className="flex flex-row gap-6">
-          <StyledFormField
-            form={form}
-            label="École Lyonnaise"
-            id="fromLyon"
-            input={(field) => (
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </div>
-            )}
-          />
-
-          <StyledFormField
-            form={form}
-            label="Activée"
-            id="activated"
-            input={(field) => (
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </div>
-            )}
-          />
-        </div>
-
+        <StyledFormField
+          form={form}
+          label="École Lyonnaise"
+          id="fromLyon"
+          input={(field) => (
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </div>
+          )}
+        />
+{/* 
         <div className="grid grid-cols-2 gap-6">
           <StyledFormField
             form={form}
@@ -158,7 +140,7 @@ export const SchoolsForm = ({
               />
             )}
           />
-        </div>
+        </div> */}
 
         <LoadingButton
           type="submit"
@@ -170,4 +152,4 @@ export const SchoolsForm = ({
       </form>
     </Form>
   );
-}
+};
