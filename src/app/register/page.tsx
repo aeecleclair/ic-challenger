@@ -41,10 +41,10 @@ const Register = () => {
       "Récapitulatif",
     ],
     pageFields: {
-      Informations: ["phone"],
+      Informations: ["phone", "sex"],
       Participation: ["status"],
       Package: ["package", "party", "bottle", "tShirt"],
-      Sport: ["sport.id", "sport.sex"],
+      Sport: ["sport.id"],
     } as const,
   });
   return (

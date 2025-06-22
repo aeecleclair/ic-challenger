@@ -6,26 +6,17 @@ import { useState } from "react";
 import { RegisterFormField } from "./RegisterFormField";
 import { Form } from "../../ui/form";
 import { RegisterState } from "@/src/infra/registerState";
+import { useSports } from "@/src/hooks/useSports";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
   state: RegisterState;
 }
 
-export const RegisterForm = ({
-  setState,
-  state
-} : RegisterFormProps
-) => {
+export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const sports = [
-    { id: "football", name: "Football" },
-    { id: "basketball", name: "Basketball" },
-    { id: "volleyball", name: "Volleyball" },
-    { id: "handball", name: "Handball" },
-    { id: "rugby", name: "Rugby" },
-  ];
+  const { sports } = useSports();
 
   const form = useForm<z.infer<typeof registeringFormSchema>>({
     resolver: zodResolver(registeringFormSchema),

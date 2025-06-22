@@ -18,17 +18,17 @@ export const registeringFormSchema = z
         required_error: "Veuillez sélectionner au moins un statut",
       },
     ),
+    sex: z.enum(["masculin", "féminin"], {
+      required_error: "Veuillez sélectionner une option",
+    }),
     sport: z
       .object({
         id: z.string({
           required_error: "Veuillez sélectionner un sport",
         }),
-        team: z.string().optional(),
+        team_id: z.string().optional(),
         team_leader: z.boolean().optional(),
         license_number: z.string().optional(),
-        sex: z.enum(["masculin", "féminin"], {
-          required_error: "Veuillez sélectionner une option",
-        }),
       })
       .optional(),
     package: z.enum(["light", "full"], {
@@ -66,10 +66,10 @@ export const registeringFormSchema = z
     if (
       data.status === "sport" &&
       data.sport?.team_leader &&
-      !data.sport?.team
+      !data.sport?.team_id
     ) {
       ctx.addIssue({
-        path: ["sport", "team"],
+        path: ["sport", "team_id"],
         code: z.ZodIssueCode.custom,
         message: "Veuillez renseigner le nom de l'équipe",
       });

@@ -21,18 +21,45 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import { FormMessage } from "../../ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Button } from "../../ui/button";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { HiDownload } from "react-icons/hi";
 import { DocumentDialog } from "../../custom/DocumentDialog";
+import { Sport, TeamInfo } from "@/src/api/hyperionSchemas";
+import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
+import { useUser } from "@/src/hooks/useUser";
+import { useState } from "react";
 
 interface SportCardProps {
   form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
-  sports: { id: string; name: string }[];
+  sports?: Sport[];
 }
 
 export const SportCard = ({ form, sports }: SportCardProps) => {
+  const { me } = useUser();
+
+  const [teamName, setTeamName] = useState("");
+
+  const { teams, createSchoolSportTeam, isCreateLoading } = useSchoolSportTeams(
+    {
+      schoolId: me?.school?.id,
+      sportId: form.watch("sport.id"),
+    },
+  );
+
+  const createTeam = (name: string) => {
+    const body: TeamInfo = {
+      name,
+      sport_id: form.watch("sport.id")!,
+      school_id: me?.school?.id!,
+      captain_id: me?.id!,
+    };
+    createSchoolSportTeam(body, (team) => {
+      form.setValue("sport.team_id", team.id);
+    });
+  };
+
   return (
     <CardTemplate>
       <h2 className="text-xl font-semibold">Ta participation au Challenge :</h2>
@@ -45,55 +72,15 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
             <SelectTrigger className="w-full lg:w-2/3">
               <SelectValue placeholder="Sélectionnez un sport" />
             </SelectTrigger>
-            <SelectContent>
-              {sports.map((sport) => (
-                <SelectItem key={sport.id} value={sport.id}>
-                  {sport.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      />
-
-      <StyledFormField
-        form={form}
-        label="Catégorie"
-        id="sport.sex"
-        input={(field) => (
-          <RadioGroup
-            onValueChange={field.onChange}
-            defaultValue={field.value}
-            value={field.value}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="masculin" id="masculin" />
-              <Label htmlFor="masculin">Masculin</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="féminin" id="féminin" />
-              <Label htmlFor="féminin">Féminin</Label>
-            </div>
-          </RadioGroup>
-        )}
-      />
-
-      <StyledFormField
-        form={form}
-        label="Sport"
-        id="sport.team"
-        input={(field) => (
-          <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className="w-full  lg:w-2/3">
-              <SelectValue placeholder="Équipe" />
-            </SelectTrigger>
-            <SelectContent>
-              {sports.map((sport) => (
-                <SelectItem key={sport.id} value={sport.id}>
-                  {sport.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
+            {sports && (
+              <SelectContent>
+                {sports.map((sport) => (
+                  <SelectItem key={sport.id} value={sport.id}>
+                    {sport.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            )}
           </Select>
         )}
       />
@@ -116,6 +103,64 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
         )}
       />
 
+      {form.watch("sport.team_leader") ? (
+        <FormItem className="w-full">
+          <div className="grid gap-2">
+            <FormLabel className="text-base">
+              Création de l&apos;équipe
+            </FormLabel>
+            <FormControl>
+              <div className="flex flex-col gap-4 lg:flex-row w-2/3">
+                <Input
+                  placeholder="Nom de l'équipe"
+                  value={teamName}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  className="w-full lg:w-2/3"
+                />
+                <LoadingButton
+                  variant="outline"
+                  className="w-1/3"
+                  onClick={() => createTeam(teamName)}
+                  disabled={
+                    !form.watch("sport.team_leader") || teamName.length === 0
+                  }
+                  isLoading={isCreateLoading}
+                >
+                  Ajouter l&apos;équipe
+                </LoadingButton>
+              </div>
+            </FormControl>
+            <FormMessage />
+          </div>
+        </FormItem>
+      ) : (
+        <StyledFormField
+          form={form}
+          label="Catégorie"
+          id="sport.team_id"
+          input={(field) => (
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              disabled={!form.watch("sport.team_leader")}
+            >
+              <SelectTrigger className="w-full lg:w-2/3">
+                <SelectValue placeholder="Sélectionnez une équipe" />
+              </SelectTrigger>
+              {teams && teams.length === 0 && (
+                <SelectContent>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              )}
+            </Select>
+          )}
+        />
+      )}
+
       <div className="flex flex-col gap-4 lg:flex-row w-2/3">
         <StyledFormField
           form={form}
@@ -123,6 +168,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
           id="sport.license_number"
           input={(field) => <Input {...field} className="w-full" />}
         />
+        {/*
         <StyledFormField
           form={form}
           label="Certificat médical"
@@ -143,19 +189,19 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                       <span className="text-gray-500 overflow-hidden">
                         {field.value.name ?? "Aucun fichier séléctionné"}
                       </span>
-                    ) : ( */}
+                    ) : ( 
                       <span className="font-semibold mr-6">
                         Choisir un fichier
                       </span>
                       {/* )}
-                  </> */}
+                  </> 
                     </div>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="md:max-w-2xl top-1/2">
                   <DialogHeader>
                     <DialogTitle className="text-red sm:text-lg">
-                      {/* {label} */}
+                      {/* {label} 
                     </DialogTitle>
                   </DialogHeader>
                   {/* <DocumentDialog
@@ -165,7 +211,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                 fileType={id}
                 documentId={field.value?.id}
                 participantId={participantId!}
-              /> */}
+              /> 
                 </DialogContent>
               </Dialog>
               {/* {id === "raidRules" && !!information?.raid_rules_id && (
@@ -182,11 +228,13 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                 </>
               }
             />
-          )} */}
+          )} 
             </div>
           )}
         />
+        */}
       </div>
     </CardTemplate>
   );
 };
+

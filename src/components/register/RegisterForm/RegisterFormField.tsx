@@ -12,12 +12,13 @@ import { Button } from "../../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RegisterState } from "@/src/infra/registerState";
 import { SummaryCard } from "./SummaryCard";
+import { Sport } from "@/src/api/hyperionSchemas";
 
 interface RegisterFormFieldProps {
   form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
   isLoading: boolean;
   onSubmit: (values: z.infer<typeof registeringFormSchema>) => void;
-  sports: { id: string; name: string }[];
+  sports?: Sport[];
   setState: (state: RegisterState) => void;
   state: RegisterState;
 }

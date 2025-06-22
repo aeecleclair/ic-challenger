@@ -18,7 +18,7 @@ import { MergeIcon, UserRoundMinusIcon } from "lucide-react";
 import { WarningDialog } from "../../custom/WarningDialog";
 import { useState } from "react";
 import { useAdminTeam } from "@/src/hooks/useAdminTeam";
-import { useTeams } from "@/src/hooks/useTeams";
+import { useTeams } from "@/src/hooks/useSchoolSportTeams";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

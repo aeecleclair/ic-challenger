@@ -13,7 +13,7 @@ import { DataTableFilterCheckBox } from "./DataTableFilterCheckBox";
 import { useMergeTeams } from "@/src/hooks/useMergeTeams";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { icons, MergeIcon, Trash2Icon } from "lucide-react";
-import { useTeams } from "@/src/hooks/useTeams";
+import { useTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useState } from "react";
 import { WarningDialog } from "../../custom/WarningDialog";
 import { useDeleteAllTeams } from "@/src/hooks/useDeleteAllTeams";
