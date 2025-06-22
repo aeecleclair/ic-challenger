@@ -11,26 +11,10 @@ import {
   SidebarMenuItem,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
-import { NavSports } from "./sports/NavSports";
-import { NavSchools } from "./schools/NavSchools";
-import { NavSecondary } from "./NavSecondary";
 import { useEdition } from "@/src/hooks/useEdition";
 
-const data = {
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-};
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
   const { edition } = useEdition();
 
   return (
@@ -45,7 +29,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Challenger</span>
-                  <span className="truncate text-xs">Administration</span>
+                  {edition && <span className="truncate text-xs">Edition {edition.year}</span>}
                 </div>
               </a>
             </SidebarMenuButton>
@@ -53,13 +37,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {edition && (
-          <>
-            <NavSchools />
-            <NavSports />
-            <NavSecondary items={data.navSecondary} className="mt-auto" />
-          </>
-        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

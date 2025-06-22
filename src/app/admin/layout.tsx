@@ -1,5 +1,6 @@
 "use client";
 
+import AdminFallback from "@/src/components/admin/AdminFallback";
 import { AppSidebar } from "@/src/components/admin/appSideBar/AppSidebar";
 import {
   Breadcrumb,
@@ -15,6 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/src/components/ui/sidebar";
+import { useEdition } from "@/src/hooks/useEdition";
 import { useUser } from "@/src/hooks/useUser";
 import { usePathname, useRouter } from "next/navigation";
 import { ReactNode } from "react";
@@ -23,6 +25,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { isAdmin } = useUser();
   const router = useRouter();
+  const { edition } = useEdition();
 
   if (!isAdmin() && typeof window !== "undefined") {
     router.replace("/?redirect=/admin");
@@ -65,7 +68,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <div className="flex flex-col relative overflow-auto h-full m-6">
-          {children}
+          {edition ? children : <AdminFallback />}
         </div>
       </SidebarInset>
     </SidebarProvider>
