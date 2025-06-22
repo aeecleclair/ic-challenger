@@ -14,6 +14,7 @@ const Login = () => {
   const code = searchParams.get("code");
   const { codeVerifier } = useCodeVerifierStore();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const redirect = searchParams.get("redirect") || "/";
 
   useEffect(() => {
     if (
@@ -25,13 +26,13 @@ const Login = () => {
     ) {
       setIsLoggingIn(true);
       login(code, () => {
-        router.replace("/");
+        router.replace(redirect);
       });
     }
-  }, [code, isLoading, codeVerifier, login, router, isLoggingIn]);
+  }, [code, isLoading, codeVerifier, login, router, isLoggingIn, redirect]);
 
   if (token !== null && !isTokenExpired()) {
-    router.replace("/");
+    router.replace(redirect);
   }
 
   function connectMyECL(e: React.MouseEvent<HTMLButtonElement>) {
