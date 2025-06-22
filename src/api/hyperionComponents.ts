@@ -14935,7 +14935,7 @@ export const fetchPatchCompetitionSportsSportId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionSportsSportIdError,
     Schemas.SportEdit,
     {},
@@ -14951,7 +14951,7 @@ export const fetchPatchCompetitionSportsSportId = (
 export const usePatchCompetitionSportsSportId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionSportsSportIdError,
       PatchCompetitionSportsSportIdVariables
     >,
@@ -14960,7 +14960,7 @@ export const usePatchCompetitionSportsSportId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionSportsSportIdError,
     PatchCompetitionSportsSportIdVariables
   >({
@@ -15304,6 +15304,145 @@ export const useGetCompetitionEditionsActive = <
   });
 };
 
+export type PostCompetitionEditionsEditionIdActivatePathParams = {
+  /**
+   * @format uuid
+   */
+  editionId: string;
+};
+
+export type PostCompetitionEditionsEditionIdActivateError =
+  Fetcher.ErrorWrapper<{
+    status: 422;
+    payload: Schemas.HTTPValidationError;
+  }>;
+
+export type PostCompetitionEditionsEditionIdActivateVariables = {
+  pathParams: PostCompetitionEditionsEditionIdActivatePathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Activate a competition edition.
+ * If another edition is already active, it will be deactivated.
+ */
+export const fetchPostCompetitionEditionsEditionIdActivate = (
+  variables: PostCompetitionEditionsEditionIdActivateVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    PostCompetitionEditionsEditionIdActivateError,
+    undefined,
+    {},
+    {},
+    PostCompetitionEditionsEditionIdActivatePathParams
+  >({
+    url: "/competition/editions/{editionId}/activate",
+    method: "post",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Activate a competition edition.
+ * If another edition is already active, it will be deactivated.
+ */
+export const usePostCompetitionEditionsEditionIdActivate = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PostCompetitionEditionsEditionIdActivateError,
+      PostCompetitionEditionsEditionIdActivateVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    PostCompetitionEditionsEditionIdActivateError,
+    PostCompetitionEditionsEditionIdActivateVariables
+  >({
+    mutationFn: (
+      variables: PostCompetitionEditionsEditionIdActivateVariables,
+    ) =>
+      fetchPostCompetitionEditionsEditionIdActivate(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
+export type PostCompetitionEditionsEditionIdInscriptionPathParams = {
+  /**
+   * @format uuid
+   */
+  editionId: string;
+};
+
+export type PostCompetitionEditionsEditionIdInscriptionError =
+  Fetcher.ErrorWrapper<{
+    status: 422;
+    payload: Schemas.HTTPValidationError;
+  }>;
+
+export type PostCompetitionEditionsEditionIdInscriptionVariables = {
+  body?: boolean;
+  pathParams: PostCompetitionEditionsEditionIdInscriptionPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Enable inscription for a competition edition.
+ * The edition must already be active.
+ */
+export const fetchPostCompetitionEditionsEditionIdInscription = (
+  variables: PostCompetitionEditionsEditionIdInscriptionVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    PostCompetitionEditionsEditionIdInscriptionError,
+    boolean,
+    {},
+    {},
+    PostCompetitionEditionsEditionIdInscriptionPathParams
+  >({
+    url: "/competition/editions/{editionId}/inscription",
+    method: "post",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Enable inscription for a competition edition.
+ * The edition must already be active.
+ */
+export const usePostCompetitionEditionsEditionIdInscription = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PostCompetitionEditionsEditionIdInscriptionError,
+      PostCompetitionEditionsEditionIdInscriptionVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    PostCompetitionEditionsEditionIdInscriptionError,
+    PostCompetitionEditionsEditionIdInscriptionVariables
+  >({
+    mutationFn: (
+      variables: PostCompetitionEditionsEditionIdInscriptionVariables,
+    ) =>
+      fetchPostCompetitionEditionsEditionIdInscription(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
 export type PatchCompetitionEditionsEditionIdPathParams = {
   /**
    * @format uuid
@@ -15326,7 +15465,7 @@ export const fetchPatchCompetitionEditionsEditionId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionEditionsEditionIdError,
     Schemas.CompetitionEditionEdit,
     {},
@@ -15342,7 +15481,7 @@ export const fetchPatchCompetitionEditionsEditionId = (
 export const usePatchCompetitionEditionsEditionId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionEditionsEditionIdError,
       PatchCompetitionEditionsEditionIdVariables
     >,
@@ -15351,7 +15490,7 @@ export const usePatchCompetitionEditionsEditionId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionEditionsEditionIdError,
     PatchCompetitionEditionsEditionIdVariables
   >({
@@ -15533,7 +15672,7 @@ export const fetchPatchCompetitionGroupsGroupId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionGroupsGroupIdError,
     Schemas.GroupEdit,
     {},
@@ -15549,7 +15688,7 @@ export const fetchPatchCompetitionGroupsGroupId = (
 export const usePatchCompetitionGroupsGroupId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionGroupsGroupIdError,
       PatchCompetitionGroupsGroupIdVariables
     >,
@@ -15558,7 +15697,7 @@ export const usePatchCompetitionGroupsGroupId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionGroupsGroupIdError,
     PatchCompetitionGroupsGroupIdVariables
   >({
@@ -15740,6 +15879,397 @@ export const useDeleteCompetitionGroupsGroupIdUsersUserId = (
       variables: DeleteCompetitionGroupsGroupIdUsersUserIdVariables,
     ) =>
       fetchDeleteCompetitionGroupsGroupIdUsersUserId(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
+export type GetCompetitionSchoolsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetCompetitionSchoolsResponse = Schemas.SchoolExtension[];
+
+export type GetCompetitionSchoolsVariables = HyperionContext["fetcherOptions"];
+
+export const fetchGetCompetitionSchools = (
+  variables: GetCompetitionSchoolsVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    GetCompetitionSchoolsResponse,
+    GetCompetitionSchoolsError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/competition/schools", method: "get", ...variables, signal });
+
+export function getCompetitionSchoolsQuery(
+  variables: GetCompetitionSchoolsVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (options: QueryFnOptions) => Promise<GetCompetitionSchoolsResponse>;
+};
+
+export function getCompetitionSchoolsQuery(
+  variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((options: QueryFnOptions) => Promise<GetCompetitionSchoolsResponse>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionSchoolsQuery(
+  variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/schools",
+      operationId: "getCompetitionSchools",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionSchools(variables, signal),
+  };
+}
+
+export const useSuspenseGetCompetitionSchools = <
+  TData = GetCompetitionSchoolsResponse,
+>(
+  variables: GetCompetitionSchoolsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionSchoolsResponse,
+      GetCompetitionSchoolsError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    GetCompetitionSchoolsResponse,
+    GetCompetitionSchoolsError,
+    TData
+  >({
+    ...getCompetitionSchoolsQuery(deepMerge(fetcherOptions, variables)),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export const useGetCompetitionSchools = <
+  TData = GetCompetitionSchoolsResponse,
+>(
+  variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionSchoolsResponse,
+      GetCompetitionSchoolsError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    GetCompetitionSchoolsResponse,
+    GetCompetitionSchoolsError,
+    TData
+  >({
+    ...getCompetitionSchoolsQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export type PostCompetitionSchoolsError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type PostCompetitionSchoolsVariables = {
+  body: Schemas.SchoolExtensionBase;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchPostCompetitionSchools = (
+  variables: PostCompetitionSchoolsVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    Schemas.SchoolExtension,
+    PostCompetitionSchoolsError,
+    Schemas.SchoolExtensionBase,
+    {},
+    {},
+    {}
+  >({ url: "/competition/schools", method: "post", ...variables, signal });
+
+export const usePostCompetitionSchools = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.SchoolExtension,
+      PostCompetitionSchoolsError,
+      PostCompetitionSchoolsVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    Schemas.SchoolExtension,
+    PostCompetitionSchoolsError,
+    PostCompetitionSchoolsVariables
+  >({
+    mutationFn: (variables: PostCompetitionSchoolsVariables) =>
+      fetchPostCompetitionSchools(deepMerge(fetcherOptions, variables)),
+    ...options,
+  });
+};
+
+export type PatchCompetitionSchoolsSchoolIdPathParams = {
+  /**
+   * @format uuid
+   */
+  schoolId: string;
+};
+
+export type PatchCompetitionSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type PatchCompetitionSchoolsSchoolIdVariables = {
+  body?: Schemas.SchoolExtensionEdit;
+  pathParams: PatchCompetitionSchoolsSchoolIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchPatchCompetitionSchoolsSchoolId = (
+  variables: PatchCompetitionSchoolsSchoolIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    PatchCompetitionSchoolsSchoolIdError,
+    Schemas.SchoolExtensionEdit,
+    {},
+    {},
+    PatchCompetitionSchoolsSchoolIdPathParams
+  >({
+    url: "/competition/schools/{schoolId}",
+    method: "patch",
+    ...variables,
+    signal,
+  });
+
+export const usePatchCompetitionSchoolsSchoolId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PatchCompetitionSchoolsSchoolIdError,
+      PatchCompetitionSchoolsSchoolIdVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    PatchCompetitionSchoolsSchoolIdError,
+    PatchCompetitionSchoolsSchoolIdVariables
+  >({
+    mutationFn: (variables: PatchCompetitionSchoolsSchoolIdVariables) =>
+      fetchPatchCompetitionSchoolsSchoolId(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
+export type DeleteCompetitionSchoolsSchoolIdPathParams = {
+  /**
+   * @format uuid
+   */
+  schoolId: string;
+};
+
+export type DeleteCompetitionSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type DeleteCompetitionSchoolsSchoolIdVariables = {
+  pathParams: DeleteCompetitionSchoolsSchoolIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchDeleteCompetitionSchoolsSchoolId = (
+  variables: DeleteCompetitionSchoolsSchoolIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    DeleteCompetitionSchoolsSchoolIdError,
+    undefined,
+    {},
+    {},
+    DeleteCompetitionSchoolsSchoolIdPathParams
+  >({
+    url: "/competition/schools/{schoolId}",
+    method: "delete",
+    ...variables,
+    signal,
+  });
+
+export const useDeleteCompetitionSchoolsSchoolId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteCompetitionSchoolsSchoolIdError,
+      DeleteCompetitionSchoolsSchoolIdVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteCompetitionSchoolsSchoolIdError,
+    DeleteCompetitionSchoolsSchoolIdVariables
+  >({
+    mutationFn: (variables: DeleteCompetitionSchoolsSchoolIdVariables) =>
+      fetchDeleteCompetitionSchoolsSchoolId(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
+export type PostCompetitionSchoolsSchoolIdGeneralQuotaPathParams = {
+  /**
+   * @format uuid
+   */
+  schoolId: string;
+};
+
+export type PostCompetitionSchoolsSchoolIdGeneralQuotaError =
+  Fetcher.ErrorWrapper<{
+    status: 422;
+    payload: Schemas.HTTPValidationError;
+  }>;
+
+export type PostCompetitionSchoolsSchoolIdGeneralQuotaVariables = {
+  body?: Schemas.SchoolGeneralQuotaBase;
+  pathParams: PostCompetitionSchoolsSchoolIdGeneralQuotaPathParams;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchPostCompetitionSchoolsSchoolIdGeneralQuota = (
+  variables: PostCompetitionSchoolsSchoolIdGeneralQuotaVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    Schemas.SchoolGeneralQuota,
+    PostCompetitionSchoolsSchoolIdGeneralQuotaError,
+    Schemas.SchoolGeneralQuotaBase,
+    {},
+    {},
+    PostCompetitionSchoolsSchoolIdGeneralQuotaPathParams
+  >({
+    url: "/competition/schools/{schoolId}/general_quota",
+    method: "post",
+    ...variables,
+    signal,
+  });
+
+export const usePostCompetitionSchoolsSchoolIdGeneralQuota = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.SchoolGeneralQuota,
+      PostCompetitionSchoolsSchoolIdGeneralQuotaError,
+      PostCompetitionSchoolsSchoolIdGeneralQuotaVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    Schemas.SchoolGeneralQuota,
+    PostCompetitionSchoolsSchoolIdGeneralQuotaError,
+    PostCompetitionSchoolsSchoolIdGeneralQuotaVariables
+  >({
+    mutationFn: (
+      variables: PostCompetitionSchoolsSchoolIdGeneralQuotaVariables,
+    ) =>
+      fetchPostCompetitionSchoolsSchoolIdGeneralQuota(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
+export type PatchCompetitionSchoolsSchoolIdGeneralQuotaPathParams = {
+  /**
+   * @format uuid
+   */
+  schoolId: string;
+};
+
+export type PatchCompetitionSchoolsSchoolIdGeneralQuotaError =
+  Fetcher.ErrorWrapper<{
+    status: 422;
+    payload: Schemas.HTTPValidationError;
+  }>;
+
+export type PatchCompetitionSchoolsSchoolIdGeneralQuotaVariables = {
+  body?: Schemas.SchoolGeneralQuotaBase;
+  pathParams: PatchCompetitionSchoolsSchoolIdGeneralQuotaPathParams;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchPatchCompetitionSchoolsSchoolIdGeneralQuota = (
+  variables: PatchCompetitionSchoolsSchoolIdGeneralQuotaVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    PatchCompetitionSchoolsSchoolIdGeneralQuotaError,
+    Schemas.SchoolGeneralQuotaBase,
+    {},
+    {},
+    PatchCompetitionSchoolsSchoolIdGeneralQuotaPathParams
+  >({
+    url: "/competition/schools/{schoolId}/general_quota",
+    method: "patch",
+    ...variables,
+    signal,
+  });
+
+export const usePatchCompetitionSchoolsSchoolIdGeneralQuota = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PatchCompetitionSchoolsSchoolIdGeneralQuotaError,
+      PatchCompetitionSchoolsSchoolIdGeneralQuotaVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    PatchCompetitionSchoolsSchoolIdGeneralQuotaError,
+    PatchCompetitionSchoolsSchoolIdGeneralQuotaVariables
+  >({
+    mutationFn: (
+      variables: PatchCompetitionSchoolsSchoolIdGeneralQuotaVariables,
+    ) =>
+      fetchPatchCompetitionSchoolsSchoolIdGeneralQuota(
         deepMerge(fetcherOptions, variables),
       ),
     ...options,
@@ -16103,7 +16633,7 @@ export const fetchPatchCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
     Schemas.QuotaEdit,
     {},
@@ -16119,7 +16649,7 @@ export const fetchPatchCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
 export const usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
       PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables
     >,
@@ -16128,7 +16658,7 @@ export const usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
     PatchCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables
   >({
@@ -16168,7 +16698,7 @@ export const fetchDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     DeleteCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
     undefined,
     {},
@@ -16184,7 +16714,7 @@ export const fetchDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
 export const useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       DeleteCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
       DeleteCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables
     >,
@@ -16193,7 +16723,7 @@ export const useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     DeleteCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
     DeleteCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables
   >({
@@ -16201,273 +16731,6 @@ export const useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
       variables: DeleteCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables,
     ) =>
       fetchDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas(
-        deepMerge(fetcherOptions, variables),
-      ),
-    ...options,
-  });
-};
-
-export type GetCompetitionSchoolsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetCompetitionSchoolsResponse = Schemas.SchoolExtension[];
-
-export type GetCompetitionSchoolsVariables = HyperionContext["fetcherOptions"];
-
-export const fetchGetCompetitionSchools = (
-  variables: GetCompetitionSchoolsVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    GetCompetitionSchoolsResponse,
-    GetCompetitionSchoolsError,
-    undefined,
-    {},
-    {},
-    {}
-  >({ url: "/competition/schools", method: "get", ...variables, signal });
-
-export function getCompetitionSchoolsQuery(
-  variables: GetCompetitionSchoolsVariables,
-): {
-  queryKey: reactQuery.QueryKey;
-  queryFn: (options: QueryFnOptions) => Promise<GetCompetitionSchoolsResponse>;
-};
-
-export function getCompetitionSchoolsQuery(
-  variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken,
-): {
-  queryKey: reactQuery.QueryKey;
-  queryFn:
-    | ((options: QueryFnOptions) => Promise<GetCompetitionSchoolsResponse>)
-    | reactQuery.SkipToken;
-};
-
-export function getCompetitionSchoolsQuery(
-  variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken,
-) {
-  return {
-    queryKey: queryKeyFn({
-      path: "/competition/schools",
-      operationId: "getCompetitionSchools",
-      variables,
-    }),
-    queryFn:
-      variables === reactQuery.skipToken
-        ? reactQuery.skipToken
-        : ({ signal }: QueryFnOptions) =>
-            fetchGetCompetitionSchools(variables, signal),
-  };
-}
-
-export const useSuspenseGetCompetitionSchools = <
-  TData = GetCompetitionSchoolsResponse,
->(
-  variables: GetCompetitionSchoolsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetCompetitionSchoolsResponse,
-      GetCompetitionSchoolsError,
-      TData
-    >,
-    "queryKey" | "queryFn" | "initialData"
-  >,
-) => {
-  const { queryOptions, fetcherOptions } = useHyperionContext(options);
-  return reactQuery.useSuspenseQuery<
-    GetCompetitionSchoolsResponse,
-    GetCompetitionSchoolsError,
-    TData
-  >({
-    ...getCompetitionSchoolsQuery(deepMerge(fetcherOptions, variables)),
-    ...options,
-    ...queryOptions,
-  });
-};
-
-export const useGetCompetitionSchools = <
-  TData = GetCompetitionSchoolsResponse,
->(
-  variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetCompetitionSchoolsResponse,
-      GetCompetitionSchoolsError,
-      TData
-    >,
-    "queryKey" | "queryFn" | "initialData"
-  >,
-) => {
-  const { queryOptions, fetcherOptions } = useHyperionContext(options);
-  return reactQuery.useQuery<
-    GetCompetitionSchoolsResponse,
-    GetCompetitionSchoolsError,
-    TData
-  >({
-    ...getCompetitionSchoolsQuery(
-      variables === reactQuery.skipToken
-        ? variables
-        : deepMerge(fetcherOptions, variables),
-    ),
-    ...options,
-    ...queryOptions,
-  });
-};
-
-export type PostCompetitionSchoolsError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type PostCompetitionSchoolsVariables = {
-  body: Schemas.SchoolExtensionBase;
-} & HyperionContext["fetcherOptions"];
-
-export const fetchPostCompetitionSchools = (
-  variables: PostCompetitionSchoolsVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    Schemas.SchoolExtension,
-    PostCompetitionSchoolsError,
-    Schemas.SchoolExtensionBase,
-    {},
-    {},
-    {}
-  >({ url: "/competition/schools", method: "post", ...variables, signal });
-
-export const usePostCompetitionSchools = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      Schemas.SchoolExtension,
-      PostCompetitionSchoolsError,
-      PostCompetitionSchoolsVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    Schemas.SchoolExtension,
-    PostCompetitionSchoolsError,
-    PostCompetitionSchoolsVariables
-  >({
-    mutationFn: (variables: PostCompetitionSchoolsVariables) =>
-      fetchPostCompetitionSchools(deepMerge(fetcherOptions, variables)),
-    ...options,
-  });
-};
-
-export type PatchCompetitionSchoolsSchoolIdPathParams = {
-  /**
-   * @format uuid
-   */
-  schoolId: string;
-};
-
-export type PatchCompetitionSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type PatchCompetitionSchoolsSchoolIdVariables = {
-  body?: Schemas.SchoolExtensionEdit;
-  pathParams: PatchCompetitionSchoolsSchoolIdPathParams;
-} & HyperionContext["fetcherOptions"];
-
-export const fetchPatchCompetitionSchoolsSchoolId = (
-  variables: PatchCompetitionSchoolsSchoolIdVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    void,
-    PatchCompetitionSchoolsSchoolIdError,
-    Schemas.SchoolExtensionEdit,
-    {},
-    {},
-    PatchCompetitionSchoolsSchoolIdPathParams
-  >({
-    url: "/competition/schools/{schoolId}",
-    method: "patch",
-    ...variables,
-    signal,
-  });
-
-export const usePatchCompetitionSchoolsSchoolId = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      void,
-      PatchCompetitionSchoolsSchoolIdError,
-      PatchCompetitionSchoolsSchoolIdVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    void,
-    PatchCompetitionSchoolsSchoolIdError,
-    PatchCompetitionSchoolsSchoolIdVariables
-  >({
-    mutationFn: (variables: PatchCompetitionSchoolsSchoolIdVariables) =>
-      fetchPatchCompetitionSchoolsSchoolId(
-        deepMerge(fetcherOptions, variables),
-      ),
-    ...options,
-  });
-};
-
-export type DeleteCompetitionSchoolsSchoolIdPathParams = {
-  /**
-   * @format uuid
-   */
-  schoolId: string;
-};
-
-export type DeleteCompetitionSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type DeleteCompetitionSchoolsSchoolIdVariables = {
-  pathParams: DeleteCompetitionSchoolsSchoolIdPathParams;
-} & HyperionContext["fetcherOptions"];
-
-export const fetchDeleteCompetitionSchoolsSchoolId = (
-  variables: DeleteCompetitionSchoolsSchoolIdVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    void,
-    DeleteCompetitionSchoolsSchoolIdError,
-    undefined,
-    {},
-    {},
-    DeleteCompetitionSchoolsSchoolIdPathParams
-  >({
-    url: "/competition/schools/{schoolId}",
-    method: "delete",
-    ...variables,
-    signal,
-  });
-
-export const useDeleteCompetitionSchoolsSchoolId = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      void,
-      DeleteCompetitionSchoolsSchoolIdError,
-      DeleteCompetitionSchoolsSchoolIdVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    void,
-    DeleteCompetitionSchoolsSchoolIdError,
-    DeleteCompetitionSchoolsSchoolIdVariables
-  >({
-    mutationFn: (variables: DeleteCompetitionSchoolsSchoolIdVariables) =>
-      fetchDeleteCompetitionSchoolsSchoolId(
         deepMerge(fetcherOptions, variables),
       ),
     ...options,
@@ -16813,7 +17076,7 @@ export const fetchPatchCompetitionTeamsTeamId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionTeamsTeamIdError,
     Schemas.TeamEdit,
     {},
@@ -16829,7 +17092,7 @@ export const fetchPatchCompetitionTeamsTeamId = (
 export const usePatchCompetitionTeamsTeamId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionTeamsTeamIdError,
       PatchCompetitionTeamsTeamIdVariables
     >,
@@ -16838,7 +17101,7 @@ export const usePatchCompetitionTeamsTeamId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionTeamsTeamIdError,
     PatchCompetitionTeamsTeamIdVariables
   >({
@@ -16869,7 +17132,7 @@ export const fetchDeleteCompetitionTeamsTeamId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     DeleteCompetitionTeamsTeamIdError,
     undefined,
     {},
@@ -16885,7 +17148,7 @@ export const fetchDeleteCompetitionTeamsTeamId = (
 export const useDeleteCompetitionTeamsTeamId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       DeleteCompetitionTeamsTeamIdError,
       DeleteCompetitionTeamsTeamIdVariables
     >,
@@ -16894,7 +17157,7 @@ export const useDeleteCompetitionTeamsTeamId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     DeleteCompetitionTeamsTeamIdError,
     DeleteCompetitionTeamsTeamIdVariables
   >({
@@ -17262,7 +17525,7 @@ export const fetchPatchCompetitionParticipantsUserIdSportsSportIdValidate = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionParticipantsUserIdSportsSportIdValidateError,
     undefined,
     {},
@@ -17278,7 +17541,7 @@ export const fetchPatchCompetitionParticipantsUserIdSportsSportIdValidate = (
 export const usePatchCompetitionParticipantsUserIdSportsSportIdValidate = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionParticipantsUserIdSportsSportIdValidateError,
       PatchCompetitionParticipantsUserIdSportsSportIdValidateVariables
     >,
@@ -17287,7 +17550,7 @@ export const usePatchCompetitionParticipantsUserIdSportsSportIdValidate = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionParticipantsUserIdSportsSportIdValidateError,
     PatchCompetitionParticipantsUserIdSportsSportIdValidateVariables
   >({
@@ -17654,7 +17917,7 @@ export const fetchPatchCompetitionMatchesMatchId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PatchCompetitionMatchesMatchIdError,
     Schemas.MatchEdit,
     {},
@@ -17670,7 +17933,7 @@ export const fetchPatchCompetitionMatchesMatchId = (
 export const usePatchCompetitionMatchesMatchId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PatchCompetitionMatchesMatchIdError,
       PatchCompetitionMatchesMatchIdVariables
     >,
@@ -17679,7 +17942,7 @@ export const usePatchCompetitionMatchesMatchId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PatchCompetitionMatchesMatchIdError,
     PatchCompetitionMatchesMatchIdVariables
   >({
@@ -17710,7 +17973,7 @@ export const fetchDeleteCompetitionMatchesMatchId = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     DeleteCompetitionMatchesMatchIdError,
     undefined,
     {},
@@ -17726,7 +17989,7 @@ export const fetchDeleteCompetitionMatchesMatchId = (
 export const useDeleteCompetitionMatchesMatchId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       DeleteCompetitionMatchesMatchIdError,
       DeleteCompetitionMatchesMatchIdVariables
     >,
@@ -17735,7 +17998,7 @@ export const useDeleteCompetitionMatchesMatchId = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     DeleteCompetitionMatchesMatchIdError,
     DeleteCompetitionMatchesMatchIdVariables
   >({
@@ -39050,6 +39313,11 @@ export type QueryOperation =
       variables: GetCompetitionGroupsVariables | reactQuery.SkipToken;
     }
   | {
+      path: "/competition/schools";
+      operationId: "getCompetitionSchools";
+      variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken;
+    }
+  | {
       path: "/competition/sports/{sportId}/quotas";
       operationId: "getCompetitionSportsSportIdQuotas";
       variables:
@@ -39062,11 +39330,6 @@ export type QueryOperation =
       variables:
         | GetCompetitionSchoolsSchoolIdQuotasVariables
         | reactQuery.SkipToken;
-    }
-  | {
-      path: "/competition/schools";
-      operationId: "getCompetitionSchools";
-      variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken;
     }
   | {
       path: "/competition/teams/sports/{sportId}";

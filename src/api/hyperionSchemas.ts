@@ -486,7 +486,11 @@ export type CompetitionEdition = {
   /**
    * @default true
    */
-  activated?: boolean;
+  active?: boolean;
+  /**
+   * @default false
+   */
+  inscription_enabled?: boolean;
   /**
    * @format uuid
    */
@@ -507,7 +511,11 @@ export type CompetitionEditionBase = {
   /**
    * @default true
    */
-  activated?: boolean;
+  active?: boolean;
+  /**
+   * @default false
+   */
+  inscription_enabled?: boolean;
 };
 
 export type CompetitionEditionEdit = {
@@ -515,7 +523,44 @@ export type CompetitionEditionEdit = {
   year?: number | null;
   start_date?: string | null;
   end_date?: string | null;
-  activated?: boolean | null;
+};
+
+/**
+ * A user with additional fields for competition purposes.
+ * This is used to represent a user in the context of a competition.
+ */
+export type CompetitionUser = {
+  name: string;
+  firstname: string;
+  nickname?: string | null;
+  id: string;
+  account_type: AccountType;
+  /**
+   * @format uuid
+   */
+  school_id: string;
+  email: string;
+  birthday?: string | null;
+  promo?: number | null;
+  floor?: FloorsType | null;
+  phone?: string | null;
+  created_on?: string | null;
+  groups?: CoreGroupSimple[];
+  school?: CoreSchool | null;
+  /**
+   * @format uuid
+   */
+  edition_id: string;
+  competition_category?: SportCategory | null;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @default false
+   */
+  validated?: boolean;
+  competition_groups?: Group[];
 };
 
 /**
@@ -1580,10 +1625,6 @@ export type Participant = {
    */
   substitute?: boolean;
   team_id?: string | null;
-  /**
-   * @default false
-   */
-  validated?: boolean;
 };
 
 export type ParticipantComplete = {
@@ -1606,11 +1647,7 @@ export type ParticipantComplete = {
    */
   substitute?: boolean;
   team_id?: string | null;
-  /**
-   * @default false
-   */
-  validated?: boolean;
-  user: CoreUser;
+  user: CompetitionUser;
 };
 
 export type ParticipantInfo = {
@@ -2189,7 +2226,11 @@ export type SchoolExtension = {
   /**
    * @default true
    */
-  activated?: boolean;
+  active?: boolean;
+  /**
+   * @default false
+   */
+  inscription_enabled?: boolean;
   school: CoreSchool;
   general_quota: SchoolGeneralQuota;
 };
@@ -2203,20 +2244,33 @@ export type SchoolExtensionBase = {
   /**
    * @default true
    */
-  activated?: boolean;
+  active?: boolean;
+  /**
+   * @default false
+   */
+  inscription_enabled?: boolean;
 };
 
 export type SchoolExtensionEdit = {
   from_lyon?: boolean | null;
-  activated?: boolean | null;
+  active?: boolean | null;
+  inscription_enabled?: boolean | null;
 };
 
 export type SchoolGeneralQuota = {
+  athlete_quota?: number | null;
+  cameraman_quota?: number | null;
+  pompom_quota?: number | null;
+  fanfare_quota?: number | null;
+  non_athlete_quota?: number | null;
   /**
    * @format uuid
    */
   school_id: string;
-  edition: string;
+  edition_id: string;
+};
+
+export type SchoolGeneralQuotaBase = {
   athlete_quota?: number | null;
   cameraman_quota?: number | null;
   pompom_quota?: number | null;
@@ -2425,7 +2479,7 @@ export type Sport = {
   /**
    * @default true
    */
-  activated?: boolean;
+  active?: boolean;
   /**
    * @format uuid
    */
@@ -2443,7 +2497,7 @@ export type SportBase = {
   /**
    * @default true
    */
-  activated?: boolean;
+  active?: boolean;
 };
 
 export type SportCategory = "masculine" | "feminine";
@@ -2453,7 +2507,7 @@ export type SportEdit = {
   team_size?: number | null;
   substitute_max?: number | null;
   sport_category?: SportCategory | null;
-  activated?: boolean | null;
+  active?: boolean | null;
 };
 
 export type Status = {
@@ -2563,6 +2617,10 @@ export type Team = {
    * @format uuid
    */
   id: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
 };
 
 export type TeamEdit = {
