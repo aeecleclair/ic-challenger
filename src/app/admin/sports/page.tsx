@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   const sport = sports?.find((s) => s.id === schoolId);
   return (
-    <div className="flex w-full flex-col">
+    <div className="flex w-full flex-col p-6">
       {sport ? (
         <SportDetail sport={sport} />
       ) : (

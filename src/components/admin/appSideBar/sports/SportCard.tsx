@@ -18,7 +18,6 @@ interface SportCardProps {
 }
 
 export const SportCard = ({ sport, onClick }: SportCardProps) => {
-  // Find the label for the sport category
   const categoryLabel =
     sportCategories.find((cat) => cat.value === sport.sport_category)?.label ||
     sport.sport_category;
@@ -33,8 +32,8 @@ export const SportCard = ({ sport, onClick }: SportCardProps) => {
           {sport.sport_category && (
             <Badge variant="secondary">{categoryLabel}</Badge>
           )}
-          <Badge variant={sport.activated ? "default" : "outline"}>
-            {sport.activated ? "Activé" : "Désactivé"}
+          <Badge variant={sport.active ? "default" : "outline"}>
+            {sport.active ? "Activé" : "Désactivé"}
           </Badge>
         </div>
       </CardHeader>

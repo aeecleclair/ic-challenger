@@ -35,7 +35,7 @@ export const sportFormSchema = z.object({
   substituteMax: z.number().min(0, {
     message: "Le nombre de remplaçants doit être supérieur ou égal à 0",
   }),
-  activated: z.boolean({
+  active: z.boolean({
     required_error: "Veuillez indiquer si le sport est activé",
   }),
 });

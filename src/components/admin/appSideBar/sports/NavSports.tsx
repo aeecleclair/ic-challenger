@@ -31,8 +31,8 @@ export function NavSports() {
     router.push(`/admin/sports${path}`);
   };
 
-  const toggleActivated = (sportId: string, activated: boolean) => {
-    updateSport(sportId, { activated: !activated }, () => {
+  const toggleActive = (sportId: string, active: boolean) => {
+    updateSport(sportId, { active: !active }, () => {
       router.refresh();
     });
   };
@@ -74,11 +74,9 @@ export function NavSports() {
                     <SidebarMenuButton asChild>
                       <div
                         onClick={() => handleClick(`?sport_id=${sport.id}`)}
-                        className={`"cursor-pointer flex items-center ${sport.activated ? "" : "text-muted-foreground"}`}
+                        className={`"cursor-pointer flex items-center ${sport.active ? "" : "text-muted-foreground"}`}
                       >
-                        {sport.name}{" "}
-                        {sport.sport_category &&
-                          sport.sport_category.charAt(0).toUpperCase()}
+                        {sport.name}
                       </div>
                     </SidebarMenuButton>
                     <DropdownMenu>
@@ -90,11 +88,11 @@ export function NavSports() {
                       <DropdownMenuContent side="right" align="start">
                         <DropdownMenuItem
                           onClick={() =>
-                            toggleActivated(sport.id, sport.activated ?? true)
+                            toggleActive(sport.id, sport.active ?? true)
                           }
                         >
                           <span>
-                            {sport.activated ? "Désactiver" : "Activer"}
+                            {sport.active ? "Désactiver" : "Activer"}
                           </span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>

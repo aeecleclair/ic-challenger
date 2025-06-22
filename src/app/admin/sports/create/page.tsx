@@ -17,7 +17,7 @@ const Dashboard = () => {
       teamSize: 1,
       sportCategory: "masculine",
       substituteMax: 0,
-      activated: true,
+      active: true,
     },
     mode: "onChange",
   });
@@ -29,7 +29,7 @@ const Dashboard = () => {
         team_size: values.teamSize,
         sport_category: values.sportCategory,
         substitute_max: values.substituteMax,
-        activated: values.activated,
+        active: values.active,
       },
       () => {
         form.reset();

@@ -23,7 +23,7 @@ const SportDetail = ({ sport }: SportDetailProps) => {
       teamSize: sport.team_size,
       sportCategory: sport.sport_category ?? undefined,
       substituteMax: sport.substitute_max ?? 0,
-      activated: sport.activated,
+      active: sport.active,
     },
     mode: "onChange",
   });
@@ -36,7 +36,7 @@ const SportDetail = ({ sport }: SportDetailProps) => {
         team_size: values.teamSize,
         sport_category: values.sportCategory,
         substitute_max: values.substituteMax,
-        activated: values.activated,
+        active: values.active,
       },
       () => {
         form.reset();
