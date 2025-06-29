@@ -40,7 +40,9 @@ export function NavSchools() {
             onClick={() => handleClick("")}
             className="cursor-pointer hover:underline"
           >
-            Écoles
+            Écoles{" "}
+            {sportSchools?.length && sportSchools?.length > 0 &&
+              `(${sportSchools.length})`}
           </div>
           <CollapsibleTrigger asChild>
             <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">

@@ -45,7 +45,8 @@ export function NavSports() {
             onClick={() => handleClick("")}
             className="cursor-pointer hover:underline"
           >
-            Sports
+            Sports{" "}
+            {sports?.length && sports?.length > 0 && `(${sports.length})`}
           </div>
           <CollapsibleTrigger asChild>
             <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">
@@ -74,7 +75,7 @@ export function NavSports() {
                     <SidebarMenuButton asChild>
                       <div
                         onClick={() => handleClick(`?sport_id=${sport.id}`)}
-                        className={`"cursor-pointer flex items-center ${sport.active ? "" : "text-muted-foreground"}`}
+                        className={`cursor-pointer flex items-center ${sport.active ? "" : "text-muted-foreground"}`}
                       >
                         {sport.name}
                       </div>
@@ -91,9 +92,7 @@ export function NavSports() {
                             toggleActive(sport.id, sport.active ?? true)
                           }
                         >
-                          <span>
-                            {sport.active ? "Désactiver" : "Activer"}
-                          </span>
+                          <span>{sport.active ? "Désactiver" : "Activer"}</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
