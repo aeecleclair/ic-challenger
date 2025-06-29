@@ -22,6 +22,7 @@ import {
   Collapsible,
   CollapsibleTrigger,
 } from "@/src/components/ui/collapsible";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 export function NavSchools() {
   const { sportSchools } = useSportSchools();
@@ -72,7 +73,7 @@ export function NavSchools() {
                         }
                         className="cursor-pointer flex items-center"
                       >
-                        {school.school.name}
+                        {formatSchoolName(school.school.name)}
                       </div>
                     </SidebarMenuButton>
                     <DropdownMenu>

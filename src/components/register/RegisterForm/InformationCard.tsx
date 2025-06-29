@@ -36,7 +36,7 @@ export const InformationCard = ({ form }: InformationCardProps) => {
 
         <StyledFormField
           form={form}
-          label="Sexe"
+          label="Catégorie sportive"
           id="sex"
           input={(field) => (
             <RadioGroup
@@ -45,12 +45,12 @@ export const InformationCard = ({ form }: InformationCardProps) => {
               value={field.value}
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="masculin" id="masculin" />
-                <Label htmlFor="masculin">Homme</Label>
+                <RadioGroupItem value="masculine" id="masculine" />
+                <Label htmlFor="masculine">Masculin</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="féminin" id="féminin" />
-                <Label htmlFor="féminin">Femme</Label>
+                <RadioGroupItem value="feminine" id="feminine" />
+                <Label htmlFor="feminine">Féminin</Label>
               </div>
             </RadioGroup>
           )}

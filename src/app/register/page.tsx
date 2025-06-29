@@ -20,9 +20,22 @@ import {
 } from "@/src/components/ui/sidebar";
 import { RegisterState } from "@/src/infra/registerState";
 import { useState } from "react";
+import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
+import {
+  CompetitionUserBase,
+  Participant,
+  SportCategory,
+} from "@/src/api/hyperionSchemas";
+import { useParticipant } from "@/src/hooks/useParticipant";
+import { useEdition } from "@/src/hooks/useEdition";
+import { useUser } from "@/src/hooks/useUser";
 
 const Register = () => {
   const { isTokenQueried, token } = useAuth();
+  const { me, updateUser } = useUser();
+  const { meCompetition, createCompetitionUser } = useCompetitionUser();
+  const { createParticipant } = useParticipant();
+  const { edition } = useEdition();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -42,9 +55,54 @@ const Register = () => {
     ],
     pageFields: {
       Informations: ["phone", "sex"],
-      Participation: ["status"],
+      Participation: [
+        "is_athlete",
+        "is_cameraman",
+        "is_fanfare",
+        "is_pompom",
+        "is_volunteer",
+      ],
       Package: ["package", "party", "bottle", "tShirt"],
       Sport: ["sport.id"],
+      Récapitulatif: [],
+    } as const,
+    onValidateCardActions: {
+      Informations: (values, callback) => {
+        if (values.phone !== me!.phone) {
+          updateUser({ phone: values.phone }, callback);
+        } else {
+          callback();
+        }
+      },
+      Participation: (values, callback) => {
+        if (!!meCompetition) {
+          callback();
+          return;
+        }
+        const body: CompetitionUserBase = {
+          sport_category: values.sex,
+          is_athlete: values.is_athlete,
+          is_cameraman: values.is_cameraman,
+          is_fanfare: values.is_fanfare,
+          is_pompom: values.is_pompom,
+          is_volunteer: values.is_volunteer,
+        };
+        createCompetitionUser(body, callback);
+      },
+      Sport: (values, callback) => {
+        // TODO: check participant
+        const body: Participant = {
+          user_id: me!.id,
+          sport_id: values.sport!.id,
+          edition_id: edition?.id!,
+          school_id: me!.school!.id,
+          license: values.sport!.license_number!,
+          team_id: values.sport!.team_id,
+        };
+        createParticipant(body, callback);
+      },
+      Package: () => {},
+      Récapitulatif: () => {},
     } as const,
   });
   return (

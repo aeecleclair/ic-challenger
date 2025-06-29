@@ -7,6 +7,8 @@ import { RegisterFormField } from "./RegisterFormField";
 import { Form } from "../../ui/form";
 import { RegisterState } from "@/src/infra/registerState";
 import { useSports } from "@/src/hooks/useSports";
+import { useUser } from "@/src/hooks/useUser";
+import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
@@ -17,18 +19,29 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { sports } = useSports();
+  const { me } = useUser();
+  const { meCompetition } = useCompetitionUser();
 
   const form = useForm<z.infer<typeof registeringFormSchema>>({
     resolver: zodResolver(registeringFormSchema),
     mode: "onBlur",
     defaultValues: {
+      phone: me?.phone || undefined,
+      sex: meCompetition?.sport_category || undefined,
+      is_athlete: meCompetition?.is_athlete ?? false,
+      is_cameraman: meCompetition?.is_cameraman ?? false,
+      is_fanfare: meCompetition?.is_fanfare ?? false,
+      is_pompom: meCompetition?.is_pompom ?? false,
+      is_volunteer: meCompetition?.is_volunteer ?? false,
       party: false,
       bottle: false,
       tShirt: false,
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registeringFormSchema>) {}
+  async function onSubmit(values: z.infer<typeof registeringFormSchema>) {
+    setIsLoading(true);
+  }
 
   return (
     <Form {...form}>

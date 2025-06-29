@@ -10,13 +10,19 @@ type FormFieldPath =
   | `sport.${keyof NonNullable<RegisteringFormData['sport']> & string}`; // Nested sport fields with dot notation
 
 // Define the header subtitle options based on the actual values used
-export type HeaderSubtitle = 'Informations' | 'Participation' | 'Sport' | 'Package';
+export type HeaderSubtitle =
+  | "Informations"
+  | "Participation"
+  | "Sport"
+  | "Package"
+  | "Récapitulatif";
 
 export interface RegisterState {
   currentStep: number;
   stepDone: number;
   headerTitle: string;
-  headerSubtitle: HeaderSubtitle | string;
-  allHeaderSubtitles: (HeaderSubtitle | string)[];
-  pageFields: Record<string, FormFieldPath[]>;
+  headerSubtitle: HeaderSubtitle;
+  allHeaderSubtitles: HeaderSubtitle[];
+  pageFields: Record<HeaderSubtitle, FormFieldPath[]>;
+  onValidateCardActions: Record<HeaderSubtitle, (data: RegisteringFormData, callback: () => void) => void>;
 }

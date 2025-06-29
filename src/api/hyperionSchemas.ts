@@ -525,33 +525,39 @@ export type CompetitionEditionEdit = {
   end_date?: string | null;
 };
 
+export type CompetitionGroupType = "sport_manager" | "schools_bds";
+
 /**
  * A user with additional fields for competition purposes.
  * This is used to represent a user in the context of a competition.
  */
 export type CompetitionUser = {
-  name: string;
-  firstname: string;
-  nickname?: string | null;
-  id: string;
-  account_type: AccountType;
+  sport_category?: SportCategory | null;
   /**
-   * @format uuid
+   * @default false
    */
-  school_id: string;
-  email: string;
-  birthday?: string | null;
-  promo?: number | null;
-  floor?: FloorsType | null;
-  phone?: string | null;
-  created_on?: string | null;
-  groups?: CoreGroupSimple[];
-  school?: CoreSchool | null;
+  is_pompom?: boolean;
+  /**
+   * @default false
+   */
+  is_fanfare?: boolean;
+  /**
+   * @default false
+   */
+  is_cameraman?: boolean;
+  /**
+   * @default false
+   */
+  is_athlete?: boolean;
+  /**
+   * @default false
+   */
+  is_volunteer?: boolean;
+  user_id: string;
   /**
    * @format uuid
    */
   edition_id: string;
-  competition_category?: SportCategory | null;
   /**
    * @format date-time
    */
@@ -560,7 +566,78 @@ export type CompetitionUser = {
    * @default false
    */
   validated?: boolean;
-  competition_groups?: Group[];
+  user: CoreUser;
+};
+
+export type CompetitionUserBase = {
+  sport_category?: SportCategory | null;
+  /**
+   * @default false
+   */
+  is_pompom?: boolean;
+  /**
+   * @default false
+   */
+  is_fanfare?: boolean;
+  /**
+   * @default false
+   */
+  is_cameraman?: boolean;
+  /**
+   * @default false
+   */
+  is_athlete?: boolean;
+  /**
+   * @default false
+   */
+  is_volunteer?: boolean;
+};
+
+export type CompetitionUserEdit = {
+  sport_category?: SportCategory | null;
+  validated?: boolean | null;
+  is_pompom?: boolean | null;
+  is_fanfare?: boolean | null;
+  is_cameraman?: boolean | null;
+  is_athlete?: boolean | null;
+  is_volunteer?: boolean | null;
+};
+
+export type CompetitionUserSimple = {
+  sport_category?: SportCategory | null;
+  /**
+   * @default false
+   */
+  is_pompom?: boolean;
+  /**
+   * @default false
+   */
+  is_fanfare?: boolean;
+  /**
+   * @default false
+   */
+  is_cameraman?: boolean;
+  /**
+   * @default false
+   */
+  is_athlete?: boolean;
+  /**
+   * @default false
+   */
+  is_volunteer?: boolean;
+  user_id: string;
+  /**
+   * @format uuid
+   */
+  edition_id: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  /**
+   * @default false
+   */
+  validated?: boolean;
 };
 
 /**
@@ -1081,22 +1158,6 @@ export type GenerateTicketComplete = {
   id: string;
 };
 
-export type Group = {
-  name: string;
-  /**
-   * @format uuid
-   */
-  id: string;
-};
-
-export type GroupBase = {
-  name: string;
-};
-
-export type GroupEdit = {
-  name: string | null;
-};
-
 export type HTTPValidationError = {
   detail?: ValidationError[];
 };
@@ -1411,7 +1472,7 @@ export type Match = {
    */
   team2_id: string;
   date?: string | null;
-  location?: string | null;
+  location_id?: string | null;
   score_team1?: number | null;
   score_team2?: number | null;
   winner_id?: string | null;
@@ -1442,7 +1503,7 @@ export type MatchBase = {
    */
   team2_id: string;
   date?: string | null;
-  location?: string | null;
+  location_id?: string | null;
   score_team1?: number | null;
   score_team2?: number | null;
   winner_id?: string | null;
@@ -1454,7 +1515,7 @@ export type MatchEdit = {
   team1_id?: string | null;
   team2_id?: string | null;
   date?: string | null;
-  location?: string | null;
+  location_id?: string | null;
   score_team1?: number | null;
   score_team2?: number | null;
   winner_id?: string | null;
@@ -2232,7 +2293,6 @@ export type SchoolExtension = {
    */
   inscription_enabled?: boolean;
   school: CoreSchool;
-  general_quota: SchoolGeneralQuota;
 };
 
 export type SchoolExtensionBase = {
@@ -2251,6 +2311,24 @@ export type SchoolExtensionBase = {
   inscription_enabled?: boolean;
 };
 
+export type SchoolExtensionComplete = {
+  /**
+   * @format uuid
+   */
+  school_id: string;
+  from_lyon: boolean;
+  /**
+   * @default true
+   */
+  active?: boolean;
+  /**
+   * @default false
+   */
+  inscription_enabled?: boolean;
+  school: CoreSchool;
+  general_quota?: SchoolGeneralQuota | null;
+};
+
 export type SchoolExtensionEdit = {
   from_lyon?: boolean | null;
   active?: boolean | null;
@@ -2262,11 +2340,13 @@ export type SchoolGeneralQuota = {
   cameraman_quota?: number | null;
   pompom_quota?: number | null;
   fanfare_quota?: number | null;
-  non_athlete_quota?: number | null;
   /**
    * @format uuid
    */
   school_id: string;
+  /**
+   * @format uuid
+   */
   edition_id: string;
 };
 
@@ -2275,7 +2355,6 @@ export type SchoolGeneralQuotaBase = {
   cameraman_quota?: number | null;
   pompom_quota?: number | null;
   fanfare_quota?: number | null;
-  non_athlete_quota?: number | null;
 };
 
 /**
@@ -2623,6 +2702,35 @@ export type Team = {
   created_at: string;
 };
 
+export type TeamComplete = {
+  name: string;
+  /**
+   * @format uuid
+   */
+  edition_id: string;
+  /**
+   * @format uuid
+   */
+  school_id: string;
+  /**
+   * @format uuid
+   */
+  sport_id: string;
+  /**
+   * @format uuid
+   */
+  captain_id: string;
+  /**
+   * @format uuid
+   */
+  id: string;
+  /**
+   * @format date-time
+   */
+  created_at: string;
+  participants: ParticipantComplete[];
+};
+
 export type TeamEdit = {
   name?: string | null;
   captain_id?: string | null;
@@ -2802,10 +2910,7 @@ export type TransferType = "hello_asso";
 
 export type UserGroupMembership = {
   user_id: string;
-  /**
-   * @format uuid
-   */
-  group_id: string;
+  group: CompetitionGroupType;
   /**
    * @format uuid
    */

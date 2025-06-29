@@ -15502,66 +15502,75 @@ export const usePatchCompetitionEditionsEditionId = (
   });
 };
 
-export type GetCompetitionGroupsError = Fetcher.ErrorWrapper<undefined>;
+export type GetCompetitionUsersError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetCompetitionGroupsResponse = Schemas.Group[];
+export type GetCompetitionUsersResponse = Schemas.CompetitionUser[];
 
-export type GetCompetitionGroupsVariables = HyperionContext["fetcherOptions"];
+export type GetCompetitionUsersVariables = HyperionContext["fetcherOptions"];
 
-export const fetchGetCompetitionGroups = (
-  variables: GetCompetitionGroupsVariables,
+/**
+ * Get all competition users for the current edition.
+ */
+export const fetchGetCompetitionUsers = (
+  variables: GetCompetitionUsersVariables,
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    GetCompetitionGroupsResponse,
-    GetCompetitionGroupsError,
+    GetCompetitionUsersResponse,
+    GetCompetitionUsersError,
     undefined,
     {},
     {},
     {}
-  >({ url: "/competition/groups", method: "get", ...variables, signal });
+  >({ url: "/competition/users", method: "get", ...variables, signal });
 
-export function getCompetitionGroupsQuery(
-  variables: GetCompetitionGroupsVariables,
+/**
+ * Get all competition users for the current edition.
+ */
+export function getCompetitionUsersQuery(
+  variables: GetCompetitionUsersVariables,
 ): {
   queryKey: reactQuery.QueryKey;
-  queryFn: (options: QueryFnOptions) => Promise<GetCompetitionGroupsResponse>;
+  queryFn: (options: QueryFnOptions) => Promise<GetCompetitionUsersResponse>;
 };
 
-export function getCompetitionGroupsQuery(
-  variables: GetCompetitionGroupsVariables | reactQuery.SkipToken,
+export function getCompetitionUsersQuery(
+  variables: GetCompetitionUsersVariables | reactQuery.SkipToken,
 ): {
   queryKey: reactQuery.QueryKey;
   queryFn:
-    | ((options: QueryFnOptions) => Promise<GetCompetitionGroupsResponse>)
+    | ((options: QueryFnOptions) => Promise<GetCompetitionUsersResponse>)
     | reactQuery.SkipToken;
 };
 
-export function getCompetitionGroupsQuery(
-  variables: GetCompetitionGroupsVariables | reactQuery.SkipToken,
+export function getCompetitionUsersQuery(
+  variables: GetCompetitionUsersVariables | reactQuery.SkipToken,
 ) {
   return {
     queryKey: queryKeyFn({
-      path: "/competition/groups",
-      operationId: "getCompetitionGroups",
+      path: "/competition/users",
+      operationId: "getCompetitionUsers",
       variables,
     }),
     queryFn:
       variables === reactQuery.skipToken
         ? reactQuery.skipToken
         : ({ signal }: QueryFnOptions) =>
-            fetchGetCompetitionGroups(variables, signal),
+            fetchGetCompetitionUsers(variables, signal),
   };
 }
 
-export const useSuspenseGetCompetitionGroups = <
-  TData = GetCompetitionGroupsResponse,
+/**
+ * Get all competition users for the current edition.
+ */
+export const useSuspenseGetCompetitionUsers = <
+  TData = GetCompetitionUsersResponse,
 >(
-  variables: GetCompetitionGroupsVariables,
+  variables: GetCompetitionUsersVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<
-      GetCompetitionGroupsResponse,
-      GetCompetitionGroupsError,
+      GetCompetitionUsersResponse,
+      GetCompetitionUsersError,
       TData
     >,
     "queryKey" | "queryFn" | "initialData"
@@ -15569,22 +15578,25 @@ export const useSuspenseGetCompetitionGroups = <
 ) => {
   const { queryOptions, fetcherOptions } = useHyperionContext(options);
   return reactQuery.useSuspenseQuery<
-    GetCompetitionGroupsResponse,
-    GetCompetitionGroupsError,
+    GetCompetitionUsersResponse,
+    GetCompetitionUsersError,
     TData
   >({
-    ...getCompetitionGroupsQuery(deepMerge(fetcherOptions, variables)),
+    ...getCompetitionUsersQuery(deepMerge(fetcherOptions, variables)),
     ...options,
     ...queryOptions,
   });
 };
 
-export const useGetCompetitionGroups = <TData = GetCompetitionGroupsResponse,>(
-  variables: GetCompetitionGroupsVariables | reactQuery.SkipToken,
+/**
+ * Get all competition users for the current edition.
+ */
+export const useGetCompetitionUsers = <TData = GetCompetitionUsersResponse,>(
+  variables: GetCompetitionUsersVariables | reactQuery.SkipToken,
   options?: Omit<
     reactQuery.UseQueryOptions<
-      GetCompetitionGroupsResponse,
-      GetCompetitionGroupsError,
+      GetCompetitionUsersResponse,
+      GetCompetitionUsersError,
       TData
     >,
     "queryKey" | "queryFn" | "initialData"
@@ -15592,11 +15604,11 @@ export const useGetCompetitionGroups = <TData = GetCompetitionGroupsResponse,>(
 ) => {
   const { queryOptions, fetcherOptions } = useHyperionContext(options);
   return reactQuery.useQuery<
-    GetCompetitionGroupsResponse,
-    GetCompetitionGroupsError,
+    GetCompetitionUsersResponse,
+    GetCompetitionUsersError,
     TData
   >({
-    ...getCompetitionGroupsQuery(
+    ...getCompetitionUsersQuery(
       variables === reactQuery.skipToken
         ? variables
         : deepMerge(fetcherOptions, variables),
@@ -15606,91 +15618,402 @@ export const useGetCompetitionGroups = <TData = GetCompetitionGroupsResponse,>(
   });
 };
 
-export type PostCompetitionGroupsError = Fetcher.ErrorWrapper<{
+export type PostCompetitionUsersError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
-export type PostCompetitionGroupsVariables = {
-  body: Schemas.GroupBase;
+export type PostCompetitionUsersVariables = {
+  body?: Schemas.CompetitionUserBase;
 } & HyperionContext["fetcherOptions"];
 
-export const fetchPostCompetitionGroups = (
-  variables: PostCompetitionGroupsVariables,
+/**
+ * Create a competition user for the current edition.
+ * The user must exist in the core users database.
+ */
+export const fetchPostCompetitionUsers = (
+  variables: PostCompetitionUsersVariables,
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    Schemas.Group,
-    PostCompetitionGroupsError,
-    Schemas.GroupBase,
+    Schemas.CompetitionUserSimple,
+    PostCompetitionUsersError,
+    Schemas.CompetitionUserBase,
     {},
     {},
     {}
-  >({ url: "/competition/groups", method: "post", ...variables, signal });
+  >({ url: "/competition/users", method: "post", ...variables, signal });
 
-export const usePostCompetitionGroups = (
+/**
+ * Create a competition user for the current edition.
+ * The user must exist in the core users database.
+ */
+export const usePostCompetitionUsers = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.Group,
-      PostCompetitionGroupsError,
-      PostCompetitionGroupsVariables
+      Schemas.CompetitionUserSimple,
+      PostCompetitionUsersError,
+      PostCompetitionUsersVariables
     >,
     "mutationFn"
   >,
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    Schemas.Group,
-    PostCompetitionGroupsError,
-    PostCompetitionGroupsVariables
+    Schemas.CompetitionUserSimple,
+    PostCompetitionUsersError,
+    PostCompetitionUsersVariables
   >({
-    mutationFn: (variables: PostCompetitionGroupsVariables) =>
-      fetchPostCompetitionGroups(deepMerge(fetcherOptions, variables)),
+    mutationFn: (variables: PostCompetitionUsersVariables) =>
+      fetchPostCompetitionUsers(deepMerge(fetcherOptions, variables)),
     ...options,
   });
 };
 
-export type PatchCompetitionGroupsGroupIdPathParams = {
-  /**
-   * @format uuid
-   */
-  groupId: string;
+export type GetCompetitionUsersMeError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetCompetitionUsersMeVariables = HyperionContext["fetcherOptions"];
+
+/**
+ * Get the competition user for the current edition.
+ * This is the user making the request.
+ */
+export const fetchGetCompetitionUsersMe = (
+  variables: GetCompetitionUsersMeVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    Schemas.CompetitionUser,
+    GetCompetitionUsersMeError,
+    undefined,
+    {},
+    {},
+    {}
+  >({ url: "/competition/users/me", method: "get", ...variables, signal });
+
+/**
+ * Get the competition user for the current edition.
+ * This is the user making the request.
+ */
+export function getCompetitionUsersMeQuery(
+  variables: GetCompetitionUsersMeVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (options: QueryFnOptions) => Promise<Schemas.CompetitionUser>;
 };
 
-export type PatchCompetitionGroupsGroupIdError = Fetcher.ErrorWrapper<{
+export function getCompetitionUsersMeQuery(
+  variables: GetCompetitionUsersMeVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((options: QueryFnOptions) => Promise<Schemas.CompetitionUser>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionUsersMeQuery(
+  variables: GetCompetitionUsersMeVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/users/me",
+      operationId: "getCompetitionUsersMe",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionUsersMe(variables, signal),
+  };
+}
+
+/**
+ * Get the competition user for the current edition.
+ * This is the user making the request.
+ */
+export const useSuspenseGetCompetitionUsersMe = <
+  TData = Schemas.CompetitionUser,
+>(
+  variables: GetCompetitionUsersMeVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Schemas.CompetitionUser,
+      GetCompetitionUsersMeError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    Schemas.CompetitionUser,
+    GetCompetitionUsersMeError,
+    TData
+  >({
+    ...getCompetitionUsersMeQuery(deepMerge(fetcherOptions, variables)),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+/**
+ * Get the competition user for the current edition.
+ * This is the user making the request.
+ */
+export const useGetCompetitionUsersMe = <TData = Schemas.CompetitionUser,>(
+  variables: GetCompetitionUsersMeVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Schemas.CompetitionUser,
+      GetCompetitionUsersMeError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    Schemas.CompetitionUser,
+    GetCompetitionUsersMeError,
+    TData
+  >({
+    ...getCompetitionUsersMeQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export type PatchCompetitionUsersMeError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
-export type PatchCompetitionGroupsGroupIdVariables = {
-  body: Schemas.GroupEdit;
-  pathParams: PatchCompetitionGroupsGroupIdPathParams;
+export type PatchCompetitionUsersMeVariables = {
+  body?: Schemas.CompetitionUserEdit;
 } & HyperionContext["fetcherOptions"];
 
-export const fetchPatchCompetitionGroupsGroupId = (
-  variables: PatchCompetitionGroupsGroupIdVariables,
+/**
+ * Edit the current user's competition user for the current edition.
+ * The user must exist in the core users database.
+ */
+export const fetchPatchCompetitionUsersMe = (
+  variables: PatchCompetitionUsersMeVariables,
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
     undefined,
-    PatchCompetitionGroupsGroupIdError,
-    Schemas.GroupEdit,
+    PatchCompetitionUsersMeError,
+    Schemas.CompetitionUserEdit,
     {},
     {},
-    PatchCompetitionGroupsGroupIdPathParams
+    {}
+  >({ url: "/competition/users/me", method: "patch", ...variables, signal });
+
+/**
+ * Edit the current user's competition user for the current edition.
+ * The user must exist in the core users database.
+ */
+export const usePatchCompetitionUsersMe = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      PatchCompetitionUsersMeError,
+      PatchCompetitionUsersMeVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    PatchCompetitionUsersMeError,
+    PatchCompetitionUsersMeVariables
   >({
-    url: "/competition/groups/{groupId}",
+    mutationFn: (variables: PatchCompetitionUsersMeVariables) =>
+      fetchPatchCompetitionUsersMe(deepMerge(fetcherOptions, variables)),
+    ...options,
+  });
+};
+
+export type GetCompetitionUsersUserIdPathParams = {
+  userId: string;
+};
+
+export type GetCompetitionUsersUserIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type GetCompetitionUsersUserIdVariables = {
+  pathParams: GetCompetitionUsersUserIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Get a competition user by their user ID for the current edition.
+ */
+export const fetchGetCompetitionUsersUserId = (
+  variables: GetCompetitionUsersUserIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    Schemas.CompetitionUser,
+    GetCompetitionUsersUserIdError,
+    undefined,
+    {},
+    {},
+    GetCompetitionUsersUserIdPathParams
+  >({
+    url: "/competition/users/{userId}",
+    method: "get",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Get a competition user by their user ID for the current edition.
+ */
+export function getCompetitionUsersUserIdQuery(
+  variables: GetCompetitionUsersUserIdVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (options: QueryFnOptions) => Promise<Schemas.CompetitionUser>;
+};
+
+export function getCompetitionUsersUserIdQuery(
+  variables: GetCompetitionUsersUserIdVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((options: QueryFnOptions) => Promise<Schemas.CompetitionUser>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionUsersUserIdQuery(
+  variables: GetCompetitionUsersUserIdVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/users/{userId}",
+      operationId: "getCompetitionUsersUserId",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionUsersUserId(variables, signal),
+  };
+}
+
+/**
+ * Get a competition user by their user ID for the current edition.
+ */
+export const useSuspenseGetCompetitionUsersUserId = <
+  TData = Schemas.CompetitionUser,
+>(
+  variables: GetCompetitionUsersUserIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Schemas.CompetitionUser,
+      GetCompetitionUsersUserIdError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    Schemas.CompetitionUser,
+    GetCompetitionUsersUserIdError,
+    TData
+  >({
+    ...getCompetitionUsersUserIdQuery(deepMerge(fetcherOptions, variables)),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+/**
+ * Get a competition user by their user ID for the current edition.
+ */
+export const useGetCompetitionUsersUserId = <TData = Schemas.CompetitionUser,>(
+  variables: GetCompetitionUsersUserIdVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Schemas.CompetitionUser,
+      GetCompetitionUsersUserIdError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    Schemas.CompetitionUser,
+    GetCompetitionUsersUserIdError,
+    TData
+  >({
+    ...getCompetitionUsersUserIdQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export type PatchCompetitionUsersUserIdPathParams = {
+  userId: string;
+};
+
+export type PatchCompetitionUsersUserIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type PatchCompetitionUsersUserIdVariables = {
+  body?: Schemas.CompetitionUserEdit;
+  pathParams: PatchCompetitionUsersUserIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Edit a competition user for the current edition.
+ * The user must exist in the core users database.
+ */
+export const fetchPatchCompetitionUsersUserId = (
+  variables: PatchCompetitionUsersUserIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    PatchCompetitionUsersUserIdError,
+    Schemas.CompetitionUserEdit,
+    {},
+    {},
+    PatchCompetitionUsersUserIdPathParams
+  >({
+    url: "/competition/users/{userId}",
     method: "patch",
     ...variables,
     signal,
   });
 
-export const usePatchCompetitionGroupsGroupId = (
+/**
+ * Edit a competition user for the current edition.
+ * The user must exist in the core users database.
+ */
+export const usePatchCompetitionUsersUserId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
       undefined,
-      PatchCompetitionGroupsGroupIdError,
-      PatchCompetitionGroupsGroupIdVariables
+      PatchCompetitionUsersUserIdError,
+      PatchCompetitionUsersUserIdVariables
     >,
     "mutationFn"
   >,
@@ -15698,113 +16021,458 @@ export const usePatchCompetitionGroupsGroupId = (
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
     undefined,
-    PatchCompetitionGroupsGroupIdError,
-    PatchCompetitionGroupsGroupIdVariables
+    PatchCompetitionUsersUserIdError,
+    PatchCompetitionUsersUserIdVariables
   >({
-    mutationFn: (variables: PatchCompetitionGroupsGroupIdVariables) =>
-      fetchPatchCompetitionGroupsGroupId(deepMerge(fetcherOptions, variables)),
+    mutationFn: (variables: PatchCompetitionUsersUserIdVariables) =>
+      fetchPatchCompetitionUsersUserId(deepMerge(fetcherOptions, variables)),
     ...options,
   });
 };
 
-export type DeleteCompetitionGroupsGroupIdPathParams = {
-  /**
-   * @format uuid
-   */
-  groupId: string;
+export type GetCompetitionGroupsGroupPathParams = {
+  group: Schemas.CompetitionGroupType;
 };
 
-export type DeleteCompetitionGroupsGroupIdError = Fetcher.ErrorWrapper<{
+export type GetCompetitionGroupsGroupError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: Schemas.HTTPValidationError;
 }>;
 
-export type DeleteCompetitionGroupsGroupIdVariables = {
-  pathParams: DeleteCompetitionGroupsGroupIdPathParams;
+export type GetCompetitionGroupsGroupResponse = Schemas.UserGroupMembership[];
+
+export type GetCompetitionGroupsGroupVariables = {
+  pathParams: GetCompetitionGroupsGroupPathParams;
 } & HyperionContext["fetcherOptions"];
 
-export const fetchDeleteCompetitionGroupsGroupId = (
-  variables: DeleteCompetitionGroupsGroupIdVariables,
+/**
+ * Get all users in a specific competition group for the current edition.
+ */
+export const fetchGetCompetitionGroupsGroup = (
+  variables: GetCompetitionGroupsGroupVariables,
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
-    DeleteCompetitionGroupsGroupIdError,
+    GetCompetitionGroupsGroupResponse,
+    GetCompetitionGroupsGroupError,
     undefined,
     {},
     {},
-    DeleteCompetitionGroupsGroupIdPathParams
+    GetCompetitionGroupsGroupPathParams
   >({
-    url: "/competition/groups/{groupId}",
-    method: "delete",
+    url: "/competition/groups/{group}",
+    method: "get",
     ...variables,
     signal,
   });
 
-export const useDeleteCompetitionGroupsGroupId = (
+/**
+ * Get all users in a specific competition group for the current edition.
+ */
+export function getCompetitionGroupsGroupQuery(
+  variables: GetCompetitionGroupsGroupVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (
+    options: QueryFnOptions,
+  ) => Promise<GetCompetitionGroupsGroupResponse>;
+};
+
+export function getCompetitionGroupsGroupQuery(
+  variables: GetCompetitionGroupsGroupVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((options: QueryFnOptions) => Promise<GetCompetitionGroupsGroupResponse>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionGroupsGroupQuery(
+  variables: GetCompetitionGroupsGroupVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/groups/{group}",
+      operationId: "getCompetitionGroupsGroup",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionGroupsGroup(variables, signal),
+  };
+}
+
+/**
+ * Get all users in a specific competition group for the current edition.
+ */
+export const useSuspenseGetCompetitionGroupsGroup = <
+  TData = GetCompetitionGroupsGroupResponse,
+>(
+  variables: GetCompetitionGroupsGroupVariables,
   options?: Omit<
-    reactQuery.UseMutationOptions<
-      void,
-      DeleteCompetitionGroupsGroupIdError,
-      DeleteCompetitionGroupsGroupIdVariables
+    reactQuery.UseQueryOptions<
+      GetCompetitionGroupsGroupResponse,
+      GetCompetitionGroupsGroupError,
+      TData
     >,
-    "mutationFn"
+    "queryKey" | "queryFn" | "initialData"
   >,
 ) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    void,
-    DeleteCompetitionGroupsGroupIdError,
-    DeleteCompetitionGroupsGroupIdVariables
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    GetCompetitionGroupsGroupResponse,
+    GetCompetitionGroupsGroupError,
+    TData
   >({
-    mutationFn: (variables: DeleteCompetitionGroupsGroupIdVariables) =>
-      fetchDeleteCompetitionGroupsGroupId(deepMerge(fetcherOptions, variables)),
+    ...getCompetitionGroupsGroupQuery(deepMerge(fetcherOptions, variables)),
     ...options,
+    ...queryOptions,
   });
 };
 
-export type PostCompetitionGroupsGroupIdUsersUserIdPathParams = {
-  /**
-   * @format uuid
-   */
-  groupId: string;
+/**
+ * Get all users in a specific competition group for the current edition.
+ */
+export const useGetCompetitionGroupsGroup = <
+  TData = GetCompetitionGroupsGroupResponse,
+>(
+  variables: GetCompetitionGroupsGroupVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionGroupsGroupResponse,
+      GetCompetitionGroupsGroupError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    GetCompetitionGroupsGroupResponse,
+    GetCompetitionGroupsGroupError,
+    TData
+  >({
+    ...getCompetitionGroupsGroupQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export type GetCompetitionUsersMeGroupsError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetCompetitionUsersMeGroupsResponse = Schemas.UserGroupMembership[];
+
+export type GetCompetitionUsersMeGroupsVariables =
+  HyperionContext["fetcherOptions"];
+
+/**
+ * Get all groups the current user is a member of in the current edition.
+ * This is the user making the request.
+ */
+export const fetchGetCompetitionUsersMeGroups = (
+  variables: GetCompetitionUsersMeGroupsVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    GetCompetitionUsersMeGroupsResponse,
+    GetCompetitionUsersMeGroupsError,
+    undefined,
+    {},
+    {},
+    {}
+  >({
+    url: "/competition/users/me/groups",
+    method: "get",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Get all groups the current user is a member of in the current edition.
+ * This is the user making the request.
+ */
+export function getCompetitionUsersMeGroupsQuery(
+  variables: GetCompetitionUsersMeGroupsVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (
+    options: QueryFnOptions,
+  ) => Promise<GetCompetitionUsersMeGroupsResponse>;
+};
+
+export function getCompetitionUsersMeGroupsQuery(
+  variables: GetCompetitionUsersMeGroupsVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((
+        options: QueryFnOptions,
+      ) => Promise<GetCompetitionUsersMeGroupsResponse>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionUsersMeGroupsQuery(
+  variables: GetCompetitionUsersMeGroupsVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/users/me/groups",
+      operationId: "getCompetitionUsersMeGroups",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionUsersMeGroups(variables, signal),
+  };
+}
+
+/**
+ * Get all groups the current user is a member of in the current edition.
+ * This is the user making the request.
+ */
+export const useSuspenseGetCompetitionUsersMeGroups = <
+  TData = GetCompetitionUsersMeGroupsResponse,
+>(
+  variables: GetCompetitionUsersMeGroupsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionUsersMeGroupsResponse,
+      GetCompetitionUsersMeGroupsError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    GetCompetitionUsersMeGroupsResponse,
+    GetCompetitionUsersMeGroupsError,
+    TData
+  >({
+    ...getCompetitionUsersMeGroupsQuery(deepMerge(fetcherOptions, variables)),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+/**
+ * Get all groups the current user is a member of in the current edition.
+ * This is the user making the request.
+ */
+export const useGetCompetitionUsersMeGroups = <
+  TData = GetCompetitionUsersMeGroupsResponse,
+>(
+  variables: GetCompetitionUsersMeGroupsVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionUsersMeGroupsResponse,
+      GetCompetitionUsersMeGroupsError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    GetCompetitionUsersMeGroupsResponse,
+    GetCompetitionUsersMeGroupsError,
+    TData
+  >({
+    ...getCompetitionUsersMeGroupsQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export type GetCompetitionUsersUserIdGroupsPathParams = {
   userId: string;
 };
 
-export type PostCompetitionGroupsGroupIdUsersUserIdError =
-  Fetcher.ErrorWrapper<{
-    status: 422;
-    payload: Schemas.HTTPValidationError;
-  }>;
+export type GetCompetitionUsersUserIdGroupsError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
 
-export type PostCompetitionGroupsGroupIdUsersUserIdVariables = {
-  pathParams: PostCompetitionGroupsGroupIdUsersUserIdPathParams;
+export type GetCompetitionUsersUserIdGroupsResponse =
+  Schemas.UserGroupMembership[];
+
+export type GetCompetitionUsersUserIdGroupsVariables = {
+  pathParams: GetCompetitionUsersUserIdGroupsPathParams;
 } & HyperionContext["fetcherOptions"];
 
-export const fetchPostCompetitionGroupsGroupIdUsersUserId = (
-  variables: PostCompetitionGroupsGroupIdUsersUserIdVariables,
+/**
+ * Get all groups a user is a member of in the current edition.
+ */
+export const fetchGetCompetitionUsersUserIdGroups = (
+  variables: GetCompetitionUsersUserIdGroupsVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    GetCompetitionUsersUserIdGroupsResponse,
+    GetCompetitionUsersUserIdGroupsError,
+    undefined,
+    {},
+    {},
+    GetCompetitionUsersUserIdGroupsPathParams
+  >({
+    url: "/competition/users/{userId}/groups",
+    method: "get",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Get all groups a user is a member of in the current edition.
+ */
+export function getCompetitionUsersUserIdGroupsQuery(
+  variables: GetCompetitionUsersUserIdGroupsVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (
+    options: QueryFnOptions,
+  ) => Promise<GetCompetitionUsersUserIdGroupsResponse>;
+};
+
+export function getCompetitionUsersUserIdGroupsQuery(
+  variables: GetCompetitionUsersUserIdGroupsVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((
+        options: QueryFnOptions,
+      ) => Promise<GetCompetitionUsersUserIdGroupsResponse>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionUsersUserIdGroupsQuery(
+  variables: GetCompetitionUsersUserIdGroupsVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/users/{userId}/groups",
+      operationId: "getCompetitionUsersUserIdGroups",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionUsersUserIdGroups(variables, signal),
+  };
+}
+
+/**
+ * Get all groups a user is a member of in the current edition.
+ */
+export const useSuspenseGetCompetitionUsersUserIdGroups = <
+  TData = GetCompetitionUsersUserIdGroupsResponse,
+>(
+  variables: GetCompetitionUsersUserIdGroupsVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionUsersUserIdGroupsResponse,
+      GetCompetitionUsersUserIdGroupsError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    GetCompetitionUsersUserIdGroupsResponse,
+    GetCompetitionUsersUserIdGroupsError,
+    TData
+  >({
+    ...getCompetitionUsersUserIdGroupsQuery(
+      deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+/**
+ * Get all groups a user is a member of in the current edition.
+ */
+export const useGetCompetitionUsersUserIdGroups = <
+  TData = GetCompetitionUsersUserIdGroupsResponse,
+>(
+  variables: GetCompetitionUsersUserIdGroupsVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionUsersUserIdGroupsResponse,
+      GetCompetitionUsersUserIdGroupsError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    GetCompetitionUsersUserIdGroupsResponse,
+    GetCompetitionUsersUserIdGroupsError,
+    TData
+  >({
+    ...getCompetitionUsersUserIdGroupsQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export type PostCompetitionGroupsGroupUsersUserIdPathParams = {
+  group: Schemas.CompetitionGroupType;
+  userId: string;
+};
+
+export type PostCompetitionGroupsGroupUsersUserIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type PostCompetitionGroupsGroupUsersUserIdVariables = {
+  pathParams: PostCompetitionGroupsGroupUsersUserIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchPostCompetitionGroupsGroupUsersUserId = (
+  variables: PostCompetitionGroupsGroupUsersUserIdVariables,
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
     Schemas.UserGroupMembership,
-    PostCompetitionGroupsGroupIdUsersUserIdError,
+    PostCompetitionGroupsGroupUsersUserIdError,
     undefined,
     {},
     {},
-    PostCompetitionGroupsGroupIdUsersUserIdPathParams
+    PostCompetitionGroupsGroupUsersUserIdPathParams
   >({
-    url: "/competition/groups/{groupId}/users/{userId}",
+    url: "/competition/groups/{group}/users/{userId}",
     method: "post",
     ...variables,
     signal,
   });
 
-export const usePostCompetitionGroupsGroupIdUsersUserId = (
+export const usePostCompetitionGroupsGroupUsersUserId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
       Schemas.UserGroupMembership,
-      PostCompetitionGroupsGroupIdUsersUserIdError,
-      PostCompetitionGroupsGroupIdUsersUserIdVariables
+      PostCompetitionGroupsGroupUsersUserIdError,
+      PostCompetitionGroupsGroupUsersUserIdVariables
     >,
     "mutationFn"
   >,
@@ -15812,59 +16480,56 @@ export const usePostCompetitionGroupsGroupIdUsersUserId = (
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
     Schemas.UserGroupMembership,
-    PostCompetitionGroupsGroupIdUsersUserIdError,
-    PostCompetitionGroupsGroupIdUsersUserIdVariables
+    PostCompetitionGroupsGroupUsersUserIdError,
+    PostCompetitionGroupsGroupUsersUserIdVariables
   >({
-    mutationFn: (variables: PostCompetitionGroupsGroupIdUsersUserIdVariables) =>
-      fetchPostCompetitionGroupsGroupIdUsersUserId(
+    mutationFn: (variables: PostCompetitionGroupsGroupUsersUserIdVariables) =>
+      fetchPostCompetitionGroupsGroupUsersUserId(
         deepMerge(fetcherOptions, variables),
       ),
     ...options,
   });
 };
 
-export type DeleteCompetitionGroupsGroupIdUsersUserIdPathParams = {
-  /**
-   * @format uuid
-   */
-  groupId: string;
+export type DeleteCompetitionGroupsGroupUsersUserIdPathParams = {
+  group: Schemas.CompetitionGroupType;
   userId: string;
 };
 
-export type DeleteCompetitionGroupsGroupIdUsersUserIdError =
+export type DeleteCompetitionGroupsGroupUsersUserIdError =
   Fetcher.ErrorWrapper<{
     status: 422;
     payload: Schemas.HTTPValidationError;
   }>;
 
-export type DeleteCompetitionGroupsGroupIdUsersUserIdVariables = {
-  pathParams: DeleteCompetitionGroupsGroupIdUsersUserIdPathParams;
+export type DeleteCompetitionGroupsGroupUsersUserIdVariables = {
+  pathParams: DeleteCompetitionGroupsGroupUsersUserIdPathParams;
 } & HyperionContext["fetcherOptions"];
 
-export const fetchDeleteCompetitionGroupsGroupIdUsersUserId = (
-  variables: DeleteCompetitionGroupsGroupIdUsersUserIdVariables,
+export const fetchDeleteCompetitionGroupsGroupUsersUserId = (
+  variables: DeleteCompetitionGroupsGroupUsersUserIdVariables,
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
     undefined,
-    DeleteCompetitionGroupsGroupIdUsersUserIdError,
+    DeleteCompetitionGroupsGroupUsersUserIdError,
     undefined,
     {},
     {},
-    DeleteCompetitionGroupsGroupIdUsersUserIdPathParams
+    DeleteCompetitionGroupsGroupUsersUserIdPathParams
   >({
-    url: "/competition/groups/{groupId}/users/{userId}",
+    url: "/competition/groups/{group}/users/{userId}",
     method: "delete",
     ...variables,
     signal,
   });
 
-export const useDeleteCompetitionGroupsGroupIdUsersUserId = (
+export const useDeleteCompetitionGroupsGroupUsersUserId = (
   options?: Omit<
     reactQuery.UseMutationOptions<
       undefined,
-      DeleteCompetitionGroupsGroupIdUsersUserIdError,
-      DeleteCompetitionGroupsGroupIdUsersUserIdVariables
+      DeleteCompetitionGroupsGroupUsersUserIdError,
+      DeleteCompetitionGroupsGroupUsersUserIdVariables
     >,
     "mutationFn"
   >,
@@ -15872,13 +16537,11 @@ export const useDeleteCompetitionGroupsGroupIdUsersUserId = (
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
     undefined,
-    DeleteCompetitionGroupsGroupIdUsersUserIdError,
-    DeleteCompetitionGroupsGroupIdUsersUserIdVariables
+    DeleteCompetitionGroupsGroupUsersUserIdError,
+    DeleteCompetitionGroupsGroupUsersUserIdVariables
   >({
-    mutationFn: (
-      variables: DeleteCompetitionGroupsGroupIdUsersUserIdVariables,
-    ) =>
-      fetchDeleteCompetitionGroupsGroupIdUsersUserId(
+    mutationFn: (variables: DeleteCompetitionGroupsGroupUsersUserIdVariables) =>
+      fetchDeleteCompetitionGroupsGroupUsersUserId(
         deepMerge(fetcherOptions, variables),
       ),
     ...options,
@@ -16005,7 +16668,7 @@ export const fetchPostCompetitionSchools = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    Schemas.SchoolExtension,
+    Schemas.SchoolExtensionBase,
     PostCompetitionSchoolsError,
     Schemas.SchoolExtensionBase,
     {},
@@ -16016,7 +16679,7 @@ export const fetchPostCompetitionSchools = (
 export const usePostCompetitionSchools = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      Schemas.SchoolExtension,
+      Schemas.SchoolExtensionBase,
       PostCompetitionSchoolsError,
       PostCompetitionSchoolsVariables
     >,
@@ -16025,13 +16688,136 @@ export const usePostCompetitionSchools = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    Schemas.SchoolExtension,
+    Schemas.SchoolExtensionBase,
     PostCompetitionSchoolsError,
     PostCompetitionSchoolsVariables
   >({
     mutationFn: (variables: PostCompetitionSchoolsVariables) =>
       fetchPostCompetitionSchools(deepMerge(fetcherOptions, variables)),
     ...options,
+  });
+};
+
+export type GetCompetitionSchoolsSchoolIdPathParams = {
+  /**
+   * @format uuid
+   */
+  schoolId: string;
+};
+
+export type GetCompetitionSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type GetCompetitionSchoolsSchoolIdVariables = {
+  pathParams: GetCompetitionSchoolsSchoolIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+export const fetchGetCompetitionSchoolsSchoolId = (
+  variables: GetCompetitionSchoolsSchoolIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    Schemas.SchoolExtensionComplete,
+    GetCompetitionSchoolsSchoolIdError,
+    undefined,
+    {},
+    {},
+    GetCompetitionSchoolsSchoolIdPathParams
+  >({
+    url: "/competition/schools/{schoolId}",
+    method: "get",
+    ...variables,
+    signal,
+  });
+
+export function getCompetitionSchoolsSchoolIdQuery(
+  variables: GetCompetitionSchoolsSchoolIdVariables,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn: (
+    options: QueryFnOptions,
+  ) => Promise<Schemas.SchoolExtensionComplete>;
+};
+
+export function getCompetitionSchoolsSchoolIdQuery(
+  variables: GetCompetitionSchoolsSchoolIdVariables | reactQuery.SkipToken,
+): {
+  queryKey: reactQuery.QueryKey;
+  queryFn:
+    | ((options: QueryFnOptions) => Promise<Schemas.SchoolExtensionComplete>)
+    | reactQuery.SkipToken;
+};
+
+export function getCompetitionSchoolsSchoolIdQuery(
+  variables: GetCompetitionSchoolsSchoolIdVariables | reactQuery.SkipToken,
+) {
+  return {
+    queryKey: queryKeyFn({
+      path: "/competition/schools/{schoolId}",
+      operationId: "getCompetitionSchoolsSchoolId",
+      variables,
+    }),
+    queryFn:
+      variables === reactQuery.skipToken
+        ? reactQuery.skipToken
+        : ({ signal }: QueryFnOptions) =>
+            fetchGetCompetitionSchoolsSchoolId(variables, signal),
+  };
+}
+
+export const useSuspenseGetCompetitionSchoolsSchoolId = <
+  TData = Schemas.SchoolExtensionComplete,
+>(
+  variables: GetCompetitionSchoolsSchoolIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Schemas.SchoolExtensionComplete,
+      GetCompetitionSchoolsSchoolIdError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useSuspenseQuery<
+    Schemas.SchoolExtensionComplete,
+    GetCompetitionSchoolsSchoolIdError,
+    TData
+  >({
+    ...getCompetitionSchoolsSchoolIdQuery(deepMerge(fetcherOptions, variables)),
+    ...options,
+    ...queryOptions,
+  });
+};
+
+export const useGetCompetitionSchoolsSchoolId = <
+  TData = Schemas.SchoolExtensionComplete,
+>(
+  variables: GetCompetitionSchoolsSchoolIdVariables | reactQuery.SkipToken,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      Schemas.SchoolExtensionComplete,
+      GetCompetitionSchoolsSchoolIdError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { queryOptions, fetcherOptions } = useHyperionContext(options);
+  return reactQuery.useQuery<
+    Schemas.SchoolExtensionComplete,
+    GetCompetitionSchoolsSchoolIdError,
+    TData
+  >({
+    ...getCompetitionSchoolsSchoolIdQuery(
+      variables === reactQuery.skipToken
+        ? variables
+        : deepMerge(fetcherOptions, variables),
+    ),
+    ...options,
+    ...queryOptions,
   });
 };
 
@@ -16182,7 +16968,7 @@ export const fetchPostCompetitionSchoolsSchoolIdGeneralQuota = (
     {},
     PostCompetitionSchoolsSchoolIdGeneralQuotaPathParams
   >({
-    url: "/competition/schools/{schoolId}/general_quota",
+    url: "/competition/schools/{schoolId}/general-quota",
     method: "post",
     ...variables,
     signal,
@@ -16244,7 +17030,7 @@ export const fetchPatchCompetitionSchoolsSchoolIdGeneralQuota = (
     {},
     PatchCompetitionSchoolsSchoolIdGeneralQuotaPathParams
   >({
-    url: "/competition/schools/{schoolId}/general_quota",
+    url: "/competition/schools/{schoolId}/general-quota",
     method: "patch",
     ...variables,
     signal,
@@ -16567,7 +17353,7 @@ export const fetchPostCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   signal?: AbortSignal,
 ) =>
   hyperionFetch<
-    void,
+    undefined,
     PostCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
     Schemas.QuotaInfo,
     {},
@@ -16583,7 +17369,7 @@ export const fetchPostCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
 export const usePostCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
   options?: Omit<
     reactQuery.UseMutationOptions<
-      void,
+      undefined,
       PostCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
       PostCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables
     >,
@@ -16592,7 +17378,7 @@ export const usePostCompetitionSchoolsSchoolIdSportsSportIdQuotas = (
 ) => {
   const { fetcherOptions } = useHyperionContext();
   return reactQuery.useMutation<
-    void,
+    undefined,
     PostCompetitionSchoolsSchoolIdSportsSportIdQuotasError,
     PostCompetitionSchoolsSchoolIdSportsSportIdQuotasVariables
   >({
@@ -16749,7 +17535,7 @@ export type GetCompetitionTeamsSportsSportIdError = Fetcher.ErrorWrapper<{
   payload: Schemas.HTTPValidationError;
 }>;
 
-export type GetCompetitionTeamsSportsSportIdResponse = Schemas.Team[];
+export type GetCompetitionTeamsSportsSportIdResponse = Schemas.TeamComplete[];
 
 export type GetCompetitionTeamsSportsSportIdVariables = {
   pathParams: GetCompetitionTeamsSportsSportIdPathParams;
@@ -16884,7 +17670,7 @@ export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdError =
   }>;
 
 export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdResponse =
-  Schemas.Team[];
+  Schemas.TeamComplete[];
 
 export type GetCompetitionTeamsSchoolsSchoolIdSportsSportIdVariables = {
   pathParams: GetCompetitionTeamsSchoolsSchoolIdSportsSportIdPathParams;
@@ -39308,14 +40094,46 @@ export type QueryOperation =
       variables: GetCompetitionEditionsActiveVariables | reactQuery.SkipToken;
     }
   | {
-      path: "/competition/groups";
-      operationId: "getCompetitionGroups";
-      variables: GetCompetitionGroupsVariables | reactQuery.SkipToken;
+      path: "/competition/users";
+      operationId: "getCompetitionUsers";
+      variables: GetCompetitionUsersVariables | reactQuery.SkipToken;
+    }
+  | {
+      path: "/competition/users/me";
+      operationId: "getCompetitionUsersMe";
+      variables: GetCompetitionUsersMeVariables | reactQuery.SkipToken;
+    }
+  | {
+      path: "/competition/users/{userId}";
+      operationId: "getCompetitionUsersUserId";
+      variables: GetCompetitionUsersUserIdVariables | reactQuery.SkipToken;
+    }
+  | {
+      path: "/competition/groups/{group}";
+      operationId: "getCompetitionGroupsGroup";
+      variables: GetCompetitionGroupsGroupVariables | reactQuery.SkipToken;
+    }
+  | {
+      path: "/competition/users/me/groups";
+      operationId: "getCompetitionUsersMeGroups";
+      variables: GetCompetitionUsersMeGroupsVariables | reactQuery.SkipToken;
+    }
+  | {
+      path: "/competition/users/{userId}/groups";
+      operationId: "getCompetitionUsersUserIdGroups";
+      variables:
+        | GetCompetitionUsersUserIdGroupsVariables
+        | reactQuery.SkipToken;
     }
   | {
       path: "/competition/schools";
       operationId: "getCompetitionSchools";
       variables: GetCompetitionSchoolsVariables | reactQuery.SkipToken;
+    }
+  | {
+      path: "/competition/schools/{schoolId}";
+      operationId: "getCompetitionSchoolsSchoolId";
+      variables: GetCompetitionSchoolsSchoolIdVariables | reactQuery.SkipToken;
     }
   | {
       path: "/competition/sports/{sportId}/quotas";

@@ -32,14 +32,12 @@ export const RegisterFormField = ({
   state,
 }: RegisterFormFieldProps) => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
-  const status = form.watch("status");
-  const showSportFields = status === "sport";
+  const showSportFields = form.watch("is_athlete");
 
-  const handleParticipationChange = (value: string) => {
-    const isSport = value === "sport";
+  const onSportToggle = () => {
     const newSubtitles = [...state.allHeaderSubtitles];
 
-    if (isSport) {
+    if (!showSportFields) {
       newSubtitles.splice(2, 0, "Sport");
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
@@ -57,7 +55,7 @@ export const RegisterFormField = ({
       <Carousel setApi={setApi} opts={{ watchDrag: false }}>
         <CarouselContent className="h-[calc(100vh-16rem)]" draggable={false}>
           <InformationCard form={form} />
-          <ParticipationCard form={form} onChange={handleParticipationChange} />
+          <ParticipationCard form={form} onSportToggle={onSportToggle} />
           {showSportFields && <SportCard form={form} sports={sports} />}
           <PackageCard form={form} />
           <SummaryCard form={form} />
@@ -90,24 +88,27 @@ export const RegisterFormField = ({
                 if (!result) {
                   const shouldBeValid = state.pageFields[state.headerSubtitle];
                   const isValid = shouldBeValid.every(
-                    (field) => !form.getFieldState(field).invalid
+                    (field) => !form.getFieldState(field).invalid,
                   );
                   if (!isValid) {
                     return;
                   }
                 }
+                state.onValidateCardActions[state.headerSubtitle](
+                  form.getValues(),
+                  () => {
+                    // setState({
+                    //   ...state,
+                    //   stepDone: Math.max(state.stepDone, state.currentStep + 1),
+                    // });
+                  },
+                );
                 api?.scrollNext();
                 setState({
                   ...state,
                   currentStep: Math.min(3, state.currentStep + 1),
                   headerSubtitle:
-                    state.allHeaderSubtitles[
-                      state.currentStep + 1
-                    ],
-                  stepDone: Math.max(
-                    state.stepDone,
-                    state.currentStep + 1,
-                  ),
+                    state.allHeaderSubtitles[state.currentStep + 1],
                 });
               });
             }}

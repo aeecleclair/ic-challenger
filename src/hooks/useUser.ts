@@ -1,6 +1,8 @@
-import { useGetUsersMe } from "@/src/api/hyperionComponents";
+import { useGetUsersMe, usePatchUsersMe } from "@/src/api/hyperionComponents";
 import { useUserStore } from "../stores/user";
 import { useAuth } from "./useAuth";
+import { toast } from "../components/ui/use-toast";
+import { ErrorType } from "../utils/errorTyping";
 
 const COMPETITION_ADMIN_GROUP_ID = "e9e6e3d3-9f5f-4e9b-8e5f-9f5f4e9b8e5f";
 const SCHOOLS_BDS_GROUP_ID = "96f8ffb8-c585-4ca5-8360-dc3881f9f1e2";
@@ -40,17 +42,41 @@ export const useUser = () => {
   const isSportManager = () =>
     user?.groups?.some((group) => group.id === SPORT_MANAGER_GROUP_ID) ?? false;
 
-  const isNonAthlete = () =>
-    user?.groups?.some((group) => group.id === NON_ATHLETE_GROUP_ID) ?? false;
+  const {
+    mutate: mutateUpdateUser,
 
-  const isCameraman = () =>
-    user?.groups?.some((group) => group.id === CAMERAMAN_GROUP_ID) ?? false;
+    isPending: isUpdateLoading,
+  } = usePatchUsersMe();
 
-  const isCheerleader = () =>
-    user?.groups?.some((group) => group.id === CHEERLEADER_GROUP_ID) ?? false;
-
-  const isFanfaron = () =>
-    user?.groups?.some((group) => group.id === FANFARON_GROUP_ID) ?? false;
+  const updateUser = async (body: any, callback: () => void) => {
+    return mutateUpdateUser(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: body,
+      },
+      {
+        onSuccess: (data) => {
+          setUser(data);
+          callback();
+          toast({
+            title: "Utilisateur mis à jour",
+            description:
+              "Les informations de l'utilisateur ont été mises à jour avec succès.",
+          });
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la mise à jour de l'utilisateur",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
 
   return {
     me: user,
@@ -58,9 +84,7 @@ export const useUser = () => {
     isAdmin,
     isBDS,
     isSportManager,
-    isNonAthlete,
-    isCameraman,
-    isCheerleader,
-    isFanfaron,
+    updateUser,
+    isUpdateLoading,
   };
 };
