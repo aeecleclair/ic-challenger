@@ -1,0 +1,167 @@
+import {
+  useGetCompetitionSportsSportIdMatches,
+  usePostCompetitionSportsSportIdMatches,
+  usePatchCompetitionMatchesMatchId,
+  useDeleteCompetitionMatchesMatchId,
+} from "@/src/api/hyperionComponents";
+import { useUser } from "./useUser";
+import { useAuth } from "./useAuth";
+import { toast } from "../components/ui/use-toast";
+import { ErrorType } from "../utils/errorTyping";
+import { MatchBase, MatchEdit } from "../api/hyperionSchemas";
+
+interface UseSportMatchesProps {
+  sportId?: string;
+}
+
+export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
+  const { token, isTokenExpired } = useAuth();
+  const { isAdmin } = useUser();
+
+  // Fetch matchs for a specific sport
+  const {
+    data: sportMatches,
+    refetch: refetchSportMatches,
+    error,
+  } = useGetCompetitionSportsSportIdMatches(
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      pathParams: {
+        sportId: sportId!,
+      },
+    },
+    {
+      enabled: isAdmin() && !isTokenExpired() && !!sportId,
+      retry: 0,
+      queryHash: "getSportMatches",
+    },
+  );
+
+  // Create match for a school in this sport
+  const { mutate: mutateCreateMatch, isPending: isCreateLoading } =
+    usePostCompetitionSportsSportIdMatches();
+
+  const createMatch = (
+    body: MatchBase,
+    callback: () => void,
+  ) => {
+    return mutateCreateMatch(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          sportId: sportId!,
+        },
+        body: body,
+      },
+      {
+        onSuccess: () => {
+          refetchSportMatches();
+          toast({
+            title: "Match ajoutée",
+            description: "Le match a été ajouté avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de l'ajout du match",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  // Update match for a school in this sport
+  const { mutate: mutateUpdateMatch, isPending: isUpdateLoading } =
+    usePatchCompetitionMatchesMatchId();
+
+  const updateMatch = (
+    matchId: string,
+    body: MatchEdit,
+    callback: () => void,
+  ) => {
+    return mutateUpdateMatch(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          matchId: matchId,
+        },
+        body: body,
+      },
+      {
+        onSuccess: () => {
+          refetchSportMatches();
+          toast({
+            title: "Match modifiée",
+            description: "Le match a été modifiée avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la modification du match",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  // Delete match for a school in this sport
+  const { mutate: mutateDeleteMatch, isPending: isDeleteLoading } =
+    useDeleteCompetitionMatchesMatchId();
+
+  const deleteMatch = (matchId: string, callback: () => void) => {
+    return mutateDeleteMatch(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          matchId: matchId,
+        },
+      },
+      {
+        onSuccess: () => {
+          refetchSportMatches();
+          toast({
+            title: "Match supprimée",
+            description: "Le match a été supprimée avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la suppression du match",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  return {
+    sportMatches,
+    error,
+    refetchSportMatches,
+    isCreateLoading,
+    createMatch,
+    isUpdateLoading,
+    updateMatch,
+    isDeleteLoading,
+    deleteMatch,
+  };
+};
