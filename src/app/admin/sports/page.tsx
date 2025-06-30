@@ -35,7 +35,7 @@ const Dashboard = () => {
                     key={sport.id}
                     sport={sport}
                     onClick={() => {
-                      router.push(`/admin/sports?sport_id=${sport.id}`);
+                      router.push(`/admin/sports/edit?sport_id=${sport.id}`);
                     }}
                   />
                 ))}
