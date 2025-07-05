@@ -15,12 +15,14 @@ import { Label } from "@/src/components/ui/label";
 import { Check, Loader2, Search, UserPlus } from "lucide-react";
 import { useUserSearch } from "@/src/hooks/useUsersSearch";
 import { cn } from "@/lib/utils";
+import { CoreUserSimple } from "@/src/api/hyperionSchemas";
 
 interface AddUserDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   onAddUser: (userId: string) => void;
   isLoading: boolean;
+  groupName: string;
 }
 
 export function AddUserDialog({
@@ -28,13 +30,12 @@ export function AddUserDialog({
   setIsOpen,
   onAddUser,
   isLoading,
+    groupName,
 }: AddUserDialogProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedUserId, setSelectedUserId] = useState<string>("");
-  const [selectedUserData, setSelectedUserData] = useState<{
-    firstname: string;
-    name: string;
-  } | null>(null);
+  const [selectedUserData, setSelectedUserData] =
+    useState<CoreUserSimple | null>(null);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
 
   const { userSearch, refetchSchools: refetchUsers } = useUserSearch({
@@ -60,10 +61,7 @@ export function AddUserDialog({
     if (selectedUserId && userSearch) {
       const user = userSearch.find((u) => u.id === selectedUserId);
       if (user) {
-        setSelectedUserData({
-          firstname: user.firstname,
-          name: user.name,
-        });
+        setSelectedUserData(user);
       }
     } else if (!selectedUserId) {
       setSelectedUserData(null);
@@ -96,9 +94,9 @@ export function AddUserDialog({
         }
       }}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="lg:max-w-lg max-w-md">
         <DialogHeader>
-          <DialogTitle>Ajouter un utilisateur au groupe</DialogTitle>
+          <DialogTitle>Ajouter un utilisateur au groupe {groupName}</DialogTitle>
           <DialogDescription>
             Recherchez un utilisateur que vous souhaitez ajouter à ce groupe.
           </DialogDescription>
@@ -119,7 +117,7 @@ export function AddUserDialog({
                   />
                 </div>
 
-                <div className="border rounded-md max-h-60 overflow-y-auto">
+                <div className="border rounded-md max-h-80 overflow-y-auto">
                   {isSearchLoading ? (
                     <div className="p-4 text-center">
                       <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
@@ -140,7 +138,7 @@ export function AddUserDialog({
                         >
                           <div className="flex flex-col">
                             <span className="font-medium">
-                              {user.firstname} {user.name}
+                              {user.firstname} {user.name} {user.nickname ? `(${user.nickname})` : ""}
                             </span>
                           </div>
                           {selectedUserId === user.id && (
@@ -166,7 +164,7 @@ export function AddUserDialog({
                       Utilisateur sélectionné:
                     </p>
                     <p className="text-sm">
-                      {selectedUserData.firstname} {selectedUserData.name}
+                      {selectedUserData.firstname} {selectedUserData.name} {selectedUserData.nickname ? `(${selectedUserData.nickname})` : ""}
                     </p>
                   </div>
                 )}

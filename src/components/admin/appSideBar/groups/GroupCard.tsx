@@ -11,16 +11,18 @@ import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { User, UserX } from "lucide-react";
-import { CompetitionUser } from "@/src/api/hyperionSchemas";
+import { UserGroupMembership } from "@/src/api/hyperionSchemas";
+import { AVAILABLE_GROUPS } from "@/src/infra/groups";
 
 interface GroupCardProps {
-  user: any; // Will be extended with user details from API
-  groupName: string;
+  user: UserGroupMembership;
   onClick: () => void;
   onRemove?: () => void;
 }
 
-const GroupCard = ({ user, groupName, onClick, onRemove }: GroupCardProps) => {
+const GroupCard = ({ user, onClick, onRemove }: GroupCardProps) => {
+  const groupName =
+    AVAILABLE_GROUPS.find((g) => g.id === user.group)?.name || user.group;
   return (
     <Card className="h-full overflow-hidden">
       <CardHeader className="bg-gray-50 dark:bg-gray-800">

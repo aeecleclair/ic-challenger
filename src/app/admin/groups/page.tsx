@@ -9,22 +9,10 @@ import GroupCard from "@/src/components/admin/appSideBar/groups/GroupCard";
 import UserDetail from "@/src/components/admin/appSideBar/groups/UserDetail";
 import { WarningDialog } from "@/src/components/custom/WarningDialog";
 import { AddUserDialog } from "@/src/components/admin/appSideBar/groups/AddUserDialog";
-import { UserPlus, Users } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
+import { UserPlus } from "lucide-react";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { CompetitionGroupType } from "@/src/api/hyperionSchemas";
-
-// Define available group types with their display names
-const AVAILABLE_GROUPS: { id: CompetitionGroupType; name: string }[] = [
-  { id: "schools_bds", name: "BDS" },
-  { id: "sport_manager", name: "Gestionnaires de sport" },
-];
+import { AVAILABLE_GROUPS } from "@/src/infra/groups";
 
 export default function GroupsPage() {
   const router = useRouter();
@@ -35,8 +23,6 @@ export default function GroupsPage() {
     (searchParam.get("group_id") as CompetitionGroupType) ||
     ("schools_bds" as CompetitionGroupType);
 
-  const [selectedGroupId, setSelectedGroupId] =
-    useState<CompetitionGroupType>(groupParam);
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
@@ -47,19 +33,18 @@ export default function GroupsPage() {
     isCreateLoading,
     isDeleteLoading,
     refetchGroups,
-  } = useGroups({ group: selectedGroupId });
+  } = useGroups({ group: groupParam });
 
   const selectedUser = userId
     ? groups?.find((group_user) => group_user.user_id === userId)
     : undefined;
 
   const selectedGroupName =
-    AVAILABLE_GROUPS.find((g) => g.id === selectedGroupId)?.name ||
-    selectedGroupId;
+    AVAILABLE_GROUPS.find((g) => g.id === groupParam)?.name || groupParam;
 
   useEffect(() => {
     refetchGroups();
-  }, [selectedGroupId, refetchGroups]);
+  }, [groupParam, refetchGroups]);
 
   const handleDelete = (userId: string) => {
     setDeleteUserId(userId);
@@ -69,16 +54,11 @@ export default function GroupsPage() {
     if (deleteUserId) {
       deleteGroup(deleteUserId, () => {
         if (deleteUserId === userId) {
-          router.push(`/admin/groups?group_id=${selectedGroupId}`);
+          router.push(`/admin/groups?group_id=${groupParam}`);
         }
         setDeleteUserId(null);
       });
     }
-  };
-
-  const handleGroupChange = (groupId: string) => {
-    setSelectedGroupId(groupId as CompetitionGroupType);
-    router.push(`/admin/groups?group_id=${groupId}`);
   };
 
   const handleAddUser = (userId: string) => {
@@ -93,7 +73,7 @@ export default function GroupsPage() {
         <>
           <div className="mb-6">
             <Link
-              href={`/admin/groups?group_id=${selectedGroupId}`}
+              href={`/admin/groups?group_id=${groupParam}`}
               className="text-sm text-primary hover:underline"
             >
               &larr; Retour à la liste des utilisateurs
@@ -101,14 +81,15 @@ export default function GroupsPage() {
           </div>
           <UserDetail
             user={selectedUser}
-            groupName={selectedGroupName}
             onRemoveFromGroup={() => handleDelete(selectedUser.user_id)}
           />
         </>
       ) : (
         <>
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Gestion des groupes</h1>
+            <h1 className="text-2xl font-bold">
+              Gestion des groupes {selectedGroupName}
+            </h1>
             <Button
               className="flex items-center"
               onClick={() => setIsAddUserOpen(true)}
@@ -118,24 +99,6 @@ export default function GroupsPage() {
             </Button>
           </div>
 
-          <div className="w-full md:w-64 mb-6">
-            <Select value={selectedGroupId} onValueChange={handleGroupChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Sélectionner un groupe" />
-              </SelectTrigger>
-              <SelectContent>
-                {AVAILABLE_GROUPS.map((group) => (
-                  <SelectItem key={group.id} value={group.id}>
-                    <div className="flex items-center">
-                      <Users className="mr-2 h-4 w-4" />
-                      {group.name}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="mt-4">
             {groups && groups.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -143,10 +106,9 @@ export default function GroupsPage() {
                   <GroupCard
                     key={group_user.user_id}
                     user={group_user}
-                    groupName={selectedGroupName}
                     onClick={() => {
                       router.push(
-                        `/admin/groups?user_id=${group_user.user_id}&group_id=${selectedGroupId}`,
+                        `/admin/groups?user_id=${group_user.user_id}&group_id=${groupParam}`,
                       );
                     }}
                     onRemove={() => handleDelete(group_user.user_id)}
@@ -187,6 +149,7 @@ export default function GroupsPage() {
         setIsOpen={setIsAddUserOpen}
         onAddUser={handleAddUser}
         isLoading={isCreateLoading}
+        groupName={selectedGroupName}
       />
     </div>
   );

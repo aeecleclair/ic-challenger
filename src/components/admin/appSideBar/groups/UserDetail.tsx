@@ -10,18 +10,17 @@ import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { UserMinus } from "lucide-react";
+import { UserGroupMembership } from "@/src/api/hyperionSchemas";
+import { AVAILABLE_GROUPS } from "@/src/infra/groups";
 
 interface UserDetailProps {
-  user: any; // Will be extended with user details from API
-  groupName: string;
+  user: UserGroupMembership;
   onRemoveFromGroup: () => void;
 }
 
-const UserDetail = ({
-  user,
-  groupName,
-  onRemoveFromGroup,
-}: UserDetailProps) => {
+const UserDetail = ({ user, onRemoveFromGroup }: UserDetailProps) => {
+  const groupName =
+    AVAILABLE_GROUPS.find((g) => g.id === user.group)?.name || user.group;
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader className="bg-gray-50 dark:bg-gray-800">
