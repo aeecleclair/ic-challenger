@@ -19,7 +19,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
 
   const {
     data: groups,
-    refetch: refetchSchools,
+    refetch: refetchGroups,
     error,
   } = useGetCompetitionGroupsGroup(
     {
@@ -53,7 +53,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
       },
       {
         onSuccess: () => {
-          refetchSchools();
+          refetchGroups();
           toast({
             title: "Groupe ajoutée",
             description: "Le groupe a été ajoutée avec succès.",
@@ -88,7 +88,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
       },
       {
         onSuccess: () => {
-          refetchSchools();
+          refetchGroups();
           toast({
             title: "Group modifiée",
             description: "Le group a été modifiée avec succès.",
@@ -114,6 +114,6 @@ export const useGroups = ({ group }: UseGroupsProps) => {
     isCreateLoading,
     isDeleteLoading,
     deleteGroup,
-    refetchSchools,
+    refetchGroups,
   };
 };

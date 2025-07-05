@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
@@ -40,8 +40,14 @@ export default function GroupsPage() {
   const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
-  const { groups, createGroup, deleteGroup, isCreateLoading, isDeleteLoading } =
-    useGroups({ group: selectedGroupId });
+  const {
+    groups,
+    createGroup,
+    deleteGroup,
+    isCreateLoading,
+    isDeleteLoading,
+    refetchGroups,
+  } = useGroups({ group: selectedGroupId });
 
   const selectedUser = userId
     ? groups?.find((group_user) => group_user.user_id === userId)
@@ -50,6 +56,10 @@ export default function GroupsPage() {
   const selectedGroupName =
     AVAILABLE_GROUPS.find((g) => g.id === selectedGroupId)?.name ||
     selectedGroupId;
+
+  useEffect(() => {
+    refetchGroups();
+  }, [selectedGroupId, refetchGroups]);
 
   const handleDelete = (userId: string) => {
     setDeleteUserId(userId);
