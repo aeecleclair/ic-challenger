@@ -45,8 +45,7 @@ export function NavSports() {
             onClick={() => handleClick("")}
             className="cursor-pointer hover:underline"
           >
-            Sports{" "}
-            {sports?.length && sports?.length > 0 && `(${sports.length})`}
+            Sports {(sports?.length ?? 0) > 0 && `(${sports!.length})`}
           </div>
           <CollapsibleTrigger asChild>
             <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">
