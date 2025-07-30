@@ -4,7 +4,6 @@ import { Label } from "@/src/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Textarea } from "@/src/components/ui/textarea";
 import { variantFormSchema } from "@/src/forms/variant";
-import { useCurriculums } from "@/src/hooks/useCurriculums";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
@@ -26,7 +25,7 @@ export const AddEditVariantForm = ({
   setIsOpened,
   isEdit = false,
 }: AddEditVariantFormProps) => {
-  const { curriculums } = useCurriculums();
+  const schoolTypes = ["centrale", "from_lyon", "others"] as const;
 
   function closeDialog(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
@@ -75,9 +74,9 @@ export const AddEditVariantForm = ({
           id="allowed_curriculum"
           input={(field) => (
             <MultiSelect
-              options={curriculums.map((curriculum) => ({
-                label: curriculum.name,
-                value: curriculum.id,
+              options={schoolTypes.map((type) => ({
+                label: type,
+                value: type,
               }))}
               selected={field.value}
               {...field}

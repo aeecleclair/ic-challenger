@@ -16,10 +16,8 @@ interface VariantCardWithOptionsProps {
   canRemove?: boolean;
   canDisable?: boolean;
   product: AppModulesSportCompetitionSchemasSportCompetitionProductComplete;
-  sellerId: string;
   userId: string;
   showDescription: boolean;
-  refreshProduct: () => void;
   isSelectable: boolean;
   isAdmin: boolean;
   displayWarning?: boolean;
@@ -31,10 +29,8 @@ export const VariantCardWithOptions = ({
   canRemove,
   canDisable,
   product,
-  sellerId,
   userId,
   showDescription,
-  refreshProduct,
   isSelectable,
   isAdmin,
   displayWarning,
@@ -44,13 +40,11 @@ export const VariantCardWithOptions = ({
       <ContextMenuTrigger>
         <VariantCard
           variant={variant}
-          sellerId={sellerId}
           userId={userId}
           showDescription={showDescription}
           isSelectable={isSelectable}
           isAdmin={isAdmin}
           displayWarning={displayWarning}
-          productId={product.id}
         />
       </ContextMenuTrigger>
       <VariantCardOptions
@@ -58,10 +52,7 @@ export const VariantCardWithOptions = ({
         canEdit={canEdit}
         canRemove={canRemove}
         canDisable={canDisable}
-        sellerId={sellerId}
         productId={product.id}
-        userId={userId}
-        refreshProduct={refreshProduct}
       />
     </ContextMenu>
   );

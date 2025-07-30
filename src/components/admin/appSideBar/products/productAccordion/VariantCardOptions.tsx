@@ -1,10 +1,6 @@
 import {
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit,
-  deleteCdrSellersSellerIdProductsProductIdVariantsVariantId,
-  patchCdrSellersSellerIdProductsProductIdUsersUserIdDataFieldId,
-  patchCdrSellersSellerIdProductsProductIdVariantsVariantId,
-  postCdrSellersSellerIdProductsProductIdUsersUserIdDataFieldId,
 } from "@/src/api/hyperionSchemas";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -12,7 +8,6 @@ import {
   ContextMenuShortcut,
 } from "@/src/components/ui/context-menu";
 import { Form } from "@/src/components/ui/form";
-import { useToast } from "@/src/components/ui/use-toast";
 import { variantFormSchema } from "@/src/forms/variant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -24,16 +19,14 @@ import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { AddEditVariantForm } from "./AddEditVariantForm";
 import { PencilIcon, PlayIcon, TrashIcon } from "lucide-react";
 import { StopIcon } from "@radix-ui/react-icons";
+import { useProducts } from "@/src/hooks/useProducts";
 
 interface VariantCardOptionsProps {
   variant: AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete;
   canEdit?: boolean;
   canRemove?: boolean;
   canDisable?: boolean;
-  sellerId: string;
   productId: string;
-  userId: string;
-  refreshProduct: () => void;
 }
 
 export const VariantCardOptions = ({
@@ -41,58 +34,31 @@ export const VariantCardOptions = ({
   canEdit,
   canRemove,
   canDisable,
-  sellerId,
   productId,
-  userId,
-  refreshProduct,
 }: VariantCardOptionsProps) => {
-  const { toast } = useToast();
+  const {
+    updateVariant,
+    deleteVariant,
+    isUpdateVariantLoading,
+    isDeleteVariantLoading,
+  } = useProducts();
   const [isEditDialogOpened, setIsEditDialogOpened] = useState(false);
   const [isRemoveDialogOpened, setIsRemoveDialogOpened] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
     mode: "onBlur",
     defaultValues: {
-      name_en: variant.name_en || undefined,
-      name_fr: variant.name_fr,
-      description_en: variant?.description_en || undefined,
-      description_fr: variant?.description_fr || undefined,
+      name: variant.name,
+      description: variant?.description || undefined,
       price: (variant.price / 100).toString(),
       unique: variant.unique ? "unique" : "multiple",
-      allowed_curriculum:
-        variant.allowed_curriculum?.map((curriculum) => curriculum.id) || [],
+      enabled: variant.enabled,
+      schoolType: variant.school_type,
+      publicType: variant.public_type || undefined,
     },
   });
-
-  async function patchVariant(
-    body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit,
-  ) {
-    const { data, error } =
-      await patchCdrSellersSellerIdProductsProductIdVariantsVariantId({
-        path: {
-          variant_id: variant.id,
-          seller_id: sellerId,
-          product_id: productId,
-        },
-        body: body,
-      });
-    if (error) {
-      toast({
-        title: "Error",
-        description: (error as { detail: String }).detail,
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      setIsEditDialogOpened(false);
-      return;
-    }
-  }
-
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
-    setIsLoading(true);
     const body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit =
       {
         ...values,
@@ -100,22 +66,18 @@ export const VariantCardOptions = ({
         unique: values.unique === "unique",
         enabled: true,
       };
-    await patchVariant(body);
-    refreshProduct();
-    setIsEditDialogOpened(false);
-    setIsLoading(false);
-    form.reset(values);
+    updateVariant(variant.id, body, () => {
+      setIsEditDialogOpened(false);
+      form.reset(values);
+    });
   }
 
   async function toggleEnabled() {
-    setIsLoading(true);
     const body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit =
       {
         enabled: !variant.enabled,
       };
-    await patchVariant(body);
-    refreshProduct();
-    setIsLoading(false);
+    updateVariant(variant.id, body, () => {});
   }
 
   function closeDialog(event: React.MouseEvent<HTMLButtonElement>) {
@@ -124,60 +86,10 @@ export const VariantCardOptions = ({
   }
 
   async function removeVariant() {
-    setIsLoading(true);
-    const { data, error } =
-      await deleteCdrSellersSellerIdProductsProductIdVariantsVariantId({
-        path: {
-          variant_id: variant.id,
-          seller_id: sellerId,
-          product_id: productId,
-        },
-      });
-    if (error) {
-      toast({
-        title: "Error",
-        description: (error as { detail: String }).detail,
-        variant: "destructive",
-      });
-      setIsLoading(false);
+    deleteVariant(productId, variant.id, () => {
       setIsRemoveDialogOpened(false);
-      return;
-    }
-    refreshProduct();
-    setIsRemoveDialogOpened(false);
-    setIsLoading(false);
+    });
   }
-
-  const onCustomFieldValidate = async (answers: Record<string, Answer>) => {
-    setIsLoading(true);
-    await Promise.all(
-      productFields.map((field) => {
-        if (!answers[field.id]) return;
-        if (!answers[field.id].isNew) {
-          patchCdrSellersSellerIdProductsProductIdUsersUserIdDataFieldId({
-            body: { value: answers[field.id].value },
-            path: {
-              seller_id: sellerId,
-              product_id: productId,
-              user_id: userId,
-              field_id: field.id,
-            },
-          });
-        } else {
-          postCdrSellersSellerIdProductsProductIdUsersUserIdDataFieldId({
-            body: { value: answers[field.id].value },
-            path: {
-              seller_id: sellerId,
-              product_id: productId,
-              user_id: userId,
-              field_id: field.id,
-            },
-          });
-        }
-      }),
-    );
-    setIsLoading(false);
-  };
 
   return (
     (canEdit || canRemove || canDisable) && (
@@ -194,7 +106,7 @@ export const VariantCardOptions = ({
                   <AddEditVariantForm
                     form={form}
                     setIsOpened={setIsEditDialogOpened}
-                    isLoading={isLoading}
+                    isLoading={isUpdateVariantLoading}
                     isEdit
                   />
                 </form>
@@ -214,7 +126,7 @@ export const VariantCardOptions = ({
             className="w-full"
             variant="ghost"
             onClick={toggleEnabled}
-            isLoading={isLoading}
+            isLoading={isUpdateVariantLoading}
           >
             Désactiver
             <ContextMenuShortcut>
@@ -227,7 +139,7 @@ export const VariantCardOptions = ({
             className="w-full"
             variant="ghost"
             onClick={toggleEnabled}
-            isLoading={isLoading}
+            isLoading={isUpdateVariantLoading}
           >
             Activer
             <ContextMenuShortcut>
@@ -248,13 +160,13 @@ export const VariantCardOptions = ({
                   <Button
                     variant="outline"
                     onClick={closeDialog}
-                    disabled={isLoading}
+                    disabled={isDeleteVariantLoading}
                     className="w-[100px]"
                   >
                     Annuler
                   </Button>
                   <LoadingButton
-                    isLoading={isLoading}
+                    isLoading={isDeleteVariantLoading}
                     className="w-[100px]"
                     variant="destructive"
                     onClick={removeVariant}

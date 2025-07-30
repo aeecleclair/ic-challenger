@@ -1,16 +1,23 @@
 import { z } from "zod";
 
+const schoolType = ["centrale", "from_lyon", "others"] as const;
+const publicType = [
+  "pompom",
+  "fanfare",
+  "cameraman",
+  "athlete",
+  "volunteer"
+] as const;
+
 export const variantFormSchema = z.object({
-  name_fr: z
+  name: z
     .string({
       required_error: "Veuillez renseigner le nom de la variante",
     })
     .min(1, {
       message: "Veuillez renseigner le nom de la variante",
     }),
-  name_en: z.string().optional(),
-  description_fr: z.string().optional(),
-  description_en: z.string().optional(),
+  description: z.string().optional(),
   price: z
     .string({
       required_error: "Veuillez renseigner le prix du produit",
@@ -21,7 +28,7 @@ export const variantFormSchema = z.object({
   unique: z.enum(["unique", "multiple"], {
     required_error: "Veuillez renseigner la quantité du produit",
   }),
-  allowed_curriculum: z.array(z.string(), {
-    required_error: "Veuillez renseigner les cursus autorisés",
-  }),
+  enabled: z.boolean().optional(),
+  schoolType: z.enum(schoolType),
+  publicType: z.enum(publicType).optional(),
 });

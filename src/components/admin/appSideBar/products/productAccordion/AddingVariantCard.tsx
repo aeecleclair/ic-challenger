@@ -1,9 +1,5 @@
-import {
-  AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase,
-  postCdrSellersSellerIdProductsProductIdVariants,
-} from "@/src/api/hyperionSchemas";
+import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase } from "@/src/api/hyperionSchemas";
 import { Form } from "@/src/components/ui/form";
-import { useToast } from "@/src/components/ui/use-toast";
 import { variantFormSchema } from "@/src/forms/variant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -14,28 +10,23 @@ import { z } from "zod";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { CustomDialog } from "@/src/components/custom/CustomDialog";
 import { AddEditVariantForm } from "./AddEditVariantForm";
+import { useProducts } from "@/src/hooks/useProducts";
 
 interface AddingVariantCardProps {
-  sellerId: string;
   productId: string;
-  refreshProduct: () => void;
 }
 
 export const AddingVariantCard = ({
-  sellerId,
   productId,
-  refreshProduct,
 }: AddingVariantCardProps) => {
-  const { toast } = useToast();
+  const { createVariant } = useProducts();
   const [isAddDialogOpened, setIsAddDialogOpened] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
     mode: "onBlur",
-    defaultValues: {
-      allowed_curriculum: [],
-    },
+    defaultValues: {},
   });
 
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
@@ -46,29 +37,13 @@ export const AddingVariantCard = ({
         price: Math.round(parseFloat(values.price) * 100),
         unique: values.unique === "unique",
         enabled: true,
+        school_type: values.schoolType,
+        public_type: values.publicType || undefined,
+        product_id: productId,
       };
-    const { data, error } =
-      await postCdrSellersSellerIdProductsProductIdVariants({
-        path: {
-          seller_id: sellerId,
-          product_id: productId,
-        },
-        body: body,
-      });
-    if (error) {
-      toast({
-        title: "Error",
-        description: (error as { detail: String }).detail,
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      setIsAddDialogOpened(false);
-      return;
-    }
-    refreshProduct();
-    setIsAddDialogOpened(false);
-    setIsLoading(false);
-    form.reset();
+    createVariant(productId, body, () => {
+      form.reset();
+    });
   }
   return (
     <CustomDialog

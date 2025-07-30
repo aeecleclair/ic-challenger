@@ -3,6 +3,9 @@ import {
   usePostCompetitionProducts,
   usePatchCompetitionProductsProductId,
   useDeleteCompetitionProductsProductId,
+  usePostCompetitionProductsProductIdVariants,
+  usePatchCompetitionProductsVariantsVariantId,
+  useDeleteCompetitionProductsVariantsVariantId,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -11,6 +14,8 @@ import { ErrorType } from "../utils/errorTyping";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionProductBase,
   AppModulesSportCompetitionSchemasSportCompetitionProductEdit,
+  AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase,
+  AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit,
 } from "../api/hyperionSchemas";
 
 export const useProducts = () => {
@@ -142,6 +147,125 @@ export const useProducts = () => {
     );
   };
 
+  const { mutate: mutateCreateVariant, isPending: isCreateVariantLoading } =
+    usePostCompetitionProductsProductIdVariants();
+
+  const createVariant = (
+    productId: string,
+    body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase,
+    callback: () => void,
+  ) => {
+    return mutateCreateVariant(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          productId: productId,
+        },
+        body: body,
+      },
+      {
+        onSuccess: () => {
+          refetchProducts();
+          toast({
+            title: "Variante ajoutée",
+            description: "La variante a été ajoutée avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de l'ajout de la variante",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  const { mutate: mutateUpdateVariant, isPending: isUpdateVariantLoading } =
+    usePatchCompetitionProductsVariantsVariantId();
+
+  const updateVariant = (
+    variantId: string,
+    body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit,
+    callback: () => void,
+  ) => {
+    return mutateUpdateVariant(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          variantId: variantId,
+        },
+        body: body,
+      },
+      {
+        onSuccess: () => {
+          refetchProducts();
+          toast({
+            title: "Variante modifiée",
+            description: "La variante a été modifiée avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la modification de la variante",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  const { mutate: mutateDeleteVariant, isPending: isDeleteVariantLoading } =
+    useDeleteCompetitionProductsVariantsVariantId();
+
+  const deleteVariant = (
+    productId: string,
+    variantId: string,
+    callback: () => void
+  ) => {
+    return mutateDeleteVariant(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        queryParams: {
+          product_id: productId,
+        },
+        pathParams: {
+          variantId: variantId,
+        },
+      },
+      {
+        onSuccess: () => {
+          refetchProducts();
+          toast({
+            title: "Variante supprimée",
+            description: "La variante a été supprimée avec succès.",
+          });
+          callback();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Erreur lors de la suppression de la variante",
+            description: (error as unknown as ErrorType).stack.detail,
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
   return {
     products,
     error,
@@ -152,5 +276,11 @@ export const useProducts = () => {
     updateProduct,
     isDeleteLoading,
     deleteProduct,
+    isCreateVariantLoading,
+    createVariant,
+    isUpdateVariantLoading,
+    updateVariant,
+    isDeleteVariantLoading,
+    deleteVariant,
   };
 };

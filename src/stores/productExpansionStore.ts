@@ -2,23 +2,20 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface productExpansionStore {
-  productExpansion: Record<string, string[]>;
+  productExpansion: string[];
   loaded: boolean;
-  setExpandedProducts: (sellerId: string, productIds: string[]) => void;
+  setExpandedProducts: (productIds: string[]) => void;
 }
 
 export const useProductExpansionStore = create<productExpansionStore>()(
   devtools(
     persist(
       (set) => ({
-        productExpansion: {},
+        productExpansion: [],
         loaded: true,
-        setExpandedProducts: (sellerId: string, productIds: string[]) => {
+        setExpandedProducts: (productIds: string[]) => {
           set((state) => ({
-            productExpansion: {
-              ...state.productExpansion,
-              [sellerId]: productIds,
-            },
+            productExpansion: productIds,
           }));
         },
       }),
