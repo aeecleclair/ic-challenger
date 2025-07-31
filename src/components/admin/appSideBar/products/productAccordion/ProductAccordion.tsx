@@ -3,7 +3,6 @@ import {
   ContextMenu,
   ContextMenuTrigger,
 } from "@/src/components/ui/context-menu";
-import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useSizeStore } from "@/src/stores/sizeStore";
 
 import {
@@ -21,10 +20,7 @@ interface ProductAccordionProps {
   canEdit?: boolean;
   canRemove?: boolean;
   canDisable?: boolean;
-  userId: string;
   showDescription?: boolean;
-  isSelectable?: boolean;
-  isAdmin?: boolean;
 }
 
 export const ProductAccordion = ({
@@ -33,30 +29,13 @@ export const ProductAccordion = ({
   canEdit,
   canRemove,
   canDisable,
-  userId,
   showDescription = false,
-  isSelectable = false,
-  isAdmin = false,
 }: ProductAccordionProps) => {
   const { size } = useSizeStore();
-  const numberOfCard = Math.round(size / 20);
-  const { userPurchases } = useUserPurchases({ userId: userId });
-  const purchasedVariantIds = userPurchases?.map(
-    (purchase) => purchase.product_variant_id,
-  );
-  const variantToDisplay = isAdmin
-    ? product.variants
-    : product.variants?.filter(
-        (variant) =>
-          variant.enabled || purchasedVariantIds?.includes(variant.id),
-      );
-
-  const isOneVariantTaken = product.variants?.some((variant) =>
-    purchasedVariantIds?.includes(variant.id),
-  );
+  const numberOfCard = Math.round(size / 15);
 
   return (
-    (isAdmin || (variantToDisplay?.length ?? 0) > 0) && (
+    ((product.variants?.length ?? 0) > 0) && (
       <AccordionItem value={product.id}>
         <ContextMenu>
           <ContextMenuTrigger>
@@ -88,26 +67,22 @@ export const ProductAccordion = ({
           <div
             className={`grid ${showDescription ? "grid-row" : "grid-cols-" + numberOfCard} gap-4`}
           >
-            {variantToDisplay && (
+            {product.variants && (
               <>
                 {canAdd && (
                   <AddingVariantCard
                     productId={product.id}
                   />
                 )}
-                {variantToDisplay.map((variant) => (
+                {product.variants.map((variant) => (
                   <VariantCardWithOptions
                     key={variant.id}
                     variant={variant}
                     product={product}
-                    userId={userId}
                     canEdit={canEdit}
                     canRemove={canRemove}
                     canDisable={canDisable}
                     showDescription={showDescription}
-                    isSelectable={isSelectable}
-                    isAdmin={isAdmin}
-                    displayWarning={isOneVariantTaken || !variant.enabled}
                   />
                 ))}
               </>

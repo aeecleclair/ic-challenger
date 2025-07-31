@@ -16,12 +16,9 @@ interface AddingVariantCardProps {
   productId: string;
 }
 
-export const AddingVariantCard = ({
-  productId,
-}: AddingVariantCardProps) => {
-  const { createVariant } = useProducts();
+export const AddingVariantCard = ({ productId }: AddingVariantCardProps) => {
+  const { createVariant, isCreateVariantLoading } = useProducts();
   const [isAddDialogOpened, setIsAddDialogOpened] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof variantFormSchema>>({
     resolver: zodResolver(variantFormSchema),
@@ -30,7 +27,6 @@ export const AddingVariantCard = ({
   });
 
   async function onSubmit(values: z.infer<typeof variantFormSchema>) {
-    setIsLoading(true);
     const body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase =
       {
         ...values,
@@ -42,6 +38,7 @@ export const AddingVariantCard = ({
         product_id: productId,
       };
     createVariant(productId, body, () => {
+      setIsAddDialogOpened(false);
       form.reset();
     });
   }
@@ -56,7 +53,7 @@ export const AddingVariantCard = ({
             <AddEditVariantForm
               form={form}
               setIsOpened={setIsAddDialogOpened}
-              isLoading={isLoading}
+              isLoading={isCreateVariantLoading}
             />
           </form>
         </Form>

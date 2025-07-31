@@ -1,9 +1,11 @@
+"use client";
+
 import { SellerProductList } from "@/src/components/admin/appSideBar/products/SellerProductList";
 import { useProducts } from "@/src/hooks/useProducts";
 import { useUser } from "@/src/hooks/useUser";
 import { useRouter } from "next/navigation";
 
-export const SellerTab = () => {
+const SellerTab = () => {
   const { isAdmin } = useUser();
   const { products } = useProducts();
   const router = useRouter();
@@ -19,3 +21,6 @@ export const SellerTab = () => {
     </div>
   );
 };
+
+
+export default SellerTab;

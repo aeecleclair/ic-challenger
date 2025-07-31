@@ -3,13 +3,20 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Textarea } from "@/src/components/ui/textarea";
+import { Checkbox } from "@/src/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 import { variantFormSchema } from "@/src/forms/variant";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
 import { CurrencyInput } from "@/src/components/custom/CurrencyInput";
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
-import { MultiSelect } from "@/src/components/custom/MultiSelect";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 
 interface AddEditVariantFormProps {
@@ -25,7 +32,19 @@ export const AddEditVariantForm = ({
   setIsOpened,
   isEdit = false,
 }: AddEditVariantFormProps) => {
-  const schoolTypes = ["centrale", "from_lyon", "others"] as const;
+  const schoolTypes = [
+    { value: "centrale", label: "Centrale" },
+    { value: "from_lyon", label: "De Lyon" },
+    { value: "others", label: "Autres" },
+  ];
+
+  const publicTypes = [
+    { value: "pompom", label: "Pompom" },
+    { value: "fanfare", label: "Fanfare" },
+    { value: "cameraman", label: "Cameraman" },
+    { value: "athlete", label: "Athlète" },
+    { value: "volunteer", label: "Bénévole" },
+  ];
 
   function closeDialog(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
@@ -33,34 +52,22 @@ export const AddEditVariantForm = ({
   }
   return (
     <div className="grid gap-6 mt-4">
-      <div className="flex flex-row gap-2 w-full">
-        <StyledFormField
-          form={form}
-          label="Nom (français)"
-          id="name_fr"
-          input={(field) => <Input {...field} />}
-        />
-        <StyledFormField
-          form={form}
-          label="Nom (anglais)"
-          id="name_en"
-          input={(field) => <Input {...field} />}
-        />
-      </div>
-      <div className="flex flex-row gap-2">
-        <StyledFormField
-          form={form}
-          label="Description (français)"
-          id="description_fr"
-          input={(field) => <Textarea {...field} />}
-        />
-        <StyledFormField
-          form={form}
-          label="Description (anglais)"
-          id="description_en"
-          input={(field) => <Textarea {...field} />}
-        />
-      </div>
+      <StyledFormField
+        form={form}
+        label="Nom"
+        id="name"
+        input={(field) => <Input placeholder="Nom de la variante" {...field} />}
+      />
+
+      <StyledFormField
+        form={form}
+        label="Description"
+        id="description"
+        input={(field) => (
+          <Textarea placeholder="Description (optionnelle)" {...field} />
+        )}
+      />
+
       <div className="grid grid-cols-2 gap-4">
         <StyledFormField
           form={form}
@@ -68,23 +75,48 @@ export const AddEditVariantForm = ({
           id="price"
           input={(field) => <CurrencyInput id="price" {...field} />}
         />
+
         <StyledFormField
           form={form}
-          label="Cursus"
-          id="allowed_curriculum"
+          label="Type d'école"
+          id="schoolType"
           input={(field) => (
-            <MultiSelect
-              options={schoolTypes.map((type) => ({
-                label: type,
-                value: type,
-              }))}
-              selected={field.value}
-              {...field}
-              className="w-64"
-            />
+            <Select onValueChange={field.onChange} value={field.value}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionnez un type d'école" />
+              </SelectTrigger>
+              <SelectContent>
+                {schoolTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         />
       </div>
+
+      <StyledFormField
+        form={form}
+        label="Type de public (optionnel)"
+        id="publicType"
+        input={(field) => (
+          <Select onValueChange={field.onChange} value={field.value}>
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionnez un type de public" />
+            </SelectTrigger>
+            <SelectContent>
+              {publicTypes.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+
       <div className="grid gap-2">
         <StyledFormField
           form={form}
@@ -111,6 +143,25 @@ export const AddEditVariantForm = ({
           )}
         />
       </div>
+
+      <StyledFormField
+        form={form}
+        label="Activé"
+        id="enabled"
+        input={(field) => (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="enabled"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            />
+            <Label htmlFor="enabled">
+              Cette variante est activée et disponible à l&apos;achat
+            </Label>
+          </div>
+        )}
+      />
+
       <div className="flex justify-end mt-2 space-x-4">
         <Button
           variant="outline"

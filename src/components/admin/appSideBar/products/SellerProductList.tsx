@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
-} from "@/src/api/hyperionSchemas";
+import { AppModulesSportCompetitionSchemasSportCompetitionProductComplete } from "@/src/api/hyperionSchemas";
 import { Accordion } from "@/src/components/ui/accordion";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { AddProductAccordionItem } from "./AddProductAccordionItem";
 import { ProductAccordion } from "./productAccordion/ProductAccordion";
 import { useProductExpansionStore } from "@/src/stores/productExpansionStore";
@@ -15,16 +11,7 @@ interface SellerProductListProps {
 }
 
 export const SellerProductList = ({ products }: SellerProductListProps) => {
-  const searchParams = useSearchParams();
-  const activeSellerId = searchParams.get("sellerId");
-  const userId = searchParams.get("userId");
   const { productExpansion, setExpandedProducts } = useProductExpansionStore();
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && products && products.length > 0) {
-      setExpandedProducts(products.map((product) => product.id));
-    }
-  }, [productExpansion, setExpandedProducts, products, activeSellerId]);
 
   return (
     <div className="min-w-96 w-full">
@@ -39,13 +26,10 @@ export const SellerProductList = ({ products }: SellerProductListProps) => {
             <ProductAccordion
               key={product.id}
               product={product}
-              userId={userId!}
               canAdd
               canEdit
               canRemove
               canDisable
-              isSelectable
-              isAdmin
             />
           ))}
         </Accordion>

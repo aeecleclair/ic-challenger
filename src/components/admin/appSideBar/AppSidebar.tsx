@@ -18,6 +18,7 @@ import { useEdition } from "@/src/hooks/useEdition";
 import { NavValidation } from "./validation/NavValidation";
 import { NavMatches } from "./matches/NavMatches";
 import { NavGroups } from "./groups/NavGroups";
+import { NavProducts } from "./products/NavProducts";
 
 const data = {
   navSecondary: [
@@ -63,6 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <NavValidation />
             <NavMatches />
             <NavGroups />
+            <NavProducts />
             <NavSecondary items={data.navSecondary} className="mt-auto" />
           </>
         )}
