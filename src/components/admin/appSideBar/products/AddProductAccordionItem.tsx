@@ -28,6 +28,7 @@ export const AddProductAccordionItem = () => {
       ...values,
     };
     createProduct(body, () => {
+      setIsAddDialogOpened(false);
       form.reset();
     });
   }

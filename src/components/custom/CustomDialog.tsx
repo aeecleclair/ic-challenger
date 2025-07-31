@@ -35,10 +35,10 @@ export const CustomDialog = ({
         onClick={(e) => e.stopPropagation()}
       >
         <ScrollArea className="max-h-[80vh] px-6">
-          <DialogHeader className="pt-6 m-1">
+          <DialogHeader className="pt-6 m-2">
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
-          <DialogDescription className="pb-6 m-1">
+          <DialogDescription className="pb-6 m-2">
             {description}
           </DialogDescription>
         </ScrollArea>

@@ -14,37 +14,25 @@ interface VariantCardProps {
   showDescription: boolean;
 }
 
-export const VariantCard = ({
-  variant,
-  showDescription,
-}: VariantCardProps) => {
+export const VariantCard = ({ variant, showDescription }: VariantCardProps) => {
   return (
     <Card
-      className={`min-w-40 h-full ${!variant.enabled && "text-muted-foreground"} ${variant.enabled && variant.unique && "cursor-pointer"}`}
+      className={`min-w-40 h-full ${!variant.enabled && "text-muted-foreground"}`}
     >
-      {variant.enabled && variant.unique && (
-        <div className="w-full h-0 relative">
-          <div
-            className={`flex m-auto ${showDescription ? "h-[109px]" : "h-[93px]"} w-full bg-white rounded-md bg-opacity-50`}
-          >
-            <ReloadIcon className="flex h-6 w-6 animate-spin m-auto" />
-          </div>
-        </div>
-      )}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-1 gap-4">
-        <CardTitle
-          className={`text-sm font-medium`}
-        >
+        <CardTitle className={`text-sm font-medium`}>
           <span>{variant.name}</span>
         </CardTitle>
-        <Badge variant="outline" className="h-6 px-1">
-          {variant.unique ? "Unique" : "Multiple"}
-        </Badge>
+        <div className="flex flex-row items-center">
+          <Badge variant="outline" className="h-6 px-1">
+            {variant.public_type}
+          </Badge>
+          <div className="w-2"></div>
+          <Badge className="h-6 px-1">{variant.school_type}</Badge>
+        </div>
       </CardHeader>
       <CardContent className="flex p-4 pt-0 mr-auto">
-        <div
-          className={`text-2xl font-bold`}
-        >
+        <div className={`text-2xl font-bold`}>
           <span>{variant.price / 100} €</span>
         </div>
         {showDescription && (

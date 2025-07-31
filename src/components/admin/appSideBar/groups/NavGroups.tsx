@@ -56,36 +56,32 @@ export function NavGroups() {
         </SidebarGroupLabel>
         <CollapsibleContent>
           <SidebarMenu>
-            <>
-              {AVAILABLE_GROUPS.map((group) => (
-                <SidebarMenuItem key={group.id}>
-                  <SidebarMenuButton asChild>
-                    <div
-                      onClick={() =>
-                        handleClick(`?group_id=${group.id}`)
-                      }
-                      className="cursor-pointer flex items-center"
+            {AVAILABLE_GROUPS.map((group) => (
+              <SidebarMenuItem key={group.id}>
+                <SidebarMenuButton asChild>
+                  <div
+                    onClick={() => handleClick(`?group_id=${group.id}`)}
+                    className="cursor-pointer flex items-center"
+                  >
+                    {group.name}
+                  </div>
+                </SidebarMenuButton>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuAction>
+                      <MoreHorizontal />
+                    </SidebarMenuAction>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="right" align="start">
+                    <DropdownMenuItem
+                      onClick={() => handleClick(`?group_id=${group.id}`)}
                     >
-                      {group.name}
-                    </div>
-                  </SidebarMenuButton>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuAction>
-                        <MoreHorizontal />
-                      </SidebarMenuAction>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent side="right" align="start">
-                      <DropdownMenuItem 
-                        onClick={() => handleClick(`?group_id=${group.id}`)}
-                      >
-                        <span>Gérer le groupe</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </SidebarMenuItem>
-              ))}
-            </>
+                      <span>Gérer le groupe</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </CollapsibleContent>
       </SidebarGroup>
