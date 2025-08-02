@@ -66,7 +66,7 @@ export const useUser = () => {
               "Les informations de l'utilisateur ont été mises à jour avec succès.",
           });
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la mise à jour de l'utilisateur",

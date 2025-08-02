@@ -68,7 +68,7 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du quota",
@@ -109,7 +109,7 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification du quota",
@@ -145,7 +145,7 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression du quota",

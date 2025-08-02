@@ -62,7 +62,7 @@ export const useProducts = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du produit",
@@ -101,7 +101,7 @@ export const useProducts = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification du produit",
@@ -135,7 +135,7 @@ export const useProducts = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression du product",
@@ -174,7 +174,7 @@ export const useProducts = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de la variante",
@@ -213,7 +213,7 @@ export const useProducts = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification de la variante",
@@ -231,7 +231,7 @@ export const useProducts = () => {
   const deleteVariant = (
     productId: string,
     variantId: string,
-    callback: () => void
+    callback: () => void,
   ) => {
     return mutateDeleteVariant(
       {
@@ -254,7 +254,7 @@ export const useProducts = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression de la variante",

@@ -51,7 +51,7 @@ export const useEdition = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la création de l'édition",

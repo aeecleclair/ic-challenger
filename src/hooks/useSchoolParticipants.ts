@@ -61,7 +61,7 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la mise à jour",

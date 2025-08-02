@@ -64,7 +64,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de la variante",
@@ -76,8 +76,10 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
     );
   };
 
-  const { mutate: mutateValidatePurchase, isPending: isValidatePurchaseLoading } =
-    usePatchCompetitionUsersUserIdPurchasesProductVariantIdValidated();
+  const {
+    mutate: mutateValidatePurchase,
+    isPending: isValidatePurchaseLoading,
+  } = usePatchCompetitionUsersUserIdPurchasesProductVariantIdValidated();
 
   const validatePurchase = (
     userId: string,
@@ -107,7 +109,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la validation de la variante",
@@ -146,7 +148,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression de la variante",

@@ -51,7 +51,7 @@ export const useSports = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du sport",
@@ -90,7 +90,7 @@ export const useSports = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification du sport",

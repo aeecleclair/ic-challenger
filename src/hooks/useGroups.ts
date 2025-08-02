@@ -60,7 +60,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du groupe",
@@ -95,7 +95,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification du group",

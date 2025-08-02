@@ -42,7 +42,10 @@ export const useSchoolSportTeams = ({
   const { mutate: mutateCreateSchoolSportTeam, isPending: isCreateLoading } =
     usePostCompetitionTeams();
 
-  const createSchoolSportTeam = (teamData: TeamInfo, callback: (data: Team) => void) => {
+  const createSchoolSportTeam = (
+    teamData: TeamInfo,
+    callback: (data: Team) => void,
+  ) => {
     return mutateCreateSchoolSportTeam(
       {
         headers: {
@@ -59,7 +62,7 @@ export const useSchoolSportTeams = ({
           });
           callback(data);
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de l'équipe",

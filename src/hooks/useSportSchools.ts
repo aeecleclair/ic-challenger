@@ -6,7 +6,10 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { SchoolExtensionBase, SchoolExtensionEdit } from "../api/hyperionSchemas";
+import {
+  SchoolExtensionBase,
+  SchoolExtensionEdit,
+} from "../api/hyperionSchemas";
 
 export const useSportSchools = () => {
   const { token, isTokenExpired } = useAuth();
@@ -52,7 +55,7 @@ export const useSportSchools = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la fusion des équipes",
@@ -92,7 +95,7 @@ export const useSportSchools = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la mise à jour",

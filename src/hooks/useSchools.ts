@@ -52,7 +52,7 @@ export const useSchools = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de l'établissement",
@@ -93,7 +93,7 @@ export const useSchools = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification de l'établissement",
@@ -107,9 +107,7 @@ export const useSchools = () => {
     );
   };
 
-  const filteredSchools = schools?.filter(
-    (school) => school.id !== NoSchoolId,
-  );
+  const filteredSchools = schools?.filter((school) => school.id !== NoSchoolId);
 
   return {
     schools,

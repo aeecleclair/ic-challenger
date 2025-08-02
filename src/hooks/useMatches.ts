@@ -43,10 +43,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
   const { mutate: mutateCreateMatch, isPending: isCreateLoading } =
     usePostCompetitionSportsSportIdMatches();
 
-  const createMatch = (
-    body: MatchBase,
-    callback: () => void,
-  ) => {
+  const createMatch = (body: MatchBase, callback: () => void) => {
     return mutateCreateMatch(
       {
         headers: {
@@ -66,7 +63,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du match",
@@ -106,7 +103,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la modification du match",
@@ -141,7 +138,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression du match",

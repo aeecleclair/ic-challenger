@@ -1,13 +1,31 @@
 import {
+  useGetCompetitionParticipantsMe,
   usePostCompetitionSportsSportIdParticipate,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType } from "../utils/errorTyping";
-import { Participant, ParticipantInfo } from "../api/hyperionSchemas";
+import { ParticipantInfo } from "../api/hyperionSchemas";
 
 export const useParticipant = () => {
-  const { token } = useAuth();
+  const { token, isTokenExpired } = useAuth();
+
+  const {
+    data: meParticipant,
+    refetch: refetchMeParticipant,
+    error,
+  } = useGetCompetitionParticipantsMe(
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    {
+      enabled: !isTokenExpired(),
+      retry: 0,
+      queryHash: "getMeParticipant",
+    },
+  );
 
   const { mutate: mutateCreateParticipant, isPending: isCreateLoading } =
     usePostCompetitionSportsSportIdParticipate();
@@ -36,7 +54,7 @@ export const useParticipant = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'inscription",
@@ -49,6 +67,9 @@ export const useParticipant = () => {
   };
 
   return {
+    meParticipant,
+    refetchMeParticipant,
+    error,
     createParticipant,
     isCreateLoading,
   };
