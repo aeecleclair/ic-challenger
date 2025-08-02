@@ -22,18 +22,22 @@ import { RegisterState } from "@/src/infra/registerState";
 import { useState } from "react";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
+  AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
   CompetitionUserBase,
   ParticipantInfo,
 } from "@/src/api/hyperionSchemas";
 import { useParticipant } from "@/src/hooks/useParticipant";
-import { useEdition } from "@/src/hooks/useEdition";
 import { useUser } from "@/src/hooks/useUser";
+import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 
 const Register = () => {
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
   const { meCompetition, createCompetitionUser } = useCompetitionUser();
-  const { createParticipant } = useParticipant();
+  const { meParticipant, createParticipant } = useParticipant();
+  const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
+    userId: me?.id,
+  });
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -53,15 +57,9 @@ const Register = () => {
     ],
     pageFields: {
       Informations: ["phone", "sex"],
-      Participation: [
-        "is_athlete",
-        "is_cameraman",
-        "is_fanfare",
-        "is_pompom",
-        "is_volunteer",
-      ],
-      Package: ["package", "party", "bottle", "tShirt"],
+      Participation: [],
       Sport: ["sport.id", "sport.team_id"],
+      Package: [],
       Récapitulatif: [],
     } as const,
     onValidateCardActions: {
@@ -73,7 +71,7 @@ const Register = () => {
         }
       },
       Participation: (values, callback) => {
-        if (!!meCompetition) {
+        if (!meCompetition) {
           callback();
           return;
         }
@@ -88,7 +86,10 @@ const Register = () => {
         createCompetitionUser(body, callback);
       },
       Sport: (values, callback) => {
-        // TODO: check participant
+        if (!meParticipant) {
+          callback();
+          return;
+        }
         const body: ParticipantInfo = {
           license: values.sport!.license_number!,
           team_id: values.sport!.team_id!,
@@ -96,8 +97,41 @@ const Register = () => {
         };
         createParticipant(body, values.sport!.id, callback);
       },
-      Package: () => {},
-      Récapitulatif: () => {},
+      Package: (values, callback) => {
+        const newPurchases = values.products;
+
+        const toCreate = newPurchases.filter(
+          (newPurchase) =>
+            !userPurchases?.some(
+              (purchase) =>
+                purchase.product_variant_id === newPurchase.product.id,
+            ),
+        );
+        const toDelete = userPurchases?.filter(
+          (purchase) =>
+            !newPurchases.some(
+              (newPurchase) =>
+                newPurchase.product.id === purchase.product_variant_id,
+            ),
+        );
+
+        toCreate.map((purchase) => {
+          const body: AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase =
+            {
+              product_variant_id: purchase.product.id,
+              quantity: purchase.quantity,
+            };
+          createPurchase(body, () => {});
+        });
+
+        toDelete?.map((purchase) => {
+          deletePurchase(me?.id!, purchase.product_variant_id, () => {});
+        });
+        callback();
+      },
+      Récapitulatif: (values, callback) => {
+        callback();
+      },
     } as const,
   });
   return (

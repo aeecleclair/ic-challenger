@@ -126,38 +126,44 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
               </div>
             </div>
 
-            {/* Package and Options */}
+            {/* Products */}
             <div className="space-y-2">
-              <h3 className="font-semibold">Package et Options</h3>
-              <div className="flex items-center gap-2">
-                <p className="text-sm text-muted-foreground">Package:</p>
-                <Badge variant="outline">{formValues.package}</Badge>
-              </div>
+              <h3 className="font-semibold">Produits sélectionnés</h3>
 
-              <div className="grid grid-cols-1 gap-2 mt-2">
-                {formValues.party && (
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <p className="text-sm">Soirée</p>
-                  </div>
-                )}
+              {formValues.products && formValues.products.length > 0 ? (
+                <div className="grid grid-cols-1 gap-2 mt-2">
+                  {formValues.products.map((productItem, index) => (
+                    <div key={index} className="flex items-center gap-1">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      <p className="text-sm">
+                        {productItem.product.name}
+                        {productItem.quantity > 1 &&
+                          ` (x${productItem.quantity})`} - <span className="font-semibold">{productItem.product.price / 100}€</span> 
+                      </p>
+                    </div>
+                  ))}
 
-                {formValues.bottle && (
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <p className="text-sm">Gourde</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <p className="text-sm text-muted-foreground">Total:</p>
+                    <Badge variant="outline">
+                      {formValues.products
+                        .reduce(
+                          (total, item) =>
+                            total + item.product.price / 100 * item.quantity,
+                          0,
+                        )
+                        .toFixed(2)}
+                      €
+                    </Badge>
                   </div>
-                )}
-
-                {formValues.tShirt && (
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <p className="text-sm">
-                      T-shirt {formValues.tShirtSize || ""}
-                    </p>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-2 mt-2">
+                  <p className="text-sm text-muted-foreground">
+                    Aucun produit sélectionné
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

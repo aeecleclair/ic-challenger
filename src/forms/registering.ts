@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
 
 const sexEnum = ["masculine", "feminine"] as const;
 
@@ -33,27 +34,20 @@ export const registeringFormSchema = z
         substitute: z.boolean().optional(),
       })
       .optional(),
-    package: z.enum(["light", "full"], {
-      required_error: "Veuillez sélectionner un package",
-    }),
-    party: z.boolean({
-      required_error:
-        "Veuillez indiquer si vous souhaitez participer à la soirée",
-    }),
-    bottle: z.boolean({
-      required_error: "Veuillez indiquer si vous souhaitez une gourde",
-    }),
-    tShirt: z.boolean({
-      required_error: "Veuillez indiquer si vous souhaitez un t-shirt",
-    }),
-    tShirtSize: z.enum(["XS", "S", "M", "L", "XL"]).optional(),
+    products: z.array(
+      z.object({
+        product:
+          z.custom<AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete>(),
+        quantity: z.number().min(1),
+      }),
+    ),
   })
   .superRefine((data, ctx) => {
-    if (data?.tShirt && !data?.tShirtSize) {
+    if (!data.is_athlete && !data.is_cameraman && !data.is_fanfare && !data.is_pompom && !data.is_volunteer) {
       ctx.addIssue({
-        path: ["tShirtSize"],
+        path: ["is_athlete"],
         code: z.ZodIssueCode.custom,
-        message: "Veuillez sélectionner une taille de t-shirt",
+        message: "Veuillez sélectionner au moins un rôle",
       });
     }
   })

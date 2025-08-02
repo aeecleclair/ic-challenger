@@ -48,7 +48,7 @@ export const useCompetitionUser = () => {
           });
           callback();
         },
-        onError: (error) => {
+        onSettled: (error) => {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de l'utilisateur",
