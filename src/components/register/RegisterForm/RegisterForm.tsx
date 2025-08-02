@@ -1,7 +1,10 @@
-import { registeringFormSchema, RegisteringFormValues } from "@/src/forms/registering";
+import {
+  registeringFormSchema,
+  RegisteringFormValues,
+} from "@/src/forms/registering";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RegisterFormField } from "./RegisterFormField";
 import { Form } from "../../ui/form";
 import { RegisterState } from "@/src/infra/registerState";
@@ -23,20 +26,21 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
 
   const form = useForm<RegisteringFormValues>({
     resolver: zodResolver(registeringFormSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
-      phone: me?.phone || undefined,
-      sex: meCompetition?.sport_category || undefined,
-      is_athlete: meCompetition?.is_athlete ?? false,
-      is_cameraman: meCompetition?.is_cameraman ?? false,
-      is_fanfare: meCompetition?.is_fanfare ?? false,
-      is_pompom: meCompetition?.is_pompom ?? false,
-      is_volunteer: meCompetition?.is_volunteer ?? false,
-      party: false,
-      bottle: false,
-      tShirt: false,
+      is_athlete: false,
+      is_cameraman: false,
+      is_fanfare: false,
+      is_pompom: false,
+      is_volunteer: false,
+      products: [],
     },
   });
+
+  useEffect(() => {
+    form.setValue("phone", me?.phone || meCompetition?.user.phone || "");
+    form.setValue("sex", meCompetition?.sport_category || "masculine");
+  }, [form, me, meCompetition]);
 
   async function onSubmit(values: RegisteringFormValues) {
     setIsLoading(true);
