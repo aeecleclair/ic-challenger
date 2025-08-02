@@ -11,14 +11,14 @@ import {
   SidebarMenuItem,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
-import { NavSports } from "../sports/NavSports
-import { NavSchools } from "../schools/NavSchools";
 import { NavSecondary } from "./NavSecondary";
 import { useEdition } from "@/src/hooks/useEdition";
 import { NavValidation } from "./validation/NavValidation";
-import { NavMatches } from "../matches/NavMatches
-import { NavGroups } from "../groups/NavGroups
-import { NavProducts } from "../products/NavProducts
+import { NavSchools } from "./NavSchools";
+import { NavSports } from "./NavSports";
+import { NavGroups } from "./NavGroups";
+import { NavMatches } from "./NavMatches";
+import { NavProducts } from "./NavProducts";
 
 const data = {
   navSecondary: [

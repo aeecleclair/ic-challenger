@@ -11,3 +11,5 @@ export const productFormSchema = z.object({
     }),
   description: z.string().optional(),
 });
+
+export type ProductFormValues = z.infer<typeof productFormSchema>;

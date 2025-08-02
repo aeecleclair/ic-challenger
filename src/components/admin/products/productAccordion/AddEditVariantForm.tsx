@@ -11,16 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { variantFormSchema } from "@/src/forms/variant";
+import {  VariantFormValues } from "@/src/forms/variant";
 import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
 
 import { CurrencyInput } from "@/src/components/custom/CurrencyInput";
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 
 interface AddEditVariantFormProps {
-  form: UseFormReturn<z.infer<typeof variantFormSchema>>;
+  form: UseFormReturn<VariantFormValues>;
   isLoading: boolean;
   setIsOpened: (value: boolean) => void;
   isEdit?: boolean;

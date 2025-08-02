@@ -2,8 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { schoolFormSchema } from "@/src/forms/schools";
+import { schoolFormSchema, SchoolFormValues } from "@/src/forms/schools";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import Link from "next/link";
@@ -13,7 +12,7 @@ import { SchoolExtensionBase } from "@/src/api/hyperionSchemas";
 const Dashboard = () => {
   const { filteredSchools } = useSchools();
   const { createCompetitionSchool, isLoading } = useSportSchools();
-  const form = useForm<z.infer<typeof schoolFormSchema>>({
+  const form = useForm<SchoolFormValues>({
     resolver: zodResolver(schoolFormSchema),
     defaultValues: {
       fromLyon: false,
@@ -23,7 +22,7 @@ const Dashboard = () => {
     mode: "onChange",
   });
 
-  function onSubmit(values: z.infer<typeof schoolFormSchema>) {
+  function onSubmit(values: SchoolFormValues) {
     const body: SchoolExtensionBase = {
       school_id: values.schools,
       from_lyon: values.fromLyon,

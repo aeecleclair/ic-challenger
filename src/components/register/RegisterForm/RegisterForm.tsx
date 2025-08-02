@@ -1,6 +1,5 @@
-import { registeringFormSchema } from "@/src/forms/registering";
+import { registeringFormSchema, RegisteringFormValues } from "@/src/forms/registering";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { RegisterFormField } from "./RegisterFormField";
@@ -22,7 +21,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const { me } = useUser();
   const { meCompetition } = useCompetitionUser();
 
-  const form = useForm<z.infer<typeof registeringFormSchema>>({
+  const form = useForm<RegisteringFormValues>({
     resolver: zodResolver(registeringFormSchema),
     mode: "onBlur",
     defaultValues: {
@@ -39,7 +38,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof registeringFormSchema>) {
+  async function onSubmit(values: RegisteringFormValues) {
     setIsLoading(true);
   }
 

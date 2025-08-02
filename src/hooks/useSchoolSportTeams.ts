@@ -1,5 +1,5 @@
 import {
-  useGetCompetitionTeamsSchoolsSchoolIdSportsSportId,
+  useGetCompetitionTeamsSportsSportIdSchoolsSchoolId,
   usePostCompetitionTeams,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
@@ -22,7 +22,7 @@ export const useSchoolSportTeams = ({
     data: teams,
     isLoading,
     refetch: refetchTeams,
-  } = useGetCompetitionTeamsSchoolsSchoolIdSportsSportId(
+  } = useGetCompetitionTeamsSportsSportIdSchoolsSchoolId(
     {
       headers: {
         Authorization: `Bearer ${token}`,

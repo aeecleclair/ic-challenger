@@ -4,7 +4,7 @@ import {
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType } from "../utils/errorTyping";
-import { Participant } from "../api/hyperionSchemas";
+import { Participant, ParticipantInfo } from "../api/hyperionSchemas";
 
 export const useParticipant = () => {
   const { token } = useAuth();
@@ -12,7 +12,11 @@ export const useParticipant = () => {
   const { mutate: mutateCreateParticipant, isPending: isCreateLoading } =
     usePostCompetitionSportsSportIdParticipate();
 
-  const createParticipant = async (body: Participant, callback: () => void) => {
+  const createParticipant = async (
+    body: ParticipantInfo,
+    sportId: string,
+    callback: () => void,
+  ) => {
     return mutateCreateParticipant(
       {
         headers: {
@@ -20,14 +24,15 @@ export const useParticipant = () => {
         },
         body: body,
         pathParams: {
-          sportId: body.sport_id,
+          sportId: sportId,
         },
       },
       {
         onSuccess: () => {
           toast({
             title: "Demande d'inscription enregistrée",
-            description: "Votre demande d'inscription a été envoyée avec succès.",
+            description:
+              "Votre demande d'inscription a été envoyée avec succès.",
           });
           callback();
         },

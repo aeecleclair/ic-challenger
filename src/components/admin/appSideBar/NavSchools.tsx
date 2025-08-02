@@ -7,14 +7,14 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "../../../ui/sidebar";
+} from "@/src/components/ui/sidebar";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../ui/dropdown-menu";
+} from "@/src/components/ui/dropdown-menu";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useRouter } from "next/navigation";
 import {

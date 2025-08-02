@@ -1,24 +1,23 @@
 "use client";
 
 import EditionForm from "@/src/components/admin/EditionForm";
-import { editionFormSchema } from "@/src/forms/edition";
+import { EditionFormSchema, editionFormSchema } from "@/src/forms/edition";
 import { useEdition } from "@/src/hooks/useEdition";
 import { useUser } from "@/src/hooks/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z from "zod";
 
 const AdminFallback = () => {
   const { createEdition, isCreationLoading } = useEdition();
   const { isAdmin } = useUser();
 
-  const form = useForm<z.infer<typeof editionFormSchema>>({
+  const form = useForm<EditionFormSchema>({
     resolver: zodResolver(editionFormSchema),
     defaultValues: {},
     mode: "onChange",
   });
 
-  function onSubmit(values: z.infer<typeof editionFormSchema>) {
+  function onSubmit(values: EditionFormSchema) {
     createEdition(
       {
         name: values.name,

@@ -29,3 +29,5 @@ export const editionFormSchema = z
       });
     }
   });
+
+export type EditionFormSchema = z.infer<typeof editionFormSchema>;

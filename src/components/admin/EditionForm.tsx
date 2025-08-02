@@ -5,14 +5,13 @@ import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Form } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
-import { editionFormSchema } from "@/src/forms/edition";
+import { EditionFormSchema } from "@/src/forms/edition";
 import { DatePicker } from "../custom/DatePicker";
 
 interface EditionFormProps {
-  form: UseFormReturn<z.infer<typeof editionFormSchema>>;
+  form: UseFormReturn<EditionFormSchema>;
   isLoading: boolean;
-  onSubmit: (values: z.infer<typeof editionFormSchema>) => void;
+  onSubmit: (values: EditionFormSchema) => void;
   submitLabel: string;
 }
 

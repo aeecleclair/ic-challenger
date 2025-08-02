@@ -1,14 +1,12 @@
 import { StyledFormField } from "../../custom/StyledFormField";
-import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
-import { registeringFormSchema } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import { Checkbox } from "../../ui/checkbox";
+import { RegisteringFormValues } from "@/src/forms/registering";
 
 interface ParticipationCardProps {
-  form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
+  form: UseFormReturn<RegisteringFormValues>;
   onSportToggle: () => void;
 }
 

@@ -32,3 +32,5 @@ export const variantFormSchema = z.object({
   schoolType: z.enum(schoolType),
   publicType: z.enum(publicType).optional(),
 });
+
+export type VariantFormValues = z.infer<typeof variantFormSchema>;

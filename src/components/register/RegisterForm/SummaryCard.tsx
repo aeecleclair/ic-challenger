@@ -1,6 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
-import { registeringFormSchema } from "@/src/forms/registering";
+import { RegisteringFormValues } from "@/src/forms/registering";
 import { useUser } from "@/src/hooks/useUser";
 import { useSports } from "@/src/hooks/useSports";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
@@ -10,7 +9,7 @@ import { CheckCircle2 } from "lucide-react";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 
 interface SummaryCardProps {
-  form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
+  form: UseFormReturn<RegisteringFormValues>;
 }
 
 export const SummaryCard = ({ form }: SummaryCardProps) => {

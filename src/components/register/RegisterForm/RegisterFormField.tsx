@@ -1,7 +1,6 @@
 import { LoadingButton } from "../../custom/LoadingButton";
 import { UseFormReturn } from "react-hook-form";
-import { registeringFormSchema } from "@/src/forms/registering";
-import z from "zod";
+import { RegisteringFormValues } from "@/src/forms/registering";
 import { Carousel, CarouselApi, CarouselContent } from "../../ui/carousel";
 import { InformationCard } from "./InformationCard";
 import { ParticipationCard } from "./ParticipationCard";
@@ -15,9 +14,9 @@ import { SummaryCard } from "./SummaryCard";
 import { Sport } from "@/src/api/hyperionSchemas";
 
 interface RegisterFormFieldProps {
-  form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
+  form: UseFormReturn<RegisteringFormValues>;
   isLoading: boolean;
-  onSubmit: (values: z.infer<typeof registeringFormSchema>) => void;
+  onSubmit: (values: RegisteringFormValues) => void;
   sports?: Sport[];
   setState: (state: RegisterState) => void;
   state: RegisterState;

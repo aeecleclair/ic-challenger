@@ -1,7 +1,6 @@
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Form } from "@/src/components/ui/form";
-import { Input } from "@/src/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -10,16 +9,15 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
-import { schoolFormSchema } from "@/src/forms/schools";
+import { SchoolFormValues } from "@/src/forms/schools";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { CoreSchool } from "@/src/api/hyperionSchemas";
 
 interface SchoolsFormProps {
-  form: UseFormReturn<z.infer<typeof schoolFormSchema>>;
+  form: UseFormReturn<SchoolFormValues>;
   isLoading: boolean;
-  onSubmit: (values: z.infer<typeof schoolFormSchema>) => void;
+  onSubmit: (values: SchoolFormValues) => void;
   submitLabel: string;
   schools: CoreSchool[];
 }
@@ -67,7 +65,7 @@ export const SchoolsForm = ({
             </div>
           )}
         />
-{/* 
+        {/* 
         <div className="grid grid-cols-2 gap-6">
           <StyledFormField
             form={form}

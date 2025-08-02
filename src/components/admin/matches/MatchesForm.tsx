@@ -26,23 +26,8 @@ import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useEffect, useState } from "react";
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
-import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { MatchFormValues } from "@/src/forms/match";
 
-// Form schema
-export const matchFormSchema = z.object({
-  name: z.string().min(1, "Le nom est requis"),
-  sport_id: z.string().min(1, "Le sport est requis"),
-  team1_id: z.string().min(1, "L'équipe 1 est requise"),
-  team2_id: z.string().min(1, "L'équipe 2 est requise"),
-  date: z.date().optional(),
-  location_id: z.string().optional(),
-  score_team1: z.number().int().optional(),
-  score_team2: z.number().int().optional(),
-  winner_id: z.string().optional(),
-  edition_id: z.string().min(1, "L'édition est requise"),
-});
-
-export type MatchFormValues = z.infer<typeof matchFormSchema>;
 
 interface MatchesFormProps {
   form: UseFormReturn<MatchFormValues>;

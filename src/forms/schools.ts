@@ -25,3 +25,6 @@ export const schoolFormSchema = z.object({
   //   required_error: "Veuillez renseigner le quota de non-athlètes",
   // }).min(0, "Le quota de non-athlètes doit être supérieur ou égal à 0"),
 });
+
+
+export type SchoolFormValues = z.infer<typeof schoolFormSchema>;

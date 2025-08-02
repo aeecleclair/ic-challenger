@@ -24,10 +24,7 @@ export const sportFormSchema = z.object({
     message: "La taille de l'équipe doit être supérieure à 0",
   }),
   sportCategory: z.enum(
-    sportCategories.map((cat) => cat.value) as [
-      SportCategory,
-      ...SportCategory[],
-    ],
+    sportCategories.map((cat) => cat.value) as [SportCategory],
     {
       required_error: "Veuillez sélectionner une catégorie de sport",
     },
@@ -39,3 +36,5 @@ export const sportFormSchema = z.object({
     required_error: "Veuillez indiquer si le sport est activé",
   }),
 });
+
+export type SportFormValues = z.infer<typeof sportFormSchema>;

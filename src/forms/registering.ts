@@ -28,8 +28,9 @@ export const registeringFormSchema = z
           required_error: "Veuillez sélectionner un sport",
         }),
         team_id: z.string().optional(),
-        team_leader: z.boolean().optional(),
+        team_leader: z.boolean(),
         license_number: z.string().optional(),
+        substitute: z.boolean().optional(),
       })
       .optional(),
     package: z.enum(["light", "full"], {
@@ -64,11 +65,7 @@ export const registeringFormSchema = z
         message: "Veuillez renseigner les informations sportives",
       });
     }
-    if (
-      data.is_athlete &&
-      data.sport?.team_leader &&
-      !data.sport?.team_id
-    ) {
+    if (data.is_athlete && data.sport?.team_leader && !data.sport?.team_id) {
       ctx.addIssue({
         path: ["sport", "team_id"],
         code: z.ZodIssueCode.custom,
@@ -83,3 +80,5 @@ export const registeringFormSchema = z
       });
     }
   });
+
+export type RegisteringFormValues = z.infer<typeof registeringFormSchema>;

@@ -23,8 +23,7 @@ import { useState } from "react";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
   CompetitionUserBase,
-  Participant,
-  SportCategory,
+  ParticipantInfo,
 } from "@/src/api/hyperionSchemas";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useEdition } from "@/src/hooks/useEdition";
@@ -35,7 +34,6 @@ const Register = () => {
   const { me, updateUser } = useUser();
   const { meCompetition, createCompetitionUser } = useCompetitionUser();
   const { createParticipant } = useParticipant();
-  const { edition } = useEdition();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -63,7 +61,7 @@ const Register = () => {
         "is_volunteer",
       ],
       Package: ["package", "party", "bottle", "tShirt"],
-      Sport: ["sport.id"],
+      Sport: ["sport.id", "sport.team_id"],
       Récapitulatif: [],
     } as const,
     onValidateCardActions: {
@@ -91,15 +89,12 @@ const Register = () => {
       },
       Sport: (values, callback) => {
         // TODO: check participant
-        const body: Participant = {
-          user_id: me!.id,
-          sport_id: values.sport!.id,
-          edition_id: edition?.id!,
-          school_id: me!.school!.id,
+        const body: ParticipantInfo = {
           license: values.sport!.license_number!,
-          team_id: values.sport!.team_id,
+          team_id: values.sport!.team_id!,
+          substitute: values.sport!.substitute,
         };
-        createParticipant(body, callback);
+        createParticipant(body, values.sport!.id, callback);
       },
       Package: () => {},
       Récapitulatif: () => {},

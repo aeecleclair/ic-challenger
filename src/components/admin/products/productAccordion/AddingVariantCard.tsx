@@ -1,11 +1,10 @@
 import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase } from "@/src/api/hyperionSchemas";
 import { Form } from "@/src/components/ui/form";
-import { variantFormSchema } from "@/src/forms/variant";
+import { variantFormSchema, VariantFormValues } from "@/src/forms/variant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { HiPlus } from "react-icons/hi2";
-import { z } from "zod";
 
 import { Card, CardContent } from "@/src/components/ui/card";
 import { CustomDialog } from "@/src/components/custom/CustomDialog";
@@ -20,13 +19,13 @@ export const AddingVariantCard = ({ productId }: AddingVariantCardProps) => {
   const { createVariant, isCreateVariantLoading } = useProducts();
   const [isAddDialogOpened, setIsAddDialogOpened] = useState(false);
 
-  const form = useForm<z.infer<typeof variantFormSchema>>({
+  const form = useForm<VariantFormValues>({
     resolver: zodResolver(variantFormSchema),
     mode: "onBlur",
     defaultValues: {},
   });
 
-  async function onSubmit(values: z.infer<typeof variantFormSchema>) {
+  async function onSubmit(values: VariantFormValues) {
     const body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase =
       {
         ...values,

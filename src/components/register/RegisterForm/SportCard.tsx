@@ -3,7 +3,7 @@ import { Label } from "../../ui/label";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
-import { registeringFormSchema } from "@/src/forms/registering";
+import { registeringFormSchema, RegisteringFormValues } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import {
   Select,
@@ -32,7 +32,7 @@ import { useUser } from "@/src/hooks/useUser";
 import { useState } from "react";
 
 interface SportCardProps {
-  form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
+  form: UseFormReturn<RegisteringFormValues>;
   sports?: Sport[];
 }
 

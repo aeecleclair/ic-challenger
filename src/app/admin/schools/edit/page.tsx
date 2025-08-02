@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
 import { SchoolExtensionEdit } from "@/src/api/hyperionSchemas";
-import { schoolFormSchema } from "@/src/forms/schools";
+import { schoolFormSchema, SchoolFormValues } from "@/src/forms/schools";
 
 const Dashboard = () => {
   const searchParam = useSearchParams();
@@ -22,7 +22,7 @@ const Dashboard = () => {
   const { updateCompetitionSchool, isUpdateLoading: isLoading } =
     useSportSchools();
 
-  const form = useForm<z.infer<typeof schoolFormSchema>>({
+  const form = useForm<SchoolFormValues>({
     resolver: zodResolver(schoolFormSchema),
     defaultValues: {
       schools: school?.school_id,
@@ -33,7 +33,7 @@ const Dashboard = () => {
     mode: "onChange",
   });
 
-  function onSubmit(values: z.infer<typeof schoolFormSchema>) {
+  function onSubmit(values: SchoolFormValues) {
     const body: SchoolExtensionEdit = {
       from_lyon: values.fromLyon,
       active: values.active,

@@ -2,8 +2,7 @@ import { StyledFormField } from "../../custom/StyledFormField";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
-import { registeringFormSchema } from "@/src/forms/registering";
+import { RegisteringFormValues } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import {
   Select,
@@ -15,7 +14,7 @@ import {
 import { Checkbox } from "../../ui/checkbox";
 
 interface PackageCardProps {
-  form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
+  form: UseFormReturn<RegisteringFormValues>;
 }
 
 export const PackageCard = ({ form }: PackageCardProps) => {

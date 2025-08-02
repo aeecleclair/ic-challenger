@@ -8,11 +8,10 @@ import {
   ContextMenuShortcut,
 } from "@/src/components/ui/context-menu";
 import { Form } from "@/src/components/ui/form";
-import { variantFormSchema } from "@/src/forms/variant";
+import { variantFormSchema, VariantFormValues } from "@/src/forms/variant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { CustomDialog } from "@/src/components/custom/CustomDialog";
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
@@ -45,7 +44,7 @@ export const VariantCardOptions = ({
   const [isEditDialogOpened, setIsEditDialogOpened] = useState(false);
   const [isRemoveDialogOpened, setIsRemoveDialogOpened] = useState(false);
 
-  const form = useForm<z.infer<typeof variantFormSchema>>({
+  const form = useForm<VariantFormValues>({
     resolver: zodResolver(variantFormSchema),
     mode: "onBlur",
     defaultValues: {
@@ -58,7 +57,7 @@ export const VariantCardOptions = ({
       publicType: variant.public_type || undefined,
     },
   });
-  async function onSubmit(values: z.infer<typeof variantFormSchema>) {
+  async function onSubmit(values: VariantFormValues) {
     const body: AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit =
       {
         ...values,

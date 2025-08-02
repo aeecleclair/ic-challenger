@@ -1,8 +1,7 @@
 import { StyledFormField } from "../../custom/StyledFormField";
 import { Input } from "../../ui/input";
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
-import { registeringFormSchema } from "@/src/forms/registering";
+import { RegisteringFormValues } from "@/src/forms/registering";
 import { useUser } from "@/src/hooks/useUser";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { CardTemplate } from "./CardTemplate";
@@ -10,7 +9,7 @@ import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 
 interface InformationCardProps {
-  form: UseFormReturn<z.infer<typeof registeringFormSchema>>;
+  form: UseFormReturn<RegisteringFormValues>;
 }
 
 export const InformationCard = ({ form }: InformationCardProps) => {
