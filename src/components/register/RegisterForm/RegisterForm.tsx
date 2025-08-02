@@ -11,6 +11,7 @@ import { RegisterState } from "@/src/infra/registerState";
 import { useSports } from "@/src/hooks/useSports";
 import { useUser } from "@/src/hooks/useUser";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
+import { WaitingPage } from "./WaintingPage";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
@@ -46,18 +47,48 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
     setIsLoading(true);
   }
 
+  useEffect(() => {
+    if (meCompetition) {
+      setState({
+        ...state,
+        currentStep: 4,
+        stepDone: 4,
+        headerTitle: "Récapitulatif",
+        headerSubtitle: "Récapitulatif",
+      });
+    } else {
+      setState({
+        ...state,
+        currentStep: 1,
+        stepDone: 0,
+        headerTitle: "Inscription",
+        headerSubtitle: "Informations",
+      });
+    }
+  }, [meCompetition, setState, state]);
+
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <RegisterFormField
-          form={form}
-          sports={sports}
-          isLoading={isLoading}
-          onSubmit={onSubmit}
-          setState={setState}
-          state={state}
-        />
-      </form>
-    </Form>
+    <>
+      {meCompetition === null && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <RegisterFormField
+              form={form}
+              sports={sports}
+              isLoading={isLoading}
+              onSubmit={onSubmit}
+              setState={setState}
+              state={state}
+            />
+          </form>
+        </Form>
+      )}
+      {meCompetition && !meCompetition.validated && <WaitingPage />}
+      {meCompetition && meCompetition.validated && (
+        <div className="text-center text-green-500">
+          <p>Votre inscription a été validée avec succès !</p>
+        </div>
+      )}
+    </>
   );
 };

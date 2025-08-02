@@ -4,14 +4,6 @@ import { useAuth } from "../hooks/useAuth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "../hooks/useUser";
 import { AppSidebar } from "../components/home/appSideBar/AppSidebar";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "../components/ui/breadcrumb";
 import { Separator } from "../components/ui/separator";
 import {
   SidebarInset,
@@ -33,16 +25,23 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { fr } from "date-fns/locale";
 import { useEdition } from "../hooks/useEdition";
+import { useCompetitionUser } from "../hooks/useCompetitionUser";
+import { useSportMatches } from "../hooks/useMatches";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
   const { me: user, isAdmin } = useUser();
+  const { meCompetition, isLoading } = useCompetitionUser();
   const searchParams = useSearchParams();
   const router = useRouter();
   const { edition } = useEdition();
 
   if (isTokenQueried && token === null) {
     router.replace("/login");
+  }
+
+  if (!isLoading && !meCompetition?.validated && user !== null) {
+    router.replace("/register");
   }
 
   // if (isAdmin() && typeof window !== "undefined") {
@@ -63,13 +62,25 @@ const Home = () => {
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
-        {!edition && (
-          <div className="flex flex-col relative overflow-auto h-full m-6">
+        <div className="flex flex-col relative overflow-auto h-full m-6">
+          {!edition && (
             <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
               Veuillez patienter, l&apos;édition n&apos;est pas encore prête.
             </span>
-          </div>
-        )}
+          )}
+          {meCompetition && (
+            <>
+            <div className="flex flex-col gap-2">
+              <h2 className="text-lg font-semibold">Inscrit en tant que</h2>
+              {meCompetition.is_athlete ? (
+                <span className="text-sm text-muted-foreground">Athlète</span>
+              ) : (
+                <span className="text-sm text-muted-foreground">Supporter</span>
+              )}
+            </div>
+            </>
+          )}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

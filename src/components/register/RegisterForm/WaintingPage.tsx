@@ -1,34 +1,41 @@
-import { UseFormReturn } from "react-hook-form";
-import { RegisteringFormValues } from "@/src/forms/registering";
+import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useUser } from "@/src/hooks/useUser";
-import { useSports } from "@/src/hooks/useSports";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
-import { CardTemplate } from "./CardTemplate";
 import { Badge } from "../../ui/badge";
 import { CheckCircle2 } from "lucide-react";
+import { useParticipant } from "@/src/hooks/useParticipant";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
+import { useSports } from "@/src/hooks/useSports";
+import { useUserPurchases } from "@/src/hooks/useUserPurchases";
+import { Card, CardContent } from "../../ui/card";
 
-interface SummaryCardProps {
-  form: UseFormReturn<RegisteringFormValues>;
-}
-
-export const SummaryCard = ({ form }: SummaryCardProps) => {
+export const WaitingPage = () => {
   const { me } = useUser();
+  const { meCompetition } = useCompetitionUser();
+  const { meParticipant } = useParticipant();
+  const { sports } = useSports();
   const { teams } = useSchoolSportTeams({
     schoolId: me?.school_id,
-    sportId: form.getValues().sport?.id,
+    sportId: meParticipant?.sport_id,
   });
-  const { sports } = useSports();
-  const formValues = form.getValues();
+  const { userPurchases } = useUserPurchases({
+    userId: me?.id,
+  });
 
-  // Find the selected sport by ID
-  const selectedSport = formValues.sport?.id
-    ? sports?.find((sport) => sport.id === formValues.sport?.id)
-    : undefined;
+  const team = teams?.find((team) => team.id === meParticipant?.team_id);
 
   return (
-    <CardTemplate>
+    <div className="flex w-full flex-col p-6">
       <div className="space-y-6">
+        <Card>
+          <CardContent>
+            <h2 className="text-xl font-semibold">En attente de validation</h2>
+            <p>
+              Votre inscription est en cours de validation. Vous serez informé
+              par e-mail une fois qu&apos;elle aura été examinée.
+            </p>
+          </CardContent>
+        </Card>
         <h2 className="text-xl font-semibold">
           Récapitulatif de ton inscription
         </h2>
@@ -51,7 +58,7 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Téléphone</p>
-              <p>{formValues.phone || "-"}</p>
+              <p>{me?.phone || "-"}</p>
             </div>
           </div>
         </div>
@@ -62,7 +69,7 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
             <div>
               <h3 className="font-semibold">Participation</h3>
               <div className="grid grid-cols-1 gap-2 mt-2">
-                {formValues.is_athlete && formValues.sport && (
+                {meCompetition?.is_athlete && meParticipant && (
                   <div className="space-y-2">
                     <div className="flex items-center gap-1">
                       <CheckCircle2 className="h-4 w-4 text-green-500" />
@@ -74,21 +81,23 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
                       <div>
                         <p className="text-sm text-muted-foreground">Sport</p>
                         <p>
-                          {selectedSport?.name || "-"}{" "}
-                          {formValues.sex ? `(${formValues.sex!})` : ""}
+                          {sports?.find(
+                            (sport) => sport.id === meParticipant.sport_id,
+                          )?.name || "-"}{" "}
+                          {meCompetition?.sport_category
+                            ? `(${meCompetition.sport_category!})`
+                            : ""}
                         </p>
                       </div>
 
-                      {formValues.sport.team_id && (
+                      {meParticipant.team_id && (
                         <div>
                           <p className="text-sm text-muted-foreground">
                             Équipe
                           </p>
                           <p>
-                            {teams?.find(
-                              (team) => team.id === formValues.sport?.team_id,
-                            )?.name || "-"}{" "}
-                            {formValues.sport?.team_leader ? "(capitaine)" : ""}
+                            {team?.name || "-"}{" "}
+                            {team?.captain_id === me?.id ? "(capitaine)" : ""}
                           </p>
                         </div>
                       )}
@@ -96,28 +105,28 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
                   </div>
                 )}
 
-                {formValues.is_cameraman && (
+                {meCompetition?.is_cameraman && (
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <p className="text-sm">Caméraman</p>
                   </div>
                 )}
 
-                {formValues.is_fanfare && (
+                {meCompetition?.is_fanfare && (
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <p className="text-sm">Fanfaron</p>
                   </div>
                 )}
 
-                {formValues.is_pompom && (
+                {meCompetition?.is_pompom && (
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <p className="text-sm">Pompom</p>
                   </div>
                 )}
 
-                {formValues.is_volunteer && (
+                {meCompetition?.is_volunteer && (
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <p className="text-sm">Bénévole</p>
@@ -130,18 +139,18 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
             <div className="space-y-2">
               <h3 className="font-semibold">Produits sélectionnés</h3>
 
-              {formValues.products && formValues.products.length > 0 ? (
+              {userPurchases && userPurchases.length > 0 ? (
                 <div className="grid grid-cols-1 gap-2 mt-2">
-                  {formValues.products.map((productItem, index) => (
+                  {userPurchases.map((productItem, index) => (
                     <div key={index} className="flex items-center gap-1">
                       <CheckCircle2 className="h-4 w-4 text-green-500" />
                       <p className="text-sm">
-                        {productItem.product.name}
+                        {productItem.product_variant_id}
                         {productItem.quantity > 1 &&
                           ` (x${productItem.quantity})`}{" "}
                         -{" "}
                         <span className="font-semibold">
-                          {productItem.product.price / 100}€
+                          {productItem.quantity / 100}€
                         </span>
                       </p>
                     </div>
@@ -150,10 +159,10 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
                   <div className="flex items-center gap-2 mt-2">
                     <p className="text-sm text-muted-foreground">Total:</p>
                     <Badge variant="outline">
-                      {formValues.products
+                      {userPurchases
                         .reduce(
                           (total, item) =>
-                            total + (item.product.price / 100) * item.quantity,
+                            total + (item.quantity / 100) * item.quantity,
                           0,
                         )
                         .toFixed(2)}
@@ -172,6 +181,6 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
           </div>
         </div>
       </div>
-    </CardTemplate>
+    </div>
   );
 };
