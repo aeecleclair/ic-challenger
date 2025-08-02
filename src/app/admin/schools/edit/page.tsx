@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SchoolsForm } from "@/src/components/admin/appSideBar/schools/SchoolsForm";
+import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
 import { SchoolExtensionEdit } from "@/src/api/hyperionSchemas";
 import { schoolFormSchema } from "@/src/forms/schools";
 

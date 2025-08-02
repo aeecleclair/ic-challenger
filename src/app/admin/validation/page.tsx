@@ -1,6 +1,6 @@
 "use client";
 
-import SchoolCard from "@/src/components/admin/appSideBar/schools/SchoolCard";
+import SchoolCard from "@/src/components/admin/schools/SchoolCard";
 import { Button } from "@/src/components/ui/button";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useSportSchools } from "@/src/hooks/useSportSchools";

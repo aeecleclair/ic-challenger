@@ -1,6 +1,6 @@
 "use client";
 
-import { SellerProductList } from "@/src/components/admin/appSideBar/products/SellerProductList";
+import { SellerProductList } from "@/src/components/admin/products/SellerProductList";
 import { useProducts } from "@/src/hooks/useProducts";
 import { useUser } from "@/src/hooks/useUser";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,5 @@ const SellerTab = () => {
     </div>
   );
 };
-
 
 export default SellerTab;

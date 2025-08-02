@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useSportMatches } from "@/src/hooks/useMatches";
 import { MatchFormValues, matchFormSchema } from "@/src/forms/match";
-import { MatchesForm } from "@/src/components/admin/appSideBar/matches/MatchesForm";
+import { MatchesForm } from "@/src/components/admin/matches/MatchesForm";
 import { MatchBase } from "@/src/api/hyperionSchemas";
 
 const CreateMatchPage = () => {

@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { SportsForm } from "@/src/components/admin/appSideBar/sports/SportsForm";
+import { SportsForm } from "@/src/components/admin/sports/SportsForm";
 import { SportEdit } from "@/src/api/hyperionSchemas";
 import { sportFormSchema } from "@/src/forms/sport";
 

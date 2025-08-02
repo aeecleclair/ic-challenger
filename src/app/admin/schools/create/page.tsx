@@ -7,7 +7,7 @@ import { schoolFormSchema } from "@/src/forms/schools";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import Link from "next/link";
-import { SchoolsForm } from "@/src/components/admin/appSideBar/schools/SchoolsForm";
+import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
 import { SchoolExtensionBase } from "@/src/api/hyperionSchemas";
 
 const Dashboard = () => {
@@ -30,12 +30,9 @@ const Dashboard = () => {
       active: values.active,
       inscription_enabled: values.inscription_enabled,
     };
-    createCompetitionSchool(
-      body,
-      () => {
-        form.reset();
-      },
-    );
+    createCompetitionSchool(body, () => {
+      form.reset();
+    });
   }
   return (
     <div className="flex h-full w-full flex-col p-6">

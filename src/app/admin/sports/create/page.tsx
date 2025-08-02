@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { sportFormSchema } from "@/src/forms/sport";
 import { useSports } from "@/src/hooks/useSports";
-import { SportsForm } from "@/src/components/admin/appSideBar/sports/SportsForm";
+import { SportsForm } from "@/src/components/admin/sports/SportsForm";
 
 const Dashboard = () => {
   const { createSport, isCreateLoading: isLoading } = useSports();

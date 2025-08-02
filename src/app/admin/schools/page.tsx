@@ -1,12 +1,12 @@
 "use client";
 
-import SchoolCard from "@/src/components/admin/appSideBar/schools/SchoolCard";
+import SchoolCard from "@/src/components/admin/schools/SchoolCard";
 import { Button } from "@/src/components/ui/button";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import SchoolDetail from "@/src/components/admin/appSideBar/schools/SchoolDetail";
+import SchoolDetail from "@/src/components/admin/schools/SchoolDetail";
 
 const Dashboard = () => {
   const router = useRouter();

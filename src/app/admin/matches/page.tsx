@@ -6,10 +6,10 @@ import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { useSportMatches } from "@/src/hooks/useMatches";
 import { useSports } from "@/src/hooks/useSports";
-import MatchCard from "@/src/components/admin/appSideBar/matches/MatchCard";
-import MatchDetail from "@/src/components/admin/appSideBar/matches/MatchDetail";
+import MatchCard from "@/src/components/admin/matches/MatchCard";
+import MatchDetail from "@/src/components/admin/matches/MatchDetail";
 import { WarningDialog } from "@/src/components/custom/WarningDialog";
-import { MatchDataTable } from "@/src/components/admin/appSideBar/matches/MatchDataTable";
+import { MatchDataTable } from "@/src/components/admin/matches/MatchDataTable";
 import {
   Tabs,
   TabsContent,

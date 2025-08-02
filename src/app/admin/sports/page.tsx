@@ -1,11 +1,11 @@
 "use client";
 
-import SportCard from "@/src/components/admin/appSideBar/sports/SportCard";
+import SportCard from "@/src/components/admin/sports/SportCard";
 import { useSports } from "@/src/hooks/useSports";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
-import SportDetail from "@/src/components/admin/appSideBar/sports/SportDetail";
+import SportDetail from "@/src/components/admin/sports/SportDetail";
 
 const Dashboard = () => {
   const router = useRouter();
