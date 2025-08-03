@@ -50,7 +50,7 @@ export const RegisterFormField = ({
   };
 
   return (
-    <div className="gap-6 p-8 w-full flex flex-col h-[calc(100vh-12rem)] rounded-lg lg:w-1/2">
+    <div className="gap-6 p-8 w-full flex flex-col h-[calc(100vh-12rem)]">
       <Carousel setApi={setApi} opts={{ watchDrag: false }}>
         <CarouselContent className="h-[calc(100vh-16rem)]" draggable={false}>
           <InformationCard form={form} />
@@ -61,7 +61,7 @@ export const RegisterFormField = ({
         </CarouselContent>
       </Carousel>
 
-      <div className="flex justify-center mt-4 gap-4">
+      <div className="flex justify-end mt-4 gap-4">
         <Button
           variant="outline"
           size="icon"

@@ -7,7 +7,7 @@ import { useParticipant } from "@/src/hooks/useParticipant";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
-import { Card, CardContent } from "../../ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "../../ui/card";
 
 export const WaitingPage = () => {
   const { me } = useUser();
@@ -25,16 +25,14 @@ export const WaitingPage = () => {
   const team = teams?.find((team) => team.id === meParticipant?.team_id);
 
   return (
-    <div className="flex w-full flex-col p-6">
+    <div className="flex w-full flex-col p-12 pt-6">
       <div className="space-y-6">
-        <Card>
-          <CardContent>
-            <h2 className="text-xl font-semibold">En attente de validation</h2>
-            <p>
-              Votre inscription est en cours de validation. Vous serez informé
-              par e-mail une fois qu&apos;elle aura été examinée.
-            </p>
-          </CardContent>
+        <Card className="p-6 bg-red-700 text-white border-red-800 shadow-md shadow-red-500/50">
+          <CardTitle>En attente de validation</CardTitle>
+          <CardDescription className="text-white">
+            Ton inscription est en cours de validation par ton BDS. Tu seras
+            informé par e-mail une fois qu&apos;elle aura été examinée.
+          </CardDescription>
         </Card>
         <h2 className="text-xl font-semibold">
           Récapitulatif de ton inscription
@@ -45,11 +43,11 @@ export const WaitingPage = () => {
           <h3 className="font-semibold">Informations personnelles</h3>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-sm text-muted-foreground">Nom</p>
+              <p className="text-sm text-muted-foreground">Prénom</p>
               <p>{me?.firstname || "-"}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Prénom</p>
+              <p className="text-sm text-muted-foreground">Nom</p>
               <p>{me?.name || "-"}</p>
             </div>
             <div>

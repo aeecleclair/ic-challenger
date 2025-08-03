@@ -69,7 +69,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
         id="sport.id"
         input={(field) => (
           <Select onValueChange={field.onChange} value={field.value}>
-            <SelectTrigger className="w-full lg:w-2/3">
+            <SelectTrigger className="w-60">
               <SelectValue placeholder="Sélectionnez un sport" />
             </SelectTrigger>
             {sports && (
@@ -115,11 +115,11 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                   placeholder="Nom de l'équipe"
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
-                  className="w-full lg:w-2/3"
+                  className="w-60"
                 />
                 <LoadingButton
                   variant="outline"
-                  className="w-1/3"
+                  className="w-60"
                   onClick={() => createTeam(teamName)}
                   disabled={
                     !form.watch("sport.team_leader") || teamName.length === 0
@@ -144,7 +144,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
               value={field.value}
               disabled={!form.watch("sport.team_leader")}
             >
-              <SelectTrigger className="w-full lg:w-2/3">
+              <SelectTrigger className="w-60">
                 <SelectValue placeholder="Sélectionnez une équipe" />
               </SelectTrigger>
               {teams && teams.length === 0 && (
@@ -166,7 +166,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
           form={form}
           label="Numéro de licence"
           id="sport.license_number"
-          input={(field) => <Input {...field} className="w-full" />}
+          input={(field) => <Input {...field} className="w-60" />}
         />
         {/*
         <StyledFormField

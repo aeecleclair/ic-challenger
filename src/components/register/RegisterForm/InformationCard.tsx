@@ -21,7 +21,7 @@ export const InformationCard = ({ form }: InformationCardProps) => {
         Complément d&apos;information te concernant
       </h2>
       <div
-        className="w-full grid gap-8 lg:gap-12 lg:w-2/3"
+        className="w-full grid gap-8 lg:gap-12"
         style={{ gridTemplateRows: "auto 1fr" }}
       >
         <StyledFormField
@@ -29,7 +29,7 @@ export const InformationCard = ({ form }: InformationCardProps) => {
           label="Numéro de téléphone"
           id="phone"
           input={(field) => (
-            <Input placeholder="+33 6 12 34 56 78" {...field} />
+            <Input className="w-60" placeholder="+33 6 12 34 56 78" {...field} />
           )}
         />
 

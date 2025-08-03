@@ -12,6 +12,7 @@ import { useSports } from "@/src/hooks/useSports";
 import { useUser } from "@/src/hooks/useUser";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { WaitingPage } from "./WaintingPage";
+import { useParticipant } from "@/src/hooks/useParticipant";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
@@ -24,6 +25,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const { sports } = useSports();
   const { me } = useUser();
   const { meCompetition } = useCompetitionUser();
+  const { meParticipant } = useParticipant();
 
   const form = useForm<RegisteringFormValues>({
     resolver: zodResolver(registeringFormSchema),
@@ -48,24 +50,27 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   }
 
   useEffect(() => {
-    if (meCompetition) {
+    const newSubtitles = [...state.allHeaderSubtitles];
+    if (meParticipant) {
+      newSubtitles.splice(2, 0, "Sport");
+    } else if (state.allHeaderSubtitles[2] === "Sport") {
+      newSubtitles.splice(2, 1);
+    }
+    setState({
+      ...state,
+      allHeaderSubtitles: newSubtitles,
+    });
+    if (meCompetition && !meCompetition.validated) {
       setState({
         ...state,
-        currentStep: 4,
-        stepDone: 4,
-        headerTitle: "Récapitulatif",
+        currentStep: meParticipant ? 5 : 4,
+        stepDone: meParticipant ? 5 : 4,
+        headerTitle: "Confirmation de l'inscription",
         headerSubtitle: "Récapitulatif",
       });
-    } else {
-      setState({
-        ...state,
-        currentStep: 1,
-        stepDone: 0,
-        headerTitle: "Inscription",
-        headerSubtitle: "Informations",
-      });
     }
-  }, [meCompetition, setState, state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meCompetition, meParticipant]);
 
   return (
     <>

@@ -38,11 +38,11 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
           <h3 className="font-semibold">Informations personnelles</h3>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-sm text-muted-foreground">Nom</p>
+              <p className="text-sm text-muted-foreground">Prénom</p>
               <p>{me?.firstname || "-"}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Prénom</p>
+              <p className="text-sm text-muted-foreground">Nom</p>
               <p>{me?.name || "-"}</p>
             </div>
             <div>
