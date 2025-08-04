@@ -12,6 +12,7 @@ import { useSports } from "@/src/hooks/useSports";
 import { useUser } from "@/src/hooks/useUser";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { WaitingPage } from "./WaintingPage";
+import { ValidatedPage } from "./ValidatedPage";
 import { useParticipant } from "@/src/hooks/useParticipant";
 
 interface RegisterFormProps {
@@ -89,11 +90,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
         </Form>
       )}
       {meCompetition && !meCompetition.validated && <WaitingPage />}
-      {meCompetition && meCompetition.validated && (
-        <div className="text-center text-green-500">
-          <p>Votre inscription a été validée avec succès !</p>
-        </div>
-      )}
+      {meCompetition && meCompetition.validated && <ValidatedPage />}
     </>
   );
 };
