@@ -1,6 +1,7 @@
 "use client";
-import { ChevronsUpDown, LogOut } from "lucide-react";
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { ChevronsUpDown, LogOut, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +20,8 @@ import { useUser } from "@/src/hooks/useUser";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { me } = useUser();
+  const { me, isAdmin, isBDS, isSportManager } = useUser();
+  const router = useRouter();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -29,10 +31,11 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              {/* <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar> */}
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarFallback className="rounded-lg">
+                  {me?.firstname?.charAt(0)?.toUpperCase()}{me?.name?.charAt(0)?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {me?.firstname} {me?.name}
@@ -51,8 +54,9 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {me?.firstname?.charAt(0)?.toUpperCase()}{me?.name?.charAt(0)?.toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
@@ -63,8 +67,14 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {(isAdmin() || isBDS() || isSportManager()) && (
+              <DropdownMenuItem onClick={() => router.push("/admin")}>
+                <Settings className="mr-2 h-4 w-4" />
+                Administration
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem>
-              <LogOut />
+              <LogOut className="mr-2 h-4 w-4" />
               Se déconnecter
             </DropdownMenuItem>
           </DropdownMenuContent>
