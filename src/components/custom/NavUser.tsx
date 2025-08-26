@@ -1,6 +1,6 @@
 "use client";
 import { ChevronsUpDown, LogOut, Settings } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import {
   DropdownMenu,
@@ -19,9 +19,13 @@ import {
 import { useUser } from "@/src/hooks/useUser";
 
 export function NavUser() {
+  const pathname = usePathname();
   const { isMobile } = useSidebar();
   const { me, isAdmin, isBDS, isSportManager } = useUser();
   const router = useRouter();
+
+  const isOnAdminPage = pathname.startsWith("/admin");
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -33,7 +37,8 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarFallback className="rounded-lg">
-                  {me?.firstname?.charAt(0)?.toUpperCase()}{me?.name?.charAt(0)?.toUpperCase()}
+                  {me?.firstname?.charAt(0)?.toUpperCase()}
+                  {me?.name?.charAt(0)?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -55,7 +60,8 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarFallback className="rounded-lg">
-                    {me?.firstname?.charAt(0)?.toUpperCase()}{me?.name?.charAt(0)?.toUpperCase()}
+                    {me?.firstname?.charAt(0)?.toUpperCase()}
+                    {me?.name?.charAt(0)?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -68,9 +74,11 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {(isAdmin() || isBDS() || isSportManager()) && (
-              <DropdownMenuItem onClick={() => router.push("/admin")}>
+              <DropdownMenuItem
+                onClick={() => router.push(isOnAdminPage ? "/" : "/admin")}
+              >
                 <Settings className="mr-2 h-4 w-4" />
-                Administration
+                {isOnAdminPage ? "Utilisateur" : "Administration"}
               </DropdownMenuItem>
             )}
             <DropdownMenuItem>

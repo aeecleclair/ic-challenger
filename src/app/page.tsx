@@ -27,6 +27,7 @@ import { fr } from "date-fns/locale";
 import { useEdition } from "../hooks/useEdition";
 import { useCompetitionUser } from "../hooks/useCompetitionUser";
 import { useSportMatches } from "../hooks/useMatches";
+import { useEffect } from "react";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
@@ -36,19 +37,18 @@ const Home = () => {
   const router = useRouter();
   const { edition } = useEdition();
 
-  if (isTokenQueried && token === null) {
-    router.replace("/login");
-  }
 
-  if (
-    !isLoading &&
-    !meCompetition?.validated &&
-    user !== undefined &&
-    edition !== undefined
-    && isTokenQueried
-  ) {
-    router.replace("/register");
-  }
+  useEffect(() => {
+    if (
+      !isLoading &&
+      (meCompetition === undefined || !meCompetition?.validated) &&
+      user !== undefined &&
+      edition !== undefined &&
+      token !== null
+    ) {
+      router.replace("/register");
+    }
+  }, [isLoading, router, meCompetition, user, edition, token]);
 
   // if (isAdmin() && typeof window !== "undefined") {
   //   const redirection = searchParams.get("redirect");
@@ -58,6 +58,10 @@ const Home = () => {
   //     router.replace("/admin");
   //   }
   // }
+
+  if (isTokenQueried && token === null) {
+    router.replace("/login");
+  }
 
   return (
     <SidebarProvider>
