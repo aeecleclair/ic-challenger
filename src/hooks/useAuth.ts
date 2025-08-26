@@ -107,7 +107,7 @@ export const useAuth = () => {
   }
 
   function isTokenExpired() {
-    if (!token) return false;
+    if (token === null) return true;
     const access_token_expires = token
       ? JSON.parse(atob(token.split(".")[1])).exp
       : 0;
@@ -196,7 +196,7 @@ export const useAuth = () => {
     queryKey: ["lookToRefreshToken"],
     queryFn: () => lookToRefreshToken(),
     retry: 0,
-    enabled: isTokenQueried,
+    enabled: token !== null,
     refetchOnMount: false,
   });
 
@@ -204,7 +204,7 @@ export const useAuth = () => {
     queryKey: ["getTokenFromStorage"],
     queryFn: () => getTokenFromStorage(),
     retry: 0,
-    enabled: !isTokenQueried,
+    enabled: token === null,
     refetchOnMount: false,
   });
 

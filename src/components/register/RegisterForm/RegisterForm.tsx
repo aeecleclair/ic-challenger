@@ -75,7 +75,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
 
   return (
     <>
-      {meCompetition === null && (
+      {meCompetition === undefined && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <RegisterFormField
