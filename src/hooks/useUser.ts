@@ -66,13 +66,15 @@ export const useUser = () => {
               "Les informations de l'utilisateur ont été mises à jour avec succès.",
           });
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la mise à jour de l'utilisateur",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour de l'utilisateur",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );

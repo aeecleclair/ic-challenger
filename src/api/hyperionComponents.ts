@@ -8959,7 +8959,7 @@ export type PostCdrSellersSellerIdProductsProductIdVariantsError =
   }>;
 
 export type PostCdrSellersSellerIdProductsProductIdVariantsVariables = {
-  body: Schemas.AppModulesCdrSchemasCdrAppModulesSportCompetitionSchemasSportCompetitionProductVariantBase;
+  body: Schemas.AppModulesCdrSchemasCdrProductVariantBase;
   pathParams: PostCdrSellersSellerIdProductsProductIdVariantsPathParams;
 } & HyperionContext["fetcherOptions"];
 
@@ -8975,7 +8975,7 @@ export const fetchPostCdrSellersSellerIdProductsProductIdVariants = (
   hyperionFetch<
     Schemas.AppModulesCdrSchemasCdrProductVariantComplete,
     PostCdrSellersSellerIdProductsProductIdVariantsError,
-    Schemas.AppModulesCdrSchemasCdrAppModulesSportCompetitionSchemasSportCompetitionProductVariantBase,
+    Schemas.AppModulesCdrSchemasCdrProductVariantBase,
     {},
     {},
     PostCdrSellersSellerIdProductsProductIdVariantsPathParams
@@ -24421,6 +24421,138 @@ export const useGetCompetitionPodiumsSportSportId = <
   });
 };
 
+export type PostCompetitionPodiumsSportSportIdPathParams = {
+  /**
+   * @format uuid
+   */
+  sportId: string;
+};
+
+export type PostCompetitionPodiumsSportSportIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type PostCompetitionPodiumsSportSportIdResponse =
+  Schemas.TeamSportResult[];
+
+export type PostCompetitionPodiumsSportSportIdVariables = {
+  body: Schemas.SportPodiumRankings;
+  pathParams: PostCompetitionPodiumsSportSportIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Create or update the podium for a specific sport in the current edition.
+ */
+export const fetchPostCompetitionPodiumsSportSportId = (
+  variables: PostCompetitionPodiumsSportSportIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    PostCompetitionPodiumsSportSportIdResponse,
+    PostCompetitionPodiumsSportSportIdError,
+    Schemas.SportPodiumRankings,
+    {},
+    {},
+    PostCompetitionPodiumsSportSportIdPathParams
+  >({
+    url: "/competition/podiums/sport/{sportId}",
+    method: "post",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Create or update the podium for a specific sport in the current edition.
+ */
+export const usePostCompetitionPodiumsSportSportId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostCompetitionPodiumsSportSportIdResponse,
+      PostCompetitionPodiumsSportSportIdError,
+      PostCompetitionPodiumsSportSportIdVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    PostCompetitionPodiumsSportSportIdResponse,
+    PostCompetitionPodiumsSportSportIdError,
+    PostCompetitionPodiumsSportSportIdVariables
+  >({
+    mutationFn: (variables: PostCompetitionPodiumsSportSportIdVariables) =>
+      fetchPostCompetitionPodiumsSportSportId(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
+export type DeleteCompetitionPodiumsSportSportIdPathParams = {
+  /**
+   * @format uuid
+   */
+  sportId: string;
+};
+
+export type DeleteCompetitionPodiumsSportSportIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type DeleteCompetitionPodiumsSportSportIdVariables = {
+  pathParams: DeleteCompetitionPodiumsSportSportIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Delete the podium for a specific sport in the current edition.
+ */
+export const fetchDeleteCompetitionPodiumsSportSportId = (
+  variables: DeleteCompetitionPodiumsSportSportIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    undefined,
+    DeleteCompetitionPodiumsSportSportIdError,
+    undefined,
+    {},
+    {},
+    DeleteCompetitionPodiumsSportSportIdPathParams
+  >({
+    url: "/competition/podiums/sport/{sportId}",
+    method: "delete",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Delete the podium for a specific sport in the current edition.
+ */
+export const useDeleteCompetitionPodiumsSportSportId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteCompetitionPodiumsSportSportIdError,
+      DeleteCompetitionPodiumsSportSportIdVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteCompetitionPodiumsSportSportIdError,
+    DeleteCompetitionPodiumsSportSportIdVariables
+  >({
+    mutationFn: (variables: DeleteCompetitionPodiumsSportSportIdVariables) =>
+      fetchDeleteCompetitionPodiumsSportSportId(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
 export type GetCompetitionPodiumsSchoolSchoolIdPathParams = {
   /**
    * @format uuid
@@ -24569,138 +24701,6 @@ export const useGetCompetitionPodiumsSchoolSchoolId = <
   });
 };
 
-export type PostCompetitionPodiumsSportSportIdPathParams = {
-  /**
-   * @format uuid
-   */
-  sportId: string;
-};
-
-export type PostCompetitionPodiumsSportSportIdError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type PostCompetitionPodiumsSportSportIdResponse =
-  Schemas.TeamSportResult[];
-
-export type PostCompetitionPodiumsSportSportIdVariables = {
-  body: Schemas.SportPodiumRankings;
-  pathParams: PostCompetitionPodiumsSportSportIdPathParams;
-} & HyperionContext["fetcherOptions"];
-
-/**
- * Create or update the podium for a specific sport in the current edition.
- */
-export const fetchPostCompetitionPodiumsSportSportId = (
-  variables: PostCompetitionPodiumsSportSportIdVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    PostCompetitionPodiumsSportSportIdResponse,
-    PostCompetitionPodiumsSportSportIdError,
-    Schemas.SportPodiumRankings,
-    {},
-    {},
-    PostCompetitionPodiumsSportSportIdPathParams
-  >({
-    url: "/competition/podiums/sport/{sportId}/",
-    method: "post",
-    ...variables,
-    signal,
-  });
-
-/**
- * Create or update the podium for a specific sport in the current edition.
- */
-export const usePostCompetitionPodiumsSportSportId = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostCompetitionPodiumsSportSportIdResponse,
-      PostCompetitionPodiumsSportSportIdError,
-      PostCompetitionPodiumsSportSportIdVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    PostCompetitionPodiumsSportSportIdResponse,
-    PostCompetitionPodiumsSportSportIdError,
-    PostCompetitionPodiumsSportSportIdVariables
-  >({
-    mutationFn: (variables: PostCompetitionPodiumsSportSportIdVariables) =>
-      fetchPostCompetitionPodiumsSportSportId(
-        deepMerge(fetcherOptions, variables),
-      ),
-    ...options,
-  });
-};
-
-export type DeleteCompetitionPodiumsSportSportIdPathParams = {
-  /**
-   * @format uuid
-   */
-  sportId: string;
-};
-
-export type DeleteCompetitionPodiumsSportSportIdError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type DeleteCompetitionPodiumsSportSportIdVariables = {
-  pathParams: DeleteCompetitionPodiumsSportSportIdPathParams;
-} & HyperionContext["fetcherOptions"];
-
-/**
- * Delete the podium for a specific sport in the current edition.
- */
-export const fetchDeleteCompetitionPodiumsSportSportId = (
-  variables: DeleteCompetitionPodiumsSportSportIdVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    undefined,
-    DeleteCompetitionPodiumsSportSportIdError,
-    undefined,
-    {},
-    {},
-    DeleteCompetitionPodiumsSportSportIdPathParams
-  >({
-    url: "/competition/podiums/sport/{sportId}/",
-    method: "delete",
-    ...variables,
-    signal,
-  });
-
-/**
- * Delete the podium for a specific sport in the current edition.
- */
-export const useDeleteCompetitionPodiumsSportSportId = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      DeleteCompetitionPodiumsSportSportIdError,
-      DeleteCompetitionPodiumsSportSportIdVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    undefined,
-    DeleteCompetitionPodiumsSportSportIdError,
-    DeleteCompetitionPodiumsSportSportIdVariables
-  >({
-    mutationFn: (variables: DeleteCompetitionPodiumsSportSportIdVariables) =>
-      fetchDeleteCompetitionPodiumsSportSportId(
-        deepMerge(fetcherOptions, variables),
-      ),
-    ...options,
-  });
-};
-
 export type GetCompetitionProductsError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetCompetitionProductsResponse =
@@ -24722,7 +24722,7 @@ export const fetchGetCompetitionProducts = (
     {},
     {},
     {}
-  >({ url: "/competition/products/", method: "get", ...variables, signal });
+  >({ url: "/competition/products", method: "get", ...variables, signal });
 
 /**
  * Get all products.
@@ -24748,7 +24748,7 @@ export function getCompetitionProductsQuery(
 ) {
   return {
     queryKey: queryKeyFn({
-      path: "/competition/products/",
+      path: "/competition/products",
       operationId: "getCompetitionProducts",
       variables,
     }),
@@ -24843,7 +24843,7 @@ export const fetchPostCompetitionProducts = (
     {},
     {},
     {}
-  >({ url: "/competition/products/", method: "post", ...variables, signal });
+  >({ url: "/competition/products", method: "post", ...variables, signal });
 
 /**
  * Create a product.
@@ -24904,7 +24904,7 @@ export const fetchPatchCompetitionProductsProductId = (
     {},
     PatchCompetitionProductsProductIdPathParams
   >({
-    url: "/competition/products/{productId}/",
+    url: "/competition/products/{productId}",
     method: "patch",
     ...variables,
     signal,
@@ -24972,7 +24972,7 @@ export const fetchDeleteCompetitionProductsProductId = (
     {},
     DeleteCompetitionProductsProductIdPathParams
   >({
-    url: "/competition/products/{productId}/",
+    url: "/competition/products/{productId}",
     method: "delete",
     ...variables,
     signal,
@@ -25153,7 +25153,7 @@ export type PostCompetitionProductsProductIdVariantsError =
   }>;
 
 export type PostCompetitionProductsProductIdVariantsVariables = {
-  body: Schemas.AppModulesSportCompetitionSchemasSportCompetitionAppModulesSportCompetitionSchemasSportCompetitionProductVariantBase;
+  body: Schemas.AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase;
   pathParams: PostCompetitionProductsProductIdVariantsPathParams;
 } & HyperionContext["fetcherOptions"];
 
@@ -25169,12 +25169,12 @@ export const fetchPostCompetitionProductsProductIdVariants = (
   hyperionFetch<
     Schemas.AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
     PostCompetitionProductsProductIdVariantsError,
-    Schemas.AppModulesSportCompetitionSchemasSportCompetitionAppModulesSportCompetitionSchemasSportCompetitionProductVariantBase,
+    Schemas.AppModulesSportCompetitionSchemasSportCompetitionProductVariantBase,
     {},
     {},
     PostCompetitionProductsProductIdVariantsPathParams
   >({
-    url: "/competition/products/{productId}/variants/",
+    url: "/competition/products/{productId}/variants",
     method: "post",
     ...variables,
     signal,
@@ -25246,7 +25246,7 @@ export const fetchPatchCompetitionProductsVariantsVariantId = (
     {},
     PatchCompetitionProductsVariantsVariantIdPathParams
   >({
-    url: "/competition/products/variants/{variantId}/",
+    url: "/competition/products/variants/{variantId}",
     method: "patch",
     ...variables,
     signal,
@@ -25290,13 +25290,6 @@ export type DeleteCompetitionProductsVariantsVariantIdPathParams = {
   variantId: string;
 };
 
-export type DeleteCompetitionProductsVariantsVariantIdQueryParams = {
-  /**
-   * @format uuid
-   */
-  product_id: string;
-};
-
 export type DeleteCompetitionProductsVariantsVariantIdError =
   Fetcher.ErrorWrapper<{
     status: 422;
@@ -25305,7 +25298,6 @@ export type DeleteCompetitionProductsVariantsVariantIdError =
 
 export type DeleteCompetitionProductsVariantsVariantIdVariables = {
   pathParams: DeleteCompetitionProductsVariantsVariantIdPathParams;
-  queryParams: DeleteCompetitionProductsVariantsVariantIdQueryParams;
 } & HyperionContext["fetcherOptions"];
 
 /**
@@ -25322,10 +25314,10 @@ export const fetchDeleteCompetitionProductsVariantsVariantId = (
     DeleteCompetitionProductsVariantsVariantIdError,
     undefined,
     {},
-    DeleteCompetitionProductsVariantsVariantIdQueryParams,
+    {},
     DeleteCompetitionProductsVariantsVariantIdPathParams
   >({
-    url: "/competition/products/variants/{variantId}/",
+    url: "/competition/products/variants/{variantId}",
     method: "delete",
     ...variables,
     signal,
@@ -25508,6 +25500,72 @@ export const useGetCompetitionPurchasesUsersUserId = <
   });
 };
 
+export type PostCompetitionPurchasesUsersUserIdPathParams = {
+  userId: string;
+};
+
+export type PostCompetitionPurchasesUsersUserIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type PostCompetitionPurchasesUsersUserIdVariables = {
+  body: Schemas.AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase;
+  pathParams: PostCompetitionPurchasesUsersUserIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Create a purchase.
+ *
+ * **User must create a purchase for themself and for an online available product or be part of the seller's group to use this endpoint**
+ */
+export const fetchPostCompetitionPurchasesUsersUserId = (
+  variables: PostCompetitionPurchasesUsersUserIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    Schemas.Purchase,
+    PostCompetitionPurchasesUsersUserIdError,
+    Schemas.AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
+    {},
+    {},
+    PostCompetitionPurchasesUsersUserIdPathParams
+  >({
+    url: "/competition/purchases/users/{userId}",
+    method: "post",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Create a purchase.
+ *
+ * **User must create a purchase for themself and for an online available product or be part of the seller's group to use this endpoint**
+ */
+export const usePostCompetitionPurchasesUsersUserId = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      Schemas.Purchase,
+      PostCompetitionPurchasesUsersUserIdError,
+      PostCompetitionPurchasesUsersUserIdVariables
+    >,
+    "mutationFn"
+  >,
+) => {
+  const { fetcherOptions } = useHyperionContext();
+  return reactQuery.useMutation<
+    Schemas.Purchase,
+    PostCompetitionPurchasesUsersUserIdError,
+    PostCompetitionPurchasesUsersUserIdVariables
+  >({
+    mutationFn: (variables: PostCompetitionPurchasesUsersUserIdVariables) =>
+      fetchPostCompetitionPurchasesUsersUserId(
+        deepMerge(fetcherOptions, variables),
+      ),
+    ...options,
+  });
+};
+
 export type GetCompetitionPurchasesMeError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetCompetitionPurchasesMeResponse = Schemas.Purchase[];
@@ -25526,7 +25584,7 @@ export const fetchGetCompetitionPurchasesMe = (
     {},
     {},
     {}
-  >({ url: "/competition/purchases/me/", method: "get", ...variables, signal });
+  >({ url: "/competition/purchases/me", method: "get", ...variables, signal });
 
 export function getCompetitionPurchasesMeQuery(
   variables: GetCompetitionPurchasesMeVariables,
@@ -25551,7 +25609,7 @@ export function getCompetitionPurchasesMeQuery(
 ) {
   return {
     queryKey: queryKeyFn({
-      path: "/competition/purchases/me/",
+      path: "/competition/purchases/me",
       operationId: "getCompetitionPurchasesMe",
       variables,
     }),
@@ -25614,72 +25672,6 @@ export const useGetCompetitionPurchasesMe = <
     ),
     ...options,
     ...queryOptions,
-  });
-};
-
-export type PostCompetitionPurchasesUsersUserIdPathParams = {
-  userId: string;
-};
-
-export type PostCompetitionPurchasesUsersUserIdError = Fetcher.ErrorWrapper<{
-  status: 422;
-  payload: Schemas.HTTPValidationError;
-}>;
-
-export type PostCompetitionPurchasesUsersUserIdVariables = {
-  body: Schemas.AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase;
-  pathParams: PostCompetitionPurchasesUsersUserIdPathParams;
-} & HyperionContext["fetcherOptions"];
-
-/**
- * Create a purchase.
- *
- * **User must create a purchase for themself and for an online available product or be part of the seller's group to use this endpoint**
- */
-export const fetchPostCompetitionPurchasesUsersUserId = (
-  variables: PostCompetitionPurchasesUsersUserIdVariables,
-  signal?: AbortSignal,
-) =>
-  hyperionFetch<
-    Schemas.Purchase,
-    PostCompetitionPurchasesUsersUserIdError,
-    Schemas.AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
-    {},
-    {},
-    PostCompetitionPurchasesUsersUserIdPathParams
-  >({
-    url: "/competition/purchases/users/{userId}/",
-    method: "post",
-    ...variables,
-    signal,
-  });
-
-/**
- * Create a purchase.
- *
- * **User must create a purchase for themself and for an online available product or be part of the seller's group to use this endpoint**
- */
-export const usePostCompetitionPurchasesUsersUserId = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      Schemas.Purchase,
-      PostCompetitionPurchasesUsersUserIdError,
-      PostCompetitionPurchasesUsersUserIdVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useHyperionContext();
-  return reactQuery.useMutation<
-    Schemas.Purchase,
-    PostCompetitionPurchasesUsersUserIdError,
-    PostCompetitionPurchasesUsersUserIdVariables
-  >({
-    mutationFn: (variables: PostCompetitionPurchasesUsersUserIdVariables) =>
-      fetchPostCompetitionPurchasesUsersUserId(
-        deepMerge(fetcherOptions, variables),
-      ),
-    ...options,
   });
 };
 
@@ -25800,7 +25792,7 @@ export const fetchDeleteCompetitionUsersUserIdPurchasesProductVariantId = (
     {},
     DeleteCompetitionUsersUserIdPurchasesProductVariantIdPathParams
   >({
-    url: "/competition/users/{userId}/purchases/{productVariantId}/",
+    url: "/competition/users/{userId}/purchases/{productVariantId}",
     method: "delete",
     ...variables,
     signal,
@@ -25870,7 +25862,7 @@ export const fetchGetCompetitionUsersUserIdPayments = (
     {},
     GetCompetitionUsersUserIdPaymentsPathParams
   >({
-    url: "/competition/users/{userId}/payments/",
+    url: "/competition/users/{userId}/payments",
     method: "get",
     ...variables,
     signal,
@@ -25906,7 +25898,7 @@ export function getCompetitionUsersUserIdPaymentsQuery(
 ) {
   return {
     queryKey: queryKeyFn({
-      path: "/competition/users/{userId}/payments/",
+      path: "/competition/users/{userId}/payments",
       operationId: "getCompetitionUsersUserIdPayments",
       variables,
     }),
@@ -26015,7 +26007,7 @@ export const fetchPostCompetitionUsersUserIdPayments = (
     {},
     PostCompetitionUsersUserIdPaymentsPathParams
   >({
-    url: "/competition/users/{userId}/payments/",
+    url: "/competition/users/{userId}/payments",
     method: "post",
     ...variables,
     signal,
@@ -26085,7 +26077,7 @@ export const fetchDeleteCompetitionUsersUserIdPaymentsPaymentId = (
     {},
     DeleteCompetitionUsersUserIdPaymentsPaymentIdPathParams
   >({
-    url: "/competition/users/{userId}/payments/{paymentId}/",
+    url: "/competition/users/{userId}/payments/{paymentId}",
     method: "delete",
     ...variables,
     signal,
@@ -26140,7 +26132,7 @@ export const fetchPostCompetitionPay = (
     {},
     {},
     {}
-  >({ url: "/competition/pay/", method: "post", ...variables, signal });
+  >({ url: "/competition/pay", method: "post", ...variables, signal });
 
 /**
  * Get payment url
@@ -42893,7 +42885,7 @@ export type QueryOperation =
         | reactQuery.SkipToken;
     }
   | {
-      path: "/competition/products/";
+      path: "/competition/products";
       operationId: "getCompetitionProducts";
       variables: GetCompetitionProductsVariables | reactQuery.SkipToken;
     }
@@ -42912,12 +42904,12 @@ export type QueryOperation =
         | reactQuery.SkipToken;
     }
   | {
-      path: "/competition/purchases/me/";
+      path: "/competition/purchases/me";
       operationId: "getCompetitionPurchasesMe";
       variables: GetCompetitionPurchasesMeVariables | reactQuery.SkipToken;
     }
   | {
-      path: "/competition/users/{userId}/payments/";
+      path: "/competition/users/{userId}/payments";
       operationId: "getCompetitionUsersUserIdPayments";
       variables:
         | GetCompetitionUsersUserIdPaymentsVariables

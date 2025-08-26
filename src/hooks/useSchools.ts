@@ -52,7 +52,8 @@ export const useSchools = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de l'établissement",
@@ -61,6 +62,7 @@ export const useSchools = () => {
               "Une erreur s'est produite",
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -93,15 +95,17 @@ export const useSchools = () => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la modification de l'établissement",
-            description:
-              (error as unknown as ErrorType).stack?.detail ||
-              "Une erreur s'est produite",
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la modification de l'établissement",
+              description:
+                (error as unknown as ErrorType).stack?.detail ||
+                "Une erreur s'est produite",
+              variant: "destructive",
+            });
+          }
         },
       },
     );

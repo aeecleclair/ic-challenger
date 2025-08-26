@@ -61,14 +61,16 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la mise à jour",
-            description:
-              "Une erreur est survenue, veuillez réessayer plus tard",
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour",
+              description:
+                "Une erreur est survenue, veuillez réessayer plus tard",
+              variant: "destructive",
+            });
+          }
         },
       },
     );

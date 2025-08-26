@@ -51,13 +51,15 @@ export const useSports = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du sport",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -90,13 +92,15 @@ export const useSports = () => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la modification du sport",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la modification du sport",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );

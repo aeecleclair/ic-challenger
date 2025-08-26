@@ -48,13 +48,15 @@ export const useCompetitionUser = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de l'utilisateur",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );

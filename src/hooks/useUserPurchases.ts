@@ -64,13 +64,15 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout de la variante",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout de la variante",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );
@@ -109,13 +111,15 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de la validation de la variante",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -148,13 +152,15 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression de la variante",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );

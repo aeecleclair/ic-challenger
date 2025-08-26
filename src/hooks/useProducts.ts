@@ -62,13 +62,15 @@ export const useProducts = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout du produit",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -101,13 +103,15 @@ export const useProducts = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de la modification du produit",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -135,13 +139,15 @@ export const useProducts = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de la suppression du product",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -174,13 +180,15 @@ export const useProducts = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de l'ajout de la variante",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -213,13 +221,15 @@ export const useProducts = () => {
           });
           callback();
         },
-        onSettled: (error) => {
+        onSettled: (data, error) => {
+          if (error !== null) {
           console.log(error);
           toast({
             title: "Erreur lors de la modification de la variante",
             description: (error as unknown as ErrorType).stack.detail,
             variant: "destructive",
           });
+        }
         },
       },
     );
@@ -254,13 +264,15 @@ export const useProducts = () => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la suppression de la variante",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression de la variante",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );

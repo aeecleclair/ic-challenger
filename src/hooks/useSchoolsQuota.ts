@@ -8,7 +8,7 @@ import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType } from "../utils/errorTyping";
-import { QuotaInfo } from "../api/hyperionSchemas";
+import { SportQuotaInfo } from "../api/hyperionSchemas";
 
 interface UseSchoolsQuotaProps {
   schoolId?: string;
@@ -43,7 +43,7 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
 
   const createQuota = (
     sportId: string,
-    body: QuotaInfo,
+    body: SportQuotaInfo,
     callback: () => void,
   ) => {
     return mutateCreateQuota(
@@ -66,13 +66,15 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout du quota",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout du quota",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );
@@ -83,7 +85,7 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
 
   const updateQuota = (
     sportId: string,
-    body: QuotaInfo,
+    body: SportQuotaInfo,
     callback: () => void,
   ) => {
     return mutateUpdateQuota(
@@ -106,13 +108,15 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la modification du quota",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la modification du quota",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );
@@ -141,13 +145,15 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la suppression du quota",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression du quota",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );

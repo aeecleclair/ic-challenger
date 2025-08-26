@@ -55,14 +55,16 @@ export const useSportSchools = () => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la fusion des équipes",
-            description:
-              "Une erreur est survenue, veuillez réessayer plus tard",
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la fusion des équipes",
+              description:
+                "Une erreur est survenue, veuillez réessayer plus tard",
+              variant: "destructive",
+            });
+          }
         },
       },
     );
@@ -95,14 +97,16 @@ export const useSportSchools = () => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la mise à jour",
-            description:
-              "Une erreur est survenue, veuillez réessayer plus tard",
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour",
+              description:
+                "Une erreur est survenue, veuillez réessayer plus tard",
+              variant: "destructive",
+            });
+          }
         },
       },
     );

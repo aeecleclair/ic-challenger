@@ -51,15 +51,17 @@ export const useEdition = () => {
           });
           callback();
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la création de l'édition",
-            description:
-              (error as unknown as ErrorType).stack?.detail ||
-              "Une erreur s'est produite",
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la création de l'édition",
+              description:
+                (error as unknown as ErrorType).stack?.detail ||
+                "Une erreur s'est produite",
+              variant: "destructive",
+            });
+          }
         },
       },
     );

@@ -62,13 +62,15 @@ export const useSchoolSportTeams = ({
           });
           callback(data);
         },
-        onSettled: (error) => {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout de l'équipe",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
+        onSettled: (data, error) => {
+          if (error !== null) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout de l'équipe",
+              description: (error as unknown as ErrorType).stack.detail,
+              variant: "destructive",
+            });
+          }
         },
       },
     );
