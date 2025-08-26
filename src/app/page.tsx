@@ -40,7 +40,13 @@ const Home = () => {
     router.replace("/login");
   }
 
-  if (!isLoading && !meCompetition?.validated && user !== null) {
+  if (
+    !isLoading &&
+    !meCompetition?.validated &&
+    user !== undefined &&
+    edition !== undefined
+    && isTokenQueried
+  ) {
     router.replace("/register");
   }
 
@@ -70,14 +76,16 @@ const Home = () => {
           )}
           {meCompetition && (
             <>
-            <div className="flex flex-col gap-2">
-              <h2 className="text-lg font-semibold">Inscrit en tant que</h2>
-              {meCompetition.is_athlete ? (
-                <span className="text-sm text-muted-foreground">Athlète</span>
-              ) : (
-                <span className="text-sm text-muted-foreground">Supporter</span>
-              )}
-            </div>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-lg font-semibold">Inscrit en tant que</h2>
+                {meCompetition.is_athlete ? (
+                  <span className="text-sm text-muted-foreground">Athlète</span>
+                ) : (
+                  <span className="text-sm text-muted-foreground">
+                    Supporter
+                  </span>
+                )}
+              </div>
             </>
           )}
         </div>
