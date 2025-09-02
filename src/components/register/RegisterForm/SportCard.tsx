@@ -3,7 +3,10 @@ import { Label } from "../../ui/label";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
 import z from "zod";
-import { registeringFormSchema, RegisteringFormValues } from "@/src/forms/registering";
+import {
+  registeringFormSchema,
+  RegisteringFormValues,
+} from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import {
   Select,
@@ -60,6 +63,10 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
     });
   };
 
+  const selectedSport = sports?.find(
+    (sport) => sport.id === form.watch("sport.id"),
+  );
+
   return (
     <CardTemplate>
       <h2 className="text-xl font-semibold">Ta participation au Challenge :</h2>
@@ -85,80 +92,85 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
         )}
       />
 
-      <StyledFormField
-        form={form}
-        label="Capitaine d'équipe"
-        id="sport.team_leader"
-        input={(field) => (
-          <div className="flex items-center space-x-2 pt-2 ">
-            <Checkbox
-              id="sport.team_leader"
-              checked={field.value}
-              onCheckedChange={field.onChange}
-            />
-            <Label htmlFor="sport.team_leader">
-              Je suis capitaine d&apos;équipe
-            </Label>
-          </div>
-        )}
-      />
-
-      {form.watch("sport.team_leader") ? (
-        <FormItem className="w-full">
-          <div className="grid gap-2">
-            <FormLabel className="text-base">
-              Création de l&apos;équipe
-            </FormLabel>
-            <FormControl>
-              <div className="flex flex-col gap-4 lg:flex-row w-2/3">
-                <Input
-                  placeholder="Nom de l'équipe"
-                  value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  className="w-60"
+      {(selectedSport?.team_size ?? 0) > 1 && (
+        <>
+          <StyledFormField
+            form={form}
+            label="Capitaine d'équipe"
+            id="sport.team_leader"
+            input={(field) => (
+              <div className="flex items-center space-x-2 pt-2 ">
+                <Checkbox
+                  id="sport.team_leader"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
                 />
-                <LoadingButton
-                  variant="outline"
-                  className="w-60"
-                  onClick={() => createTeam(teamName)}
-                  disabled={
-                    !form.watch("sport.team_leader") || teamName.length === 0
-                  }
-                  isLoading={isCreateLoading}
-                >
-                  Ajouter l&apos;équipe
-                </LoadingButton>
+                <Label htmlFor="sport.team_leader">
+                  Je suis capitaine d&apos;équipe
+                </Label>
               </div>
-            </FormControl>
-            <FormMessage />
-          </div>
-        </FormItem>
-      ) : (
-        <StyledFormField
-          form={form}
-          label="Catégorie"
-          id="sport.team_id"
-          input={(field) => (
-            <Select
-              onValueChange={field.onChange}
-              value={field.value}
-              disabled={!form.watch("sport.team_leader")}
-            >
-              <SelectTrigger className="w-60">
-                <SelectValue placeholder="Sélectionnez une équipe" />
-              </SelectTrigger>
-              {teams && teams.length === 0 && (
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+            )}
+          />
+
+          {form.watch("sport.team_leader") ? (
+            <FormItem className="w-full">
+              <div className="grid gap-2">
+                <FormLabel className="text-base">
+                  Création de l&apos;équipe
+                </FormLabel>
+                <FormControl>
+                  <div className="flex flex-col gap-4 lg:flex-row w-2/3">
+                    <Input
+                      placeholder="Nom de l'équipe"
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
+                      className="w-60"
+                    />
+                    <LoadingButton
+                      variant="outline"
+                      className="w-60"
+                      onClick={() => createTeam(teamName)}
+                      disabled={
+                        !form.watch("sport.team_leader") ||
+                        teamName.length === 0
+                      }
+                      isLoading={isCreateLoading}
+                    >
+                      Ajouter l&apos;équipe
+                    </LoadingButton>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </div>
+            </FormItem>
+          ) : (
+            <StyledFormField
+              form={form}
+              label="Catégorie"
+              id="sport.team_id"
+              input={(field) => (
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={!form.watch("sport.team_leader")}
+                >
+                  <SelectTrigger className="w-60">
+                    <SelectValue placeholder="Sélectionnez une équipe" />
+                  </SelectTrigger>
+                  {teams && teams.length === 0 && (
+                    <SelectContent>
+                      {teams.map((team) => (
+                        <SelectItem key={team.id} value={team.id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
+                </Select>
               )}
-            </Select>
+            />
           )}
-        />
+        </>
       )}
 
       <div className="flex flex-col gap-4 lg:flex-row w-2/3">
@@ -237,4 +249,3 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
     </CardTemplate>
   );
 };
-
