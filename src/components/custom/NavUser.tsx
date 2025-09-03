@@ -17,10 +17,12 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import { useUser } from "@/src/hooks/useUser";
+import { useAuth } from "@/src/hooks/useAuth";
 
 export function NavUser() {
   const pathname = usePathname();
   const { isMobile } = useSidebar();
+  const { logout } = useAuth();
   const { me, isAdmin, isBDS, isSportManager } = useUser();
   const router = useRouter();
 
@@ -56,23 +58,6 @@ export function NavUser() {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg">
-                    {me?.firstname?.charAt(0)?.toUpperCase()}
-                    {me?.name?.charAt(0)?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">
-                    {me?.firstname} {me?.name}
-                  </span>
-                  <span className="truncate text-xs">{me?.email}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
             {(isAdmin() || isBDS() || isSportManager()) && (
               <DropdownMenuItem
                 onClick={() => router.push(isOnAdminPage ? "/" : "/admin")}
@@ -81,7 +66,9 @@ export function NavUser() {
                 {isOnAdminPage ? "Utilisateur" : "Administration"}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={logout}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Se déconnecter
             </DropdownMenuItem>
