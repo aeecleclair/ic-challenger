@@ -65,7 +65,7 @@ const Register = () => {
     onValidateCardActions: {
       Informations: (values, callback) => {
         if (values.phone !== me!.phone) {
-          updateUser({ phone: values.phone }, callback);
+          updateUser({ phone: "+" + values.phone }, callback);
         } else {
           callback();
         }

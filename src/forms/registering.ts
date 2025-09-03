@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  isValidPhoneNumber,
+  parsePhoneNumberWithError,
+} from "libphonenumber-js";
 import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
 
 const sexEnum = ["masculine", "feminine"] as const;
@@ -9,12 +13,10 @@ export const registeringFormSchema = z
       .string({
         required_error: "Veuillez renseigner le numéro de téléphone",
       })
-      .min(1, {
-        message: "Veuillez renseigner le numéro de téléphone",
-      })
-      .regex(/^\+?[0-9\s]+$/, {
-        message: "Veuillez renseigner un numéro de téléphone valide",
-      }),
+      .refine(
+        (value) => isValidPhoneNumber(value, "FR"),
+        "Veuillez renseigner un numéro de téléphone valide",
+      ),
     is_athlete: z.boolean(),
     is_cameraman: z.boolean(),
     is_fanfare: z.boolean(),
@@ -43,7 +45,13 @@ export const registeringFormSchema = z
     ),
   })
   .superRefine((data, ctx) => {
-    if (!data.is_athlete && !data.is_cameraman && !data.is_fanfare && !data.is_pompom && !data.is_volunteer) {
+    if (
+      !data.is_athlete &&
+      !data.is_cameraman &&
+      !data.is_fanfare &&
+      !data.is_pompom &&
+      !data.is_volunteer
+    ) {
       ctx.addIssue({
         path: ["is_athlete"],
         code: z.ZodIssueCode.custom,

@@ -93,19 +93,16 @@ export const RegisterFormField = ({
                     return;
                   }
                 }
-                api?.scrollNext();
-                setState({
-                  ...state,
-                  currentStep: Math.min(3, state.currentStep + 1),
-                  headerSubtitle:
-                    state.allHeaderSubtitles[state.currentStep + 1],
-                });
                 state.onValidateCardActions[state.headerSubtitle](
                   form.getValues(),
                   () => {
+                    api?.scrollNext();
                     setState({
                       ...state,
                       stepDone: Math.max(state.stepDone, state.currentStep + 1),
+                      currentStep: Math.min(3, state.currentStep + 1),
+                      headerSubtitle:
+                        state.allHeaderSubtitles[state.currentStep + 1],
                     });
                   },
                 );

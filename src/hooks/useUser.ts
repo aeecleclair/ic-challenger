@@ -57,22 +57,21 @@ export const useUser = () => {
         body: body,
       },
       {
-        onSuccess: (data) => {
-          setUser(data);
-          callback();
-          toast({
-            title: "Utilisateur mis à jour",
-            description:
-              "Les informations de l'utilisateur ont été mises à jour avec succès.",
-          });
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la mise à jour de l'utilisateur",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            setUser(data);
+            callback();
+            toast({
+              title: "Utilisateur mis à jour",
+              description:
+                "Les informations de l'utilisateur ont été mises à jour avec succès.",
             });
           }
         },
