@@ -7,6 +7,7 @@ import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { CardTemplate } from "./CardTemplate";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
+import { PhoneCustomInput } from "../../custom/PhoneCustomInput";
 
 interface InformationCardProps {
   form: UseFormReturn<RegisteringFormValues>;
@@ -29,7 +30,9 @@ export const InformationCard = ({ form }: InformationCardProps) => {
           label="Numéro de téléphone"
           id="phone"
           input={(field) => (
-            <Input className="w-60" placeholder="+33 6 12 34 56 78" {...field} />
+            <PhoneCustomInput
+              {...field}
+            />
           )}
         />
 
