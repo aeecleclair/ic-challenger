@@ -55,23 +55,22 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSportMatches();
-          toast({
-            title: "Match ajoutée",
-            description: "Le match a été ajouté avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout du match",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout du match",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchSportMatches();
+            callback();
+            toast({
+              title: "Match ajoutée",
+              description: "Le match a été ajouté avec succès.",
+            });
+          }
         },
       },
     );
@@ -97,23 +96,22 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSportMatches();
-          toast({
-            title: "Match modifiée",
-            description: "Le match a été modifiée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la modification du match",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la modification du match",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchSportMatches();
+            callback();
+            toast({
+              title: "Match modifiée",
+              description: "Le match a été modifiée avec succès.",
+            });
+          }
         },
       },
     );
@@ -134,21 +132,20 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchSportMatches();
-          toast({
-            title: "Match supprimée",
-            description: "Le match a été supprimée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression du match",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSportMatches();
+            callback();
+            toast({
+              title: "Match supprimée",
+              description: "Le match a été supprimée avec succès.",
             });
           }
         },

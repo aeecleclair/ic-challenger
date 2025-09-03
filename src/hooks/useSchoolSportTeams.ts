@@ -54,21 +54,20 @@ export const useSchoolSportTeams = ({
         body: teamData,
       },
       {
-        onSuccess: (data) => {
-          refetchTeams();
-          toast({
-            title: "Équipe ajoutée",
-            description: "L'équipe a été ajoutée avec succès.",
-          });
-          callback(data);
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout de l'équipe",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchTeams();
+            if (data) callback(data);
+            toast({
+              title: "Équipe ajoutée",
+              description: "L'équipe a été ajoutée avec succès.",
             });
           }
         },

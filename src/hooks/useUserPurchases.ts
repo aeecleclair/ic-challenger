@@ -56,21 +56,20 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchUserPurchases();
-          toast({
-            title: "Variante ajoutée",
-            description: "La variante a été ajoutée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout de la variante",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchUserPurchases();
+            callback();
+            toast({
+              title: "Variante ajoutée",
+              description: "La variante a été ajoutée avec succès.",
             });
           }
         },
@@ -103,23 +102,22 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchUserPurchases();
-          toast({
-            title: "Variante validée",
-            description: "La variante a été validée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la validation de la variante",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la validation de la variante",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchUserPurchases();
+            callback();
+            toast({
+              title: "Variante validée",
+              description: "La variante a été validée avec succès.",
+            });
+          }
         },
       },
     );
@@ -144,23 +142,22 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchUserPurchases();
-          toast({
-            title: "Variante supprimée",
-            description: "La variante a été supprimée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la suppression de la variante",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression de la variante",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchUserPurchases();
+            callback();
+            toast({
+              title: "Variante supprimée",
+              description: "La variante a été supprimée avec succès.",
+            });
+          }
         },
       },
     );

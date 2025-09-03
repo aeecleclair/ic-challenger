@@ -43,23 +43,22 @@ export const useSports = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "Sport ajoutée",
-            description: "Le sport a été ajoutée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout du sport",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout du sport",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "Sport ajoutée",
+              description: "Le sport a été ajoutée avec succès.",
+            });
+          }
         },
       },
     );
@@ -84,21 +83,20 @@ export const useSports = () => {
         },
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "Sport modifiée",
-            description: "Le sport a été modifiée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification du sport",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "Sport modifiée",
+              description: "Le sport a été modifiée avec succès.",
             });
           }
         },

@@ -52,23 +52,22 @@ export const useGroups = ({ group }: UseGroupsProps) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchGroups();
-          toast({
-            title: "Groupe ajoutée",
-            description: "Le groupe a été ajoutée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout du groupe",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout du groupe",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchGroups();
+            callback();
+            toast({
+              title: "Groupe ajoutée",
+              description: "Le groupe a été ajoutée avec succès.",
+            });
+          }
         },
       },
     );
@@ -89,21 +88,20 @@ export const useGroups = ({ group }: UseGroupsProps) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchGroups();
-          toast({
-            title: "Group modifiée",
-            description: "Le group a été modifiée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification du group",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchGroups();
+            callback();
+            toast({
+              title: "Group modifiée",
+              description: "Le group a été modifiée avec succès.",
             });
           }
         },

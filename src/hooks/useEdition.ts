@@ -43,23 +43,20 @@ export const useEdition = () => {
         body: editionData,
       },
       {
-        onSuccess: () => {
-          refetchEdition();
-          toast({
-            title: "Édition créée",
-            description: "L'édition a été créée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la création de l'édition",
-              description:
-                (error as unknown as ErrorType).stack?.detail ||
-                "Une erreur s'est produite",
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchEdition();
+            callback();
+            toast({
+              title: "Édition créée",
+              description: "L'édition a été créée avec succès.",
             });
           }
         },

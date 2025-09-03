@@ -54,23 +54,22 @@ export const useProducts = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchProducts();
-          toast({
-            title: "Produit ajoutée",
-            description: "Le produit a été ajouté avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout du produit",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout du produit",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchProducts();
+            callback();
+            toast({
+              title: "Produit ajoutée",
+              description: "Le produit a été ajouté avec succès.",
+            });
+          }
         },
       },
     );
@@ -95,23 +94,22 @@ export const useProducts = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchProducts();
-          toast({
-            title: "Produit modifiée",
-            description: "Le produit a été modifiée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la modification du produit",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la modification du produit",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchProducts();
+            callback();
+            toast({
+              title: "Produit modifiée",
+              description: "Le produit a été modifiée avec succès.",
+            });
+          }
         },
       },
     );
@@ -131,23 +129,22 @@ export const useProducts = () => {
         },
       },
       {
-        onSuccess: () => {
-          refetchProducts();
-          toast({
-            title: "Product supprimée",
-            description: "Le product a été supprimée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la suppression du product",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression du product",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchProducts();
+            callback();
+            toast({
+              title: "Product supprimée",
+              description: "Le product a été supprimée avec succès.",
+            });
+          }
         },
       },
     );
@@ -172,23 +169,22 @@ export const useProducts = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchProducts();
-          toast({
-            title: "Variante ajoutée",
-            description: "La variante a été ajoutée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout de la variante",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout de la variante",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchProducts();
+            callback();
+            toast({
+              title: "Variante ajoutée",
+              description: "La variante a été ajoutée avec succès.",
+            });
+          }
         },
       },
     );
@@ -213,23 +209,22 @@ export const useProducts = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchProducts();
-          toast({
-            title: "Variante modifiée",
-            description: "La variante a été modifiée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de la modification de la variante",
-            description: (error as unknown as ErrorType).stack.detail,
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la modification de la variante",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchProducts();
+            callback();
+            toast({
+              title: "Variante modifiée",
+              description: "La variante a été modifiée avec succès.",
+            });
+          }
         },
       },
     );
@@ -256,21 +251,20 @@ export const useProducts = () => {
         },
       },
       {
-        onSuccess: () => {
-          refetchProducts();
-          toast({
-            title: "Variante supprimée",
-            description: "La variante a été supprimée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression de la variante",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchProducts();
+            callback();
+            toast({
+              title: "Variante supprimée",
+              description: "La variante a été supprimée avec succès.",
             });
           }
         },

@@ -60,21 +60,20 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSportsQuota();
-          toast({
-            title: "Quota ajoutée",
-            description: "Le quota a été ajouté avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout du quota",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSportsQuota();
+            callback();
+            toast({
+              title: "Quota ajoutée",
+              description: "Le quota a été ajouté avec succès.",
             });
           }
         },
@@ -103,21 +102,20 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSportsQuota();
-          toast({
-            title: "Quota modifiée",
-            description: "Le quota a été modifiée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification du quota",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSportsQuota();
+            callback();
+            toast({
+              title: "Quota modifiée",
+              description: "Le quota a été modifiée avec succès.",
             });
           }
         },
@@ -141,21 +139,20 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchSportsQuota();
-          toast({
-            title: "Quota supprimée",
-            description: "Le quota a été supprimée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression du quota",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSportsQuota();
+            callback();
+            toast({
+              title: "Quota supprimée",
+              description: "Le quota a été supprimée avec succès.",
             });
           }
         },

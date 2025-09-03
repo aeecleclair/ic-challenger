@@ -6,6 +6,7 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
+import { ErrorType } from "../utils/errorTyping";
 import {
   SchoolExtensionBase,
   SchoolExtensionEdit,
@@ -47,22 +48,20 @@ export const useSportSchools = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "École ajoutée",
-            description: "L'école a été ajoutée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la fusion des équipes",
-              description:
-                "Une erreur est survenue, veuillez réessayer plus tard",
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "École ajoutée",
+              description: "L'école a été ajoutée avec succès.",
             });
           }
         },
@@ -89,22 +88,20 @@ export const useSportSchools = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "École mise à jour",
-            description: "L'école a été mise à jour avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la mise à jour",
-              description:
-                "Une erreur est survenue, veuillez réessayer plus tard",
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "École mise à jour",
+              description: "L'école a été mise à jour avec succès.",
             });
           }
         },

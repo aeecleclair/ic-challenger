@@ -53,22 +53,20 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
         },
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "École mise à jour",
-            description: "L'école a été mise à jour avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la mise à jour",
-              description:
-                "Une erreur est survenue, veuillez réessayer plus tard",
+              description: (error as any).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "École mise à jour",
+              description: "L'école a été mise à jour avec succès.",
             });
           }
         },

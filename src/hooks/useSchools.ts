@@ -44,25 +44,22 @@ export const useSchools = () => {
         body: body,
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "Établissement ajouté",
-            description: "L'établissement a été ajouté avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
-          console.log(error);
-          toast({
-            title: "Erreur lors de l'ajout de l'établissement",
-            description:
-              (error as unknown as ErrorType).stack?.detail ||
-              "Une erreur s'est produite",
-            variant: "destructive",
-          });
-        }
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de l'ajout de l'établissement",
+              description: (error as unknown as ErrorType).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "Établissement ajouté",
+              description: "L'établissement a été ajouté avec succès.",
+            });
+          }
         },
       },
     );
@@ -87,23 +84,20 @@ export const useSchools = () => {
         },
       },
       {
-        onSuccess: () => {
-          refetchSchools();
-          toast({
-            title: "Établissement modifié",
-            description: "L'établissement a été modifié avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification de l'établissement",
-              description:
-                (error as unknown as ErrorType).stack?.detail ||
-                "Une erreur s'est produite",
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "Établissement modifié",
+              description: "L'établissement a été modifié avec succès.",
             });
           }
         },

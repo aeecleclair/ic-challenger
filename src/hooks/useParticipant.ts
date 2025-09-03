@@ -46,21 +46,20 @@ export const useParticipant = () => {
         },
       },
       {
-        onSuccess: () => {
-          toast({
-            title: "Demande d'inscription enregistrée",
-            description:
-              "Votre demande d'inscription a été envoyée avec succès.",
-          });
-          callback();
-        },
         onSettled: (data, error) => {
-          if (error !== null) {
+          if ((error as any).stack.body) {
             console.log(error);
             toast({
               title: "Erreur lors de l'inscription",
-              description: (error as unknown as ErrorType).stack.detail,
+              description: (error as unknown as ErrorType).stack.body,
               variant: "destructive",
+            });
+          } else {
+            callback();
+            toast({
+              title: "Demande d'inscription enregistrée",
+              description:
+                "Votre demande d'inscription a été envoyée avec succès.",
             });
           }
         },
