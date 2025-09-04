@@ -71,7 +71,7 @@ const Register = () => {
         }
       },
       Participation: (values, callback) => {
-        if (!meCompetition) {
+        if (meCompetition !== undefined) {
           callback();
           return;
         }
@@ -86,7 +86,7 @@ const Register = () => {
         createCompetitionUser(body, callback);
       },
       Sport: (values, callback) => {
-        if (!meParticipant) {
+        if (meParticipant !== undefined) {
           callback();
           return;
         }
@@ -129,9 +129,7 @@ const Register = () => {
         });
         callback();
       },
-      Récapitulatif: (values, callback) => {
-        callback();
-      },
+      Récapitulatif: (values, callback) => {},
     } as const,
   });
   return (

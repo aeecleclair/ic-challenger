@@ -14,6 +14,7 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { WaitingPage } from "./WaintingPage";
 import { ValidatedPage } from "./ValidatedPage";
 import { useParticipant } from "@/src/hooks/useParticipant";
+import { useRouter } from "next/navigation";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
@@ -27,6 +28,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const { me } = useUser();
   const { meCompetition } = useCompetitionUser();
   const { meParticipant } = useParticipant();
+  const router = useRouter();
 
   const form = useForm<RegisteringFormValues>({
     resolver: zodResolver(registeringFormSchema),
@@ -48,6 +50,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
 
   async function onSubmit(values: RegisteringFormValues) {
     setIsLoading(true);
+    router.push("/");
   }
 
   useEffect(() => {
