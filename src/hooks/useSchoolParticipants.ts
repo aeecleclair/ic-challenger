@@ -1,6 +1,7 @@
 import {
   useGetCompetitionParticipantsSchoolsSchoolId,
-  usePatchCompetitionParticipantsUserIdSportsSportIdValidate,
+  usePatchCompetitionParticipantsUserIdSportsSportIdInvalidate,
+  usePatchCompetitionUsersUserIdValidate,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -34,15 +35,52 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
     },
   );
 
-  const { mutate: mutatePatchSchoolParticipants, isPending: isUpdateLoading } =
-    usePatchCompetitionParticipantsUserIdSportsSportIdValidate();
+  const { mutate: mutateValidateParticipants, isPending: isValidateLoading } =
+    usePatchCompetitionUsersUserIdValidate();
 
-  const updateSchoolParticipants = (
-    sportId: string,
+  const validateParticipants = (userId: string, callback: () => void) => {
+    return mutateValidateParticipants(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour",
+              description: (error as any).stack.body,
+              variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "École mise à jour",
+              description: "L'école a été mise à jour avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
+  const {
+    mutate: mutateInvalidateParticipants,
+    isPending: isInvalidateLoading,
+  } = usePatchCompetitionParticipantsUserIdSportsSportIdInvalidate();
+
+  const invalidateParticipants = (
     userId: string,
+    sportId: string,
     callback: () => void,
   ) => {
-    return mutatePatchSchoolParticipants(
+    return mutateInvalidateParticipants(
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -76,9 +114,11 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
 
   return {
     schoolParticipants,
-    updateSchoolParticipants,
+    validateParticipants,
     error,
-    isUpdateLoading,
+    isValidateLoading,
+    isInvalidateLoading,
+    invalidateParticipants,
     refetchSchools,
   };
 };

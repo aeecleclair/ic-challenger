@@ -125,7 +125,7 @@ const Register = () => {
         });
 
         toDelete?.map((purchase) => {
-          deletePurchase(me?.id!, purchase.product_variant_id, () => {});
+          deletePurchase(purchase.product_variant_id, () => {});
         });
         callback();
       },

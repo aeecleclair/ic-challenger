@@ -24,9 +24,9 @@ const Dashboard = () => {
   const schoolId = searchParam.get("school_id");
   const {
     schoolParticipants,
-    updateSchoolParticipants,
+    validateParticipants,
     error,
-    isUpdateLoading,
+    isValidateLoading,
     refetchSchools,
   } = useSchoolParticipants({
     schoolId: schoolId,
@@ -34,14 +34,11 @@ const Dashboard = () => {
 
   const school = sportSchools?.find((s) => s.school_id === schoolId);
 
-  const handleValidateParticipant = useCallback(
-    (userId: string, sportId: string) => {
-      updateSchoolParticipants(sportId, userId, () => {
-        // No need to do anything extra here since refetchSchools is called on success
-      });
-    },
-    [updateSchoolParticipants],
-  );
+  const onValidate = (userId: string) => {
+    validateParticipants(userId, () => {
+      // Callback after validation
+    });
+  };
 
   // Transform the participants data for the data table
   const participantTableData: ParticipantData[] =
@@ -100,8 +97,8 @@ const Dashboard = () => {
             <ParticipantDataTable
               data={participantTableData}
               schoolName={formatSchoolName(school.school.name) || "École"}
-              onValidateParticipant={handleValidateParticipant}
-              isLoading={isUpdateLoading}
+              onValidateParticipant={onValidate}
+              isLoading={isValidateLoading}
             />
           </div>
         </>

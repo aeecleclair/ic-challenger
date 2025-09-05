@@ -1,8 +1,7 @@
 import {
-  useDeleteCompetitionUsersUserIdPurchasesProductVariantId,
+  useDeleteCompetitionPurchasesProductVariantId,
   useGetCompetitionPurchasesUsersUserId,
-  usePatchCompetitionUsersUserIdPurchasesProductVariantIdValidated,
-  usePostCompetitionPurchasesUsersUserId,
+  usePostCompetitionPurchasesMe,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -39,7 +38,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
   );
 
   const { mutate: mutateCreatePurchase, isPending: isCreatePurchaseLoading } =
-    usePostCompetitionPurchasesUsersUserId();
+    usePostCompetitionPurchasesMe();
 
   const createPurchase = (
     body: AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
@@ -49,9 +48,6 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-        },
-        pathParams: {
-          userId: userId ?? "",
         },
         body: body,
       },
@@ -77,57 +73,10 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
     );
   };
 
-  const {
-    mutate: mutateValidatePurchase,
-    isPending: isValidatePurchaseLoading,
-  } = usePatchCompetitionUsersUserIdPurchasesProductVariantIdValidated();
-
-  const validatePurchase = (
-    userId: string,
-    productVariantId: string,
-    validated: boolean,
-    callback: () => void,
-  ) => {
-    return mutateValidatePurchase(
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        queryParams: {
-          validated: validated,
-        },
-        pathParams: {
-          userId: userId,
-          productVariantId: productVariantId,
-        },
-      },
-      {
-        onSettled: (data, error) => {
-          if ((error as any).stack.body) {
-            console.log(error);
-            toast({
-              title: "Erreur lors de la validation de la variante",
-              description: (error as unknown as ErrorType).stack.body,
-              variant: "destructive",
-            });
-          } else {
-            refetchUserPurchases();
-            callback();
-            toast({
-              title: "Variante validée",
-              description: "La variante a été validée avec succès.",
-            });
-          }
-        },
-      },
-    );
-  };
-
   const { mutate: mutateDeletePurchase, isPending: isDeletePurchaseLoading } =
-    useDeleteCompetitionUsersUserIdPurchasesProductVariantId();
+    useDeleteCompetitionPurchasesProductVariantId();
 
   const deletePurchase = (
-    userId: string,
     productVariantId: string,
     callback: () => void,
   ) => {
@@ -137,7 +86,6 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
           Authorization: `Bearer ${token}`,
         },
         pathParams: {
-          userId: userId,
           productVariantId: productVariantId,
         },
       },
@@ -169,8 +117,6 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
     refetchUserPurchases,
     createPurchase,
     isCreatePurchaseLoading,
-    validatePurchase,
-    isValidatePurchaseLoading,
     deletePurchase,
     isDeletePurchaseLoading,
   };
