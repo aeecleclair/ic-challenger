@@ -9,3 +9,11 @@ export type DetailedErrorType = {
     detail: string;
   };
 };
+
+export type APIErrorType = {
+  stack: {
+    detail: {
+      msg: string;
+    }[];
+  };
+};
