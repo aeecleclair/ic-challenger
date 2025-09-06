@@ -161,12 +161,11 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
-                  disabled={!form.watch("sport.team_leader")}
                 >
                   <SelectTrigger className="w-60">
                     <SelectValue placeholder="Sélectionnez une équipe" />
                   </SelectTrigger>
-                  {teams && teams.length === 0 && (
+                  {teams && teams.length !== 0 && (
                     <SelectContent>
                       {teams.map((team) => (
                         <SelectItem key={team.id} value={team.id}>
