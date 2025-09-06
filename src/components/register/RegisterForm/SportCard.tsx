@@ -67,6 +67,8 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
     (sport) => sport.id === form.watch("sport.id"),
   );
 
+  const userSportCategories = form.watch("sex");
+
   return (
     <CardTemplate>
       <h2 className="text-xl font-semibold">Ta participation au Challenge :</h2>
@@ -81,11 +83,18 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
             </SelectTrigger>
             {sports && (
               <SelectContent>
-                {sports.map((sport) => (
-                  <SelectItem key={sport.id} value={sport.id}>
-                    {sport.name}
-                  </SelectItem>
-                ))}
+                {sports
+                  .filter(
+                    (sport) =>
+                      sport.sport_category === null ||
+                      sport.sport_category === undefined ||
+                      sport.sport_category === userSportCategories,
+                  )
+                  .map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             )}
           </Select>
