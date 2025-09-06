@@ -43,6 +43,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
   const { me } = useUser();
 
   const [teamName, setTeamName] = useState("");
+  const [disabled, setDisabled] = useState(false);
 
   const { teams, createSchoolSportTeam, isCreateLoading } = useSchoolSportTeams(
     {
@@ -60,6 +61,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
     };
     createSchoolSportTeam(body, (team) => {
       form.setValue("sport.team_id", team.id);
+      setDisabled(true);
     });
   };
 
@@ -142,7 +144,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                       disabled={
                         !form.watch("sport.team_leader") ||
                         teamName.length === 0 ||
-                        !form.watch("sport.team_id")
+                        disabled
                       }
                       isLoading={isCreateLoading}
                     >

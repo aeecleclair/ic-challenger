@@ -15,6 +15,7 @@ import { WaitingPage } from "./WaintingPage";
 import { ValidatedPage } from "./ValidatedPage";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useRouter } from "next/navigation";
+import { CarouselApi } from "../../ui/carousel";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
@@ -22,6 +23,7 @@ interface RegisterFormProps {
 }
 
 export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
+  const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   const { sports } = useSports();
@@ -39,6 +41,9 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
       is_fanfare: false,
       is_pompom: false,
       is_volunteer: false,
+      sport: {
+        team_leader: false,
+      },
       products: [],
     },
   });
@@ -46,6 +51,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   useEffect(() => {
     form.setValue("phone", me?.phone || meCompetition?.user.phone || "");
     form.setValue("sex", meCompetition?.sport_category || "masculine");
+    form.setValue("is_athlete", meCompetition?.is_athlete || false);
   }, [form, me, meCompetition]);
 
   async function onSubmit(values: RegisteringFormValues) {
@@ -55,43 +61,55 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
 
   useEffect(() => {
     const newSubtitles = [...state.allHeaderSubtitles];
-    if (meParticipant) {
+    if (meCompetition?.is_athlete) {
       newSubtitles.splice(2, 0, "Sport");
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
     }
-    setState({
-      ...state,
-      allHeaderSubtitles: newSubtitles,
-    });
-    if (meCompetition && !meCompetition.validated) {
+    if (meCompetition?.is_athlete && meParticipant === undefined) {
       setState({
         ...state,
-        currentStep: meParticipant ? 5 : 4,
-        stepDone: meParticipant ? 5 : 4,
+        currentStep: 3,
+        stepDone: 2,
+        allHeaderSubtitles: newSubtitles,
+      });
+      api?.scrollTo(2);
+    } else if (meCompetition && !meCompetition.validated) {
+      setState({
+        ...state,
+        currentStep: !!meParticipant ? 5 : 4,
+        stepDone: !!meParticipant ? 5 : 4,
         headerTitle: "Confirmation de l'inscription",
         headerSubtitle: "Récapitulatif",
+        allHeaderSubtitles: newSubtitles,
+      });
+    } else {
+      setState({
+        ...state,
+        allHeaderSubtitles: newSubtitles,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meCompetition, meParticipant]);
 
-  return (
+  return meCompetition === undefined ||
+    (meCompetition.is_athlete && meParticipant === undefined) ? (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <RegisterFormField
+          form={form}
+          sports={sports}
+          isLoading={isLoading}
+          onSubmit={onSubmit}
+          setState={setState}
+          state={state}
+          api={api}
+          setApi={setApi}
+        />
+      </form>
+    </Form>
+  ) : (
     <>
-      {meCompetition === undefined && (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <RegisterFormField
-              form={form}
-              sports={sports}
-              isLoading={isLoading}
-              onSubmit={onSubmit}
-              setState={setState}
-              state={state}
-            />
-          </form>
-        </Form>
-      )}
       {meCompetition && !meCompetition.validated && <WaitingPage />}
       {meCompetition && meCompetition.validated && <ValidatedPage />}
     </>

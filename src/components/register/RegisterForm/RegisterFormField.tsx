@@ -20,6 +20,8 @@ interface RegisterFormFieldProps {
   sports?: Sport[];
   setState: (state: RegisterState) => void;
   state: RegisterState;
+  api?: CarouselApi | undefined;
+  setApi?: (api: CarouselApi) => void;
 }
 
 export const RegisterFormField = ({
@@ -29,8 +31,9 @@ export const RegisterFormField = ({
   sports,
   setState,
   state,
+  api,
+  setApi,
 }: RegisterFormFieldProps) => {
-  const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const showSportFields = form.watch("is_athlete");
 
   const onSportToggle = () => {
