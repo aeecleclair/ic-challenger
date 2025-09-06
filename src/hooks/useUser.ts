@@ -19,7 +19,7 @@ const FANFARON_GROUP_ID = "c69ed623-1cf5-4769-acc7-ddbc6490fb07";
 export const useUser = () => {
   const { token, isTokenExpired } = useAuth();
   const { user, setUser } = useUserStore();
-  const { data: me, isLoading } = useGetUsersMe(
+  const { data: me, isLoading, refetch: refetchMe } = useGetUsersMe(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -73,7 +73,7 @@ export const useUser = () => {
               variant: "destructive",
             });
           } else {
-            setUser(data);
+            refetchMe();
             callback();
             toast({
               title: "Utilisateur mis à jour",
