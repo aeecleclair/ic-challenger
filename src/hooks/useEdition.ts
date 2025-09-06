@@ -5,7 +5,7 @@ import {
 import { useAuth } from "./useAuth";
 import { CompetitionEditionBase } from "../api/hyperionSchemas";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType } from "../utils/errorTyping";
+import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 
 export const useEdition = () => {
   const { token, isTokenExpired } = useAuth();
@@ -44,11 +44,13 @@ export const useEdition = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la création de l'édition",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {

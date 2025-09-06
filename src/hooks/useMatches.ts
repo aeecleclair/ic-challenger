@@ -7,7 +7,7 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType } from "../utils/errorTyping";
+import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 import { MatchBase, MatchEdit } from "../api/hyperionSchemas";
 
 interface UseSportMatchesProps {
@@ -56,11 +56,13 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout du match",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -97,11 +99,13 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification du match",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -133,11 +137,13 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression du match",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {

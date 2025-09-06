@@ -6,6 +6,7 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
+import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 
 interface UseSchoolParticipants {
   schoolId: string | null;
@@ -50,11 +51,13 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la mise à jour",
-              description: (error as any).stack.body,
+              description:
+                (error as any).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -92,11 +95,13 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la mise à jour",
-              description: (error as any).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {

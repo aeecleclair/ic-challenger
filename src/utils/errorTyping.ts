@@ -3,3 +3,9 @@ export type ErrorType = {
     body: string;
   };
 };
+
+export type DetailedErrorType = {
+  stack: {
+    detail: string;
+  };
+};

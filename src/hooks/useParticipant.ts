@@ -4,7 +4,7 @@ import {
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType } from "../utils/errorTyping";
+import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 import { ParticipantInfo } from "../api/hyperionSchemas";
 
 export const useParticipant = () => {
@@ -47,11 +47,13 @@ export const useParticipant = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de l'inscription",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {

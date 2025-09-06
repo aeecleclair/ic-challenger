@@ -6,7 +6,7 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType } from "../utils/errorTyping";
+import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 import {
   SchoolExtensionBase,
   SchoolExtensionEdit,
@@ -49,11 +49,13 @@ export const useSportSchools = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la fusion des équipes",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -89,11 +91,13 @@ export const useSportSchools = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la mise à jour",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {

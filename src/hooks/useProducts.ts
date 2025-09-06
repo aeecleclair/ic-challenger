@@ -10,7 +10,7 @@ import {
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType } from "../utils/errorTyping";
+import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionProductBase,
   AppModulesSportCompetitionSchemasSportCompetitionProductEdit,
@@ -55,11 +55,13 @@ export const useProducts = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout du produit",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -95,11 +97,13 @@ export const useProducts = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification du produit",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -130,11 +134,13 @@ export const useProducts = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression du product",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -170,11 +176,13 @@ export const useProducts = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout de la variante",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -210,11 +218,13 @@ export const useProducts = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la modification de la variante",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
@@ -252,11 +262,13 @@ export const useProducts = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression de la variante",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {

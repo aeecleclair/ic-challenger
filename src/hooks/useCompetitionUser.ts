@@ -4,7 +4,7 @@ import {
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType } from "../utils/errorTyping";
+import { DetailedErrorType, ErrorType } from "../utils/errorTyping";
 import { CompetitionUserBase } from "../api/hyperionSchemas";
 
 export const useCompetitionUser = () => {
@@ -41,11 +41,13 @@ export const useCompetitionUser = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body) {
+          if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de l'ajout de l'utilisateur",
-              description: (error as unknown as ErrorType).stack.body,
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
