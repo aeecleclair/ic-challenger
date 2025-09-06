@@ -142,7 +142,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                       disabled={
                         !form.watch("sport.team_leader") ||
                         teamName.length === 0 ||
-                        (form.watch("sport.team_id")?.length ?? 0) > 0
+                        !form.watch("sport.team_id")
                       }
                       isLoading={isCreateLoading}
                     >
@@ -156,14 +156,14 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
           ) : (
             <StyledFormField
               form={form}
-              label="Catégorie"
+              label="Équipe"
               id="sport.team_id"
-              input={(field) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-60">
-                    <SelectValue placeholder="Sélectionnez une équipe" />
-                  </SelectTrigger>
-                  {teams && teams.length !== 0 && (
+              input={(field) =>
+                teams && teams.length !== 0 ? (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="w-60">
+                      <SelectValue placeholder="Sélectionnez une équipe" />
+                    </SelectTrigger>
                     <SelectContent>
                       {teams.map((team) => (
                         <SelectItem key={team.id} value={team.id}>
@@ -171,9 +171,11 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                         </SelectItem>
                       ))}
                     </SelectContent>
-                  )}
-                </Select>
-              )}
+                  </Select>
+                ) : (
+                  <p>Aucune équipe disponible pour ce sport.</p>
+                )
+              }
             />
           )}
         </>
