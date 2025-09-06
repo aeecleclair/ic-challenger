@@ -2,7 +2,11 @@ import { useGetUsersMe, usePatchUsersMe } from "@/src/api/hyperionComponents";
 import { useUserStore } from "../stores/user";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
+import {
+  ErrorType,
+  DetailedErrorType,
+  APIErrorType,
+} from "../utils/errorTyping";
 
 const COMPETITION_ADMIN_GROUP_ID = "e9e6e3d3-9f5f-4e9b-8e5f-9f5f4e9b8e5f";
 const SCHOOLS_BDS_GROUP_ID = "96f8ffb8-c585-4ca5-8360-dc3881f9f1e2";
@@ -63,6 +67,7 @@ export const useUser = () => {
             toast({
               title: "Erreur lors de la mise à jour de l'utilisateur",
               description:
+                (error as unknown as APIErrorType).stack.detail[0].msg ||
                 (error as unknown as ErrorType).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
