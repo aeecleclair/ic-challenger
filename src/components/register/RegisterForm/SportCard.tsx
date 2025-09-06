@@ -141,7 +141,8 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                       onClick={() => createTeam(teamName)}
                       disabled={
                         !form.watch("sport.team_leader") ||
-                        teamName.length === 0
+                        teamName.length === 0 ||
+                        (form.watch("sport.team_id")?.length ?? 0) > 0
                       }
                       isLoading={isCreateLoading}
                     >
@@ -158,10 +159,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
               label="Catégorie"
               id="sport.team_id"
               input={(field) => (
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className="w-60">
                     <SelectValue placeholder="Sélectionnez une équipe" />
                   </SelectTrigger>
