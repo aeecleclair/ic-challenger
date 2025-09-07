@@ -6,9 +6,11 @@ import { Button } from "@/src/components/ui/button";
 import { Trophy, Plus, Trash2, Edit } from "lucide-react";
 import { usePodiums } from "@/src/hooks/usePodiums";
 import { useSports } from "@/src/hooks/useSports";
+import { useAllSportsPodiums } from "@/src/hooks/useAllSportsPodiums";
 import { PodiumCard } from "@/src/components/admin/podiums/PodiumCard";
 import { GlobalPodiumCard } from "@/src/components/admin/podiums/GlobalPodiumCard";
 import { PodiumRankingsForm } from "@/src/components/admin/podiums/PodiumRankingsForm";
+import { SportsDataTable } from "@/src/components/admin/podiums/SportsDataTable";
 import { PodiumRankingsFormData } from "@/src/forms/podium";
 import {
   Dialog,
@@ -32,6 +34,9 @@ export default function PodiumsPage() {
   const selectedSchoolId = searchParams.get("school_id");
 
   const { sports } = useSports();
+  const { podiumsBySport } = useAllSportsPodiums({
+    sportIds: sports?.map(sport => sport.id) || [],
+  });
   const {
     globalPodium,
     sportPodium,
@@ -189,34 +194,31 @@ export default function PodiumsPage() {
         {/* Sports List for Quick Actions */}
         <div className="lg:col-span-2 xl:col-span-3">
           <h2 className="text-xl font-semibold mb-4">
-            Actions rapides par sport
+            Gestion des podiums par sport
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {sports?.map((sport) => (
-              <div key={sport.id} className="p-4 border rounded-lg">
-                <h3 className="font-semibold mb-2">{sport.name}</h3>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => openEditDialog(sport.id)}
-                    className="flex-1"
-                  >
-                    <Edit className="h-3 w-3 mr-1" />
-                    Gérer
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => handleDeletePodium(sport.id)}
-                    disabled={isDeleteLoading}
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+
+          {/* Sports Data Table */}
+          <SportsDataTable
+            data={
+              sports?.map((sport) => {
+                const podiumData = podiumsBySport[sport.id];
+                const sortedPodium = podiumData ? [...podiumData].sort((a, b) => a.rank - b.rank) : [];
+                
+                return {
+                  id: sport.id,
+                  name: sport.name,
+                  active: sport.active ?? true,
+                  firstPlace: sortedPodium.find(p => p.rank === 1)?.team?.name || null,
+                  secondPlace: sortedPodium.find(p => p.rank === 2)?.team?.name || null,
+                  thirdPlace: sortedPodium.find(p => p.rank === 3)?.team?.name || null,
+                };
+              }) || []
+            }
+            onEditSport={openEditDialog}
+            onDeletePodium={handleDeletePodium}
+            isLoading={isUpdateLoading}
+            isDeleteLoading={isDeleteLoading}
+          />
         </div>
       </div>
     </div>
