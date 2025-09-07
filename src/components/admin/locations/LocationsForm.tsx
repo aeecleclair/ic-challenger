@@ -13,6 +13,7 @@ import {
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
+import { MapPicker } from "@/src/components/ui/map-picker";
 import { locationSchema, LocationFormData } from "@/src/forms/location";
 import { LocationComplete } from "@/src/api/hyperionSchemas";
 
@@ -92,53 +93,18 @@ export function LocationsForm({
           )}
         />
 
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="latitude"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Latitude</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="any"
-                    placeholder="Ex: 48.8566"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="longitude"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Longitude</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="any"
-                    placeholder="Ex: 2.3522"
-                    {...field}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+        {/* Map Picker for Coordinates */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Localisation
+          </label>
+          <MapPicker
+            latitude={form.watch("latitude")}
+            longitude={form.watch("longitude")}
+            onCoordinatesChange={(lat, lng) => {
+              form.setValue("latitude", lat);
+              form.setValue("longitude", lng);
+            }}
           />
         </div>
 

@@ -3,21 +3,43 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/src/components/ui/button";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Plus, X, Save, Trash2 } from "lucide-react";
 import { useLocations } from "@/src/hooks/useLocations";
-import { LocationCard } from "@/src/components/admin/locations/LocationCard";
 import { DeleteConfirmationDialog } from "@/src/components/admin/locations/DeleteConfirmationDialog";
 import { LocationComplete } from "@/src/api/hyperionSchemas";
+import { MapPicker } from "@/src/components/ui/map-picker";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { locationSchema, LocationFormData } from "@/src/forms/location";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/src/components/ui/form";
+import { Input } from "@/src/components/ui/input";
+import { Textarea } from "@/src/components/ui/textarea";
 
 export default function LocationsPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const selectedLocationId = searchParams.get("location_id");
 
-  const { locations, deleteLocation, isLoading, isDeleteLoading } =
-    useLocations();
+  const {
+    locations,
+    createLocation,
+    updateLocation,
+    deleteLocation,
+    isLoading,
+    isCreateLoading,
+    isUpdateLoading,
+    isDeleteLoading,
+  } = useLocations();
 
+  const [editingLocation, setEditingLocation] =
+    useState<LocationComplete | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
     location: LocationComplete | null;
@@ -26,8 +48,57 @@ export default function LocationsPage() {
     location: null,
   });
 
-  const handleCreateLocation = () => {
-    router.push("/admin/locations/create");
+  const form = useForm<LocationFormData>({
+    resolver: zodResolver(locationSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      address: "",
+      latitude: undefined,
+      longitude: undefined,
+    },
+  });
+
+  const handleMapClick = (lat: number, lng: number) => {
+    if (!isCreating && !editingLocation) {
+      setIsCreating(true);
+      form.reset({
+        name: "",
+        description: "",
+        address: "",
+        latitude: lat,
+        longitude: lng,
+      });
+    }
+  };
+
+  const handleLocationSelect = (
+    lat: number,
+    lng: number,
+    name: string,
+    address: string,
+  ) => {
+    if (isCreating) {
+      form.setValue("address", address);
+      form.setValue("latitude", lat);
+      form.setValue("longitude", lng);
+    } else if (editingLocation) {
+      form.setValue("address", address);
+      form.setValue("latitude", lat);
+      form.setValue("longitude", lng);
+    }
+  };
+
+  const handleEditLocation = (location: LocationComplete) => {
+    setEditingLocation(location);
+    setIsCreating(false);
+    form.reset({
+      name: location.name || "",
+      description: location.description || "",
+      address: location.address || "",
+      latitude: location.latitude || undefined,
+      longitude: location.longitude || undefined,
+    });
   };
 
   const handleDeleteLocation = (locationId: string) => {
@@ -37,10 +108,34 @@ export default function LocationsPage() {
     }
   };
 
+  const handleSubmit = (data: LocationFormData) => {
+    if (editingLocation) {
+      updateLocation(editingLocation.id, data, () => {
+        setEditingLocation(null);
+        form.reset();
+      });
+    } else {
+      createLocation(data, () => {
+        setIsCreating(false);
+        form.reset();
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    setIsCreating(false);
+    setEditingLocation(null);
+    form.reset();
+  };
+
   const confirmDelete = () => {
     if (deleteDialog.location) {
       deleteLocation(deleteDialog.location.id, () => {
         setDeleteDialog({ isOpen: false, location: null });
+        if (editingLocation?.id === deleteDialog.location?.id) {
+          setEditingLocation(null);
+          form.reset();
+        }
       });
     }
   };
@@ -68,41 +163,49 @@ export default function LocationsPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Gestion des lieux</h1>
-        <Button onClick={handleCreateLocation}>
+        <Button
+          onClick={() => setIsCreating(true)}
+          disabled={isCreating || !!editingLocation}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Ajouter un lieu
         </Button>
       </div>
 
-      {selectedLocation ? (
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4">Lieu sélectionné</h2>
-          <LocationCard
-            location={selectedLocation}
-            onDelete={handleDeleteLocation}
-          />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {locations && locations.length > 0 ? (
-            locations.map((location) => (
-              <LocationCard
-                key={location.id}
-                location={location}
-                onDelete={handleDeleteLocation}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-8">
-              <p className="text-muted-foreground">Aucun lieu trouvé.</p>
-              <Button onClick={handleCreateLocation} className="mt-4">
-                <Plus className="h-4 w-4 mr-2" />
-                Créer le premier lieu
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
+      <div className="w-full">
+        {/* Map Section */}
+        <MapPicker
+          latitude={form.watch("latitude")}
+          longitude={form.watch("longitude")}
+          onCoordinatesChange={handleMapClick}
+          onLocationAdd={handleLocationSelect}
+          onLocationDelete={() => {}}
+          locations={locations}
+          onLocationEdit={handleEditLocation}
+          onLocationCreate={(data) => {
+            createLocation(data, () => {
+              setIsCreating(false);
+              form.reset();
+            });
+          }}
+          onLocationUpdate={(locationId, data) => {
+            updateLocation(locationId, data, () => {
+              setEditingLocation(null);
+              form.reset();
+            });
+          }}
+          form={form}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+          isCreating={isCreating}
+          editingLocation={editingLocation}
+          isCreateLoading={isCreateLoading}
+          isUpdateLoading={isUpdateLoading}
+          isDeleteLoading={isDeleteLoading}
+          onDelete={handleDeleteLocation}
+          className="h-[calc(100vh-12rem)]"
+        />
+      </div>
 
       <DeleteConfirmationDialog
         isOpen={deleteDialog.isOpen}
