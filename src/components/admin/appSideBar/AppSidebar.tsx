@@ -19,6 +19,7 @@ import { NavSports } from "./NavSports";
 import { NavGroups } from "./NavGroups";
 import { NavMatches } from "./NavMatches";
 import { NavProducts } from "./NavProducts";
+import { NavLocations } from "./NavLocations";
 
 const data = {
   navSecondary: [
@@ -62,6 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <NavSchools />
             <NavSports />
             <NavValidation />
+            <NavLocations />
             <NavMatches />
             <NavGroups />
             <NavProducts />

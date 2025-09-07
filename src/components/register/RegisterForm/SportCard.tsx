@@ -156,29 +156,46 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
               </div>
             </FormItem>
           ) : (
-            <StyledFormField
-              form={form}
-              label="Équipe"
-              id="sport.team_id"
-              input={(field) =>
-                teams && teams.length !== 0 ? (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-60">
-                      <SelectValue placeholder="Sélectionnez une équipe" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teams.map((team) => (
-                        <SelectItem key={team.id} value={team.id}>
-                          {team.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <p>Aucune équipe disponible pour ce sport.</p>
-                )
-              }
-            />
+            <div className="flex flex-col gap-4 lg:flex-row w-2/3">
+              <StyledFormField
+                form={form}
+                label="Équipe"
+                id="sport.team_id"
+                input={(field) =>
+                  teams && teams.length !== 0 ? (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="w-60">
+                        <SelectValue placeholder="Sélectionnez une équipe" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teams.map((team) => (
+                          <SelectItem key={team.id} value={team.id}>
+                            {team.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p>Aucune équipe enregistrée pour ce sport.</p>
+                  )
+                }
+              />
+              <StyledFormField
+                form={form}
+                label="Remplaçant d'équipe"
+                id="sport.substitute"
+                input={(field) => (
+                  <div className="flex items-center space-x-2 pt-2 ">
+                    <Checkbox
+                      id="sport.substitute"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <Label htmlFor="sport.substitute">Je suis remplaçant</Label>
+                  </div>
+                )}
+              />
+            </div>
           )}
         </>
       )}
