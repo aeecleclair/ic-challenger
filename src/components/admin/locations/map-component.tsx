@@ -93,6 +93,9 @@ export default function MapComponent({
       root.render(
         <SimpleLocationMarker
           locationName={location.name || location.address || "Lieu sans nom"}
+          address={location.address}
+          latitude={lat}
+          longitude={lng}
           onClick={() => {
             if (onLocationEdit) {
               onLocationEdit(location);
@@ -104,8 +107,8 @@ export default function MapComponent({
       const customIcon = L.divIcon({
         html: markerDiv,
         className: "location-marker-icon",
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
+        iconSize: [220, 50],
+        iconAnchor: [110, 85],
       });
 
       const marker = L.marker([lat, lng], { icon: customIcon });

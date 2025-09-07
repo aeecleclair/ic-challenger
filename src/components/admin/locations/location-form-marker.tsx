@@ -103,7 +103,7 @@ export function LocationFormMarker({
               </h3>
               <div className="flex items-center gap-2">
                 <Badge
-                  variant={isAdded ? "destructive" : "secondary"}
+                  variant="secondary"
                   className={cn(
                     "text-xs",
                     isAdded
@@ -228,7 +228,7 @@ export function LocationFormMarker({
                   className="flex items-center justify-center"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
-                  {isDeleteLoading ? "..." : "Suppr."}
+                  {isDeleteLoading ? "..." : "Supprimer"}
                 </Button>
               )}
             </div>

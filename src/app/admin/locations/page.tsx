@@ -152,13 +152,6 @@ export default function LocationsPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Gestion des lieux</h1>
-        <Button
-          onClick={() => setIsCreating(true)}
-          disabled={isCreating || !!editingLocation}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Ajouter un lieu
-        </Button>
       </div>
 
       <div className="w-full">
@@ -178,7 +171,7 @@ export default function LocationsPage() {
           isUpdateLoading={isUpdateLoading}
           isDeleteLoading={isDeleteLoading}
           onDelete={handleDeleteLocation}
-          className="h-[calc(100vh-12rem)]"
+          className="h-[calc(100vh-15rem)]"
         />
       </div>
 
