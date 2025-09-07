@@ -49,7 +49,8 @@ export function LocationCard({ location, onDelete }: LocationCardProps) {
           )}
           {location.latitude && location.longitude && (
             <p className="text-sm text-muted-foreground">
-              <strong>Coordonnées:</strong> {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+              <strong>Coordonnées:</strong> {location.latitude.toFixed(4)},{" "}
+              {location.longitude.toFixed(4)}
             </p>
           )}
           {location.matches && location.matches.length > 0 && (

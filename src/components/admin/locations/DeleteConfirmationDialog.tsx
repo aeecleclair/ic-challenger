@@ -31,8 +31,8 @@ export function DeleteConfirmationDialog({
         <DialogHeader>
           <DialogTitle>Supprimer le lieu</DialogTitle>
           <DialogDescription>
-            Êtes-vous sûr de vouloir supprimer le lieu &quot;{locationName}&quot; ?
-            Cette action ne peut pas être annulée.
+            Êtes-vous sûr de vouloir supprimer le lieu &quot;{locationName}
+            &quot; ? Cette action ne peut pas être annulée.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
