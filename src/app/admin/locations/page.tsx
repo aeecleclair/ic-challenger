@@ -7,7 +7,7 @@ import { Plus, X, Save, Trash2 } from "lucide-react";
 import { useLocations } from "@/src/hooks/useLocations";
 import { DeleteConfirmationDialog } from "@/src/components/admin/locations/DeleteConfirmationDialog";
 import { LocationComplete } from "@/src/api/hyperionSchemas";
-import { MapPicker } from "@/src/components/ui/map-picker";
+import { MapPicker } from "@/src/components/admin/locations/map-picker";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { locationSchema, LocationFormData } from "@/src/forms/location";
@@ -59,39 +59,24 @@ export default function LocationsPage() {
     },
   });
 
-  const handleMapClick = (lat: number, lng: number) => {
-    if (!isCreating && !editingLocation) {
+  const handleMapClick = (lat: number, lng: number, address: string) => {
+    // Only allow creating new location if not currently editing
+    if (!editingLocation) {
       setIsCreating(true);
       form.reset({
         name: "",
         description: "",
-        address: "",
+        address: address,
         latitude: lat,
         longitude: lng,
       });
     }
   };
 
-  const handleLocationSelect = (
-    lat: number,
-    lng: number,
-    name: string,
-    address: string,
-  ) => {
-    if (isCreating) {
-      form.setValue("address", address);
-      form.setValue("latitude", lat);
-      form.setValue("longitude", lng);
-    } else if (editingLocation) {
-      form.setValue("address", address);
-      form.setValue("latitude", lat);
-      form.setValue("longitude", lng);
-    }
-  };
-
   const handleEditLocation = (location: LocationComplete) => {
-    setEditingLocation(location);
+    // Cancel any current creation
     setIsCreating(false);
+    setEditingLocation(location);
     form.reset({
       name: location.name || "",
       description: location.description || "",
@@ -123,8 +108,12 @@ export default function LocationsPage() {
   };
 
   const handleCancel = () => {
-    setIsCreating(false);
-    setEditingLocation(null);
+    if (isCreating) {
+      setIsCreating(false);
+    }
+    if (editingLocation) {
+      setEditingLocation(null);
+    }
     form.reset();
   };
 
@@ -178,22 +167,8 @@ export default function LocationsPage() {
           latitude={form.watch("latitude")}
           longitude={form.watch("longitude")}
           onCoordinatesChange={handleMapClick}
-          onLocationAdd={handleLocationSelect}
-          onLocationDelete={() => {}}
           locations={locations}
           onLocationEdit={handleEditLocation}
-          onLocationCreate={(data) => {
-            createLocation(data, () => {
-              setIsCreating(false);
-              form.reset();
-            });
-          }}
-          onLocationUpdate={(locationId, data) => {
-            updateLocation(locationId, data, () => {
-              setEditingLocation(null);
-              form.reset();
-            });
-          }}
           form={form}
           onSubmit={handleSubmit}
           onCancel={handleCancel}

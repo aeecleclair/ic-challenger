@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import { Separator } from "@/src/components/ui/separator";
@@ -50,6 +50,7 @@ export function LocationFormMarker({
   onDelete,
   editingLocation,
 }: LocationFormMarkerProps) {
+
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -81,7 +82,9 @@ export function LocationFormMarker({
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    form.handleSubmit(onSubmit)(e);
+    form.trigger().then(() => {
+      form.handleSubmit(onSubmit)(e);
+    });
   };
 
   const getIcon = () => <MapPin className="h-4 w-4" />;
@@ -202,10 +205,10 @@ export function LocationFormMarker({
               </Button>
 
               <Button
-                type="submit"
                 size="sm"
                 disabled={isCreateLoading || isUpdateLoading}
                 className="flex items-center justify-center"
+                onClick={handleFormSubmit}
               >
                 <Save className="h-3 w-3 mr-1" />
                 {isCreateLoading || isUpdateLoading

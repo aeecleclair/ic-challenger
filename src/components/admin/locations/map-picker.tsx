@@ -6,19 +6,8 @@ import dynamic from "next/dynamic";
 interface MapPickerProps {
   latitude?: number;
   longitude?: number;
-  onCoordinatesChange: (lat: number, lng: number) => void;
-  onLocationAdd?: (
-    lat: number,
-    lng: number,
-    name: string,
-    address: string,
-  ) => void;
-  onLocationDelete?: (lat: number, lng: number) => void;
+  onCoordinatesChange: (lat: number, lng: number, address: string) => void;
   onLocationEdit?: (location: any) => void;
-  onLocationCreate?: (data: any) => void;
-  onLocationUpdate?: (locationId: string, data: any) => void;
-  isLocationAdded?: boolean;
-  locationName?: string;
   locations?: any[];
   className?: string;
   form?: any;
@@ -46,13 +35,7 @@ export function MapPicker({
   latitude,
   longitude,
   onCoordinatesChange,
-  onLocationAdd,
-  onLocationDelete,
   onLocationEdit,
-  onLocationCreate,
-  onLocationUpdate,
-  isLocationAdded = false,
-  locationName,
   locations = [],
   className = "",
   form,
@@ -65,8 +48,8 @@ export function MapPicker({
   isDeleteLoading = false,
   onDelete,
 }: MapPickerProps) {
-  const handlePositionChange = (lat: number, lng: number) => {
-    onCoordinatesChange(lat, lng);
+  const handlePositionChange = (lat: number, lng: number, address: string) => {
+    onCoordinatesChange(lat, lng, address);
   };
 
   return (
@@ -75,13 +58,7 @@ export function MapPicker({
         latitude={latitude}
         longitude={longitude}
         onCoordinatesChange={handlePositionChange}
-        onLocationAdd={onLocationAdd}
-        onLocationDelete={onLocationDelete}
         onLocationEdit={onLocationEdit}
-        onLocationCreate={onLocationCreate}
-        onLocationUpdate={onLocationUpdate}
-        isLocationAdded={isLocationAdded}
-        locationName={locationName}
         locations={locations}
         form={form}
         onSubmit={onSubmit}
