@@ -6,11 +6,6 @@ import { Checkbox } from "../../ui/checkbox";
 import { Badge } from "../../ui/badge";
 import { DataTableColumnHeader } from "./DataTableColumnHeader";
 import { DataTableRowActions } from "./DataTableRowActions";
-import {
-  difficulties,
-  getLabelFromValue,
-  meetingPlaces,
-} from "@/src/infra/comboboxValues";
 import { CircularProgressBar } from "../../custom/CircularProgressBar";
 import { ProgressBadge } from "../../custom/ProgressBadge";
 import { ParticipantInfo, Team } from "@/src/api/hyperionSchemas";

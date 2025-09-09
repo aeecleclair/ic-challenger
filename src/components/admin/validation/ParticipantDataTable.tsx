@@ -21,17 +21,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, CheckCircle } from "lucide-react";
+import { ArrowUpDown, CheckCircle, MoreHorizontal } from "lucide-react";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/src/components/ui/tooltip";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
 import { DataTableToolbar } from "./DataTableToolbar";
 
-// Extended participant info with formatted data
 export interface ParticipantData {
   userId: string;
   sportId: string;
@@ -40,6 +39,7 @@ export interface ParticipantData {
   email: string;
   license: string;
   teamId?: string | null;
+  teamName?: string | null;
   isSubstitute: boolean;
   isValidated: boolean;
   participantType: string;
@@ -64,11 +64,10 @@ export function ParticipantDataTable({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-  // Create a virtual column for search that's not actually rendered
   const columns: ColumnDef<ParticipantData>[] = [
     {
       id: "searchField",
-      accessorFn: row => `${row.fullName} ${row.email}`.toLowerCase(),
+      accessorFn: (row) => `${row.fullName} ${row.email}`.toLowerCase(),
       filterFn: (row, columnId, filterValue) => {
         const searchTerm = filterValue.toLowerCase();
         const fullName = row.getValue<string>("fullName").toLowerCase();
@@ -89,7 +88,9 @@ export function ParticipantDataTable({
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("fullName")}</div>
+        <div className="font-medium text-center">
+          {row.getValue("fullName")}
+        </div>
       ),
     },
     {
@@ -104,25 +105,9 @@ export function ParticipantDataTable({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div>{row.getValue("email")}</div>,
-    },
-    {
-      accessorKey: "sportName",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center"
-        >
-          Sport
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("email")}</div>
       ),
-      cell: ({ row }) => <div>{row.getValue("sportName")}</div>,
-      filterFn: (row, id, filterValue) => {
-        const sportName = row.getValue<string>(id);
-        return (filterValue as string[])?.includes(sportName) ?? true;
-      },
     },
     {
       accessorKey: "license",
@@ -137,7 +122,30 @@ export function ParticipantDataTable({
         </Button>
       ),
       cell: ({ row }) => (
-        <div>{row.getValue("license") || "Non renseignée"}</div>
+        <div className="text-center">
+          {row.getValue("license") || "Non renseignée"}
+        </div>
+      ),
+      filterFn: (row, id, filterValue) => {
+        if (filterValue === undefined) return true;
+        const value = row.getValue<string>(id);
+        return filterValue === true ? Boolean(value) : true;
+      },
+    },
+    {
+      accessorKey: "teamName",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center"
+        >
+          Équipe
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("teamName") || "-"}</div>
       ),
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
@@ -160,12 +168,12 @@ export function ParticipantDataTable({
       cell: ({ row }) => {
         const participantType = row.getValue("participantType") as string;
         const types = participantType.split(", ");
-        
+
         return (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 justify-center">
             {types.map((type, index) => {
               let badgeClass = "";
-              switch(type) {
+              switch (type) {
                 case "Athlète":
                   badgeClass = "bg-blue-100 text-blue-800 hover:bg-blue-200";
                   break;
@@ -173,10 +181,12 @@ export function ParticipantDataTable({
                   badgeClass = "bg-pink-100 text-pink-800 hover:bg-pink-200";
                   break;
                 case "Fanfare":
-                  badgeClass = "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
+                  badgeClass =
+                    "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
                   break;
                 case "Cameraman":
-                  badgeClass = "bg-purple-100 text-purple-800 hover:bg-purple-200";
+                  badgeClass =
+                    "bg-purple-100 text-purple-800 hover:bg-purple-200";
                   break;
                 case "Bénévole":
                   badgeClass = "bg-green-100 text-green-800 hover:bg-green-200";
@@ -184,7 +194,7 @@ export function ParticipantDataTable({
                 default:
                   badgeClass = "";
               }
-              
+
               return (
                 <Badge key={index} variant="secondary" className={badgeClass}>
                   {type}
@@ -196,12 +206,10 @@ export function ParticipantDataTable({
       },
       filterFn: (row, id, filterValue) => {
         if (!filterValue || (filterValue as string[]).length === 0) return true;
-        
-        // Split the participant types into an array
+
         const types = (row.getValue(id) as string).split(", ");
-        
-        // Check if any of the types match the selected filter values
-        return types.some(type => (filterValue as string[]).includes(type));
+
+        return types.some((type) => (filterValue as string[]).includes(type));
       },
     },
     {
@@ -217,7 +225,7 @@ export function ParticipantDataTable({
         </Button>
       ),
       cell: ({ row }) => (
-        <div>
+        <div className="flex justify-center">
           {row.getValue("isSubstitute") ? (
             <Badge variant="outline">Oui</Badge>
           ) : (
@@ -244,7 +252,7 @@ export function ParticipantDataTable({
         </Button>
       ),
       cell: ({ row }) => (
-        <div>
+        <div className="flex justify-center">
           {row.getValue("isValidated") ? (
             <Badge
               variant="secondary"
@@ -265,53 +273,52 @@ export function ParticipantDataTable({
     },
     {
       id: "actions",
-      header: () => <div className="text-right">Actions</div>,
+      header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => {
         const participant = row.original;
 
-        // Don't show validate action if already validated
         if (participant.isValidated) {
-          return <div className="text-right">Déjà validé</div>;
+          return <div className="text-center">Déjà validé</div>;
         }
 
         return (
-          <div className="flex justify-end">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center"
-                    onClick={() =>
-                      onValidateParticipant(
-                        participant.userId,
-                        participant.sportId,
-                      )
-                    }
-                    disabled={isLoading}
-                  >
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    Valider
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Valider ce participant</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <div className="flex justify-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  disabled={isLoading}
+                >
+                  <span className="sr-only">Ouvrir le menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() =>
+                    onValidateParticipant(
+                      participant.userId,
+                      participant.sportId,
+                    )
+                  }
+                  disabled={isLoading}
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Valider
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         );
       },
     },
   ];
 
-  // Setup column visibility to hide the searchField column
   React.useEffect(() => {
-    // Hide the virtual searchField column
     setColumnVisibility((prev) => ({
       ...prev,
-      searchField: false
+      searchField: false,
     }));
   }, []);
 
@@ -331,36 +338,33 @@ export function ParticipantDataTable({
     getSortedRowModel: getSortedRowModel(),
   });
 
-  // Extract unique sports for faceted filter
   const sports = React.useMemo(() => {
-    const uniqueSports = new Set(data.map(item => item.sportName));
-    return Array.from(uniqueSports).map(sport => ({
+    const uniqueSports = new Set(data.map((item) => item.sportName));
+    return Array.from(uniqueSports).map((sport) => ({
       label: sport,
-      value: sport
+      value: sport,
     }));
   }, [data]);
 
-  // Extract unique participant types for faceted filter
   const participantTypes = React.useMemo(() => {
-    // First, collect all individual types from all participants
     const types = new Set<string>();
-    data.forEach(item => {
+    data.forEach((item) => {
       const itemTypes = item.participantType.split(", ");
-      itemTypes.forEach(type => types.add(type));
+      itemTypes.forEach((type) => types.add(type));
     });
-    
-    return Array.from(types).map(type => ({
+
+    return Array.from(types).map((type) => ({
       label: type,
-      value: type
+      value: type,
     }));
   }, [data]);
 
   return (
     <div>
-      <DataTableToolbar 
-        table={table} 
+      <DataTableToolbar
+        table={table}
         sportOptions={sports}
-        typeOptions={participantTypes} 
+        typeOptions={participantTypes}
       />
       <div className="rounded-md border">
         <Table>
@@ -368,13 +372,14 @@ export function ParticipantDataTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  // Don't render the searchField column header
                   if (header.id === "searchField") return null;
-                  
+
                   return (
                     <TableHead
                       key={header.id}
-                      className={header.id === "actions" ? "text-right" : ""}
+                      className={
+                        header.id === "actions" ? "text-center" : "text-center"
+                      }
                     >
                       {header.isPlaceholder
                         ? null
@@ -393,14 +398,15 @@ export function ParticipantDataTable({
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => {
-                    // Don't render the searchField column cell
                     if (cell.column.id === "searchField") return null;
-                    
+
                     return (
                       <TableCell
                         key={cell.id}
                         className={
-                          cell.column.id === "actions" ? "text-right" : ""
+                          cell.column.id === "actions"
+                            ? "text-center"
+                            : "text-center"
                         }
                       >
                         {flexRender(
@@ -415,7 +421,7 @@ export function ParticipantDataTable({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length - 1} // Subtract 1 for the hidden searchField column
+                  colSpan={columns.length - 1}
                   className="text-center py-4 text-muted-foreground"
                 >
                   Aucun participant trouvé pour cette école

@@ -1,27 +1,42 @@
 "use client";
 
-import SchoolCard from "@/src/components/admin/schools/SchoolCard";
-import { Button } from "@/src/components/ui/button";
-import { useSchools } from "@/src/hooks/useSchools";
-import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
-import { useState, useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
   ParticipantDataTable,
   ParticipantData,
-} from "@/src/components/admin/appSideBar/validation/ParticipantDataTable";
+} from "@/src/components/admin/validation/ParticipantDataTable";
 import { useSports } from "@/src/hooks/useSports";
+import { useSportsQuota } from "@/src/hooks/useSportsQuota";
+import { useUser } from "@/src/hooks/useUser";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { Badge } from "@/src/components/ui/badge";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/components/ui/tabs";
+import { Trophy } from "lucide-react";
+import { GlobalQuotaCard } from "@/src/components/admin/validation/GlobalQuotaCard";
+import { SportQuotaCard } from "@/src/components/admin/validation/SportQuotaCard";
 
 const Dashboard = () => {
   const router = useRouter();
   const { sportSchools } = useSportSchools();
   const { sports } = useSports();
+  const { me: currentUser, isAdmin } = useUser();
 
   const searchParam = useSearchParams();
   const schoolId = searchParam.get("school_id");
+
+  const userSchoolId = currentUser?.school_id;
+  const canAccessSchool = isAdmin() || schoolId === userSchoolId;
+
+  const effectiveSchoolId = schoolId || userSchoolId;
+
   const {
     schoolParticipants,
     validateParticipants,
@@ -29,105 +44,185 @@ const Dashboard = () => {
     isValidateLoading,
     refetchSchools,
   } = useSchoolParticipants({
-    schoolId: schoolId,
+    schoolId: effectiveSchoolId || null,
   });
 
-  const school = sportSchools?.find((s) => s.school_id === schoolId);
+  const { sportsQuota } = useSportsQuota({ sportId: undefined });
 
-  const onValidate = (userId: string) => {
-    validateParticipants(userId, () => {
-      // Callback after validation
-    });
-  };
+  const onValidate = useCallback(
+    (userId: string, sportId: string) => {
+      validateParticipants(userId, () => {});
+    },
+    [validateParticipants],
+  );
 
-  // Transform the participants data for the data table
-  const participantTableData: ParticipantData[] =
-    schoolParticipants?.map((participant) => {
-      const getSportName = (sportId: string) => {
-        return sports?.find((s) => s.id === sportId)?.name || sportId;
-      };
+  const participantTableData: ParticipantData[] = useMemo(() => {
+    return (
+      schoolParticipants?.map((participant) => {
+        const getSportName = (sportId: string) => {
+          return sports?.find((s) => s.id === sportId)?.name || sportId;
+        };
 
-      const getParticipantType = (participant: any) => {
-        const types = [];
+        const getParticipantType = (participant: any) => {
+          const types = [];
 
-        // All participants are athletes by default
-        types.push("Athlète");
+          types.push("Athlète");
 
-        // Check for additional roles the participant might have
-        if (participant.user?.is_pompom) types.push("Pompom");
-        if (participant.user?.is_fanfare) types.push("Fanfare");
-        if (participant.user?.is_cameraman) types.push("Cameraman");
-        if (participant.user?.is_volunteer) types.push("Bénévole");
+          if (participant.user?.is_pompom) types.push("Pompom");
+          if (participant.user?.is_fanfare) types.push("Fanfare");
+          if (participant.user?.is_cameraman) types.push("Cameraman");
+          if (participant.user?.is_volunteer) types.push("Bénévole");
 
-        return types.join(", ");
-      };
+          return types.join(", ");
+        };
 
-      return {
-        userId: participant.user_id,
-        sportId: participant.sport_id,
-        sportName: getSportName(participant.sport_id),
-        fullName: `${participant.user?.user?.firstname || ""} ${participant.user?.user?.name || ""}`,
-        email: participant.user?.user?.email || "",
-        license: participant.license || "",
-        teamId: participant.team_id,
-        isSubstitute: participant.substitute || false,
-        isValidated: participant.user?.validated || false,
-        participantType: getParticipantType(participant),
-      };
-    }) || [];
+        return {
+          userId: participant.user_id,
+          sportId: participant.sport_id,
+          sportName: getSportName(participant.sport_id),
+          fullName: `${participant.user?.user?.firstname || ""} ${participant.user?.user?.name || ""}`,
+          email: participant.user?.user?.email || "",
+          license: participant.license || "",
+          teamId: participant.team_id,
+          teamName: null, // Will be populated by SportQuotaCard
+          isSubstitute: participant.substitute || false,
+          isValidated: participant.user?.validated || false,
+          participantType: getParticipantType(participant),
+        };
+      }) || []
+    );
+  }, [schoolParticipants, sports]);
+
+  const participantsBySport = useMemo(() => {
+    return participantTableData.reduce(
+      (acc, participant) => {
+        const sportId = participant.sportId;
+        if (!acc[sportId]) {
+          acc[sportId] = {
+            sportName: participant.sportName,
+            participants: [],
+          };
+        }
+        acc[sportId].participants.push(participant);
+        return acc;
+      },
+      {} as Record<
+        string,
+        { sportName: string; participants: ParticipantData[] }
+      >,
+    );
+  }, [participantTableData]);
+
+  if (!schoolId && userSchoolId) {
+    router.push(`/admin/validation?school_id=${userSchoolId}`);
+    return null;
+  }
+
+  if (schoolId && !canAccessSchool) {
+    router.push(`/admin/validation?school_id=${userSchoolId}`);
+    return null;
+  }
+
+  if (!effectiveSchoolId) {
+    return (
+      <div className="flex items-center justify-center h-full mt-10">
+        <p className="text-gray-500">Aucune école associée à votre compte</p>
+      </div>
+    );
+  }
+
+  const school = sportSchools?.find((s) => s.school_id === effectiveSchoolId);
+  const sportsWithParticipants = Object.entries(participantsBySport);
+
+  const totalParticipants = participantTableData.length;
+  const totalValidated = participantTableData.filter(
+    (p) => p.isValidated,
+  ).length;
 
   return (
     <div className="flex w-full flex-col p-6">
-      {school ? (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-2xl font-bold">
-              Validation des participants de{" "}
-              {formatSchoolName(school.school.name)}
-            </span>
-            <Link
-              href="/admin/validation"
-              className="text-sm text-primary hover:underline"
-            >
-              Retour à la liste des écoles
-            </Link>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <span className="text-2xl font-bold">
+          Validation des participants{" "}
+          {school ? `- ${formatSchoolName(school.school.name)}` : ""}
+        </span>
+      </div>
 
-          <div className="mt-4">
-            <ParticipantDataTable
-              data={participantTableData}
-              schoolName={formatSchoolName(school.school.name) || "École"}
-              onValidateParticipant={onValidate}
-              isLoading={isValidateLoading}
-            />
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Écoles à valider</h1>
-          </div>
+      {school && (
+        <GlobalQuotaCard
+          totalParticipants={totalParticipants}
+          totalValidated={totalValidated}
+          sportQuotas={sportsQuota || []}
+          schoolName={formatSchoolName(school.school.name) || "École"}
+        />
+      )}
 
-          {sportSchools && sportSchools.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {sportSchools.map((school) => (
-                <SchoolCard
-                  key={school.school_id}
-                  school={school}
-                  onClick={() => {
-                    router.push(
-                      `/admin/validation?school_id=${school.school_id}`,
-                    );
-                  }}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-full mt-10">
-              <p className="text-gray-500">Aucune école disponible</p>
-            </div>
+      {sportsWithParticipants.length > 0 ? (
+        <Tabs defaultValue={sportsWithParticipants[0]?.[0]} className="w-full">
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6">
+            {sportsWithParticipants.map(
+              ([sportId, { sportName, participants }]) => {
+                const quota = sportsQuota?.find(
+                  (q: any) => q.sport_id === sportId,
+                );
+                const isOverQuota =
+                  quota && participants.length > (quota.participant_quota || 0);
+
+                return (
+                  <TabsTrigger
+                    key={sportId}
+                    value={sportId}
+                    className="relative"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-4 w-4" />
+                      {sportName}
+                      <Badge
+                        variant={isOverQuota ? "destructive" : "secondary"}
+                        className="text-xs"
+                      >
+                        {participants.length}
+                      </Badge>
+                    </div>
+                  </TabsTrigger>
+                );
+              },
+            )}
+          </TabsList>
+
+          {sportsWithParticipants.map(
+            ([sportId, { sportName, participants }]) => {
+              const quota = sportsQuota?.find(
+                (q: any) => q.sport_id === sportId,
+              );
+
+              return (
+                <TabsContent key={sportId} value={sportId}>
+                  <SportQuotaCard
+                    sportId={sportId}
+                    sportName={sportName}
+                    participants={participants}
+                    quota={quota}
+                    onValidateParticipant={onValidate}
+                    isLoading={isValidateLoading}
+                    schoolId={effectiveSchoolId || ""}
+                    schoolName={
+                      school
+                        ? formatSchoolName(school.school.name) || "École"
+                        : "École"
+                    }
+                  />
+                </TabsContent>
+              );
+            },
           )}
-        </>
+        </Tabs>
+      ) : (
+        <div className="flex items-center justify-center h-full mt-10">
+          <p className="text-gray-500">
+            Aucun participant trouvé pour cette école
+          </p>
+        </div>
       )}
     </div>
   );

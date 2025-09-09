@@ -39,7 +39,7 @@ export const RegisterFormField = ({
   const onSportToggle = () => {
     const newSubtitles = [...state.allHeaderSubtitles];
 
-    if (!showSportFields) {
+    if (!showSportFields && state.allHeaderSubtitles[2] !== "Sport") {
       newSubtitles.splice(2, 0, "Sport");
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
