@@ -10,10 +10,6 @@ import { DataTableFilterCheckBox } from "../registered-table/DataTableFilterChec
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  sportOptions: {
-    label: string;
-    value: string;
-  }[];
   typeOptions: {
     label: string;
     value: string;
@@ -22,7 +18,6 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({
   table,
-  sportOptions,
   typeOptions,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -40,14 +35,6 @@ export function DataTableToolbar<TData>({
           }
           className="h-8 max-w-sm"
         />
-
-        {table.getColumn("sportName") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("sportName")}
-            title="Sport"
-            options={sportOptions}
-          />
-        )}
 
         {table.getColumn("participantType") && (
           <DataTableFacetedFilter

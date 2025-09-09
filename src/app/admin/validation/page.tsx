@@ -85,7 +85,7 @@ const Dashboard = () => {
           license: participant.license || "",
           teamId: participant.team_id,
           teamName: null,
-          isCaptain: false, // TODO: Add captain logic when field is available
+          isCaptain: false,
           isSubstitute: participant.substitute || false,
           isValidated: participant.user?.validated || false,
           participantType: getParticipantType(participant),
@@ -140,6 +140,10 @@ const Dashboard = () => {
     (p) => p.isValidated,
   ).length;
 
+  const totalTeams = new Set(
+    participantTableData.map((p) => p.teamId).filter(Boolean),
+  ).size;
+
   return (
     <div className="flex w-full flex-col p-6">
       <div className="flex items-center justify-between mb-6">
@@ -153,6 +157,7 @@ const Dashboard = () => {
         <GlobalQuotaCard
           totalParticipants={totalParticipants}
           totalValidated={totalValidated}
+          totalTeams={totalTeams}
           sportQuotas={sportsQuota || []}
           schoolName={formatSchoolName(school.school.name) || "École"}
         />

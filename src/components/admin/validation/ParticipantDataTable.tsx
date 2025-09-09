@@ -249,9 +249,7 @@ export function ParticipantDataTable({
       },
       filterFn: (row, id, filterValue) => {
         if (!filterValue || (filterValue as string[]).length === 0) return true;
-
         const types = (row.getValue(id) as string).split(", ");
-
         return types.some((type) => (filterValue as string[]).includes(type));
       },
     },
@@ -382,14 +380,6 @@ export function ParticipantDataTable({
     getSortedRowModel: getSortedRowModel(),
   });
 
-  const sports = React.useMemo(() => {
-    const uniqueSports = new Set(data.map((item) => item.sportName));
-    return Array.from(uniqueSports).map((sport) => ({
-      label: sport,
-      value: sport,
-    }));
-  }, [data]);
-
   const participantTypes = React.useMemo(() => {
     const types = new Set<string>();
     data.forEach((item) => {
@@ -405,11 +395,7 @@ export function ParticipantDataTable({
 
   return (
     <div>
-      <DataTableToolbar
-        table={table}
-        sportOptions={sports}
-        typeOptions={participantTypes}
-      />
+      <DataTableToolbar table={table} typeOptions={participantTypes} />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

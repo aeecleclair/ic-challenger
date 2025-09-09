@@ -5,11 +5,12 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
-import { Users, CheckCircle, AlertCircle, School } from "lucide-react";
+import { Users, CheckCircle, AlertCircle, School, Trophy } from "lucide-react";
 
 interface GlobalQuotaCardProps {
   totalParticipants: number;
   totalValidated: number;
+  totalTeams: number;
   sportQuotas: any[];
   schoolName: string;
 }
@@ -17,14 +18,22 @@ interface GlobalQuotaCardProps {
 export const GlobalQuotaCard = ({
   totalParticipants,
   totalValidated,
+  totalTeams,
   sportQuotas,
   schoolName,
 }: GlobalQuotaCardProps) => {
-  const totalQuota = sportQuotas.reduce(
+  const totalParticipantQuota = sportQuotas.reduce(
     (sum, quota) => sum + (quota?.participant_quota || 0),
     0,
   );
-  const isOverGlobalQuota = totalQuota > 0 && totalParticipants > totalQuota;
+  const totalTeamQuota = sportQuotas.reduce(
+    (sum, quota) => sum + (quota?.team_quota || 0),
+    0,
+  );
+
+  const isOverParticipantQuota =
+    totalParticipantQuota > 0 && totalParticipants > totalParticipantQuota;
+  const isOverTeamQuota = totalTeamQuota > 0 && totalTeams > totalTeamQuota;
 
   return (
     <Card className="mb-6">
@@ -35,32 +44,51 @@ export const GlobalQuotaCard = ({
             Aperçu global - {schoolName}
           </CardTitle>
           <div className="flex items-center gap-2">
-            {isOverGlobalQuota && (
+            {isOverParticipantQuota && (
               <Badge variant="destructive" className="text-xs">
                 <AlertCircle className="h-3 w-3 mr-1" />
-                Quota global dépassé
+                Quota participants dépassé
+              </Badge>
+            )}
+            {isOverTeamQuota && (
+              <Badge variant="destructive" className="text-xs">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Quota équipes dépassé
               </Badge>
             )}
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-6 text-sm">
+        <div className="grid grid-cols-4 gap-4 text-sm">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Total participants</span>
             </div>
             <div
-              className={`text-2xl font-bold ${isOverGlobalQuota ? "text-destructive" : ""}`}
+              className={`text-2xl font-bold ${isOverParticipantQuota ? "text-destructive" : ""}`}
             >
               {totalParticipants}
+              <span className="text-lg text-muted-foreground ml-1">
+                / {totalParticipantQuota}
+              </span>
             </div>
-            {totalQuota > 0 && (
-              <div className="text-xs text-muted-foreground">
-                Quota total: {totalQuota}
-              </div>
-            )}
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Trophy className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">Total équipes</span>
+            </div>
+            <div
+              className={`text-2xl font-bold ${isOverTeamQuota ? "text-destructive" : ""}`}
+            >
+              {totalTeams}
+              <span className="text-lg text-muted-foreground ml-1">
+                / {totalTeamQuota}
+              </span>
+            </div>
           </div>
 
           <div className="space-y-1">

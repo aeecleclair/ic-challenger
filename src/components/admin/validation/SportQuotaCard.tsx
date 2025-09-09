@@ -80,13 +80,27 @@ export const SportQuotaCard = ({
             {isOverQuota && (
               <Badge variant="destructive" className="text-xs">
                 <AlertCircle className="h-3 w-3 mr-1" />
-                Quota dépassé
+                Quota participants dépassé
               </Badge>
             )}
-            {!isOverQuota && totalParticipants === maxParticipants && (
+            {isTeamsOverQuota && (
+              <Badge variant="destructive" className="text-xs">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Quota équipes dépassé
+              </Badge>
+            )}
+            {!isOverQuota &&
+              totalParticipants === maxParticipants &&
+              maxParticipants > 0 && (
+                <Badge variant="outline" className="text-xs">
+                  <CheckCircle className="h-3 w-3 mr-1" />
+                  Quota participants atteint
+                </Badge>
+              )}
+            {!isTeamsOverQuota && uniqueTeams === maxTeams && maxTeams > 0 && (
               <Badge variant="outline" className="text-xs">
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Quota atteint
+                Quota équipes atteint
               </Badge>
             )}
           </div>
