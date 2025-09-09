@@ -470,7 +470,7 @@ export const MatchesForm = ({
                       Date et heure du match
                     </FormLabel>
                     <FormControl>
-                      <DateTimePicker
+                      <DateTimePicker 
                         date={field.value}
                         setDate={field.onChange}
                         fromDate={edition?.start_date ? new Date(edition!.start_date) : new Date(1900)}

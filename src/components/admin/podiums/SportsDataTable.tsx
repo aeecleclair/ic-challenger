@@ -86,23 +86,25 @@ export function SportsDataTable({
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center"
+          className="flex items-center justify-center w-full"
         >
           Sport
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("name")}</div>
+        <div className="font-medium text-center">{row.getValue("name")}</div>
       ),
     },
     {
       accessorKey: "firstPlace",
-      header: () => <div className="flex items-center">🥇 1ère place</div>,
+      header: () => (
+        <div className="flex items-center justify-center">🥇 1ère place</div>
+      ),
       cell: ({ row }) => (
-        <div className="font-medium">
+        <div className="font-medium text-center">
           {row.getValue("firstPlace") ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <span className="text-yellow-500">🥇</span>
               <span>{row.getValue("firstPlace")}</span>
             </div>
@@ -114,11 +116,13 @@ export function SportsDataTable({
     },
     {
       accessorKey: "secondPlace",
-      header: () => <div className="flex items-center">🥈 2ème place</div>,
+      header: () => (
+        <div className="flex items-center justify-center">🥈 2ème place</div>
+      ),
       cell: ({ row }) => (
-        <div className="font-medium">
+        <div className="font-medium text-center">
           {row.getValue("secondPlace") ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <span className="text-gray-400">🥈</span>
               <span>{row.getValue("secondPlace")}</span>
             </div>
@@ -130,11 +134,13 @@ export function SportsDataTable({
     },
     {
       accessorKey: "thirdPlace",
-      header: () => <div className="flex items-center">🥉 3ème place</div>,
+      header: () => (
+        <div className="flex items-center justify-center">🥉 3ème place</div>
+      ),
       cell: ({ row }) => (
-        <div className="font-medium">
+        <div className="font-medium text-center">
           {row.getValue("thirdPlace") ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center gap-2">
               <span className="text-amber-600">🥉</span>
               <span>{row.getValue("thirdPlace")}</span>
             </div>
@@ -150,14 +156,14 @@ export function SportsDataTable({
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center"
+          className="flex items-center justify-center w-full"
         >
           Statut
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <div>
+        <div className="text-center">
           {row.getValue("active") ? (
             <Badge
               variant="secondary"
