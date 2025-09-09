@@ -61,7 +61,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
 
   useEffect(() => {
     const newSubtitles = [...state.allHeaderSubtitles];
-    if (meCompetition?.is_athlete) {
+    if (meCompetition?.is_athlete && state.allHeaderSubtitles[2] !== "Sport") {
       newSubtitles.splice(2, 0, "Sport");
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
@@ -79,12 +79,23 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
         allHeaderSubtitles: newSubtitles,
       });
       api?.scrollTo(2);
-    } else if (meCompetition && !meCompetition.validated) {
+    }
+    if (meCompetition && !meCompetition.validated) {
       setState({
         ...state,
         currentStep: !!meParticipant ? 5 : 4,
         stepDone: !!meParticipant ? 5 : 4,
         headerTitle: "Confirmation de l'inscription",
+        headerSubtitle: "Récapitulatif",
+        allHeaderSubtitles: newSubtitles,
+      });
+    }
+    if (meCompetition && meCompetition.validated) {
+      setState({
+        ...state,
+        currentStep: !!meParticipant ? 6 : 5,
+        stepDone: !!meParticipant ? 6 : 5,
+        headerTitle: "Paiement",
         headerSubtitle: "Récapitulatif",
         allHeaderSubtitles: newSubtitles,
       });

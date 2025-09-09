@@ -21,6 +21,7 @@ export function AppSidebar({
 }: React.ComponentProps<typeof Sidebar> & {
   state: RegisterState;
 }) {
+  const numberOfItem = state.allHeaderSubtitles.length;
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -55,14 +56,18 @@ export function AppSidebar({
             <TimelineItemLabel>Confirmation</TimelineItemLabel>
             <TimelineStep
               label="Validation du BDS"
-              description="En cours"
-              isCompleted={false}
+              description={
+                state.stepDone > numberOfItem ? "Terminé" : "En cours"
+              }
+              isCompleted={state.stepDone > numberOfItem}
             />
             <TimelineItemLabel>Paiement</TimelineItemLabel>
             <TimelineStep
               label="Validation de paiement"
-              description="En cours"
-              isCompleted={false}
+              description={
+                state.stepDone > numberOfItem + 1 ? "Terminé" : "En cours"
+              }
+              isCompleted={state.stepDone > numberOfItem + 1}
             />
           </Timeline>
         </div>
