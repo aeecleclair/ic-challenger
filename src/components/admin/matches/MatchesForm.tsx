@@ -473,7 +473,8 @@ export const MatchesForm = ({
                       <DateTimePicker
                         date={field.value}
                         setDate={field.onChange}
-                        fromDate={new Date()}
+                        fromDate={edition?.start_date ? new Date(edition!.start_date) : new Date(1900)}
+                        toDate={edition?.end_date ? new Date(edition!.end_date) : new Date()}
                         timeLabel="Heure du match"
                         timeId="match-time"
                       />
