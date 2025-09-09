@@ -2,15 +2,13 @@ import { z } from "zod";
 import { SportCategory } from "../api/hyperionSchemas";
 
 export const sportCategories = [
-  { value: "masculine", label: "Masculin" } satisfies {
-    value: SportCategory;
-    label: string;
-  },
-  { value: "feminine", label: "Féminin" } satisfies {
-    value: SportCategory;
-    label: string;
-  },
-];
+  { value: "masculine", label: "Masculin" },
+  { value: "feminine", label: "Féminin" },
+  { value: "null", label: "Mixte" },
+] satisfies {
+  value: SportCategory | "null";
+  label: string;
+}[];
 
 export const sportFormSchema = z.object({
   name: z
@@ -24,7 +22,7 @@ export const sportFormSchema = z.object({
     message: "La taille de l'équipe doit être supérieure à 0",
   }),
   sportCategory: z.enum(
-    sportCategories.map((cat) => cat.value) as [SportCategory],
+    sportCategories.map((cat) => cat.value) as [SportCategory | "null"],
     {
       required_error: "Veuillez sélectionner une catégorie de sport",
     },

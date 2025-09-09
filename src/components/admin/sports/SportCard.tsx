@@ -29,8 +29,10 @@ export const SportCard = ({ sport, onClick }: SportCardProps) => {
       <CardHeader>
         <CardTitle className="text-lg">{sport.name}</CardTitle>
         <div className="flex space-x-2 items-center">
-          {sport.sport_category && (
+          {sport.sport_category ? (
             <Badge variant="secondary">{categoryLabel}</Badge>
+          ) : (
+            <Badge variant="secondary">Mixte</Badge>
           )}
           <Badge variant={sport.active ? "default" : "outline"}>
             {sport.active ? "Activé" : "Désactivé"}

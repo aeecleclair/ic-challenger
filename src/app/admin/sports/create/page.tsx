@@ -27,7 +27,8 @@ const Dashboard = () => {
       {
         name: values.name,
         team_size: values.teamSize,
-        sport_category: values.sportCategory,
+        sport_category:
+          values.sportCategory === "null" ? null : values.sportCategory,
         substitute_max: values.substituteMax,
         active: values.active,
       },
