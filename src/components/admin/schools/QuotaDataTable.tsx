@@ -9,6 +9,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -30,6 +31,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react";
 import {
   Tooltip,
@@ -181,6 +183,7 @@ export function QuotaDataTable({
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
@@ -250,6 +253,14 @@ export function QuotaDataTable({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="mt-4">
+        <DataTablePagination
+          table={table}
+          selectedLabel="quota(s) sélectionné(s)"
+          itemsPerPageLabel="Quotas par page"
+          showSelectedCount={false}
+        />
       </div>
     </div>
   );

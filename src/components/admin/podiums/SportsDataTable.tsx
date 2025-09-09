@@ -9,6 +9,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -35,6 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
+import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { SportsDataTableToolbar } from "./SportsDataTableToolbar";
 
 // Sport data for the table
@@ -247,6 +249,7 @@ export function SportsDataTable({
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
@@ -315,6 +318,14 @@ export function SportsDataTable({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="mt-4">
+        <DataTablePagination
+          table={table}
+          selectedLabel="sport(s) sélectionné(s)"
+          itemsPerPageLabel="Sports par page"
+          showSelectedCount={false}
+        />
       </div>
     </div>
   );

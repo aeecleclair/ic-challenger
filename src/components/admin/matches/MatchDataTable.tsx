@@ -9,6 +9,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -32,6 +33,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { Badge } from "@/src/components/ui/badge";
+import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Match } from "@/src/api/hyperionSchemas";
@@ -272,6 +274,7 @@ export function MatchDataTable({ data, onDelete }: MatchDataTableProps) {
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
@@ -359,6 +362,14 @@ export function MatchDataTable({ data, onDelete }: MatchDataTableProps) {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="mt-4">
+        <DataTablePagination
+          table={table}
+          selectedLabel="match(s) sélectionné(s)"
+          itemsPerPageLabel="Matchs par page"
+          showSelectedCount={false}
+        />
       </div>
     </div>
   );

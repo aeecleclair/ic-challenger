@@ -9,6 +9,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -29,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
+import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 
 export interface ParticipantData {
@@ -335,6 +337,7 @@ export function ParticipantDataTable({
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
@@ -430,6 +433,14 @@ export function ParticipantDataTable({
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="mt-4">
+        <DataTablePagination
+          table={table}
+          selectedLabel="participant(s) sélectionné(s)"
+          itemsPerPageLabel="Participants par page"
+          showSelectedCount={false}
+        />
       </div>
     </div>
   );
