@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, CheckCircle, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, CheckCircle, MoreHorizontal, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +30,12 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/src/components/ui/tooltip";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 
@@ -44,6 +50,7 @@ export interface ParticipantData {
   teamName?: string | null;
   isSubstitute: boolean;
   isValidated: boolean;
+  isCaptain: boolean;
   participantType: string;
 }
 
@@ -89,11 +96,30 @@ export function ParticipantDataTable({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium text-center">
-          {row.getValue("fullName")}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const fullName = row.getValue("fullName") as string;
+        const isCaptain = row.original.isCaptain;
+
+        return (
+          <div className="font-medium text-center flex items-center justify-center gap-2">
+            {isCaptain && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Users className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Capitaine d&apos;équipe</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            {fullName}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "email",
@@ -146,9 +172,24 @@ export function ParticipantDataTable({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="text-center">{row.getValue("teamName") || "-"}</div>
-      ),
+      cell: ({ row }) => {
+        const teamName = row.getValue("teamName") as string;
+
+        if (!teamName || teamName === "-") {
+          return <div className="text-center text-muted-foreground">-</div>;
+        }
+
+        return (
+          <div className="flex justify-center">
+            <Badge
+              variant="secondary"
+              className="bg-indigo-100 text-indigo-800 hover:bg-indigo-200"
+            >
+              {teamName}
+            </Badge>
+          </div>
+        );
+      },
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
         const value = row.getValue<string>(id);

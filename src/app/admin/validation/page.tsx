@@ -84,7 +84,8 @@ const Dashboard = () => {
           email: participant.user?.user?.email || "",
           license: participant.license || "",
           teamId: participant.team_id,
-          teamName: null, // Will be populated by SportQuotaCard
+          teamName: null,
+          isCaptain: false, // TODO: Add captain logic when field is available
           isSubstitute: participant.substitute || false,
           isValidated: participant.user?.validated || false,
           participantType: getParticipantType(participant),

@@ -35,20 +35,19 @@ export const SportQuotaCard = ({
   schoolId,
   schoolName,
 }: SportQuotaCardProps) => {
-  // Fetch teams for this specific sport
   const { teams } = useSchoolSportTeams({
     schoolId,
     sportId,
   });
 
-  // Create participants with team names resolved
   const participantsWithTeamNames = useMemo(() => {
     return participants.map((participant) => {
       if (participant.teamId && teams) {
         const team = teams.find((t) => t.id === participant.teamId);
         return {
           ...participant,
-          teamName: team?.name || participant.teamId, // Fallback to ID if name not found
+          teamName: team?.name || participant.teamId,
+          isCaptain: team?.captain_id === participant.userId || false,
         };
       }
       return participant;
@@ -103,7 +102,7 @@ export const SportQuotaCard = ({
             <div
               className={`font-medium ${isOverQuota ? "text-destructive" : ""}`}
             >
-              {totalParticipants} / {maxParticipants || "∞"}
+              {totalParticipants} / {maxParticipants}
             </div>
           </div>
 
