@@ -2,11 +2,12 @@
 
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
-import { Form } from "@/src/components/ui/form";
+import { Form, FormDescription } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { EditionFormSchema } from "@/src/forms/edition";
 import { DatePicker } from "../custom/DatePicker";
+import { DateRangePicker } from "../custom/DateRangePicker";
 
 interface EditionFormProps {
   form: UseFormReturn<EditionFormSchema>;
@@ -34,41 +35,45 @@ export const EditionForm = ({
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <StyledFormField
-            form={form}
-            label="Date de début"
-            id="startDate"
-            input={(field) => (
-              <DatePicker
-                date={field.value}
-                setDate={field.onChange}
-                fromDate={now}
-                toDate={
-                  form.getValues("endDate") ??
-                  new Date(now.getFullYear() + 1, now.getMonth(), now.getDate())
-                }
-                {...field}
-              />
-            )}
+        <div className="space-y-2">
+          <DateRangePicker
+            startDate={form.getValues("startDate")}
+            endDate={form.getValues("endDate")}
+            onDateRangeChange={(startDate, endDate) => {
+              if (startDate) {
+                form.setValue("startDate", startDate, { shouldValidate: true });
+              }
+              if (endDate) {
+                form.setValue("endDate", endDate, { shouldValidate: true });
+              }
+              // If only start date is selected, clear end date
+              if (startDate && !endDate) {
+                form.setValue("endDate", undefined as any, {
+                  shouldValidate: true,
+                });
+              }
+            }}
+            fromDate={now}
+            toDate={
+              new Date(now.getFullYear() + 1, now.getMonth(), now.getDate())
+            }
+            label="Période de l'édition"
+            id="dateRange"
           />
-
-          <StyledFormField
-            form={form}
-            label="Date de fin"
-            id="endDate"
-            input={(field) => (
-              <DatePicker
-                date={field.value}
-                setDate={field.onChange}
-                fromDate={form.getValues("startDate") ?? now}
-                toDate={
-                  new Date(now.getFullYear() + 1, now.getMonth(), now.getDate())
-                }
-                {...field}
-              />
-            )}
-          />
+          <FormDescription className="text-sm text-muted-foreground">
+            Sélectionnez la date de début, puis la date de fin de l&apos;édition
+          </FormDescription>
+          {/* Display form validation errors */}
+          {form.formState.errors.startDate && (
+            <p className="text-sm font-medium text-destructive">
+              {form.formState.errors.startDate.message}
+            </p>
+          )}
+          {form.formState.errors.endDate && (
+            <p className="text-sm font-medium text-destructive">
+              {form.formState.errors.endDate.message}
+            </p>
+          )}
         </div>
 
         <LoadingButton

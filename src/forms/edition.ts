@@ -13,9 +13,18 @@ export const editionFormSchema = z
       .date({
         required_error: "Veuillez renseigner la date de début de l'édition",
       })
-      .refine((date) => date > new Date(), {
-        message: "La date de début doit être dans le futur",
-      }),
+      .refine(
+        (date) => {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const inputDate = new Date(date);
+          inputDate.setHours(0, 0, 0, 0);
+          return inputDate >= today;
+        },
+        {
+          message: "La date de début ne peut pas être dans le passé",
+        },
+      ),
     endDate: z.date({
       required_error: "Veuillez renseigner la date de fin de l'édition",
     }),
