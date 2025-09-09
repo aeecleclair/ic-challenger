@@ -34,9 +34,9 @@ export const SellerProductList = ({ products }: SellerProductListProps) => {
           ))}
         </Accordion>
       ) : (
-        <div className="p-4 border border-gray-200 rounded-md">
-          <h3 className="text-lg font-semibold">No products found</h3>
-        </div>
+        <h3 className="text-lg font-semibold text-muted-foreground">
+          Pas de produits
+        </h3>
       )}
     </div>
   );
