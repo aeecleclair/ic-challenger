@@ -85,19 +85,28 @@ const EditMatchPage = () => {
   }
 
   return (
-    <div className="flex w-full flex-col p-6">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-2xl font-bold">Modifier le match</span>
-        <Link
-          href={`/admin/matches${match ? `?match_id=${match.id}` : ""}`}
-          className="text-sm text-primary hover:underline"
-        >
-          Retour aux détails du match
-        </Link>
-      </div>
+    <div className="flex w-full flex-col min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Modifier le match
+            </h1>
+            <p className="text-gray-600 mt-1">
+              {match
+                ? `Modifiez les détails du match "${match.name}"`
+                : "Chargement..."}
+            </p>
+          </div>
+          <Link
+            href={`/admin/matches${match ? `?match_id=${match.id}` : ""}`}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            ← Retour aux détails
+          </Link>
+        </div>
 
-      {match ? (
-        <div className="bg-white rounded-lg shadow-sm border p-6">
+        {match ? (
           <MatchesForm
             form={form}
             onSubmit={onSubmit}
@@ -105,13 +114,14 @@ const EditMatchPage = () => {
             submitLabel="Mettre à jour le match"
             isEditing={true}
           />
-        </div>
-      ) : (
-        <div className="p-6 space-y-4">
-          <Skeleton className="h-10 w-1/2" />
-          <Skeleton className="h-96 w-full" />
-        </div>
-      )}
+        ) : (
+          <div className="space-y-6">
+            <Skeleton className="h-32 w-full rounded-lg" />
+            <Skeleton className="h-64 w-full rounded-lg" />
+            <Skeleton className="h-64 w-full rounded-lg" />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

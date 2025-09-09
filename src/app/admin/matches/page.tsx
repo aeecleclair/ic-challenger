@@ -34,6 +34,7 @@ const MatchesDashboard = () => {
   const matchId = searchParam.get("match_id");
   const [deleteMatchId, setDeleteMatchId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
+  const [selectedSportId, setSelectedSportId] = useState<string>("");
 
   const {
     sportMatches,
@@ -41,7 +42,9 @@ const MatchesDashboard = () => {
     deleteMatch,
     error,
     isDeleteLoading,
-  } = useSportMatches({});
+  } = useSportMatches({
+    sportId: selectedSportId || undefined,
+  });
 
   const selectedMatch = sportMatches?.find((match) => match.id === matchId);
 
@@ -78,7 +81,13 @@ const MatchesDashboard = () => {
         <>
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Gestion des matchs</h1>
-            <Link href="/admin/matches/create">
+            <Link
+              href={
+                selectedSportId
+                  ? `/admin/matches/create?sport_id=${selectedSportId}`
+                  : "/admin/matches/create"
+              }
+            >
               <Button className="flex items-center">
                 <Plus className="mr-2 h-4 w-4" />
                 Ajouter un match
@@ -86,11 +95,29 @@ const MatchesDashboard = () => {
             </Link>
           </div>
 
-          <div className="flex flex-col md:items-center gap-4 mb-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+            <div className="w-full md:w-64">
+              <Select
+                value={selectedSportId}
+                onValueChange={setSelectedSportId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un sport" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sports?.map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <Tabs
               value={viewMode}
               onValueChange={(val) => setViewMode(val as "grid" | "table")}
-              className="w-full"
+              className="w-full md:w-auto"
             >
               <TabsList className="grid w-[180px] grid-cols-2">
                 <TabsTrigger value="grid" className="flex items-center">
@@ -102,8 +129,18 @@ const MatchesDashboard = () => {
                   Tableau
                 </TabsTrigger>
               </TabsList>
+            </Tabs>
+          </div>
 
-              <div className="mt-4">
+          <div className="mt-4">
+            {!selectedSportId ? (
+              <div className="flex items-center justify-center h-full mt-10">
+                <p className="text-gray-500">
+                  Sélectionnez un sport pour voir les matchs
+                </p>
+              </div>
+            ) : (
+              <Tabs value={viewMode} className="w-full">
                 <TabsContent value="grid" className="mt-0">
                   {sportMatches && sportMatches.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -119,7 +156,9 @@ const MatchesDashboard = () => {
                     </div>
                   ) : sportMatches ? (
                     <div className="flex items-center justify-center h-full mt-10">
-                      <p className="text-gray-500">Aucun match trouvé</p>
+                      <p className="text-gray-500">
+                        Aucun match trouvé pour ce sport
+                      </p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -142,8 +181,8 @@ const MatchesDashboard = () => {
                     <Skeleton className="h-[400px] w-full" />
                   )}
                 </TabsContent>
-              </div>
-            </Tabs>
+              </Tabs>
+            )}
           </div>
         </>
       )}
