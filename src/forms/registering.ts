@@ -74,13 +74,6 @@ export const registeringFormSchema = z
         message: "Veuillez renseigner le nom de l'équipe",
       });
     }
-    if (data.is_athlete && !data.sport?.license_number) {
-      ctx.addIssue({
-        path: ["sport", "license_number"],
-        code: z.ZodIssueCode.custom,
-        message: "Veuillez renseigner le numéro de licence",
-      });
-    }
   });
 
 export type RegisteringFormValues = z.infer<typeof registeringFormSchema>;

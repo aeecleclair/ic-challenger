@@ -66,11 +66,16 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
     }
-    if (meCompetition?.is_athlete && meParticipant === undefined) {
+    if (
+      meCompetition?.is_athlete &&
+      meParticipant === undefined &&
+      state.allHeaderSubtitles[2] !== "Sport"
+    ) {
       setState({
         ...state,
         currentStep: 3,
         stepDone: 2,
+        headerSubtitle: "Sport",
         allHeaderSubtitles: newSubtitles,
       });
       api?.scrollTo(2);
