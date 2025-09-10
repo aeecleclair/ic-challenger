@@ -52,6 +52,7 @@ export interface ParticipantData {
   isValidated: boolean;
   isCaptain: boolean;
   participantType: string;
+  hasPaid?: boolean;
 }
 
 interface ParticipantDataTableProps {
@@ -319,7 +320,32 @@ export function ParticipantDataTable({
         const participant = row.original;
 
         if (participant.isValidated) {
-          return <div className="text-center">Déjà validé</div>;
+          const hasPaid = participant.hasPaid;
+
+          if (hasPaid === undefined) {
+            return (
+              <div className="flex justify-center">
+                <Badge variant="outline" className="bg-gray-100 text-gray-600">
+                  Paiement: Inconnu
+                </Badge>
+              </div>
+            );
+          }
+
+          return (
+            <div className="flex justify-center">
+              {hasPaid ? (
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800 hover:bg-green-200"
+                >
+                  Payé
+                </Badge>
+              ) : (
+                <Badge variant="destructive">En attente de paiement</Badge>
+              )}
+            </div>
+          );
         }
 
         return (

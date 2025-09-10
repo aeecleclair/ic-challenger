@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import {
   ParticipantDataTable,
   ParticipantData,
@@ -22,12 +22,22 @@ import {
 import { Trophy } from "lucide-react";
 import { GlobalQuotaCard } from "@/src/components/admin/validation/GlobalQuotaCard";
 import { SportQuotaCard } from "@/src/components/admin/validation/SportQuotaCard";
+import { fetchGetCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
+import { useAuth } from "@/src/hooks/useAuth";
 
 const Dashboard = () => {
   const router = useRouter();
   const { sportSchools } = useSportSchools();
   const { sports } = useSports();
   const { me: currentUser, isAdmin } = useUser();
+  const { token, isTokenExpired } = useAuth();
+
+  const [participantPayments, setParticipantPayments] = useState<
+    Record<string, boolean | undefined>
+  >({});
+  const [checkedParticipants, setCheckedParticipants] = useState<Set<string>>(
+    new Set(),
+  );
 
   const searchParam = useSearchParams();
   const schoolId = searchParam.get("school_id");
@@ -48,6 +58,46 @@ const Dashboard = () => {
   });
 
   const { sportsQuota } = useSportsQuota({ sportId: undefined });
+
+  const checkPaymentStatus = useCallback(
+    async (userId: string) => {
+      if (checkedParticipants.has(userId) || !token || isTokenExpired()) {
+        return;
+      }
+
+      try {
+        const payments = await fetchGetCompetitionUsersUserIdPayments({
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          pathParams: {
+            userId: userId,
+          },
+        });
+
+        const hasPaid = payments && payments.length > 0;
+        setParticipantPayments((prev) => ({
+          ...prev,
+          [userId]: hasPaid,
+        }));
+      } catch (error: any) {
+        console.error(
+          "Error checking payment status for user",
+          userId,
+          ":",
+          error,
+        );
+
+        setParticipantPayments((prev) => ({
+          ...prev,
+          [userId]: undefined,
+        }));
+      } finally {
+        setCheckedParticipants((prev) => new Set(prev).add(userId));
+      }
+    },
+    [token, isTokenExpired, checkedParticipants],
+  );
 
   const onValidate = useCallback(
     (userId: string, sportId: string) => {
@@ -89,10 +139,11 @@ const Dashboard = () => {
           isSubstitute: participant.substitute || false,
           isValidated: participant.user?.validated || false,
           participantType: getParticipantType(participant),
+          hasPaid: participantPayments[participant.user_id],
         };
       }) || []
     );
-  }, [schoolParticipants, sports]);
+  }, [schoolParticipants, sports, participantPayments]);
 
   const participantsBySport = useMemo(() => {
     return participantTableData.reduce(
@@ -113,6 +164,30 @@ const Dashboard = () => {
       >,
     );
   }, [participantTableData]);
+
+  useEffect(() => {
+    if (participantTableData.length > 0 && token && !isTokenExpired()) {
+      const validatedParticipantsToCheck = participantTableData
+        .filter(
+          (participant) =>
+            participant.isValidated &&
+            !checkedParticipants.has(participant.userId),
+        )
+        .slice(0, 20);
+
+      validatedParticipantsToCheck.forEach((participant, index) => {
+        setTimeout(() => {
+          checkPaymentStatus(participant.userId);
+        }, index * 100);
+      });
+    }
+  }, [
+    participantTableData,
+    checkPaymentStatus,
+    checkedParticipants,
+    token,
+    isTokenExpired,
+  ]);
 
   if (!schoolId && userSchoolId) {
     router.push(`/admin/validation?school_id=${userSchoolId}`);
