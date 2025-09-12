@@ -10,62 +10,85 @@ import {
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import { User, UserX } from "lucide-react";
+import { Mail, School, Eye, Trash2 } from "lucide-react";
 import { UserGroupMembership } from "@/src/api/hyperionSchemas";
-import { AVAILABLE_GROUPS } from "@/src/infra/groups";
+import Link from "next/link";
+
+// Extended interface to match actual API response
+interface ExtendedUserGroupMembership extends UserGroupMembership {
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  school?: string;
+}
 
 interface GroupCardProps {
-  user: UserGroupMembership;
+  user: ExtendedUserGroupMembership;
   onClick: () => void;
   onRemove?: () => void;
 }
 
 const GroupCard = ({ user, onClick, onRemove }: GroupCardProps) => {
-  const groupName =
-    AVAILABLE_GROUPS.find((g) => g.id === user.group)?.name || user.group;
   return (
-    <Card className="h-full overflow-hidden">
-      <CardHeader className="bg-gray-50 dark:bg-gray-800">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">
-            {user.first_name} {user.last_name}
+    <Card
+      className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group h-full"
+      onClick={onClick}
+    >
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2 flex items-center gap-2">
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-primary/10 text-sm">
+                {user.first_name?.[0] || user.user_id?.[0] || "U"}
+                {user.last_name?.[0] || ""}
+              </AvatarFallback>
+            </Avatar>
+            {user.first_name || user.last_name
+              ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+              : `Utilisateur ${user.user_id.slice(0, 8)}`}
           </CardTitle>
-          <Badge variant="secondary">{groupName}</Badge>
         </div>
       </CardHeader>
-      <CardContent className="pt-4">
-        <div className="flex items-center space-x-4 mb-4">
-          <Avatar className="h-12 w-12">
-            <AvatarFallback className="bg-primary/10">
-              {user.first_name?.[0]}
-              {user.last_name?.[0]}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium">{user.email}</div>
-            <div className="text-sm text-muted-foreground">
-              ID: {user.user_id}
+
+      <CardContent className="py-3">
+        <div className="space-y-2 text-sm text-muted-foreground">
+          {user.email && (
+            <div className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              <span className="truncate">{user.email}</span>
             </div>
-          </div>
+          )}
+          {user.school && (
+            <div className="flex items-center gap-2">
+              <School className="h-4 w-4" />
+              <span className="truncate">{user.school}</span>
+            </div>
+          )}
         </div>
-        {user.school && (
-          <div className="mt-2 text-sm">
-            <span className="font-medium">École:</span> {user.school}
-          </div>
-        )}
+        <Link
+          href={`/admin/groups?user_id=${user.user_id}&group_id=${user.group}`}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary/80 transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <Eye className="h-4 w-4" />
+          Voir les détails
+        </Link>
       </CardContent>
-      <CardFooter className="bg-gray-50 dark:bg-gray-800 flex justify-between">
-        <Button variant="ghost" onClick={onClick}>
-          <User className="mr-2 h-4 w-4" />
-          Voir détails
-        </Button>
+
+      <CardFooter className="pt-3">
         {onRemove && (
           <Button
-            variant="ghost"
-            onClick={onRemove}
-            className="text-destructive"
+            variant="destructive"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            className="w-full gap-2"
           >
-            <UserX className="mr-2 h-4 w-4" />
+            <Trash2 className="h-4 w-4" />
             Retirer
           </Button>
         )}

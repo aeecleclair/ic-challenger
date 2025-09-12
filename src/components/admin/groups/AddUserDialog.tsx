@@ -30,7 +30,7 @@ export function AddUserDialog({
   setIsOpen,
   onAddUser,
   isLoading,
-    groupName,
+  groupName,
 }: AddUserDialogProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -96,7 +96,10 @@ export function AddUserDialog({
     >
       <DialogContent className="lg:max-w-lg max-w-md">
         <DialogHeader>
-          <DialogTitle>Ajouter un utilisateur au groupe {groupName}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5" />
+            Ajouter un utilisateur au groupe {groupName}
+          </DialogTitle>
           <DialogDescription>
             Recherchez un utilisateur que vous souhaitez ajouter à ce groupe.
           </DialogDescription>
@@ -138,7 +141,8 @@ export function AddUserDialog({
                         >
                           <div className="flex flex-col">
                             <span className="font-medium">
-                              {user.firstname} {user.name} {user.nickname ? `(${user.nickname})` : ""}
+                              {user.firstname} {user.name}{" "}
+                              {user.nickname ? `(${user.nickname})` : ""}
                             </span>
                           </div>
                           {selectedUserId === user.id && (
@@ -159,12 +163,15 @@ export function AddUserDialog({
                 </div>
 
                 {selectedUserData && (
-                  <div className="p-2 mt-2 bg-primary/10 rounded-md">
-                    <p className="text-sm font-medium">
+                  <div className="p-3 mt-2 bg-primary/10 border border-primary/20 rounded-md">
+                    <p className="text-sm font-medium text-primary">
                       Utilisateur sélectionné:
                     </p>
-                    <p className="text-sm">
-                      {selectedUserData.firstname} {selectedUserData.name} {selectedUserData.nickname ? `(${selectedUserData.nickname})` : ""}
+                    <p className="text-sm mt-1">
+                      {selectedUserData.firstname} {selectedUserData.name}{" "}
+                      {selectedUserData.nickname
+                        ? `(${selectedUserData.nickname})`
+                        : ""}
                     </p>
                   </div>
                 )}

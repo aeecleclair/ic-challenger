@@ -56,7 +56,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
           if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
-              title: "Erreur lors de l'ajout du groupe",
+              title: "Erreur lors de l'ajout de l'utilisateur",
               description:
                 (error as unknown as ErrorType).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
@@ -66,8 +66,8 @@ export const useGroups = ({ group }: UseGroupsProps) => {
             refetchGroups();
             callback();
             toast({
-              title: "Groupe ajoutée",
-              description: "Le groupe a été ajoutée avec succès.",
+              title: "Utilisateur ajouté",
+              description: "L'utilisateur a été ajouté au groupe avec succès.",
             });
           }
         },
@@ -94,7 +94,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
           if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
-              title: "Erreur lors de la modification du group",
+              title: "Erreur lors de la suppression de l'utilisateur",
               description:
                 (error as unknown as ErrorType).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
@@ -104,8 +104,8 @@ export const useGroups = ({ group }: UseGroupsProps) => {
             refetchGroups();
             callback();
             toast({
-              title: "Group modifiée",
-              description: "Le group a été modifiée avec succès.",
+              title: "Utilisateur supprimé",
+              description: "L'utilisateur a été retiré du groupe avec succès.",
             });
           }
         },
