@@ -92,20 +92,6 @@ export default function GroupsPage() {
     refetchGroups();
   }, [groupParam, refetchGroups]);
 
-  useEffect(() => {
-    if (groupUsers) {
-      console.log("===== DEBUG GROUP USERS =====");
-      console.log("Current group:", groupParam);
-      console.log("Group users data:", groupUsers);
-      console.log("Number of users:", groupUsers.length);
-      if (groupUsers.length > 0) {
-        console.log("First user sample:", groupUsers[0]);
-        console.log("First user keys:", Object.keys(groupUsers[0]));
-      }
-      console.log("============================");
-    }
-  }, [groupUsers, groupParam]);
-
   const handleDelete = (userId: string) => {
     setDeleteUserId(userId);
   };
