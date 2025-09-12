@@ -1,25 +1,87 @@
 "use client";
 
-import { SellerProductList } from "@/src/components/admin/products/SellerProductList";
 import { useProducts } from "@/src/hooks/useProducts";
-import { useUser } from "@/src/hooks/useUser";
-import { useRouter } from "next/navigation";
+import { ProductList } from "@/src/components/admin/products/ProductList";
+import ProductDetail from "@/src/components/admin/products/ProductDetail";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Skeleton } from "@/src/components/ui/skeleton";
+import { Button } from "@/src/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
-const SellerTab = () => {
-  const { isAdmin } = useUser();
-  const { products } = useProducts();
+const ProductsPage = () => {
   const router = useRouter();
+  const { products } = useProducts();
 
-  if (!isAdmin) {
-    router.push("/");
-    return null;
+  const searchParam = useSearchParams();
+  const productId = searchParam.get("product_id");
+
+  const product = products?.find((p) => p.id === productId);
+
+  const handleBackToList = () => {
+    router.push("/admin/products");
+  };
+
+  if (productId) {
+    if (!product) {
+      return (
+        <div className="container mx-auto px-4 py-8">
+          <div className="space-y-4">
+            <Button variant="outline" onClick={handleBackToList}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour aux produits
+            </Button>
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Produit non trouvé</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="space-y-4">
+          <Button variant="outline" onClick={handleBackToList}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Retour aux produits
+          </Button>
+          <ProductDetail product={product} />
+        </div>
+      </div>
+    );
+  }
+
+  if (!products) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-10 w-64" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton key={index} className="h-32 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex items-center justify-center p-6 min-w-96">
-      {products && <SellerProductList products={products} />}
+    <div className="container mx-auto px-4 py-8">
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Gestion des produits</h1>
+          <p className="text-muted-foreground">
+            Gérez vos produits et leurs variantes
+          </p>
+        </div>
+        <ProductList products={products} />
+      </div>
     </div>
   );
 };
 
-export default SellerTab;
+export default ProductsPage;
