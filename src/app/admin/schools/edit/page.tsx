@@ -8,6 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
 import { SchoolExtensionEdit } from "@/src/api/hyperionSchemas";
 import { schoolFormSchema, SchoolFormValues } from "@/src/forms/schools";
 
@@ -45,23 +51,32 @@ const Dashboard = () => {
   }
 
   return school ? (
-    <div className="flex w-full flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-2xl font-bold">Modifer une école</span>
-        <Link
-          href="/admin/schools"
-          className="text-sm text-primary hover:underline"
-        >
-          Retour à la liste
-        </Link>
+    <div className="flex w-full flex-col space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">
+          Modifier une école
+        </h1>
+        <p className="text-muted-foreground">
+          Modifiez les paramètres de l&apos;école {school.school.name}
+        </p>
       </div>
-      <SchoolsForm
-        form={form}
-        isLoading={isLoading}
-        onSubmit={onSubmit}
-        submitLabel="Modifer l'école"
-        schools={filteredSchools || []}
-      />
+
+      {/* Form Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Informations de l&apos;école</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SchoolsForm
+            form={form}
+            isLoading={isLoading}
+            onSubmit={onSubmit}
+            submitLabel="Modifier l'école"
+            schools={filteredSchools || []}
+            isEdit={true}
+          />
+        </CardContent>
+      </Card>
     </div>
   ) : (
     <div>No school with id {schoolId}</div>

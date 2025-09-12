@@ -2,52 +2,120 @@
 
 import { SchoolExtension } from "@/src/api/hyperionSchemas";
 import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
 import {
   Card,
+  CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { getSchoolType } from "@/src/utils/schools";
+import {
+  Eye,
+  MapPin,
+  Users,
+  CheckCircle,
+  XCircle,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 
 interface SchoolCardProps {
   school: SchoolExtension;
   onClick?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export const SchoolCard = ({ school, onClick }: SchoolCardProps) => {
+export const SchoolCard = ({
+  school,
+  onClick,
+  onEdit,
+  onDelete,
+}: SchoolCardProps) => {
   const formattedName = formatSchoolName(school.school.name);
+  const schoolType = getSchoolType(school);
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow"
+      className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group"
       onClick={onClick}
     >
-      <CardHeader>
-        <CardTitle className="text-lg">{formattedName}</CardTitle>
-        <div className="flex space-x-2 items-center">
-          <Badge variant="secondary">
-            {school.from_lyon ? "Lyonnaise" : "Externe"}
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2">
+          {formattedName}
+        </CardTitle>
+        <div className="flex flex-wrap gap-2 mt-2">
+          <Badge
+            variant={schoolType.variant}
+            className={`gap-1 ${schoolType.className}`}
+          >
+            <MapPin className="h-3 w-3" />
+            {schoolType.label}
           </Badge>
-          <Badge variant={school.active ? "default" : "outline"}>
-            {school.active ? "Activée" : "Désactivée"}
+          <Badge
+            variant={school.active ? "default" : "destructive"}
+            className="gap-1"
+          >
+            {school.active ? (
+              <CheckCircle className="h-3 w-3" />
+            ) : (
+              <XCircle className="h-3 w-3" />
+            )}
+            {school.active ? "Active" : "Inactive"}
           </Badge>
         </div>
       </CardHeader>
-      <CardFooter className="flex justify-between items-center">
-        <Link
-          href={`/admin/schools/${school.school_id}`}
-          className="text-sm text-primary hover:underline"
-          onClick={(e) => {
-            if (onClick) {
-              e.preventDefault();
-              onClick();
-            }
-          }}
-        >
-          Voir les détails
-        </Link>
+
+      <CardContent className="py-3">
+        <div className="flex items-center justify-start">
+          <Link
+            href={`/admin/schools?school_id=${school.school_id}`}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary/80 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Eye className="h-4 w-4" />
+            Voir les détails
+          </Link>
+        </div>
+      </CardContent>
+
+      <CardFooter className="pt-3">
+        <div className="flex gap-2 w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onEdit) {
+                onEdit();
+              }
+            }}
+          >
+            <Edit className="h-4 w-4" />
+            Modifier
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onDelete) {
+                onDelete();
+              }
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+            Supprimer
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );

@@ -2,6 +2,7 @@ import {
   useGetCompetitionSchools,
   usePostCompetitionSchools,
   usePatchCompetitionSchoolsSchoolId,
+  useDeleteCompetitionSchoolsSchoolId,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -113,13 +114,52 @@ export const useSportSchools = () => {
     );
   };
 
+  const { mutate: mutateDeleteCompetitionSchool, isPending: isDeleteLoading } =
+    useDeleteCompetitionSchoolsSchoolId();
+
+  const deleteCompetitionSchool = (schoolId: string, callback: () => void) => {
+    return mutateDeleteCompetitionSchool(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          schoolId: schoolId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression",
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchSchools();
+            callback();
+            toast({
+              title: "École supprimée",
+              description: "L'école a été supprimée avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   return {
     sportSchools,
     createCompetitionSchool,
     updateCompetitionSchool,
+    deleteCompetitionSchool,
     error,
     isLoading,
     isUpdateLoading,
+    isDeleteLoading,
     refetchSchools,
   };
 };

@@ -50,6 +50,8 @@ export default function Layout({ children }: { children: ReactNode }) {
       podiums: "Podiums",
       groups: "Groupes",
       validation: "Validation",
+      create: "Ajouter",
+      edit: "Modifier",
     };
 
     for (let i = 1; i < segments.length; i++) {

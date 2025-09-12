@@ -8,6 +8,14 @@ import { useSportSchools } from "@/src/hooks/useSportSchools";
 import Link from "next/link";
 import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
 import { SchoolExtensionBase } from "@/src/api/hyperionSchemas";
+import { Button } from "@/src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
+import { ArrowLeft, Plus, School } from "lucide-react";
 
 const Dashboard = () => {
   const { filteredSchools } = useSchools();
@@ -33,24 +41,46 @@ const Dashboard = () => {
       form.reset();
     });
   }
+
   return (
-    <div className="flex h-full w-full flex-col p-6">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-2xl font-bold">Ajouter une école</span>
-        <Link
-          href="/admin/schools"
-          className="text-sm text-primary hover:underline"
-        >
-          Retour à la liste
-        </Link>
+    <div className="flex h-full w-full flex-col space-y-6">
+      {/* Header with breadcrumb-style navigation */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <School className="h-8 w-8" />
+            Ajouter une école
+          </h1>
+          <p className="text-muted-foreground">
+            Configurez une nouvelle école pour la compétition
+          </p>
+        </div>
+        <Button variant="outline" asChild className="gap-2">
+          <Link href="/admin/schools">
+            <ArrowLeft className="h-4 w-4" />
+            Retour à la liste
+          </Link>
+        </Button>
       </div>
-      <SchoolsForm
-        form={form}
-        isLoading={isLoading}
-        onSubmit={onSubmit}
-        submitLabel="Ajouter l'école"
-        schools={filteredSchools || []}
-      />
+
+      {/* Form Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Configuration de l&apos;école
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SchoolsForm
+            form={form}
+            isLoading={isLoading}
+            onSubmit={onSubmit}
+            submitLabel="Ajouter l'école"
+            schools={filteredSchools || []}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };
