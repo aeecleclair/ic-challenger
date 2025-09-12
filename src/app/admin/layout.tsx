@@ -31,6 +31,47 @@ export default function Layout({ children }: { children: ReactNode }) {
     router.replace("/?redirect=/admin");
   }
 
+  const getBreadcrumbSegments = () => {
+    const segments = pathname.split("/").filter(Boolean);
+    const breadcrumbs = [];
+
+    breadcrumbs.push({
+      label: "Administration",
+      href: "/admin",
+      isLast: segments.length === 1,
+    });
+
+    const routeMap: { [key: string]: string } = {
+      schools: "Écoles",
+      sports: "Sports",
+      locations: "Lieux",
+      products: "Produits",
+      matches: "Matchs",
+      podiums: "Podiums",
+      groups: "Groupes",
+      validation: "Validation",
+    };
+
+    for (let i = 1; i < segments.length; i++) {
+      const segment = segments[i];
+      const href = "/" + segments.slice(0, i + 1).join("/");
+      const isLast = i === segments.length - 1;
+
+      const label =
+        routeMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+
+      breadcrumbs.push({
+        label,
+        href,
+        isLast,
+      });
+    }
+
+    return breadcrumbs;
+  };
+
+  const breadcrumbSegments = getBreadcrumbSegments();
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -44,25 +85,23 @@ export default function Layout({ children }: { children: ReactNode }) {
             />
             <Breadcrumb>
               <BreadcrumbList>
-                {pathname.split("/").map((segment, index) => {
-                  if (index < 2 || segment === "") return null;
-                  const href = `/${pathname
-                    .split("/")
-                    .slice(1, index + 1)
-                    .join("/")}`;
-                  return index === pathname.split("/").length - 1 ? (
-                    <BreadcrumbPage key={index}>
-                      {segment.charAt(0).toUpperCase() + segment.slice(1)}
-                    </BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbItem key={index}>
-                      <BreadcrumbLink href={href}>
-                        {segment.charAt(0).toUpperCase() + segment.slice(1)}
-                      </BreadcrumbLink>
-                      <BreadcrumbSeparator className="hidden md:block" />
-                    </BreadcrumbItem>
-                  );
-                })}
+                {breadcrumbSegments.map((segment, index) => (
+                  <BreadcrumbItem key={index}>
+                    {segment.isLast ? (
+                      <BreadcrumbPage>{segment.label}</BreadcrumbPage>
+                    ) : (
+                      <>
+                        <BreadcrumbLink
+                          onClick={() => router.push(segment.href)}
+                          className="cursor-pointer"
+                        >
+                          {segment.label}
+                        </BreadcrumbLink>
+                        <BreadcrumbSeparator className="hidden md:block" />
+                      </>
+                    )}
+                  </BreadcrumbItem>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
