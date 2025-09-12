@@ -2,6 +2,7 @@ import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Form } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
+import { Checkbox } from "@/src/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -20,75 +21,107 @@ interface SportsFormProps {
   submitLabel: string;
 }
 
-export const SportsForm = ({ form, isLoading, onSubmit, submitLabel }: SportsFormProps) => {
+export const SportsForm = ({
+  form,
+  isLoading,
+  onSubmit,
+  submitLabel,
+}: SportsFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <StyledFormField
-          form={form}
-          label="Nom du sport"
-          id="name"
-          input={(field) => (
-            <Input placeholder="Ex: Football, Basketball, etc." {...field} />
-          )}
-        />
-
-        <div className="grid lg:grid-cols-3 gap-6 grid-cols-1">
+        <div className="space-y-4">
           <StyledFormField
             form={form}
-            label="Catégorie"
-            id="sportCategory"
+            label="Nom du sport"
+            id="name"
             input={(field) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Sélectionner une catégorie" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sportCategories.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          <StyledFormField
-            form={form}
-            label="Taille d'équipe"
-            id="teamSize"
-            input={(field) => (
-              <Input
-                type="number"
-                min="1"
-                {...field}
-                onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-              />
+              <Input placeholder="Ex: Football, Basketball, etc." {...field} />
             )}
           />
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <StyledFormField
+              form={form}
+              label="Catégorie"
+              id="sportCategory"
+              input={(field) => (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Sélectionner une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sportCategories.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+
+            <StyledFormField
+              form={form}
+              label="Taille d'équipe"
+              id="teamSize"
+              input={(field) => (
+                <Input
+                  type="number"
+                  min="1"
+                  placeholder="Nombre de joueurs"
+                  {...field}
+                  onChange={(e) =>
+                    field.onChange(parseInt(e.target.value) || 1)
+                  }
+                />
+              )}
+            />
+
+            <StyledFormField
+              form={form}
+              label="Nombre de remplaçants max"
+              id="substituteMax"
+              input={(field) => (
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Nombre de remplaçants"
+                  {...field}
+                  onChange={(e) =>
+                    field.onChange(parseInt(e.target.value) || 0)
+                  }
+                />
+              )}
+            />
+          </div>
+
           <StyledFormField
             form={form}
-            label="Nombre de remplaçants max"
-            id="substituteMax"
+            label="Sport Actif"
+            id="active"
             input={(field) => (
-              <Input
-                type="number"
-                min="0"
-                {...field}
-                onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-              />
+              <div className="flex items-center space-x-2 pt-2">
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <span className="text-sm text-muted-foreground">
+                  Ce sport peut être utilisé dans la compétition
+                </span>
+              </div>
             )}
           />
         </div>
 
-        <LoadingButton
-          type="submit"
-          className="w-full mt-6"
-          isLoading={isLoading}
-        >
-            {submitLabel}
-        </LoadingButton>
+        <div className="flex gap-3 pt-4">
+          <LoadingButton type="submit" className="flex-1" isLoading={isLoading}>
+            {submitLabel || "Ajouter le sport"}
+          </LoadingButton>
+        </div>
       </form>
     </Form>
   );

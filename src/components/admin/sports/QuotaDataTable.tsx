@@ -247,7 +247,8 @@ export function QuotaDataTable({
                   colSpan={columns.length}
                   className="text-center py-4 text-muted-foreground"
                 >
-                  Aucun quota défini pour ce sport
+                  Aucun quota défini pour ce sport. Ajoutez des quotas pour
+                  commencer à gérer les participations des écoles.
                 </TableCell>
               </TableRow>
             )}

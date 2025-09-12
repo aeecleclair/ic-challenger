@@ -72,7 +72,7 @@ export function QuotaDialog({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" /> Ajouter un quota
+          <Plus className="h-4 w-4" /> Ajouter un quota pour ce sport
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -127,7 +127,7 @@ export function QuotaDialog({
 
             <StyledFormField
               form={quotaForm}
-              label="Quota de participants"
+              label="Quota de participants pour ce sport"
               id="participant_quota"
               input={(field) => (
                 <Input
@@ -143,7 +143,7 @@ export function QuotaDialog({
 
             <StyledFormField
               form={quotaForm}
-              label="Quota d'équipes"
+              label="Quota d'équipes pour ce sport"
               id="team_quota"
               input={(field) => (
                 <Input

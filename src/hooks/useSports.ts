@@ -2,6 +2,7 @@ import {
   useGetCompetitionSports,
   usePatchCompetitionSportsSportId,
   usePostCompetitionSports,
+  useDeleteCompetitionSportsSportId,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -15,7 +16,7 @@ export const useSports = () => {
 
   const {
     data: sports,
-    refetch: refetchSchools,
+    refetch: refetchSports,
     error,
   } = useGetCompetitionSports(
     {
@@ -53,11 +54,11 @@ export const useSports = () => {
               variant: "destructive",
             });
           } else {
-            refetchSchools();
+            refetchSports();
             callback();
             toast({
-              title: "Sport ajoutée",
-              description: "Le sport a été ajoutée avec succès.",
+              title: "Sport ajouté",
+              description: "Le sport a été ajouté avec succès.",
             });
           }
         },
@@ -95,11 +96,48 @@ export const useSports = () => {
               variant: "destructive",
             });
           } else {
-            refetchSchools();
+            refetchSports();
             callback();
             toast({
-              title: "Sport modifiée",
-              description: "Le sport a été modifiée avec succès.",
+              title: "Sport modifié",
+              description: "Le sport a été modifié avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
+  const { mutate: mutateDeleteSport, isPending: isDeleteLoading } =
+    useDeleteCompetitionSportsSportId();
+
+  const deleteSport = (sportId: string, callback: () => void) => {
+    return mutateDeleteSport(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          sportId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression du sport",
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchSports();
+            callback();
+            toast({
+              title: "Sport supprimé",
+              description: "Le sport a été supprimé avec succès.",
             });
           }
         },
@@ -114,6 +152,8 @@ export const useSports = () => {
     isCreateLoading,
     isUpdateLoading,
     updateSport,
-    refetchSchools,
+    deleteSport,
+    isDeleteLoading,
+    refetchSports,
   };
 };

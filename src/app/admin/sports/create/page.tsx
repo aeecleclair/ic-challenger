@@ -6,6 +6,15 @@ import { z } from "zod";
 import { sportFormSchema } from "@/src/forms/sport";
 import { useSports } from "@/src/hooks/useSports";
 import { SportsForm } from "@/src/components/admin/sports/SportsForm";
+import Link from "next/link";
+import { Button } from "@/src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
+import { ArrowLeft, Plus, Trophy } from "lucide-react";
 
 const Dashboard = () => {
   const { createSport, isCreateLoading: isLoading } = useSports();
@@ -39,14 +48,43 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex h-full w-full flex-col p-6">
-      <span className="text-2xl font-bold mb-4">Ajouter un sport</span>
-      <SportsForm
-        form={form}
-        isLoading={isLoading}
-        onSubmit={onSubmit}
-        submitLabel=" Ajouter le sport"
-      />
+    <div className="flex h-full w-full flex-col space-y-6">
+      {/* Header with breadcrumb-style navigation */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Trophy className="h-8 w-8" />
+            Ajouter un sport
+          </h1>
+          <p className="text-muted-foreground">
+            Configurez un nouveau sport pour la compétition
+          </p>
+        </div>
+        <Button variant="outline" asChild className="gap-2">
+          <Link href="/admin/sports">
+            <ArrowLeft className="h-4 w-4" />
+            Retour à la liste
+          </Link>
+        </Button>
+      </div>
+
+      {/* Form Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Configuration du sport
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SportsForm
+            form={form}
+            isLoading={isLoading}
+            onSubmit={onSubmit}
+            submitLabel="Ajouter le sport"
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };

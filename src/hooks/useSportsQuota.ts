@@ -74,7 +74,7 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
             refetchSportsQuota();
             callback();
             toast({
-              title: "Quota ajoutée",
+              title: "Quota ajouté",
               description: "Le quota a été ajouté avec succès.",
             });
           }
@@ -118,8 +118,8 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
             refetchSportsQuota();
             callback();
             toast({
-              title: "Quota modifiée",
-              description: "Le quota a été modifiée avec succès.",
+              title: "Quota modifié",
+              description: "Le quota a été modifié avec succès.",
             });
           }
         },
@@ -157,8 +157,8 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
             refetchSportsQuota();
             callback();
             toast({
-              title: "Quota supprimée",
-              description: "Le quota a été supprimée avec succès.",
+              title: "Quota supprimé",
+              description: "Le quota a été supprimé avec succès.",
             });
           }
         },

@@ -2,6 +2,7 @@
 
 import { Sport } from "@/src/api/hyperionSchemas";
 import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,57 +11,137 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { sportCategories } from "@/src/forms/sport";
+import {
+  Eye,
+  Users,
+  UserPlus,
+  CheckCircle,
+  XCircle,
+  Edit,
+  Trash2,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
 
 interface SportCardProps {
   sport: Sport;
   onClick?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export const SportCard = ({ sport, onClick }: SportCardProps) => {
+export const SportCard = ({
+  sport,
+  onClick,
+  onEdit,
+  onDelete,
+}: SportCardProps) => {
   const categoryLabel =
     sportCategories.find((cat) => cat.value === sport.sport_category)?.label ||
     sport.sport_category;
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "masculine":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "feminine":
+        return "bg-pink-100 text-pink-800 border-pink-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
   return (
     <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow"
+      className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group"
       onClick={onClick}
     >
-      <CardHeader>
-        <CardTitle className="text-lg">{sport.name}</CardTitle>
-        <div className="flex space-x-2 items-center">
-          {sport.sport_category ? (
-            <Badge variant="secondary">{categoryLabel}</Badge>
-          ) : (
-            <Badge variant="secondary">Mixte</Badge>
-          )}
-          <Badge variant={sport.active ? "default" : "outline"}>
-            {sport.active ? "Activé" : "Désactivé"}
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2 flex items-center gap-2">
+          <Trophy className="h-5 w-5 text-muted-foreground" />
+          {sport.name}
+        </CardTitle>
+        <div className="flex flex-wrap gap-2 mt-2">
+          <Badge
+            variant="outline"
+            className={`gap-1 ${getCategoryColor(sport.sport_category || "")}`}
+          >
+            <Users className="h-3 w-3" />
+            {categoryLabel || "Mixte"}
+          </Badge>
+          <Badge
+            variant={sport.active ? "default" : "destructive"}
+            className="gap-1"
+          >
+            {sport.active ? (
+              <CheckCircle className="h-3 w-3" />
+            ) : (
+              <XCircle className="h-3 w-3" />
+            )}
+            {sport.active ? "Actif" : "Inactif"}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="text-sm text-muted-foreground">
-          <p>Taille d&apos;équipe: {sport.team_size}</p>
+
+      <CardContent className="py-3">
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            <span>Équipe: {sport.team_size} joueurs</span>
+          </div>
           {sport.substitute_max !== undefined &&
             sport.substitute_max !== null && (
-              <p>Remplaçants max: {sport.substitute_max}</p>
+              <div className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                <span>Remplaçants: {sport.substitute_max} max</span>
+              </div>
             )}
         </div>
+        <div className="mt-3">
+          <Link
+            href={`/admin/sports?sport_id=${sport.id}`}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary/80 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <Eye className="h-4 w-4" />
+            Voir les détails
+          </Link>
+        </div>
       </CardContent>
-      <CardFooter>
-        <Link
-          href={`/admin/sports/${sport.id}`}
-          className="text-sm text-primary hover:underline"
-          onClick={(e) => {
-            if (onClick) {
-              e.preventDefault();
-              onClick();
-            }
-          }}
-        >
-          Voir les détails
-        </Link>
+
+      <CardFooter className="pt-3">
+        <div className="flex gap-2 w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onEdit) {
+                onEdit();
+              }
+            }}
+          >
+            <Edit className="h-4 w-4" />
+            Modifier
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onDelete) {
+                onDelete();
+              }
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+            Supprimer
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
