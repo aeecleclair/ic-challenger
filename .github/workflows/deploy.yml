@@ -6,16 +6,16 @@ on:
       - master # Set a branch that will trigger a deployment
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment: Production
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20.19.4
+          cache: "yarn"
 
       - name: Install dependencies
         run: |
@@ -47,9 +47,26 @@ jobs:
       - name: Build
         run: CI=false yarn build # Using CI=false remove Treat warning as error that make the compilation fail
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
-          cname: challenger.myecl.fr
+          path: ./out
+
+  # Deployment job
+  deploy:
+    # Add a dependency to the build job
+    needs: build
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+    # Deploy to the github_pages environment
+    environment:
+      name: github_pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
