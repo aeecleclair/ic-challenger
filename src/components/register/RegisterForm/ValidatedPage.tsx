@@ -41,8 +41,6 @@ export const ValidatedPage = () => {
           </CardDescription>
         </Card>
 
-        <RegistrationSummary />
-
         {!isPaymentsLoading && !hasPaid && (
           <Card className="p-6 bg-gray-50 border-gray-200">
             <CardTitle className="flex items-center gap-2 text-gray-800">
@@ -102,6 +100,7 @@ export const ValidatedPage = () => {
             </CardDescription>
           </Card>
         )}
+        <RegistrationSummary />
       </div>
     </div>
   );
