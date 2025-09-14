@@ -1,18 +1,64 @@
 import { Match } from "../../../api/hyperionSchemas";
 import { Badge } from "../../ui/badge";
-import { Trophy, X } from "lucide-react";
+import { Trophy, X, School, Users, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PastMatchCardProps {
   match: Match;
   userTeamId?: string;
+  // New props for badges
+  showSportBadge?: boolean;
+  showSchoolBadges?: boolean;
+  showSportCategoryBadges?: boolean; // New: show sport category badges
+  showTeamBadges?: boolean; // New: show team badges
+  sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
+  schools?: Array<{ id: string; name: string }>;
+  teams?: Array<{
+    id: string;
+    name: string;
+    school_id: string;
+    sport_id: string;
+  }>;
 }
 
-export const PastMatchCard = ({ match, userTeamId }: PastMatchCardProps) => {
+export const PastMatchCard = ({
+  match,
+  userTeamId,
+  showSportBadge = false,
+  showSchoolBadges = false,
+  showSportCategoryBadges = false, // New prop
+  showTeamBadges = false, // New prop
+  sports = [],
+  schools = [],
+  teams = [], // New prop
+}: PastMatchCardProps) => {
   const isVictory = match.winner_id === userTeamId;
   const isDefeat = match.winner_id && match.winner_id !== userTeamId;
   const isDraw =
     match.score_team1 === match.score_team2 && match.score_team1 !== null;
+
+  // Helper functions to get sport, school, and team names
+  const getSportName = (sportId: string) => {
+    return sports.find((sport) => sport.id === sportId)?.name || "Sport";
+  };
+
+  const getSportCategory = (sportId: string) => {
+    const sport = sports.find((sport) => sport.id === sportId);
+    if (!sport?.sport_category) return "Mixte";
+    return sport.sport_category === "masculine"
+      ? "Masculin"
+      : sport.sport_category === "feminine"
+        ? "Féminin"
+        : "Mixte";
+  };
+
+  const getSchoolName = (schoolId: string) => {
+    return schools.find((school) => school.id === schoolId)?.name || "École";
+  };
+
+  const getTeamName = (teamId: string) => {
+    return teams.find((team) => team.id === teamId)?.name || "Équipe";
+  };
 
   return (
     <div className="space-y-3">
@@ -91,6 +137,71 @@ export const PastMatchCard = ({ match, userTeamId }: PastMatchCardProps) => {
           </div>
         )}
       </div>
+
+      {/* Sport, School, Team, and Category Badges */}
+      {(showSportBadge ||
+        showSchoolBadges ||
+        showSportCategoryBadges ||
+        showTeamBadges) && (
+        <div className="flex items-center gap-2 flex-wrap">
+          {showSportBadge && (
+            <Badge
+              variant="outline"
+              className="text-xs flex items-center gap-1"
+            >
+              <Trophy className="h-3 w-3" />
+              {getSportName(match.sport_id)}
+            </Badge>
+          )}
+          {showSportCategoryBadges && (
+            <Badge
+              variant="outline"
+              className="text-xs flex items-center gap-1"
+            >
+              <Target className="h-3 w-3" />
+              {getSportCategory(match.sport_id)}
+            </Badge>
+          )}
+          {showSchoolBadges && (
+            <>
+              <Badge
+                variant="secondary"
+                className="text-xs flex items-center gap-1"
+              >
+                <School className="h-3 w-3" />
+                {getSchoolName(match.team1.school_id)}
+              </Badge>
+              {match.team1.school_id !== match.team2.school_id && (
+                <Badge
+                  variant="secondary"
+                  className="text-xs flex items-center gap-1"
+                >
+                  <School className="h-3 w-3" />
+                  {getSchoolName(match.team2.school_id)}
+                </Badge>
+              )}
+            </>
+          )}
+          {showTeamBadges && (
+            <>
+              <Badge
+                variant="default"
+                className="text-xs flex items-center gap-1"
+              >
+                <Users className="h-3 w-3" />
+                {getTeamName(match.team1_id)}
+              </Badge>
+              <Badge
+                variant="default"
+                className="text-xs flex items-center gap-1"
+              >
+                <Users className="h-3 w-3" />
+                {getTeamName(match.team2_id)}
+              </Badge>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };

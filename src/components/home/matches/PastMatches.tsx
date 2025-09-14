@@ -8,9 +8,32 @@ import { PastMatchCard } from "./PastMatchCard";
 interface PastMatchesProps {
   matches: Match[];
   userTeamId?: string;
+  // New props for badges
+  showSportBadge?: boolean;
+  showSchoolBadges?: boolean;
+  showSportCategoryBadges?: boolean; // New: show sport category badges
+  showTeamBadges?: boolean; // New: show team badges
+  sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
+  schools?: Array<{ id: string; name: string }>;
+  teams?: Array<{
+    id: string;
+    name: string;
+    school_id: string;
+    sport_id: string;
+  }>;
 }
 
-export const PastMatches = ({ matches, userTeamId }: PastMatchesProps) => {
+export const PastMatches = ({
+  matches,
+  userTeamId,
+  showSportBadge = false,
+  showSchoolBadges = false,
+  showSportCategoryBadges = false, // New prop
+  showTeamBadges = false, // New prop
+  sports = [],
+  schools = [],
+  teams = [], // New prop
+}: PastMatchesProps) => {
   const [showAllMatches, setShowAllMatches] = useState(false);
 
   if (matches.length === 0) {
@@ -44,7 +67,17 @@ export const PastMatches = ({ matches, userTeamId }: PastMatchesProps) => {
           (match, index) => {
             return (
               <div key={match.id}>
-                <PastMatchCard match={match} userTeamId={userTeamId} />
+                <PastMatchCard
+                  match={match}
+                  userTeamId={userTeamId}
+                  showSportBadge={showSportBadge}
+                  showSchoolBadges={showSchoolBadges}
+                  showSportCategoryBadges={showSportCategoryBadges}
+                  showTeamBadges={showTeamBadges}
+                  sports={sports}
+                  schools={schools}
+                  teams={teams}
+                />
 
                 {index <
                   (showAllMatches

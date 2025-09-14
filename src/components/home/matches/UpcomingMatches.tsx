@@ -8,11 +8,31 @@ import { MatchCard } from "./MatchCard";
 interface UpcomingMatchesProps {
   matches: Match[];
   userTeamId?: string;
+  // New props for badges
+  showSportBadge?: boolean;
+  showSchoolBadges?: boolean;
+  showSportCategoryBadges?: boolean; // New: show sport category badges
+  showTeamBadges?: boolean; // New: show team badges
+  sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
+  schools?: Array<{ id: string; name: string }>;
+  teams?: Array<{
+    id: string;
+    name: string;
+    school_id: string;
+    sport_id: string;
+  }>;
 }
 
 export const UpcomingMatches = ({
   matches,
   userTeamId,
+  showSportBadge = false,
+  showSchoolBadges = false,
+  showSportCategoryBadges = false, // New prop
+  showTeamBadges = false, // New prop
+  sports = [],
+  schools = [],
+  teams = [], // New prop
 }: UpcomingMatchesProps) => {
   const [showAllMatches, setShowAllMatches] = useState(false);
 
@@ -83,6 +103,13 @@ export const UpcomingMatches = ({
                   userTeamId={userTeamId}
                   urgency={urgency}
                   timeUntil={timeUntil}
+                  showSportBadge={showSportBadge}
+                  showSchoolBadges={showSchoolBadges}
+                  showSportCategoryBadges={showSportCategoryBadges}
+                  showTeamBadges={showTeamBadges}
+                  sports={sports}
+                  schools={schools}
+                  teams={teams}
                 />
 
                 {index <
