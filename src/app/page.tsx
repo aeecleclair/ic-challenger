@@ -94,14 +94,14 @@ const Home = () => {
           )}
           {edition &&
             isEditionStarted &&
-            isFullyRegistered &&
+            !isFullyRegistered &&
             meCompetition && (
               <FullyRegisteredDashboard
                 edition={edition}
                 meCompetition={meCompetition}
               />
             )}
-          {edition && isEditionStarted && !isFullyRegistered && (
+          {edition && isEditionStarted && isFullyRegistered && (
             <IncompleteRegistrationCard
               edition={edition}
               meCompetition={meCompetition}
