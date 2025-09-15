@@ -1,4 +1,4 @@
-import { Match } from "../../../api/hyperionSchemas";
+import { Match, MatchComplete } from "../../../api/hyperionSchemas";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Separator } from "../../ui/separator";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
@@ -6,13 +6,12 @@ import { useState } from "react";
 import { MatchCard } from "./MatchCard";
 
 interface UpcomingMatchesProps {
-  matches: Match[];
+  matches: MatchComplete[];
   userTeamId?: string;
-  // New props for badges
   showSportBadge?: boolean;
   showSchoolBadges?: boolean;
-  showSportCategoryBadges?: boolean; // New: show sport category badges
-  showTeamBadges?: boolean; // New: show team badges
+  showSportCategoryBadges?: boolean;
+  showTeamBadges?: boolean;
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
   schools?: Array<{ id: string; name: string }>;
   teams?: Array<{
@@ -28,11 +27,11 @@ export const UpcomingMatches = ({
   userTeamId,
   showSportBadge = false,
   showSchoolBadges = false,
-  showSportCategoryBadges = false, // New prop
-  showTeamBadges = false, // New prop
+  showSportCategoryBadges = false,
+  showTeamBadges = false,
   sports = [],
   schools = [],
-  teams = [], // New prop
+  teams = [],
 }: UpcomingMatchesProps) => {
   const [showAllMatches, setShowAllMatches] = useState(false);
 

@@ -36,7 +36,7 @@ import { Badge } from "@/src/components/ui/badge";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Match } from "@/src/api/hyperionSchemas";
+import { Match, MatchComplete } from "@/src/api/hyperionSchemas";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,7 +48,7 @@ import { useSports } from "@/src/hooks/useSports";
 import { DataTableFacetedFilter } from "@/src/components/admin/registered-table/DataTableFacetedFilter";
 
 interface MatchDataTableProps {
-  data: Match[];
+  data: MatchComplete[];
   onDelete: (matchId: string) => void;
 }
 
@@ -62,7 +62,6 @@ export function MatchDataTable({ data, onDelete }: MatchDataTableProps) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-  // Create sport options for the faceted filter
   const sportOptions = React.useMemo(() => {
     return (
       sports?.map((sport) => ({
@@ -72,7 +71,6 @@ export function MatchDataTable({ data, onDelete }: MatchDataTableProps) {
     );
   }, [sports]);
 
-  // Create a lookup for sport names by ID for display in the table
   const sportNameById = React.useMemo(() => {
     const lookup: Record<string, string> = {};
     sports?.forEach((sport) => {
@@ -81,7 +79,7 @@ export function MatchDataTable({ data, onDelete }: MatchDataTableProps) {
     return lookup;
   }, [sports]);
 
-  const columns: ColumnDef<Match>[] = [
+  const columns: ColumnDef<MatchComplete>[] = [
     {
       accessorKey: "name",
       header: ({ column }) => (
