@@ -1,6 +1,6 @@
 import {
   useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas,
-  useGetCompetitionSchoolsSchoolIdQuotas,
+  useGetCompetitionSchoolsSchoolIdSportsQuotas,
   usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas,
   usePostCompetitionSchoolsSchoolIdSportsSportIdQuotas,
 } from "@/src/api/hyperionComponents";
@@ -22,7 +22,7 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
     data: schoolsQuota,
     refetch: refetchSchoolsQuota,
     error,
-  } = useGetCompetitionSchoolsSchoolIdQuotas(
+  } = useGetCompetitionSchoolsSchoolIdSportsQuotas(
     {
       headers: {
         Authorization: `Bearer ${token}`,

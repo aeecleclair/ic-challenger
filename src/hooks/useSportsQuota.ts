@@ -18,7 +18,6 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
   const { token, isTokenExpired } = useAuth();
   const { isAdmin } = useUser();
 
-  // Fetch quotas for a specific sport
   const {
     data: sportsQuota,
     refetch: refetchSportsQuota,
@@ -39,7 +38,6 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
     },
   );
 
-  // Create quota for a school in this sport
   const { mutate: mutateCreateQuota, isPending: isCreateLoading } =
     usePostCompetitionSchoolsSchoolIdSportsSportIdQuotas();
 
@@ -83,7 +81,6 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
     );
   };
 
-  // Update quota for a school in this sport
   const { mutate: mutateUpdateQuota, isPending: isUpdateLoading } =
     usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas();
 
@@ -127,7 +124,6 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
     );
   };
 
-  // Delete quota for a school in this sport
   const { mutate: mutateDeleteQuota, isPending: isDeleteLoading } =
     useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas();
 
