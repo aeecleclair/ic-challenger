@@ -2134,12 +2134,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-text-mask@npm:^5.4.14":
-  version: 5.4.14
-  resolution: "@types/react-text-mask@npm:5.4.14"
+"@types/react-input-mask@npm:^2":
+  version: 2.0.5
+  resolution: "@types/react-input-mask@npm:2.0.5"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10c0/3458e108e2515d1f3142077c1d60ec37877dcd85f47b240fcaa57c0406a35652347ac05af82485a8e0dc875f51ef1dd56a0d785c84d63bd636fa2d4465615f48
+  checksum: 10c0/43750b72da9eeb8acc6b6a78093c0a5a040feecd6d2d26340c12c1a4cb6f0e8b69f988cbdb426203306f8db2c20919897d7246b83eac9ad7a0d3d367600f59d9
   languageName: node
   linkType: hard
 
@@ -6623,7 +6623,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.5.6, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -6719,7 +6719,7 @@ __metadata:
     "@types/react": "npm:18"
     "@types/react-big-calendar": "npm:^1.16.2"
     "@types/react-dom": "npm:18"
-    "@types/react-text-mask": "npm:^5.4.14"
+    "@types/react-input-mask": "npm:^2"
     "@types/utf8": "npm:^3.0.3"
     autoprefixer: "npm:^10.0.1"
     axios: "npm:^1.7.7"
@@ -6750,10 +6750,10 @@ __metadata:
     react-dropzone: "npm:^14.2.3"
     react-hook-form: "npm:^7.52.1"
     react-icons: "npm:^5.0.1"
+    react-input-mask: "npm:^2.0.4"
     react-leaflet: "npm:^5.0.0"
     react-pdf: "npm:^9.2.1"
     react-phone-input-2: "npm:^2.15.1"
-    react-text-mask: "npm:^5.5.0"
     recharts: "npm:^2.12.7"
     tailwind-merge: "npm:^2.5.2"
     tailwindcss: "npm:^3.4.3"
@@ -6874,6 +6874,19 @@ __metadata:
   peerDependencies:
     react: "*"
   checksum: 10c0/a24309bfc993c19cbcbfc928157e53a137851822779977b9588f6dd41ffc4d11ebc98b447f4039b0d309a858f0a42980f6bfb4477fb19f9f2d1bc2e190fcf79c
+  languageName: node
+  linkType: hard
+
+"react-input-mask@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "react-input-mask@npm:2.0.4"
+  dependencies:
+    invariant: "npm:^2.2.4"
+    warning: "npm:^4.0.2"
+  peerDependencies:
+    react: ">=0.14.0"
+    react-dom: ">=0.14.0"
+  checksum: 10c0/89fc110a99e79ee3fa3f63696d5d46ab8889c653b33c0e50c6b24d70b715e1c8d475b8637ceb9e0f4fcacec5e39f653156faef4f5f06972886c4b1e643f66a82
   languageName: node
   linkType: hard
 
@@ -7063,17 +7076,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/841938ff16d16a6b76895f4cb2e1fea957e5fe3b30febbf03a54892dae1c9153f2383e231dea0b3ba41192ad2f2849448fa859caccd288943bce32639e971bee
-  languageName: node
-  linkType: hard
-
-"react-text-mask@npm:^5.5.0":
-  version: 5.5.0
-  resolution: "react-text-mask@npm:5.5.0"
-  dependencies:
-    prop-types: "npm:^15.5.6"
-  peerDependencies:
-    react: ^0.14.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/5f64ba5cc28330d0f44515605bbef2fbcc2bed9fb97c11e081eab7b72451453795a2c8e16714fe3b927ac6676404419916e4e8fbb5e4f907d6226f614e285096
   languageName: node
   linkType: hard
 
@@ -8558,7 +8560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"warning@npm:^4.0.0, warning@npm:^4.0.3":
+"warning@npm:^4.0.0, warning@npm:^4.0.2, warning@npm:^4.0.3":
   version: 4.0.3
   resolution: "warning@npm:4.0.3"
   dependencies:
