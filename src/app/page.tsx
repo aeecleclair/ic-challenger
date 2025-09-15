@@ -43,8 +43,12 @@ const Home = () => {
   const router = useRouter();
   const { edition } = useEdition();
 
-  const isEditionStarted = edition
+  const isEditionStarted = edition?.start_date
     ? new Date() >= new Date(edition.start_date)
+    : false;
+
+  const isEditionEnded = edition?.end_date
+    ? new Date() >= new Date(edition.end_date)
     : false;
 
   const isFullyRegistered = meCompetition?.validated && hasPaid;
@@ -56,7 +60,8 @@ const Home = () => {
       user !== undefined &&
       edition !== undefined &&
       token !== null &&
-      !isEditionStarted
+      !isEditionStarted &&
+      !isEditionEnded
     ) {
       router.replace("/register");
     }
@@ -68,6 +73,7 @@ const Home = () => {
     edition,
     token,
     isEditionStarted,
+    isEditionEnded,
   ]);
 
   if (isTokenQueried && token === null) {
