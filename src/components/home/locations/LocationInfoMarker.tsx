@@ -13,7 +13,11 @@ import {
 } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import { LocationComplete, Match, MatchComplete } from "@/src/api/hyperionSchemas";
+import {
+  LocationComplete,
+  Match,
+  MatchComplete,
+} from "@/src/api/hyperionSchemas";
 
 interface LocationInfoMarkerProps {
   location: LocationComplete;
@@ -249,7 +253,7 @@ export function LocationInfoMarker({
               <div className="ml-auto flex items-center gap-1">
                 <span className="text-xs font-medium">Naviguer</span>
               </div>
-            </Button> 
+            </Button>
           </div>
         </div>
       )}

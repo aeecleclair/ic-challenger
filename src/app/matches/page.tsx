@@ -14,7 +14,7 @@ import { useTeams } from "../../hooks/useTeams";
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";
 import { Calendar, Trophy, Users, GraduationCap, Zap } from "lucide-react";
-import { Match } from "../../api/hyperionSchemas";
+import { Match, MatchComplete } from "../../api/hyperionSchemas";
 import { useMemo } from "react";
 import {
   SidebarInset,
@@ -51,7 +51,7 @@ export default function MatchesPage() {
     const nowTime = now.getTime();
 
     return sportMatches.reduce(
-      (acc, match: Match) => {
+      (acc, match: MatchComplete) => {
         if (match.team1_id !== userTeamId && match.team2_id !== userTeamId) {
           return acc;
         }
@@ -77,8 +77,8 @@ export default function MatchesPage() {
         return acc;
       },
       {
-        upcomingMatches: [] as (Match & { _matchTime: number })[],
-        pastMatches: [] as (Match & { _matchTime: number })[],
+        upcomingMatches: [] as (MatchComplete & { _matchTime: number })[],
+        pastMatches: [] as (MatchComplete & { _matchTime: number })[],
         totalMatches: 0,
         victories: 0,
       },

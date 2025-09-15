@@ -18,7 +18,7 @@ import {
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { Match } from "../../api/hyperionSchemas";
+import { Match, MatchComplete } from "../../api/hyperionSchemas";
 
 interface FullyRegisteredDashboardProps {
   edition: {
@@ -82,7 +82,7 @@ export const FullyRegisteredDashboard = ({
     const nowTime = now.getTime();
 
     return sportMatches.reduce(
-      (acc, match: Match) => {
+      (acc, match: MatchComplete) => {
         if (match.team1_id !== userTeamId && match.team2_id !== userTeamId) {
           return acc;
         }
@@ -107,8 +107,8 @@ export const FullyRegisteredDashboard = ({
         return acc;
       },
       {
-        upcomingMatches: [] as (Match & { _matchTime: number })[],
-        pastMatches: [] as (Match & { _matchTime: number })[],
+        upcomingMatches: [] as (MatchComplete & { _matchTime: number })[],
+        pastMatches: [] as (MatchComplete & { _matchTime: number })[],
         totalMatches: 0,
         victories: 0,
       },
