@@ -1,8 +1,8 @@
 import {
-  useGetCompetitionSportsSportIdMatches,
-  usePostCompetitionSportsSportIdMatches,
   usePatchCompetitionMatchesMatchId,
   useDeleteCompetitionMatchesMatchId,
+  useGetCompetitionMatchesSportsSportId,
+  usePostCompetitionMatchesSportsSportId,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -23,7 +23,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
     data: sportMatches,
     refetch: refetchSportMatches,
     error,
-  } = useGetCompetitionSportsSportIdMatches(
+  } = useGetCompetitionMatchesSportsSportId(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
 
   // Create match for a school in this sport
   const { mutate: mutateCreateMatch, isPending: isCreateLoading } =
-    usePostCompetitionSportsSportIdMatches();
+    usePostCompetitionMatchesSportsSportId();
 
   const createMatch = (body: MatchBase, callback: () => void) => {
     return mutateCreateMatch(

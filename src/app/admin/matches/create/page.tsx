@@ -41,14 +41,12 @@ const CreateMatchPage = () => {
     mode: "onChange",
   });
 
-  // Update the form's sport_id and hook when selectedSportId changes
   useEffect(() => {
     if (selectedSportId) {
       form.setValue("sport_id", selectedSportId);
     }
   }, [selectedSportId, form]);
 
-  // Also watch for changes in the form sport_id field to update selectedSportId
   useEffect(() => {
     const subscription = form.watch((value) => {
       if (value.sport_id && value.sport_id !== selectedSportId) {
@@ -66,15 +64,13 @@ const CreateMatchPage = () => {
 
     const matchData: MatchBase = {
       name: values.name,
-      sport_id: sportIdToUse,
       team1_id: values.team1_id,
       team2_id: values.team2_id,
-      date: values.date ? values.date.toISOString() : null,
-      location_id: values.location_id || null,
+      date: values.date.toISOString(),
+      location_id: values.location_id,
       score_team1: values.score_team1 || null,
       score_team2: values.score_team2 || null,
       winner_id: values.winner_id || null,
-      edition_id: values.edition_id,
     };
 
     createMatch(matchData, () => {
