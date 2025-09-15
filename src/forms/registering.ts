@@ -3,7 +3,7 @@ import {
   isValidPhoneNumber,
   parsePhoneNumberWithError,
 } from "libphonenumber-js";
-import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
+import { ProductVariant } from "@/src/api/hyperionSchemas";
 
 const sexEnum = ["masculine", "feminine"] as const;
 
@@ -38,8 +38,7 @@ export const registeringFormSchema = z
       .optional(),
     products: z.array(
       z.object({
-        product:
-          z.custom<AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete>(),
+        product: z.custom<ProductVariant>(),
         quantity: z.number().min(1),
       }),
     ),

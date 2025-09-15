@@ -6,7 +6,7 @@ import { RegisteringFormValues } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import { Checkbox } from "../../ui/checkbox";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
-import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
+import { ProductVariant } from "@/src/api/hyperionSchemas";
 
 interface PackageCardProps {
   form: UseFormReturn<RegisteringFormValues>;
@@ -16,10 +16,7 @@ export const PackageCard = ({ form }: PackageCardProps) => {
   const { availableProducts } = useAvailableProducts();
   const purchases = form.watch("products");
   const ids = purchases.map((purchase) => purchase.product.id);
-  const groupedByProductId: Record<
-    string,
-    AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete[]
-  > = {};
+  const groupedByProductId: Record<string, ProductVariant[]> = {};
   availableProducts?.forEach((product) => {
     if (!groupedByProductId[product.product_id]) {
       groupedByProductId[product.product_id] = [];
