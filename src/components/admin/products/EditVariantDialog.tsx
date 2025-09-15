@@ -3,8 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { variantFormSchema, VariantFormValues } from "@/src/forms/variant";
 import { useProducts } from "@/src/hooks/useProducts";
 import {
-  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit,
+  ProductVariant,
 } from "@/src/api/hyperionSchemas";
 import {
   Dialog,
@@ -32,7 +32,7 @@ import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { CurrencyInput } from "@/src/components/custom/CurrencyInput";
 
 interface EditVariantDialogProps {
-  variant: AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete;
+  variant: ProductVariant;
   isOpen: boolean;
   onClose: () => void;
 }

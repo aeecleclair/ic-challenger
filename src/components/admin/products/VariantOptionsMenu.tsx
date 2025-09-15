@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
+import { ProductVariant } from "@/src/api/hyperionSchemas";
 import { useProducts } from "@/src/hooks/useProducts";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -22,7 +22,7 @@ import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { EditVariantDialog } from "./EditVariantDialog";
 
 interface VariantOptionsMenuProps {
-  variant: AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete;
+  variant: ProductVariant;
   productId: string;
 }
 

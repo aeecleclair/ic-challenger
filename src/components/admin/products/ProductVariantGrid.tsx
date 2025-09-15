@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
-  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
+  ProductVariant,
 } from "@/src/api/hyperionSchemas";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
@@ -12,7 +12,7 @@ import { VariantOptionsMenu } from "./VariantOptionsMenu";
 
 interface ProductVariantGridProps {
   product: AppModulesSportCompetitionSchemasSportCompetitionProductComplete;
-  variants: AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete[];
+  variants: ProductVariant[];
 }
 
 export const ProductVariantGrid = ({
