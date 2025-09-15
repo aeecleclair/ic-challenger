@@ -1,10 +1,10 @@
-import { Match } from "../../../api/hyperionSchemas";
+import { Match, MatchComplete } from "../../../api/hyperionSchemas";
 import { Badge } from "../../ui/badge";
 import { Trophy, X, School, Users, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PastMatchCardProps {
-  match: Match;
+  match: MatchComplete;
   userTeamId?: string;
   // New props for badges
   showSportBadge?: boolean;

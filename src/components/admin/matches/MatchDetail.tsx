@@ -1,6 +1,6 @@
 "use client";
 
-import { Match } from "@/src/api/hyperionSchemas";
+import { Match, MatchComplete } from "@/src/api/hyperionSchemas";
 import { Button } from "@/src/components/ui/button";
 import { useSportMatches } from "@/src/hooks/useMatches";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,7 @@ import { Separator } from "@/src/components/ui/separator";
 import { useSports } from "@/src/hooks/useSports";
 
 interface MatchDetailProps {
-  match: Match;
+  match: MatchComplete;
 }
 
 const MatchDetail = ({ match }: MatchDetailProps) => {

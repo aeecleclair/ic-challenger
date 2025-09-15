@@ -13,13 +13,13 @@ import {
 } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import { LocationComplete, Match } from "@/src/api/hyperionSchemas";
+import { LocationComplete, Match, MatchComplete } from "@/src/api/hyperionSchemas";
 
 interface LocationInfoMarkerProps {
   location: LocationComplete;
   hasMatches: boolean;
   totalMatches: number;
-  nextMatch?: Match;
+  nextMatch?: MatchComplete;
   sports?: any[];
   schools?: any[];
 }
@@ -152,7 +152,7 @@ export function LocationInfoMarker({
                       ) : null;
                     })()}
                 </div>
-                {/* <div className="flex items-center gap-2 text-sm font-medium">
+                <div className="flex items-center gap-2 text-sm font-medium">
                   {nextMatch?.team1 && (
                     <span className="transition-colors text-primary font-semibold">
                       {nextMatch.team1.name}
@@ -164,8 +164,8 @@ export function LocationInfoMarker({
                       {nextMatch.team2.name}
                     </span>
                   )}
-                </div> */}
-                {/* {nextMatch.date && (
+                </div>
+                {nextMatch.date && (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                     <MapPin className="h-3 w-3" />
                     <span>
@@ -183,8 +183,8 @@ export function LocationInfoMarker({
                       })}
                     </span>
                   </div>
-                )} */}
-                {/* {nextMatch.location && (
+                )}
+                {nextMatch.location && (
                   <Button
                     variant="ghost"
                     size="sm"
@@ -215,7 +215,7 @@ export function LocationInfoMarker({
                       <span className="text-xs font-medium">Naviguer</span>
                     </div>
                   </Button>
-                )} */}
+                )}
               </div>
             )}
           </div>

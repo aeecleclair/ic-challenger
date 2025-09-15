@@ -1,6 +1,6 @@
 "use client";
 
-import { Match } from "@/src/api/hyperionSchemas";
+import { Match, MatchComplete } from "@/src/api/hyperionSchemas";
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface MatchCardProps {
-  match: Match;
+  match: MatchComplete;
   onClick: () => void;
 }
 
@@ -42,7 +42,7 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
       <CardContent className="py-2 flex-grow">
         <div className="grid grid-cols-3 gap-2 mb-4">
           <div className="col-span-1 flex flex-col items-center justify-center">
-            <div className="font-medium text-center">{match.team1.name}</div>
+            {/* <div className="font-medium text-center">{match.team1.name}</div> */}
             {match.score_team1 !== null && (
               <div className="text-2xl font-bold">{match.score_team1}</div>
             )}
@@ -55,7 +55,7 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
           </div>
 
           <div className="col-span-1 flex flex-col items-center justify-center">
-            <div className="font-medium text-center">{match.team2.name}</div>
+            {/* <div className="font-medium text-center">{match.team2.name}</div> */}
             {match.score_team2 !== null && (
               <div className="text-2xl font-bold">{match.score_team2}</div>
             )}

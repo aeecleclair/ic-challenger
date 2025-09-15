@@ -1,6 +1,6 @@
 "use client";
 
-import { LocationComplete, Match } from "../../../api/hyperionSchemas";
+import { LocationComplete, Match, MatchComplete } from "../../../api/hyperionSchemas";
 import { Button } from "../../ui/button";
 import {
   Card,
@@ -25,7 +25,7 @@ import {
 
 interface LocationCardProps {
   location: LocationComplete;
-  nextMatch?: Match;
+  nextMatch?: MatchComplete;
   totalMatches: number;
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
   schools?: Array<{ id: string; name: string }>;

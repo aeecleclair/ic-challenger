@@ -3,14 +3,14 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import "leaflet/dist/leaflet.css";
-import { LocationComplete, Match } from "@/src/api/hyperionSchemas";
+import { LocationComplete, Match, MatchComplete } from "@/src/api/hyperionSchemas";
 import { LocationInfoMarker } from "./LocationInfoMarker";
 
 interface LocationsMapProps {
   locations: LocationComplete[];
   locationsWithMatches: Array<
     LocationComplete & {
-      nextMatch?: Match;
+      nextMatch?: MatchComplete;
       totalMatches: number;
     }
   >;

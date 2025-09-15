@@ -1,4 +1,4 @@
-import { Match } from "../../../api/hyperionSchemas";
+import { Match, MatchComplete } from "../../../api/hyperionSchemas";
 import { Badge } from "../../ui/badge";
 import { Button } from "../../ui/button";
 import { Separator } from "../../ui/separator";
@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface MatchCardProps {
-  match: Match;
+  match: MatchComplete;
   userTeamId?: string;
   urgency: "urgent" | "soon" | "normal";
   timeUntil: string;
