@@ -3,8 +3,7 @@ import { useAuth } from "./useAuth";
 import { useUser } from "./useUser";
 
 export const useUserPayments = () => {
-  const { token, isTokenExpired } = useAuth();
-  const { me: user } = useUser();
+  const { token, isTokenExpired, userId } = useAuth();
 
   const {
     data: payments,
@@ -17,11 +16,11 @@ export const useUserPayments = () => {
         Authorization: `Bearer ${token}`,
       },
       pathParams: {
-        userId: user!.id,
+        userId: userId!,
       },
     },
     {
-      enabled: !!user?.id && !isTokenExpired(),
+      enabled: !!userId && !isTokenExpired(),
       retry: 0,
       queryHash: "getUserPayments",
     },
