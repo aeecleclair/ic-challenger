@@ -8,15 +8,11 @@ import { Input } from "../../ui/input";
 
 import { DataTableFacetedFilter } from "./DataTableFacetedFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
-import { difficulties, meetingPlaces } from "@/src/infra/comboboxValues";
 import { DataTableFilterCheckBox } from "./DataTableFilterCheckBox";
-import { useMergeTeams } from "@/src/hooks/useMergeTeams";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { icons, MergeIcon, Trash2Icon } from "lucide-react";
-import { useTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useState } from "react";
 import { WarningDialog } from "../../custom/WarningDialog";
-import { useDeleteAllTeams } from "@/src/hooks/useDeleteAllTeams";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -25,12 +21,9 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
   table,
 }: DataTableToolbarProps<TData>) {
-  const { refetchTeams } = useTeams();
-  const { mergeTeams, isMergeLoading } = useMergeTeams();
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const isFiltered = table.getState().columnFilters.length > 0;
 
-  const { deleteAllTeams, isDeleteAllLoading } = useDeleteAllTeams();
 
   return (
     <div className="flex items-center justify-between">
