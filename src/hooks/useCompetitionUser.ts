@@ -1,6 +1,8 @@
 import {
   useGetCompetitionUsersMe,
   usePostCompetitionUsers,
+  usePatchCompetitionUsersUserIdInvalidate,
+  usePatchCompetitionUsersUserIdValidate,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
@@ -63,10 +65,91 @@ export const useCompetitionUser = () => {
     );
   };
 
+  const { mutate: mutateValidateParticipants, isPending: isValidateLoading } =
+    usePatchCompetitionUsersUserIdValidate();
+
+  const validateParticipants = (userId: string, callback: () => void) => {
+    return mutateValidateParticipants(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour",
+              description:
+                (error as any).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchMeCompetition();
+            callback();
+            toast({
+              title: "École mise à jour",
+              description: "L'école a été mise à jour avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
+  const {
+    mutate: mutateInvalidateParticipants,
+    isPending: isInvalidateLoading,
+  } = usePatchCompetitionUsersUserIdInvalidate();
+
+  const invalidateParticipants = (userId: string, callback: () => void) => {
+    return mutateInvalidateParticipants(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour",
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchMeCompetition();
+            callback();
+            toast({
+              title: "École mise à jour",
+              description: "L'école a été mise à jour avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   return {
     meCompetition,
     isLoading,
+    refetchMeCompetition,
     createCompetitionUser,
     isCreateLoading,
+    validateParticipants,
+    isValidateLoading,
+    isInvalidateLoading,
+    invalidateParticipants,
   };
 };

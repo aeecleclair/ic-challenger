@@ -24,6 +24,7 @@ import { GlobalQuotaCard } from "@/src/components/admin/validation/GlobalQuotaCa
 import { SportQuotaCard } from "@/src/components/admin/validation/SportQuotaCard";
 import { fetchGetCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -47,15 +48,12 @@ const Dashboard = () => {
 
   const effectiveSchoolId = schoolId || userSchoolId;
 
-  const {
-    schoolParticipants,
-    validateParticipants,
-    error,
-    isValidateLoading,
-    refetchSchools,
-  } = useSchoolParticipants({
+  const { schoolParticipants, error } = useSchoolParticipants({
     schoolId: effectiveSchoolId || null,
   });
+
+  const { validateParticipants, isValidateLoading, refetchMeCompetition } =
+    useCompetitionUser();
 
   const { sportsQuota } = useSportsQuota({ sportId: undefined });
 
@@ -99,12 +97,9 @@ const Dashboard = () => {
     [token, isTokenExpired, checkedParticipants],
   );
 
-  const onValidate = useCallback(
-    (userId: string, sportId: string) => {
-      validateParticipants(userId, () => {});
-    },
-    [validateParticipants],
-  );
+  const onValidate = (userId: string) => {
+    validateParticipants(userId, () => {});
+  };
 
   const participantTableData: ParticipantData[] = useMemo(() => {
     return (
