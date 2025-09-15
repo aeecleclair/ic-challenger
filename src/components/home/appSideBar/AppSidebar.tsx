@@ -15,6 +15,7 @@ import { NavUser } from "../../custom/NavUser";
 import { useEdition } from "@/src/hooks/useEdition";
 import { NavMatches } from "./NavMatches";
 import { NavSearch } from "./NavSearch";
+import { NavLocations } from "./NavLocations";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
@@ -50,6 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMatches />
         <NavSearch />
+        <NavLocations />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
