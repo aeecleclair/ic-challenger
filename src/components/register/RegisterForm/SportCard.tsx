@@ -28,7 +28,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Button } from "../../ui/button";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { HiDownload } from "react-icons/hi";
-import { DocumentDialog } from "../../custom/DocumentDialog";
+// import { DocumentDialog } from "../../custom/DocumentDialog";
 import { Sport, TeamInfo } from "@/src/api/hyperionSchemas";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useUser } from "@/src/hooks/useUser";
