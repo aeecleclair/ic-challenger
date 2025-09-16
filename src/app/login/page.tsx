@@ -21,7 +21,7 @@ const Login = () => {
             <LoginForm />
           </div>
         </div>
-        <div className="text-muted-foreground text-center text-sm text-balance mt-auto">
+        {/* <div className="text-muted-foreground text-center text-sm text-balance mt-auto">
           En vous connectant, vous acceptez nos{" "}
           <a
             href="#"
@@ -37,7 +37,7 @@ const Login = () => {
             Politique de confidentialité
           </a>
           .
-        </div>
+        </div> */}
       </div>
       <div className="relative hidden lg:block py-[3vh] pr-[3vh]">
         <div className="bg-muted h-full rounded-xl overflow-hidden"></div>
