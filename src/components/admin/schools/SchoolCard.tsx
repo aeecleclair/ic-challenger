@@ -56,17 +56,18 @@ export const SchoolCard = ({
             <MapPin className="h-3 w-3" />
             {schoolType.label}
           </Badge>
-          <Badge
-            variant={school.active ? "default" : "destructive"}
-            className="gap-1"
-          >
-            {school.active ? (
-              <CheckCircle className="h-3 w-3" />
-            ) : (
+          {!school.active && (
+            <Badge variant="destructive" className="gap-1">
               <XCircle className="h-3 w-3" />
-            )}
-            {school.active ? "Active" : "Inactive"}
-          </Badge>
+              Inactive
+            </Badge>
+          )}
+          {school.inscription_enabled === false && (
+            <Badge variant="destructive" className="gap-1">
+              <XCircle className="h-3 w-3" />
+              Inscriptions fermées
+            </Badge>
+          )}
         </div>
       </CardHeader>
 
