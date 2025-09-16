@@ -33,6 +33,8 @@ import { EditionWaitingCard } from "../components/home/EditionWaitingCard";
 import { IncompleteRegistrationCard } from "../components/home/IncompleteRegistrationCard";
 import { FullyRegisteredDashboard } from "../components/home/FullyRegisteredDashboard";
 import { useEffect } from "react";
+import { useSchools } from "../hooks/useSchools";
+import { useSportSchools } from "../hooks/useSportSchools";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
@@ -42,6 +44,8 @@ const Home = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { edition } = useEdition();
+  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const isEditionStarted = edition?.start_date
     ? new Date() >= new Date(edition.start_date)
@@ -53,6 +57,12 @@ const Home = () => {
 
   const isFullyRegistered = meCompetition?.validated && hasPaid;
 
+  const userSchoolId = user?.school_id || user?.school?.id;
+  const userSportSchool = sportSchools?.find(
+    (school) => school.school_id === userSchoolId,
+  );
+  const isSchoolInscriptionEnabled = userSportSchool?.inscription_enabled;
+
   useEffect(() => {
     if (
       !isLoading &&
@@ -61,7 +71,8 @@ const Home = () => {
       edition !== undefined &&
       token !== null &&
       !isEditionStarted &&
-      !isEditionEnded
+      !isEditionEnded &&
+      isSchoolInscriptionEnabled === true
     ) {
       router.replace("/register");
     }
@@ -74,6 +85,7 @@ const Home = () => {
     token,
     isEditionStarted,
     isEditionEnded,
+    isSchoolInscriptionEnabled,
   ]);
 
   if (isTokenQueried && token === null) {
@@ -90,6 +102,11 @@ const Home = () => {
           </div>
         </header>
         <div className="flex flex-col relative overflow-auto h-full m-6">
+          {!isSchoolInscriptionEnabled && (
+            <span className="text-sm text-destructive px-4 justify-center items-center flex h-full">
+              Les inscriptions ne sont pas encore ouvertes pour votre école.
+            </span>
+          )}
           {!edition && (
             <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
               Veuillez patienter, l&apos;édition n&apos;est pas encore prête.
