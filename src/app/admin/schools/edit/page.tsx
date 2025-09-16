@@ -46,7 +46,12 @@ const Dashboard = () => {
       inscription_enabled: values.inscription_enabled,
     };
     updateCompetitionSchool(school!.school_id, body, () => {
-      form.reset();
+      form.reset({
+        schools: values.schools,
+        fromLyon: values.fromLyon,
+        active: values.active,
+        inscription_enabled: values.inscription_enabled,
+      });
     });
   }
 
