@@ -25,7 +25,13 @@ import {
 } from "@/src/components/admin/home";
 
 const AdminPage = () => {
-  const { edition, createEdition, isCreationLoading } = useEdition();
+  const {
+    edition,
+    createEdition,
+    isCreationLoading,
+    openEditionInscription,
+    isOpenInscriptionLoading,
+  } = useEdition();
   const { isAdmin } = useUser();
   const { schools } = useSchools();
   const { sports } = useSports();
@@ -128,13 +134,6 @@ const AdminPage = () => {
                   })}
                 </span>
               </div>
-              <Badge
-                variant={edition.inscription_enabled ? "default" : "secondary"}
-              >
-                {edition.inscription_enabled
-                  ? "Inscriptions ouvertes"
-                  : "Inscriptions fermées"}
-              </Badge>
             </div>
           </div>
 
@@ -149,6 +148,8 @@ const AdminPage = () => {
                   schools={schools}
                   locations={locations}
                   products={products}
+                  onOpenInscription={openEditionInscription}
+                  isOpenInscriptionLoading={isOpenInscriptionLoading}
                 />
 
                 <LocationsCard locations={locations || []} />

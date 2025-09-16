@@ -19,6 +19,7 @@ import {
   CoreSchool,
 } from "@/src/api/hyperionSchemas";
 import { AppModulesSportCompetitionSchemasSportCompetitionProductComplete } from "@/src/api/hyperionSchemas";
+import React from "react";
 
 interface ConfigurationStatusCardProps {
   edition: CompetitionEdition;
@@ -27,6 +28,8 @@ interface ConfigurationStatusCardProps {
   schools?: CoreSchool[];
   locations?: Location[];
   products?: AppModulesSportCompetitionSchemasSportCompetitionProductComplete[];
+  onOpenInscription: (editionId: string) => void;
+  isOpenInscriptionLoading?: boolean;
 }
 
 export const ConfigurationStatusCard = ({
@@ -36,12 +39,12 @@ export const ConfigurationStatusCard = ({
   schools = [],
   locations = [],
   products = [],
+  onOpenInscription,
+  isOpenInscriptionLoading,
 }: ConfigurationStatusCardProps) => {
-  // Filter out no_school
   const NoSchoolId = "dce19aa2-8863-4c93-861e-fb7be8f610ed";
   const realSchools = schools.filter((school) => school.id !== NoSchoolId);
 
-  // Calculate configuration status
   const activeSports = sports.filter((sport) => sport.active !== false);
   const enabledProducts = products.filter(
     (product) =>
@@ -142,6 +145,38 @@ export const ConfigurationStatusCard = ({
                   ? `${podiumStats.totalRankings} classements`
                   : "Non configuré"}
               </Badge>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Inscriptions</span>
+              <div className="flex items-center gap-2">
+                {!edition.inscription_enabled ? (
+                  <Badge
+                    variant="destructive"
+                  >
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={() =>
+                        !isOpenInscriptionLoading &&
+                        onOpenInscription(edition.id)
+                      }
+                    >
+                      {isOpenInscriptionLoading
+                        ? "Ouverture..."
+                        : "Ouvrir les inscriptions"}
+                    </span>
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant={
+                      edition.inscription_enabled ? "default" : "secondary"
+                    }
+                  >
+                    {edition.inscription_enabled ? "Ouvertes" : "Fermées"}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
         </TooltipProvider>

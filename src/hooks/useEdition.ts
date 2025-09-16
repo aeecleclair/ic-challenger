@@ -1,6 +1,7 @@
 import {
   useGetCompetitionEditionsActive,
   usePostCompetitionEditions,
+  usePostCompetitionEditionsEditionIdInscription,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { CompetitionEditionBase } from "../api/hyperionSchemas";
@@ -66,6 +67,42 @@ export const useEdition = () => {
     );
   };
 
+  const { mutate: mutateOpenInscription, isPending: isOpenInscriptionLoading } =
+    usePostCompetitionEditionsEditionIdInscription();
+
+  const openEditionInscription = async (
+    editionId: string,
+    callback?: () => void,
+  ) => {
+    mutateOpenInscription(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: { editionId },
+        body: true,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Inscription ouverte",
+            description: "L'inscription à l'édition est maintenant ouverte.",
+          });
+          refetchEdition();
+          if (callback) callback();
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Erreur lors de l'ouverture de l'inscription",
+            description:
+              error?.stack?.body || error?.stack?.detail || "Erreur inconnue.",
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
   return {
     edition,
     error,
@@ -73,5 +110,7 @@ export const useEdition = () => {
     refetchEdition,
     isCreationLoading,
     createEdition,
+    openEditionInscription,
+    isOpenInscriptionLoading,
   };
 };
