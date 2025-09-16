@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CoreSchool } from "@/src/api/hyperionSchemas";
+import { CoreSchool, SchoolSportQuota } from "@/src/api/hyperionSchemas";
 import { QuotaFormValues, quotaFormSchema } from "@/src/forms/quota";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Input } from "@/src/components/ui/input";
@@ -26,6 +26,7 @@ import {
 } from "@/src/components/ui/select";
 import { Plus } from "lucide-react";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { useEffect } from "react";
 
 interface QuotaDialogProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ interface QuotaDialogProps {
   schools?: CoreSchool[];
   selectedSchool: string | null;
   setSelectedSchool: (schoolId: string | null) => void;
-  existingQuotas?: { school_id: string }[];
+  existingQuota?: SchoolSportQuota;
   title: string;
   description: string;
   submitLabel: string;
@@ -48,7 +49,7 @@ export function QuotaDialog({
   schools,
   selectedSchool,
   setSelectedSchool,
-  existingQuotas,
+  existingQuota,
   title,
   description,
   submitLabel,
@@ -61,6 +62,15 @@ export function QuotaDialog({
       team_quota: 0,
     },
   });
+
+  useEffect(() => {
+    if (existingQuota) {
+      quotaForm.reset({
+        participant_quota: existingQuota.participant_quota || 0,
+        team_quota: existingQuota.team_quota || 0,
+      });
+    }
+  }, [existingQuota, quotaForm]);
 
   const handleCancel = () => {
     onOpenChange(false);
@@ -108,9 +118,7 @@ export function QuotaDialog({
                   </SelectTrigger>
                   <SelectContent>
                     {schools?.map((school) => {
-                      const hasQuota = existingQuotas?.some(
-                        (q) => q.school_id === school.id,
-                      );
+                      const hasQuota = !!existingQuota;
                       if (!hasQuota) {
                         return (
                           <SelectItem key={school.id} value={school.id}>

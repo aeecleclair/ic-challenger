@@ -83,6 +83,10 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
     }
   };
 
+  const existingQuota = sportsQuota?.find(
+    (q) => q.school_id === selectedSchool,
+  );
+
   const handleQuotaSubmit = (values: QuotaFormValues) => {
     if (!selectedSchool) return;
 
@@ -90,10 +94,6 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
       participant_quota: values.participant_quota,
       team_quota: values.team_quota,
     };
-
-    const existingQuota = sportsQuota?.find(
-      (q) => q.school_id === selectedSchool,
-    );
 
     if (existingQuota) {
       updateQuota(selectedSchool, quotaInfo, () => {
@@ -192,9 +192,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
                 <p className="text-sm font-medium text-muted-foreground">
                   Taille d&apos;équipe
                 </p>
-                <p className="text-2xl font-bold">
-                  {sport.team_size}
-                </p>
+                <p className="text-2xl font-bold">{sport.team_size}</p>
               </div>
             </div>
           </CardContent>
@@ -222,9 +220,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
                 <p className="text-sm font-medium text-muted-foreground">
                   Quotas définis
                 </p>
-                <p className="text-2xl font-bold">
-                  {sportsQuota?.length || 0}
-                </p>
+                <p className="text-2xl font-bold">{sportsQuota?.length || 0}</p>
               </div>
             </div>
           </CardContent>
@@ -252,7 +248,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
               schools={filteredSchools}
               selectedSchool={selectedSchool}
               setSelectedSchool={setSelectedSchool}
-              existingQuotas={sportsQuota}
+              existingQuota={existingQuota}
               title={
                 selectedSchool &&
                 sportsQuota?.find((q) => q.school_id === selectedSchool)

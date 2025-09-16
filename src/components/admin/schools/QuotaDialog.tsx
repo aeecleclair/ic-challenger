@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Sport } from "@/src/api/hyperionSchemas";
+import { SchoolSportQuota, Sport } from "@/src/api/hyperionSchemas";
 import { QuotaFormValues, quotaFormSchema } from "@/src/forms/quota";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Input } from "@/src/components/ui/input";
@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { Plus } from "lucide-react";
+import { useEffect } from "react";
 
 interface QuotaDialogProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ interface QuotaDialogProps {
   sports?: Sport[];
   selectedSport: string | null;
   setSelectedSport: (sportId: string | null) => void;
-  existingQuotas?: { sport_id: string }[];
+  existingQuota?: SchoolSportQuota;
   title: string;
   description: string;
   submitLabel: string;
@@ -47,7 +48,7 @@ export function QuotaDialog({
   sports,
   selectedSport,
   setSelectedSport,
-  existingQuotas,
+  existingQuota,
   title,
   description,
   submitLabel,
@@ -60,6 +61,15 @@ export function QuotaDialog({
       team_quota: 0,
     },
   });
+
+  useEffect(() => {
+    if (existingQuota) {
+      quotaForm.reset({
+        participant_quota: existingQuota.participant_quota || 0,
+        team_quota: existingQuota.team_quota || 0,
+      });
+    }
+  }, [existingQuota, quotaForm]);
 
   const handleCancel = () => {
     onOpenChange(false);
@@ -105,9 +115,7 @@ export function QuotaDialog({
                   </SelectTrigger>
                   <SelectContent>
                     {sports?.map((sport) => {
-                      const hasQuota = existingQuotas?.some(
-                        (q) => q.sport_id === sport.id,
-                      );
+                      const hasQuota = !!existingQuota;
                       if (!hasQuota) {
                         return (
                           <SelectItem key={sport.id} value={sport.id}>

@@ -69,6 +69,7 @@ const SchoolDetail = ({ school, onEdit, onDelete }: SchoolDetailProps) => {
       setIsAddDialogOpen(true);
     }
   };
+  const existingQuota = schoolsQuota?.find((q) => q.sport_id === selectedSport);
 
   const handleQuotaSubmit = (values: QuotaFormValues) => {
     if (!selectedSport) return;
@@ -77,10 +78,6 @@ const SchoolDetail = ({ school, onEdit, onDelete }: SchoolDetailProps) => {
       participant_quota: values.participant_quota,
       team_quota: values.team_quota,
     };
-
-    const existingQuota = schoolsQuota?.find(
-      (q) => q.sport_id === selectedSport,
-    );
 
     if (existingQuota) {
       updateQuota(selectedSport, quotaInfo, () => {
@@ -192,7 +189,7 @@ const SchoolDetail = ({ school, onEdit, onDelete }: SchoolDetailProps) => {
               sports={sports}
               selectedSport={selectedSport}
               setSelectedSport={setSelectedSport}
-              existingQuotas={schoolsQuota}
+              existingQuota={existingQuota}
               title={
                 selectedSport &&
                 schoolsQuota?.find((q) => q.sport_id === selectedSport)
