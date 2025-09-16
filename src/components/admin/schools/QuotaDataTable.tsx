@@ -101,8 +101,8 @@ export function QuotaDataTable({
         </Button>
       ),
       cell: ({ row }) => {
-        const quota = row.getValue("participant_quota") as number;
-        return <div className="text-right">{quota || 0}</div>;
+        const quota = row.getValue("participant_quota") as number | undefined;
+        return <div className="text-right">{quota || "-"}</div>;
       },
     },
     {
@@ -118,8 +118,8 @@ export function QuotaDataTable({
         </Button>
       ),
       cell: ({ row }) => {
-        const quota = row.getValue("team_quota") as number;
-        return <div className="text-right">{quota || 0}</div>;
+        const quota = row.getValue("team_quota") as number | undefined;
+        return <div className="text-right">{quota || "-"}</div>;
       },
     },
     {
