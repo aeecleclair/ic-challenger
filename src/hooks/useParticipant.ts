@@ -57,6 +57,7 @@ export const useParticipant = () => {
               variant: "destructive",
             });
           } else {
+            refetchMeParticipant();
             callback();
             toast({
               title: "Demande d'inscription enregistrée",
