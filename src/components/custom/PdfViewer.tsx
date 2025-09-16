@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { Document, Page, pdfjs } from "react-pdf";
-import type { PDFDocumentProxy } from "pdfjs-dist";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url,
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const options = {
   cMapUrl: "/cmaps/",
@@ -24,7 +21,7 @@ export const PdfViewer = ({ file, width }: PdfViewerProps) => {
 
   function onDocumentLoadSuccess({
     numPages: nextNumPages,
-  }: PDFDocumentProxy): void {
+  }: DocumentCallback): void {
     setNumPages(nextNumPages);
   }
   // get the width of the parent element
