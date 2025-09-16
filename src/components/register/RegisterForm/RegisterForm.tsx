@@ -79,6 +79,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
         allHeaderSubtitles: newSubtitles,
       });
       api?.scrollTo(2);
+      return;
     }
     if (meCompetition && !meCompetition.validated) {
       setState({
@@ -89,6 +90,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
         headerSubtitle: "Récapitulatif",
         allHeaderSubtitles: newSubtitles,
       });
+      return;
     }
     if (meCompetition && meCompetition.validated) {
       setState({
