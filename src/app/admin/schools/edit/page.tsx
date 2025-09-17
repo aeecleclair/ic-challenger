@@ -3,10 +3,11 @@
 import { useSchools } from "@/src/hooks/useSchools";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/src/components/ui/button";
 import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
 import {
   Card,
@@ -16,8 +17,10 @@ import {
 } from "@/src/components/ui/card";
 import { SchoolExtensionEdit } from "@/src/api/hyperionSchemas";
 import { schoolFormSchema, SchoolFormValues } from "@/src/forms/schools";
+import { ArrowLeft } from "lucide-react";
 
 const Dashboard = () => {
+  const router = useRouter();
   const searchParam = useSearchParams();
   const schoolId = searchParam.get("school_id");
 
@@ -57,13 +60,23 @@ const Dashboard = () => {
 
   return school ? (
     <div className="flex w-full flex-col space-y-6">
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Modifier une école
-        </h1>
-        <p className="text-muted-foreground">
-          Modifiez les paramètres de l&apos;école {school.school.name}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Modifier une école
+          </h1>
+          <p className="text-muted-foreground">
+            Modifiez les paramètres de l&apos;école {school.school.name}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          className="gap-2"
+          onClick={() => router.push("/admin/schools")}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour à la liste
+        </Button>
       </div>
 
       {/* Form Card */}

@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { schoolFormSchema, SchoolFormValues } from "@/src/forms/schools";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
-import Link from "next/link";
 import { SchoolsForm } from "@/src/components/admin/schools/SchoolsForm";
 import { SchoolExtensionBase } from "@/src/api/hyperionSchemas";
 import { Button } from "@/src/components/ui/button";
@@ -16,8 +15,10 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { ArrowLeft, Plus, School } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+  const router = useRouter();
   const { filteredSchools } = useSchools();
   const { createCompetitionSchool, isLoading } = useSportSchools();
   const form = useForm<SchoolFormValues>({
@@ -39,6 +40,7 @@ const Dashboard = () => {
     };
     createCompetitionSchool(body, () => {
       form.reset();
+      router.push("/admin/schools");
     });
   }
 
@@ -55,11 +57,13 @@ const Dashboard = () => {
             Configurez une nouvelle école pour la compétition
           </p>
         </div>
-        <Button variant="outline" asChild className="gap-2">
-          <Link href="/admin/schools">
-            <ArrowLeft className="h-4 w-4" />
-            Retour à la liste
-          </Link>
+        <Button
+          variant="outline"
+          className="gap-2"
+          onClick={() => router.push("/admin/schools")}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour à la liste
         </Button>
       </div>
 
