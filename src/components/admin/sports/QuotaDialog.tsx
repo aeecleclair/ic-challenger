@@ -96,42 +96,30 @@ export function QuotaDialog({
             onSubmit={quotaForm.handleSubmit(onSubmit)}
             className="space-y-4 py-4"
           >
-            {selectedSchool ? (
-              <FormItem className="w-full">
-                <FormLabel>École</FormLabel>
-                <div className="p-2 border rounded-md bg-muted/50">
-                  {formatSchoolName(
-                    schools?.find((school) => school.id === selectedSchool)
-                      ?.name,
-                  ) || selectedSchool}
-                </div>
-              </FormItem>
-            ) : (
-              <FormItem className="w-full">
-                <FormLabel>École</FormLabel>
-                <Select
-                  value={selectedSchool || ""}
-                  onValueChange={(value) => setSelectedSchool(value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Sélectionnez une école" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {schools?.map((school) => {
-                      const hasQuota = !!existingQuota;
-                      if (!hasQuota) {
-                        return (
-                          <SelectItem key={school.id} value={school.id}>
-                            {formatSchoolName(school.name)}
-                          </SelectItem>
-                        );
-                      }
-                      return null;
-                    })}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
+            <FormItem className="w-full">
+              <FormLabel>École</FormLabel>
+              <Select
+                value={selectedSchool || ""}
+                onValueChange={(value) => setSelectedSchool(value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Sélectionnez une école" />
+                </SelectTrigger>
+                <SelectContent>
+                  {schools?.map((school) => {
+                    const hasQuota = !!existingQuota;
+                    if (!hasQuota) {
+                      return (
+                        <SelectItem key={school.id} value={school.id}>
+                          {formatSchoolName(school.name)}
+                        </SelectItem>
+                      );
+                    }
+                    return null;
+                  })}
+                </SelectContent>
+              </Select>
+            </FormItem>
 
             <StyledFormField
               form={quotaForm}

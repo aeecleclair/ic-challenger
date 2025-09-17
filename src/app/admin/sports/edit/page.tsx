@@ -2,13 +2,13 @@
 
 import { useSports } from "@/src/hooks/useSports";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SportsForm } from "@/src/components/admin/sports/SportsForm";
 import { SportEdit } from "@/src/api/hyperionSchemas";
-import { sportFormSchema } from "@/src/forms/sport";
+import { sportFormSchema, SportFormValues } from "@/src/forms/sport";
 import { Button } from "@/src/components/ui/button";
 import {
   Card,
@@ -19,6 +19,7 @@ import {
 import { ArrowLeft, Edit, Trophy } from "lucide-react";
 
 const EditSportPage = () => {
+  const router = useRouter();
   const searchParam = useSearchParams();
   const sportId = searchParam.get("sport_id");
 
@@ -26,7 +27,7 @@ const EditSportPage = () => {
 
   const sport = sports?.find((s) => s.id === sportId);
 
-  const form = useForm<z.infer<typeof sportFormSchema>>({
+  const form = useForm<SportFormValues>({
     resolver: zodResolver(sportFormSchema),
     defaultValues: {
       name: sport?.name || "",
@@ -38,7 +39,7 @@ const EditSportPage = () => {
     mode: "onChange",
   });
 
-  function onSubmit(values: z.infer<typeof sportFormSchema>) {
+  function onSubmit(values: SportFormValues) {
     if (!sportId) return;
 
     const body: SportEdit = {
@@ -52,6 +53,7 @@ const EditSportPage = () => {
 
     updateSport(sportId, body, () => {
       form.reset();
+      router.push("/admin/sports");
     });
   }
 

@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { sportFormSchema } from "@/src/forms/sport";
+import { sportFormSchema, SportFormValues } from "@/src/forms/sport";
 import { useSports } from "@/src/hooks/useSports";
 import { SportsForm } from "@/src/components/admin/sports/SportsForm";
 import Link from "next/link";
@@ -15,11 +15,14 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { ArrowLeft, Plus, Trophy } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { SportBase } from "@/src/api/hyperionSchemas";
 
 const Dashboard = () => {
+  const router = useRouter();
   const { createSport, isCreateLoading: isLoading } = useSports();
 
-  const form = useForm<z.infer<typeof sportFormSchema>>({
+  const form = useForm<SportFormValues>({
     resolver: zodResolver(sportFormSchema),
     defaultValues: {
       name: "",
@@ -31,18 +34,20 @@ const Dashboard = () => {
     mode: "onChange",
   });
 
-  function onSubmit(values: z.infer<typeof sportFormSchema>) {
+  function onSubmit(values: SportFormValues) {
+    const body: SportBase = {
+      name: values.name,
+      team_size: values.teamSize,
+      sport_category:
+        values.sportCategory === "null" ? null : values.sportCategory,
+      substitute_max: values.substituteMax,
+      active: values.active,
+    };
     createSport(
-      {
-        name: values.name,
-        team_size: values.teamSize,
-        sport_category:
-          values.sportCategory === "null" ? null : values.sportCategory,
-        substitute_max: values.substituteMax,
-        active: values.active,
-      },
+      body,
       () => {
         form.reset();
+        router.push("/admin/sports");
       },
     );
   }
