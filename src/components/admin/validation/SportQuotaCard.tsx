@@ -58,15 +58,17 @@ export const SportQuotaCard = ({
   const validatedParticipants = participantsWithTeamNames.filter(
     (p) => p.isValidated,
   ).length;
-  const maxParticipants = quota?.participant_quota || 0;
-  const maxTeams = quota?.team_quota || 0;
+  const maxParticipants = quota?.participant_quota;
+  const maxTeams = quota?.team_quota;
 
   const uniqueTeams = new Set(
     participantsWithTeamNames.map((p) => p.teamId).filter(Boolean),
   ).size;
 
-  const isOverQuota = totalParticipants > maxParticipants;
-  const isTeamsOverQuota = maxTeams > 0 && uniqueTeams > maxTeams;
+  const isOverQuota = maxParticipants
+    ? totalParticipants > maxParticipants
+    : false;
+  const isTeamsOverQuota = maxTeams ? uniqueTeams > maxTeams : false;
 
   return (
     <Card className="h-full">
@@ -113,11 +115,13 @@ export const SportQuotaCard = ({
               <Users className="h-4 w-4 text-muted-foreground" />
               <span className="text-muted-foreground">Participants</span>
             </div>
-            <div
-              className={`font-medium ${isOverQuota ? "text-destructive" : ""}`}
-            >
-              {totalParticipants} / {maxParticipants}
-            </div>
+            {maxParticipants && (
+              <div
+                className={`font-medium ${isOverQuota ? "text-destructive" : ""}`}
+              >
+                {totalParticipants} / {maxParticipants}
+              </div>
+            )}
           </div>
 
           {maxTeams > 0 && (
