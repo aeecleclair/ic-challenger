@@ -64,9 +64,8 @@ export const RegisterFormField = ({
         </CarouselContent>
       </Carousel>
 
-      <div className="flex justify-end mt-4 gap-4">
+      <div className="flex justify-start mt-4 gap-4">
         <Button
-          variant="outline"
           size="icon"
           onClick={() => {
             api?.scrollPrev();
@@ -83,7 +82,6 @@ export const RegisterFormField = ({
         </Button>
         {api?.canScrollNext() ? (
           <Button
-            variant="outline"
             size="icon"
             onClick={() => {
               form.trigger().then((result) => {
