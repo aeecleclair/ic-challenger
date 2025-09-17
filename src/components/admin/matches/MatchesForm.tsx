@@ -85,19 +85,21 @@ export const MatchesForm = ({
     sportId: selectedSport || undefined,
   });
 
-  const { teams: team2Options } = useSchoolSportTeams({
+  const { teams: team2OptionsRaw } = useSchoolSportTeams({
     schoolId: team2SchoolId || undefined,
     sportId: selectedSport || undefined,
   });
+  
+  const team2Options = team2OptionsRaw?.filter(
+    (team) => team.id !== form.getValues("team1_id"),
+  );
 
-  // Populate edition_id if not already set
   useEffect(() => {
     if (edition && !form.getValues("edition_id")) {
       form.setValue("edition_id", edition.id);
     }
   }, [edition, form]);
 
-  // Update school options when sport changes
   useEffect(() => {
     if (selectedSport && sportSchools) {
       const schoolsForSport = sportSchools.filter(
@@ -115,7 +117,6 @@ export const MatchesForm = ({
     }
   }, [selectedSport, sportSchools]);
 
-  // Reset teams when sport changes
   useEffect(() => {
     if (selectedSport && !isEditing) {
       form.setValue("team1_id", "");
@@ -470,11 +471,19 @@ export const MatchesForm = ({
                       Date et heure du match
                     </FormLabel>
                     <FormControl>
-                      <DateTimePicker 
+                      <DateTimePicker
                         date={field.value}
                         setDate={field.onChange}
-                        fromDate={edition?.start_date ? new Date(edition!.start_date) : new Date(1900)}
-                        toDate={edition?.end_date ? new Date(edition!.end_date) : new Date()}
+                        fromDate={
+                          edition?.start_date
+                            ? new Date(edition!.start_date)
+                            : new Date(1900)
+                        }
+                        toDate={
+                          edition?.end_date
+                            ? new Date(edition!.end_date)
+                            : new Date()
+                        }
                         timeLabel="Heure du match"
                         timeId="match-time"
                       />
