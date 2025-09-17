@@ -115,6 +115,11 @@ export const ProductList = ({ products }: ProductListProps) => {
                             >
                               {enabledVariants > 0 ? "Actif" : "Inactif"}
                             </Badge>
+                            {product.required && (
+                              <Badge className="ml-1">
+                                Obligatoire
+                              </Badge>
+                            )}
                           </div>
                           {product.description && (
                             <p className="text-sm text-muted-foreground mt-1">

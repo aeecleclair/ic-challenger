@@ -16,6 +16,7 @@ import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
+import { Checkbox } from "@/src/components/ui/checkbox";
 
 interface AddProductDialogProps {
   isOpen: boolean;
@@ -86,6 +87,24 @@ export const AddProductDialog = ({
                   className="min-h-20"
                   {...field}
                 />
+              )}
+            />
+
+            <StyledFormField
+              form={form}
+              label="Produit obligatoire"
+              id="required"
+              input={(field) => (
+                <div className="flex items-center space-x-2 pt-2">
+                  <Checkbox
+                    checked={field.value || false}
+                    onCheckedChange={field.onChange}
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    Ce produit doit être sélectionné lors de
+                    l&apos;inscription
+                  </span>
+                </div>
               )}
             />
 
