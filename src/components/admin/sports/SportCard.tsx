@@ -22,6 +22,7 @@ import {
   Trophy,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface SportCardProps {
   sport: Sport;
@@ -36,6 +37,7 @@ export const SportCard = ({
   onEdit,
   onDelete,
 }: SportCardProps) => {
+  const router = useRouter();
   const categoryLabel =
     sportCategories.find((cat) => cat.value === sport.sport_category)?.label ||
     sport.sport_category;
@@ -87,17 +89,15 @@ export const SportCard = ({
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>Équipe: {sport.team_size} joueurs</span>
+            <span>{sport.team_size} titulaires</span>
           </div>
           {sport.substitute_max !== undefined &&
             sport.substitute_max !== null && (
               <div className="flex items-center gap-2">
                 <UserPlus className="h-4 w-4" />
-                <span>Remplaçants: {sport.substitute_max} max</span>
+                <span>{sport.substitute_max} remplaçants max</span>
               </div>
             )}
-        </div>
-        <div className="mt-3">
           <Link
             href={`/admin/sports?sport_id=${sport.id}`}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary/80 transition-colors"
