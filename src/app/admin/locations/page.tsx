@@ -1,31 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Button } from "@/src/components/ui/button";
-import { Plus, X, Save, Trash2 } from "lucide-react";
 import { useLocations } from "@/src/hooks/useLocations";
 import { DeleteConfirmationDialog } from "@/src/components/admin/locations/DeleteConfirmationDialog";
 import { LocationComplete } from "@/src/api/hyperionSchemas";
-import { MapPicker } from "@/src/components/admin/locations/map-picker";
+import { MapPicker } from "@/src/components/admin/locations/MapPicker";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { locationSchema, LocationFormData } from "@/src/forms/location";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/src/components/ui/form";
-import { Input } from "@/src/components/ui/input";
-import { Textarea } from "@/src/components/ui/textarea";
 
 export default function LocationsPage() {
-  const searchParams = useSearchParams();
-  const selectedLocationId = searchParams.get("location_id");
-
   const {
     locations,
     createLocation,
@@ -60,7 +44,6 @@ export default function LocationsPage() {
   });
 
   const handleMapClick = (lat: number, lng: number, address: string) => {
-    // Only allow creating new location if not currently editing
     if (!editingLocation) {
       setIsCreating(true);
       form.reset({
@@ -74,7 +57,6 @@ export default function LocationsPage() {
   };
 
   const handleEditLocation = (location: LocationComplete) => {
-    // Cancel any current creation
     setIsCreating(false);
     setEditingLocation(location);
     form.reset({
@@ -133,10 +115,6 @@ export default function LocationsPage() {
     setDeleteDialog({ isOpen: false, location: null });
   };
 
-  const selectedLocation = selectedLocationId
-    ? locations?.find((location) => location.id === selectedLocationId)
-    : null;
-
   if (isLoading) {
     return (
       <div className="container mx-auto p-6">
@@ -157,8 +135,6 @@ export default function LocationsPage() {
       <div className="w-full">
         {/* Map Section */}
         <MapPicker
-          latitude={form.watch("latitude")}
-          longitude={form.watch("longitude")}
           onCoordinatesChange={handleMapClick}
           locations={locations}
           onLocationEdit={handleEditLocation}

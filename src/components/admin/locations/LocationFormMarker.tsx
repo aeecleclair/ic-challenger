@@ -14,16 +14,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
-import { MapPin, Save, X, Trash2, Navigation } from "lucide-react";
+import { MapPin, Save, X, Trash2, Navigation, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LocationFormMarkerProps {
-  locationName: string;
-  latitude: number;
-  longitude: number;
   isAdded: boolean;
   address?: string;
-  isExisting?: boolean;
   form: any;
   onSubmit: (data: any) => void;
   onCancel: () => void;
@@ -35,12 +31,8 @@ interface LocationFormMarkerProps {
 }
 
 export function LocationFormMarker({
-  locationName,
-  latitude,
-  longitude,
   isAdded,
   address,
-  isExisting = false,
   form,
   onSubmit,
   onCancel,
@@ -50,19 +42,9 @@ export function LocationFormMarker({
   onDelete,
   editingLocation,
 }: LocationFormMarkerProps) {
-
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-  };
-
-  const handleDirections = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,
-      "_blank",
-    );
   };
 
   const handleCancel = (e: React.MouseEvent) => {
@@ -192,25 +174,13 @@ export function LocationFormMarker({
 
             <Separator className="my-3" />
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className={`grid grid-cols-${editingLocation ? 2 : 1} gap-2`}>
               <Button
-                variant="outline"
-                size="sm"
-                type="button"
-                className="flex items-center justify-center"
-                onClick={handleDirections}
-              >
-                <Navigation className="h-3 w-3 mr-1" />
-                Directions
-              </Button>
-
-              <Button
-                size="sm"
                 disabled={isCreateLoading || isUpdateLoading}
                 className="flex items-center justify-center"
                 onClick={handleFormSubmit}
               >
-                <Save className="h-3 w-3 mr-1" />
+                <Check className="h-3 w-3 mr-1" />
                 {isCreateLoading || isUpdateLoading
                   ? "..."
                   : editingLocation
@@ -222,7 +192,6 @@ export function LocationFormMarker({
                 <Button
                   type="button"
                   variant="destructive"
-                  size="sm"
                   onClick={handleDelete}
                   disabled={isDeleteLoading}
                   className="flex items-center justify-center"

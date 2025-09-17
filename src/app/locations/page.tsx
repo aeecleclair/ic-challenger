@@ -26,14 +26,12 @@ export default function LocationsPage() {
   const { sports } = useSports();
   const { filteredSchools: schools } = useSchools();
 
-  // Process locations with next match information
   const locationsWithMatches = useMemo(() => {
     if (!locations || !sportMatches) return [];
 
     const now = new Date();
 
     return locations.map((location) => {
-      // Find the next upcoming match at this location
       const nextMatch = sportMatches
         .filter((match: Match) => {
           return (
@@ -48,7 +46,6 @@ export default function LocationsPage() {
           return dateA - dateB;
         })[0];
 
-      // Count total matches at this location
       const totalMatches = sportMatches.filter(
         (match: Match) => match.location_id === location.id,
       ).length;

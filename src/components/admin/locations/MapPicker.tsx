@@ -4,8 +4,6 @@ import React from "react";
 import dynamic from "next/dynamic";
 
 interface MapPickerProps {
-  latitude?: number;
-  longitude?: number;
   onCoordinatesChange: (lat: number, lng: number, address: string) => void;
   onLocationEdit?: (location: any) => void;
   locations?: any[];
@@ -21,8 +19,7 @@ interface MapPickerProps {
   onDelete?: (id: string) => void;
 }
 
-// Dynamic import for the actual map component to avoid SSR issues
-const DynamicMapComponent = dynamic(() => import("./map-component"), {
+const DynamicMapComponent = dynamic(() => import("./MapComponent"), {
   ssr: false,
   loading: () => (
     <div className="h-64 w-full rounded-md border border-input bg-muted flex items-center justify-center">
@@ -32,8 +29,6 @@ const DynamicMapComponent = dynamic(() => import("./map-component"), {
 });
 
 export function MapPicker({
-  latitude,
-  longitude,
   onCoordinatesChange,
   onLocationEdit,
   locations = [],
@@ -55,8 +50,6 @@ export function MapPicker({
   return (
     <div className={className}>
       <DynamicMapComponent
-        latitude={latitude}
-        longitude={longitude}
         onCoordinatesChange={handlePositionChange}
         onLocationEdit={onLocationEdit}
         locations={locations}
