@@ -24,20 +24,24 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
   CompetitionUserBase,
+  CompetitionUserEdit,
   ParticipantInfo,
 } from "@/src/api/hyperionSchemas";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
+import { useUserPayments } from "@/src/hooks/useUserPayments";
 
 const Register = () => {
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
-  const { meCompetition, createCompetitionUser } = useCompetitionUser();
+  const { meCompetition, createCompetitionUser, updateCompetitionUser } =
+    useCompetitionUser();
   const { meParticipant, createParticipant } = useParticipant();
   const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
+  const { payments } = useUserPayments();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -52,14 +56,14 @@ const Register = () => {
     allHeaderSubtitles: [
       "Informations",
       "Participation",
-      "Package",
+      "Panier",
       "Récapitulatif",
     ],
     pageFields: {
       Informations: ["phone", "sex"],
       Participation: [],
       Sport: ["sport.id", "sport.team_id"],
-      Package: [],
+      Panier: [],
       Récapitulatif: [],
     } as const,
     onValidateCardActions: {
@@ -71,8 +75,20 @@ const Register = () => {
         }
       },
       Participation: (values, callback) => {
-        if (meCompetition !== undefined) {
+        if (payments !== undefined && payments.length > 0) {
           callback();
+          return;
+        }
+        if (meCompetition !== undefined) {
+          const body: CompetitionUserEdit = {
+            sport_category: values.sex,
+            is_athlete: values.is_athlete,
+            is_cameraman: values.is_cameraman,
+            is_fanfare: values.is_fanfare,
+            is_pompom: values.is_pompom,
+            is_volunteer: values.is_volunteer,
+          };
+          updateCompetitionUser(body, callback);
           return;
         }
         const body: CompetitionUserBase = {
@@ -97,7 +113,7 @@ const Register = () => {
         };
         createParticipant(body, values.sport!.id, callback);
       },
-      Package: (values, callback) => {
+      Panier: (values, callback) => {
         const newPurchases = values.products;
 
         const toCreate = newPurchases.filter(

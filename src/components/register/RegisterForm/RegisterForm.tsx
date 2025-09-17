@@ -11,11 +11,12 @@ import { RegisterState } from "@/src/infra/registerState";
 import { useSports } from "@/src/hooks/useSports";
 import { useUser } from "@/src/hooks/useUser";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
-import { WaitingPage } from "./WaintingPage";
+import { WaitingPage } from "./WaitingPage";
 import { ValidatedPage } from "./ValidatedPage";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useRouter } from "next/navigation";
 import { CarouselApi } from "../../ui/carousel";
+import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
@@ -30,6 +31,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const { me } = useUser();
   const { meCompetition } = useCompetitionUser();
   const { meParticipant } = useParticipant();
+  const { userPurchases } = useUserPurchases({ userId: me?.id });
   const router = useRouter();
 
   const form = useForm<RegisteringFormValues>({
@@ -79,6 +81,16 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
         allHeaderSubtitles: newSubtitles,
       });
       api?.scrollTo(2);
+      return;
+    }
+    if (userPurchases === undefined || userPurchases.length === 0) {
+      setState({
+        ...state,
+        currentStep: !!meParticipant ? 4 : 3,
+        stepDone: !!meParticipant ? 3 : 2,
+        headerSubtitle: "Panier",
+        allHeaderSubtitles: newSubtitles,
+      });
       return;
     }
     if (meCompetition && !meCompetition.validated) {

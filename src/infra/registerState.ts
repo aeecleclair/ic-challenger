@@ -10,7 +10,7 @@ export type HeaderSubtitle =
   | "Informations"
   | "Participation"
   | "Sport"
-  | "Package"
+  | "Panier"
   | "Récapitulatif";
 
 export interface RegisterState {

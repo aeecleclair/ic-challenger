@@ -5,7 +5,7 @@ import { Carousel, CarouselApi, CarouselContent } from "../../ui/carousel";
 import { InformationCard } from "./InformationCard";
 import { ParticipationCard } from "./ParticipationCard";
 import { SportCard } from "./SportCard";
-import { PackageCard } from "./PackageCard";
+import { BasketCard } from "./BasketCard";
 import { useState } from "react";
 import { Button } from "../../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -59,7 +59,7 @@ export const RegisterFormField = ({
           <InformationCard form={form} />
           <ParticipationCard form={form} onSportToggle={onSportToggle} />
           {showSportFields && <SportCard form={form} sports={sports} />}
-          <PackageCard form={form} />
+          <BasketCard form={form} />
           <SummaryCard form={form} />
         </CarouselContent>
       </Carousel>

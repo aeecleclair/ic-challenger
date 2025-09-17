@@ -59,6 +59,18 @@ export const registeringFormSchema = z
     }
   })
   .superRefine((data, ctx) => {
+    if (
+      [data.is_cameraman, data.is_fanfare, data.is_pompom].filter(Boolean)
+        .length > 1
+    ) {
+      ctx.addIssue({
+        path: ["is_athlete"],
+        code: z.ZodIssueCode.custom,
+        message: "Vous ne pouvez pas sélectionner plusieurs rôles non sportifs",
+      });
+    }
+  })
+  .superRefine((data, ctx) => {
     if (data.is_athlete && !data.sport) {
       ctx.addIssue({
         path: ["sport"],
