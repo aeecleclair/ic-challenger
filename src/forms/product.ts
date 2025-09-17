@@ -10,6 +10,7 @@ export const productFormSchema = z.object({
       message: "Veuillez renseigner le nom du produit",
     }),
   description: z.string().optional(),
+  required: z.boolean().optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;
