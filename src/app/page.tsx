@@ -102,7 +102,7 @@ const Home = () => {
           </div>
         </header>
         <div className="flex flex-col relative overflow-auto h-full m-6">
-          {!isSchoolInscriptionEnabled && (
+          {edition && !isSchoolInscriptionEnabled && (
             <span className="text-sm text-destructive px-4 justify-center items-center flex h-full">
               Les inscriptions ne sont pas encore ouvertes pour votre école.
             </span>

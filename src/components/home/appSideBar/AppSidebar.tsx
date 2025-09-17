@@ -37,9 +37,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Challenger</span>
-                  {edition && (
+                  {edition ? (
                     <span className="truncate text-xs">
                       Edition {edition.year}
+                    </span>
+                  ) : (
+                    <span className="truncate text-xs">
+                      Aucune édition active
                     </span>
                   )}
                 </div>
@@ -49,9 +53,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMatches />
-        <NavSearch />
-        <NavLocations />
+        {edition && (<NavMatches />)}
+        {edition && (<NavSearch />)}
+        {edition && (<NavLocations />)}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
