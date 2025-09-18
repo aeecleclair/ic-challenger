@@ -145,13 +145,13 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
-              <IdCard className="h-5 w-5 text-purple-600" />
+              <School className="h-5 w-5 text-purple-600" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  ID Utilisateur
+                  École
                 </p>
                 <p className="text-lg font-bold text-purple-600 font-mono">
-                  {user.user_id}
+                  {user.user.school?.name}
                 </p>
               </div>
             </div>
