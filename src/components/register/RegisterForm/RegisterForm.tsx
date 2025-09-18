@@ -70,16 +70,16 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
       api?.scrollTo(2);
       return;
     }
-    // if (userPurchases === undefined || userPurchases.length === 0) {
-    //   setState({
-    //     ...state,
-    //     currentStep: !!meParticipant ? 4 : 3,
-    //     stepDone: !!meParticipant ? 3 : 2,
-    //     headerSubtitle: "Panier",
-    //     allHeaderSubtitles: newSubtitles,
-    //   });
-    //   return;
-    // }
+    if (userPurchases === undefined || userPurchases.length === 0) {
+      setState({
+        ...state,
+        currentStep: !!meParticipant ? 4 : 3,
+        stepDone: !!meParticipant ? 3 : 2,
+        headerSubtitle: "Panier",
+        allHeaderSubtitles: newSubtitles,
+      });
+      return;
+    }
     if (meCompetition && !meCompetition.validated) {
       setState({
         ...state,

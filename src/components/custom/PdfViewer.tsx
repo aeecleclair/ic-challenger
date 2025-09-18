@@ -18,6 +18,10 @@ interface PdfViewerProps {
 
 export const PdfViewer = ({ file, width }: PdfViewerProps) => {
   const [numPages, setNumPages] = useState<number>();
+  if (typeof window === "undefined") {
+    // SSR: return null or a fallback
+    return null;
+  }
 
   function onDocumentLoadSuccess({
     numPages: nextNumPages,

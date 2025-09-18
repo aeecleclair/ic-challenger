@@ -28,11 +28,12 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Button } from "../../ui/button";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { HiDownload } from "react-icons/hi";
-// import { DocumentDialog } from "../../custom/DocumentDialog";
 import { Sport, TeamInfo } from "@/src/api/hyperionSchemas";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useUser } from "@/src/hooks/useUser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { DocumentDialog } from "../../custom/DocumentDialog";
+import { useDocument } from "@/src/hooks/useDocument";
 
 interface SportCardProps {
   form: UseFormReturn<RegisteringFormValues>;
@@ -44,6 +45,17 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
 
   const [teamName, setTeamName] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [open, setIsOpen] = useState(false);
+
+  const {data} = useDocument();
+
+  useEffect(() => {
+    if (data) {
+      form.setValue("sport.certificate", "Certificat chargé");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const { teams, createSchoolSportTeam, isCreateLoading } = useSchoolSportTeams(
     {
@@ -207,71 +219,48 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
           id="sport.license_number"
           input={(field) => <Input {...field} className="w-60" />}
         />
-        {/*
         <StyledFormField
           form={form}
           label="Certificat médical"
-          id="sport.license_number"
+          id="sport.certificate"
           input={(field) => (
             <div className="col-span-4 gap-2 grid grid-cols-3">
-              <Dialog>
+              <Dialog open={open} onOpenChange={setIsOpen}>
                 <FormMessage />
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
                     className={"col-span-3"}
-                    // disabled={isUploading}
+                    disabled={isUploading}
                   >
                     <div className="flex flex-row items-start w-full">
-                      {/* <>
-                    {field.value?.name ? (
-                      <span className="text-gray-500 overflow-hidden">
-                        {field.value.name ?? "Aucun fichier séléctionné"}
-                      </span>
-                    ) : ( 
-                      <span className="font-semibold mr-6">
-                        Choisir un fichier
-                      </span>
-                      {/* )}
-                  </> 
+                      <>
+                        <span className="text-gray-500 overflow-hidden">
+                          {form.watch("sport.certificate") ??
+                            "Aucun fichier séléctionné"}
+                        </span>
+                      </>
                     </div>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="md:max-w-2xl top-1/2">
                   <DialogHeader>
                     <DialogTitle className="text-red sm:text-lg">
-                      {/* {label} 
+                      Ajouter un certificat médical
                     </DialogTitle>
                   </DialogHeader>
-                  {/* <DocumentDialog
-                setIsOpen={setIsOpen}
-                setIsUploading={setIsUploading}
-                field={field}
-                fileType={id}
-                documentId={field.value?.id}
-                participantId={participantId!}
-              /> 
+                  <DocumentDialog
+                    setIsOpen={setIsOpen}
+                    setIsUploading={setIsUploading}
+                    field={field}
+                    form={form}
+                    sportId={form.watch("sport.id")}
+                  />
                 </DialogContent>
               </Dialog>
-              {/* {id === "raidRules" && !!information?.raid_rules_id && (
-            <LoadingButton
-              variant="outline"
-              className="col-span-1"
-              type="button"
-              onClick={(_) => downloadRaidRules(information.raid_rules_id!)}
-              isLoading={isFileLoading}
-              label={
-                <>
-                  <HiDownload className="mr-2" />
-                  Télécharger
-                </>
-              }
-            />
-          )} 
             </div>
           )}
         />
-        */}
       </div>
     </CardTemplate>
   );

@@ -33,6 +33,7 @@ export const registeringFormSchema = z
         team_id: z.string().optional(),
         team_leader: z.boolean(),
         license_number: z.string().optional(),
+        certificate: z.string().optional(),
         substitute: z.boolean().optional(),
       })
       .optional(),
