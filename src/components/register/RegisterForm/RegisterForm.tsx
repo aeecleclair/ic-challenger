@@ -2,8 +2,6 @@ import {
   registeringFormSchema,
   RegisteringFormValues,
 } from "@/src/forms/registering";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { RegisterFormField } from "./RegisterFormField";
 import { Form } from "../../ui/form";
@@ -17,13 +15,15 @@ import { useParticipant } from "@/src/hooks/useParticipant";
 import { useRouter } from "next/navigation";
 import { CarouselApi } from "../../ui/carousel";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
+import { UseFormReturn } from "react-hook-form";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
   state: RegisterState;
+  form: UseFormReturn<RegisteringFormValues>;
 }
 
-export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
+export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,27 +33,14 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   const { meParticipant } = useParticipant();
   const { userPurchases } = useUserPurchases({ userId: me?.id });
   const router = useRouter();
-
-  const form = useForm<RegisteringFormValues>({
-    resolver: zodResolver(registeringFormSchema),
-    mode: "onChange",
-    defaultValues: {
-      is_athlete: false,
-      is_cameraman: false,
-      is_fanfare: false,
-      is_pompom: false,
-      is_volunteer: false,
-      sport: {
-        team_leader: false,
-      },
-      products: [],
-    },
-  });
-
   useEffect(() => {
     form.setValue("phone", me?.phone || meCompetition?.user.phone || "");
     form.setValue("sex", meCompetition?.sport_category || "masculine");
     form.setValue("is_athlete", meCompetition?.is_athlete || false);
+    form.setValue("is_cameraman", meCompetition?.is_cameraman || false);
+    form.setValue("is_fanfare", meCompetition?.is_fanfare || false);
+    form.setValue("is_pompom", meCompetition?.is_pompom || false);
+    form.setValue("is_volunteer", meCompetition?.is_volunteer || false);
   }, [form, me, meCompetition]);
 
   async function onSubmit(values: RegisteringFormValues) {
@@ -83,16 +70,16 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
       api?.scrollTo(2);
       return;
     }
-    if (userPurchases === undefined || userPurchases.length === 0) {
-      setState({
-        ...state,
-        currentStep: !!meParticipant ? 4 : 3,
-        stepDone: !!meParticipant ? 3 : 2,
-        headerSubtitle: "Panier",
-        allHeaderSubtitles: newSubtitles,
-      });
-      return;
-    }
+    // if (userPurchases === undefined || userPurchases.length === 0) {
+    //   setState({
+    //     ...state,
+    //     currentStep: !!meParticipant ? 4 : 3,
+    //     stepDone: !!meParticipant ? 3 : 2,
+    //     headerSubtitle: "Panier",
+    //     allHeaderSubtitles: newSubtitles,
+    //   });
+    //   return;
+    // }
     if (meCompetition && !meCompetition.validated) {
       setState({
         ...state,
@@ -125,7 +112,7 @@ export const RegisterForm = ({ setState, state }: RegisterFormProps) => {
   return meCompetition === undefined ||
     (meCompetition.is_athlete && meParticipant === undefined) ? (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(() => {})}>
         <RegisterFormField
           form={form}
           sports={sports}
