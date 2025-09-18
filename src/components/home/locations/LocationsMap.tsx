@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import "leaflet/dist/leaflet.css";
-import { LocationComplete, Match, MatchComplete } from "@/src/api/hyperionSchemas";
+import { LocationComplete, MatchComplete } from "@/src/api/hyperionSchemas";
 import { LocationInfoMarker } from "./LocationInfoMarker";
 
 interface LocationsMapProps {
@@ -156,11 +156,15 @@ export function LocationsMap({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
         markersRef.current = [];
-
-        delete (container as any)._leaflet_id;
+        mapInstanceRef.current = null;
+      }
+      if (mapRef.current) {
+        mapRef.current.innerHTML = "";
+        // eslint-disable-next-line
+        delete (mapRef.current as any)._leaflet_id;
       }
     };
-  }, [createLocationMarker, locations, locationsWithMatches, schools, sports]);
+  }, []);
 
   useEffect(() => {
     if (!mapInstanceRef.current || !locations) return;

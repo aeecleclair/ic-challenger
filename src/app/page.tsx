@@ -35,6 +35,7 @@ import { FullyRegisteredDashboard } from "../components/home/FullyRegisteredDash
 import { useEffect } from "react";
 import { useSchools } from "../hooks/useSchools";
 import { useSportSchools } from "../hooks/useSportSchools";
+import { UnregisteredCard } from "../components/home/UnregisteredCard";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
@@ -63,31 +64,6 @@ const Home = () => {
   );
   const isSchoolInscriptionEnabled = userSportSchool?.inscription_enabled;
 
-  useEffect(() => {
-    if (
-      !isLoading &&
-      (meCompetition === undefined || !meCompetition?.validated) &&
-      user !== undefined &&
-      edition !== undefined &&
-      token !== null &&
-      !isEditionStarted &&
-      !isEditionEnded &&
-      isSchoolInscriptionEnabled === true
-    ) {
-      router.replace("/register");
-    }
-  }, [
-    isLoading,
-    router,
-    meCompetition,
-    user,
-    edition,
-    token,
-    isEditionStarted,
-    isEditionEnded,
-    isSchoolInscriptionEnabled,
-  ]);
-
   if (isTokenQueried && token === null) {
     router.replace("/login");
   }
@@ -102,35 +78,55 @@ const Home = () => {
           </div>
         </header>
         <div className="flex flex-col relative overflow-auto h-full m-6">
-          {edition && isEditionStarted && !isSchoolInscriptionEnabled && (
-            <span className="text-sm text-destructive px-4 justify-center items-center flex h-full">
-              Les inscriptions ne sont pas encore ouvertes pour votre école.
-            </span>
-          )}
           {!edition && (
             <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
               Veuillez patienter, l&apos;édition n&apos;est pas encore prête.
             </span>
           )}
-          {edition && !isEditionStarted && (
-            <EditionWaitingCard edition={edition} />
-          )}
           {edition &&
-            isEditionStarted &&
-            !isFullyRegistered &&
+            (!edition.inscription_enabled || !isSchoolInscriptionEnabled) &&
+            !(isEditionStarted || isEditionEnded) && (
+              <EditionWaitingCard
+                edition={{
+                  year: edition.year,
+                  name: edition.name,
+                  start_date: edition.start_date,
+                  inscription_enabled: edition.inscription_enabled || false,
+                }}
+                isSchoolInscriptionEnabled={!!isSchoolInscriptionEnabled}
+              />
+            )}
+          {edition &&
+            edition.inscription_enabled &&
+            isSchoolInscriptionEnabled &&
+            isFullyRegistered &&
             meCompetition && (
               <FullyRegisteredDashboard
                 edition={edition}
                 meCompetition={meCompetition}
               />
             )}
-          {edition && isEditionStarted && isFullyRegistered && (
-            <IncompleteRegistrationCard
-              edition={edition}
-              meCompetition={meCompetition}
-              hasPaid={hasPaid}
-            />
-          )}
+          {edition &&
+            edition.inscription_enabled &&
+            isSchoolInscriptionEnabled &&
+            meCompetition &&
+            !isFullyRegistered && (
+              <IncompleteRegistrationCard
+                edition={edition}
+                meCompetition={meCompetition}
+                hasPaid={hasPaid}
+              />
+            )}
+          {edition &&
+            edition.inscription_enabled &&
+            isSchoolInscriptionEnabled &&
+            !meCompetition &&
+            !isLoading &&
+            user &&
+            !(isEditionStarted || isEditionEnded) &&
+            isSchoolInscriptionEnabled && (
+              <UnregisteredCard edition={edition} />
+            )}
         </div>
       </SidebarInset>
     </SidebarProvider>

@@ -38,8 +38,12 @@ import {
 } from "@/src/forms/registering";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { useEdition } from "@/src/hooks/useEdition";
 
 const Register = () => {
+  const { edition } = useEdition();
+  const { sportSchools } = useSportSchools();
   const { availableProducts } = useAvailableProducts();
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
@@ -54,6 +58,15 @@ const Register = () => {
 
   if (isTokenQueried && token === null) {
     router.replace("/login");
+  }
+  const userSportSchool = sportSchools?.find(
+    (school) => school.school_id === me?.school_id,
+  );
+  if (
+    edition?.inscription_enabled === false ||
+    userSportSchool?.inscription_enabled === false
+  ) {
+    router.replace("/");
   }
 
   const form = useForm<RegisteringFormValues>({
