@@ -158,7 +158,7 @@ export const SportQuotaCard = ({
 
         <Separator />
 
-        <div className="max-h-64 overflow-y-auto">
+        <div className="overflow-y-auto">
           <ParticipantDataTable
             data={participantsWithTeamNames}
             schoolName={schoolName}
