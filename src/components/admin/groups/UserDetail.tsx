@@ -22,19 +22,12 @@ import {
   Settings,
   Users,
 } from "lucide-react";
-import { UserGroupMembership } from "@/src/api/hyperionSchemas";
+import { UserGroupMembership, UserGroupMembershipComplete } from "@/src/api/hyperionSchemas";
 import { AVAILABLE_GROUPS } from "@/src/infra/groups";
 
-// Extended interface to match actual API response
-interface ExtendedUserGroupMembership extends UserGroupMembership {
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  school?: string;
-}
 
 interface UserDetailProps {
-  user: ExtendedUserGroupMembership;
+  user: UserGroupMembershipComplete;
   onEdit?: () => void;
   onRemoveFromGroup: () => void;
 }
@@ -66,8 +59,8 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
   };
 
   const userName =
-    user.first_name || user.last_name
-      ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+    user.user.firstname || user.user.name
+      ? `${user.user.firstname || ""} ${user.user.name || ""}`.trim()
       : "Utilisateur";
 
   return (
@@ -131,7 +124,7 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
           </CardContent>
         </Card>
 
-        {user.email && (
+        {user.user.email && (
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-2">
@@ -141,7 +134,7 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
                     Email
                   </p>
                   <p className="text-lg font-bold text-green-600 truncate">
-                    {user.email}
+                    {user.user.email}
                   </p>
                 </div>
               </div>
@@ -179,28 +172,28 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
             <div>
               <h3 className="font-semibold mb-3">Informations personnelles</h3>
               <div className="space-y-3">
-                {user.first_name && (
+                {user.user.firstname && (
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       Prénom
                     </p>
-                    <p className="text-sm">{user.first_name}</p>
+                    <p className="text-sm">{user.user.firstname}</p>
                   </div>
                 )}
-                {user.last_name && (
+                {user.user.name && (
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       Nom
                     </p>
-                    <p className="text-sm">{user.last_name}</p>
+                    <p className="text-sm">{user.user.name}</p>
                   </div>
                 )}
-                {user.email && (
+                {user.user.email && (
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       Email
                     </p>
-                    <p className="text-sm">{user.email}</p>
+                    <p className="text-sm">{user.user.email}</p>
                   </div>
                 )}
               </div>
@@ -218,23 +211,17 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
                     <span className="text-sm">{groupName}</span>
                   </div>
                 </div>
-                {user.school && (
+                {user.user.school && (
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">
                       École
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <School className="h-4 w-4" />
-                      <span className="text-sm">{user.school}</span>
+                      <span className="text-sm">{user.user.school.name}</span>
                     </div>
                   </div>
                 )}
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    ID Édition
-                  </p>
-                  <p className="text-sm font-mono">{user.edition_id}</p>
-                </div>
               </div>
             </div>
           </div>

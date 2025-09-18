@@ -11,19 +11,14 @@ import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import { Mail, School, Eye, Trash2 } from "lucide-react";
-import { UserGroupMembership } from "@/src/api/hyperionSchemas";
+import {
+  UserGroupMembership,
+  UserGroupMembershipComplete,
+} from "@/src/api/hyperionSchemas";
 import Link from "next/link";
 
-// Extended interface to match actual API response
-interface ExtendedUserGroupMembership extends UserGroupMembership {
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  school?: string;
-}
-
 interface GroupCardProps {
-  user: ExtendedUserGroupMembership;
+  user: UserGroupMembershipComplete;
   onClick: () => void;
   onRemove?: () => void;
 }
@@ -39,12 +34,12 @@ const GroupCard = ({ user, onClick, onRemove }: GroupCardProps) => {
           <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2 flex items-center gap-2">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-primary/10 text-sm">
-                {user.first_name?.[0] || user.user_id?.[0] || "U"}
-                {user.last_name?.[0] || ""}
+                {user.user.firstname?.[0] || user.user_id?.[0] || "U"}
+                {user.user.name?.[0] || ""}
               </AvatarFallback>
             </Avatar>
-            {user.first_name || user.last_name
-              ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+            {user.user.firstname || user.user.name
+              ? `${user.user.firstname || ""} ${user.user.name || ""}`.trim()
               : `Utilisateur ${user.user_id.slice(0, 8)}`}
           </CardTitle>
         </div>
@@ -52,16 +47,16 @@ const GroupCard = ({ user, onClick, onRemove }: GroupCardProps) => {
 
       <CardContent className="py-3">
         <div className="space-y-2 text-sm text-muted-foreground">
-          {user.email && (
+          {user.user.email && (
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4" />
-              <span className="truncate">{user.email}</span>
+              <span className="truncate">{user.user.email}</span>
             </div>
           )}
-          {user.school && (
+          {user.user.school && (
             <div className="flex items-center gap-2">
               <School className="h-4 w-4" />
-              <span className="truncate">{user.school}</span>
+              <span className="truncate">{user.user.school.name}</span>
             </div>
           )}
         </div>
