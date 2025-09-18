@@ -7,12 +7,10 @@ import { RegisteringFormValues } from "@/src/forms/registering";
 
 interface ParticipationCardProps {
   form: UseFormReturn<RegisteringFormValues>;
-  onSportToggle: () => void;
 }
 
 export const ParticipationCard = ({
   form,
-  onSportToggle,
 }: ParticipationCardProps) => {
   return (
     <CardTemplate>
@@ -26,10 +24,7 @@ export const ParticipationCard = ({
               <Checkbox
                 id="is_athlete"
                 checked={field.value}
-                onCheckedChange={(e) => {
-                  field.onChange(e);
-                  onSportToggle();
-                }}
+                onCheckedChange={field.onChange}
               />
               <Label htmlFor="is_athlete">Sportif</Label>
             </div>

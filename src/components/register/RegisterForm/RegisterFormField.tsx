@@ -6,7 +6,7 @@ import { InformationCard } from "./InformationCard";
 import { ParticipationCard } from "./ParticipationCard";
 import { SportCard } from "./SportCard";
 import { BasketCard } from "./BasketCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RegisterState } from "@/src/infra/registerState";
@@ -36,10 +36,11 @@ export const RegisterFormField = ({
 }: RegisterFormFieldProps) => {
   const showSportFields = form.watch("is_athlete");
 
-  const onSportToggle = () => {
+  useEffect(() => {
+    const showSportFields = form.watch("is_athlete");
     const newSubtitles = [...state.allHeaderSubtitles];
 
-    if (!showSportFields && state.allHeaderSubtitles[2] !== "Sport") {
+    if (showSportFields && state.allHeaderSubtitles[2] !== "Sport") {
       newSubtitles.splice(2, 0, "Sport");
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
@@ -50,14 +51,15 @@ export const RegisterFormField = ({
       allHeaderSubtitles: newSubtitles,
       stepDone: Math.min(state.stepDone, 2),
     });
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showSportFields]);
 
   return (
     <div className="gap-6 p-8 w-full flex flex-col h-[calc(100vh-12rem)]">
       <Carousel setApi={setApi} opts={{ watchDrag: false }}>
         <CarouselContent className="h-[calc(100vh-16rem)]" draggable={false}>
           <InformationCard form={form} />
-          <ParticipationCard form={form} onSportToggle={onSportToggle} />
+          <ParticipationCard form={form} />
           {showSportFields && <SportCard form={form} sports={sports} />}
           <BasketCard form={form} />
           <SummaryCard form={form} />
