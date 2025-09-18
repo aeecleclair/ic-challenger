@@ -2,14 +2,22 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useUser } from "@/src/hooks/useUser";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "../../ui/badge";
+import { Edit } from "lucide-react";
 import { CheckCircle2 } from "lucide-react";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
+import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
+import { useState } from "react";
 
-export const RegistrationSummary = () => {
+interface RegistrationSummaryProps {
+  onEdit?: () => void;
+}
+
+export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
   const { me } = useUser();
+  const { availableProducts } = useAvailableProducts();
   const { meCompetition } = useCompetitionUser();
   const { meParticipant } = useParticipant();
   const { sports } = useSports();
@@ -20,6 +28,20 @@ export const RegistrationSummary = () => {
   const { userPurchases } = useUserPurchases({
     userId: me?.id,
   });
+
+  
+  const purchasedItems = userPurchases?.map((purchase) => {
+    return availableProducts?.find(
+      (product) => product.id === purchase.product_variant_id,
+    );
+  });
+
+  const total = purchasedItems?.reduce((acc, item) => {
+    if (item) {
+      return acc + (item.price * (userPurchases?.find(p => p.product_variant_id === item.id)?.quantity || 1)) / 100;
+    }
+    return acc;
+  }, 0);
 
   const team = teams?.find((team) => team.id === meParticipant?.team_id);
 
@@ -120,35 +142,48 @@ export const RegistrationSummary = () => {
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">Produits sélectionnés</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold">Produits sélectionnés</h3>
+              {onEdit && (
+                <button
+                  type="button"
+                  className="p-1 rounded hover:bg-muted transition-colors"
+                  aria-label="Modifier les produits"
+                  onClick={onEdit}
+                >
+                  <Edit className="h-4 w-4 text-primary" />
+                </button>
+              )}
+            </div>
 
             {userPurchases && userPurchases.length > 0 ? (
               <div className="grid grid-cols-1 gap-2 mt-2">
-                {userPurchases.map((productItem, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <p className="text-sm">
-                      {productItem.product_variant_id}
-                      {productItem.quantity > 1 &&
-                        ` (x${productItem.quantity})`}{" "}
-                      -{" "}
-                      <span className="font-semibold">
-                        {productItem.quantity / 100}€
-                      </span>
-                    </p>
-                  </div>
-                ))}
+                {userPurchases.map((productItem, index) => {
+                  const product = availableProducts?.find(
+                    (p) => p.id === productItem.product_variant_id,
+                  );
+                  if (!product) return null;
+
+                  return (
+                    <div key={index} className="flex items-center gap-1">
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      <p className="text-sm">
+                        {product.product.name}
+                        {productItem.quantity > 1 &&
+                          ` (x${productItem.quantity})`}{" "}
+                        -{" "}
+                        <span className="font-semibold">
+                          {(product.price * productItem.quantity) / 100}€
+                        </span>
+                      </p>
+                    </div>
+                  );
+                })}
 
                 <div className="flex items-center gap-2 mt-2">
                   <p className="text-sm text-muted-foreground">Total:</p>
                   <Badge variant="outline">
-                    {userPurchases
-                      .reduce(
-                        (total, item) =>
-                          total + (item.quantity / 100) * item.quantity,
-                        0,
-                      )
-                      .toFixed(2)}
+                    {total?.toFixed(2)}
                     €
                   </Badge>
                 </div>

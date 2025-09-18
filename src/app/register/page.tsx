@@ -31,8 +31,16 @@ import { useParticipant } from "@/src/hooks/useParticipant";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useUserPayments } from "@/src/hooks/useUserPayments";
+import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
+import {
+  registeringFormSchema,
+  RegisteringFormValues,
+} from "@/src/forms/registering";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Register = () => {
+  const { availableProducts } = useAvailableProducts();
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
   const { meCompetition, createCompetitionUser, updateCompetitionUser } =
@@ -47,6 +55,34 @@ const Register = () => {
   if (isTokenQueried && token === null) {
     router.replace("/login");
   }
+
+  const form = useForm<RegisteringFormValues>({
+    resolver: zodResolver(registeringFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      is_athlete: false,
+      is_cameraman: false,
+      is_fanfare: false,
+      is_pompom: false,
+      is_volunteer: false,
+      sport: {
+        team_leader: false,
+      },
+      products:
+        userPurchases
+          ?.map((purchase) => {
+            const productItem = availableProducts?.find(
+              (product) => product.id === purchase.product_variant_id,
+            );
+            if (!productItem) return undefined;
+            return {
+              product: productItem,
+              quantity: purchase.quantity,
+            };
+          })
+          .filter((item) => item !== undefined) || [],
+    },
+  });
 
   const [state, setState] = useState<RegisterState>({
     currentStep: 0,
@@ -122,11 +158,44 @@ const Register = () => {
         Panier: (values, callback) => {
           const newPurchases = values.products;
 
+          const requiredProductIds = availableProducts
+            ? availableProducts
+                .filter((product) => product.product.required === true)
+                .map((product) => product.id)
+            : [];
+
+          const allPurchasesProductIds = newPurchases.map(
+            (purchase) => purchase.product.id,
+          );
+
+          const hasAllRequired = requiredProductIds.every((id) =>
+            allPurchasesProductIds.includes(id),
+          );
+
+          if (!hasAllRequired) {
+            for (const id of requiredProductIds) {
+              if (!allPurchasesProductIds.includes(id)) {
+                const productName = availableProducts?.find(
+                  (product) => product.product_id === id,
+                )?.product.name;
+                const index = newPurchases.findIndex(
+                  (purchase) => purchase.product.id === id,
+                );
+                form.setError(index !== -1 ? `products.${index}` : "products", {
+                  type: "manual",
+                  message: `Le produit ${productName} est requis.`,
+                });
+              }
+            }
+            return;
+          }
+
           const toCreate = newPurchases.filter(
             (newPurchase) =>
               !userPurchases?.some(
                 (purchase) =>
-                  purchase.product_variant_id === newPurchase.product.id,
+                  purchase.product_variant_id === newPurchase.product.id &&
+                  purchase.quantity === newPurchase.quantity,
               ),
           );
           const toDelete = userPurchases?.filter(
@@ -137,6 +206,10 @@ const Register = () => {
               ),
           );
 
+          toDelete?.map((purchase) => {
+            deletePurchase(purchase.product_variant_id, () => {});
+          });
+
           toCreate.map((purchase) => {
             const body: AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase =
               {
@@ -145,16 +218,13 @@ const Register = () => {
               };
             createPurchase(body, () => {});
           });
-
-          toDelete?.map((purchase) => {
-            deletePurchase(purchase.product_variant_id, () => {});
-          });
           callback();
         },
         Récapitulatif: (values, callback) => {},
       } as const,
     });
-  }, [me, meCompetition, meParticipant, userPurchases]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me, meCompetition, meParticipant, userPurchases, availableProducts]);
 
   return (
     <SidebarProvider>
@@ -180,7 +250,7 @@ const Register = () => {
             </Breadcrumb>
           </div>
         </header>
-        <RegisterForm setState={setState} state={state} />
+        <RegisterForm setState={setState} state={state} form={form} />
       </SidebarInset>
     </SidebarProvider>
   );

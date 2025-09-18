@@ -12,6 +12,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RegisterState } from "@/src/infra/registerState";
 import { SummaryCard } from "./SummaryCard";
 import { Sport } from "@/src/api/hyperionSchemas";
+import { EditProductValues } from "@/src/forms/editProducts";
+import { CardTemplate } from "./CardTemplate";
 
 interface RegisterFormFieldProps {
   form: UseFormReturn<RegisteringFormValues>;
@@ -61,7 +63,11 @@ export const RegisterFormField = ({
           <InformationCard form={form} />
           <ParticipationCard form={form} />
           {showSportFields && <SportCard form={form} sports={sports} />}
-          <BasketCard form={form} />
+          <CardTemplate>
+            <BasketCard
+              form={form as unknown as UseFormReturn<EditProductValues>}
+            />
+          </CardTemplate>
           <SummaryCard form={form} />
         </CarouselContent>
       </Carousel>

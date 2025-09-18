@@ -21,7 +21,6 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
   const { sports } = useSports();
   const formValues = form.getValues();
 
-  // Find the selected sport by ID
   const selectedSport = formValues.sport?.id
     ? sports?.find((sport) => sport.id === formValues.sport?.id)
     : undefined;
