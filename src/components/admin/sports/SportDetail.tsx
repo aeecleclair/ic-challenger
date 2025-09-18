@@ -190,7 +190,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
               <Users className="h-5 w-5" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Taille d&apos;équipe
+                  Titulaires
                 </p>
                 <p className="text-2xl font-bold">{sport.team_size}</p>
               </div>

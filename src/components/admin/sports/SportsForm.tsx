@@ -66,7 +66,7 @@ export const SportsForm = ({
 
             <StyledFormField
               form={form}
-              label="Taille d'équipe"
+              label="Nombre de titulaires par équipe"
               id="teamSize"
               input={(field) => (
                 <Input
