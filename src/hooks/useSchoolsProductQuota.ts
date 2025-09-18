@@ -1,28 +1,29 @@
 import {
-  useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas,
-  useGetCompetitionSchoolsSchoolIdSportsQuotas,
-  usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas,
-  usePostCompetitionSchoolsSchoolIdSportsSportIdQuotas,
+  useGetCompetitionSchoolsSchoolIdProductQuotas,
+  usePatchCompetitionSchoolsSchoolIdProductQuotasProductId,
+  usePostCompetitionSchoolsSchoolIdProductQuotas,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
-import { SportQuotaInfo } from "../api/hyperionSchemas";
+import { SchoolProductQuotaBase } from "../api/hyperionSchemas";
 
-interface UseSchoolsQuotaProps {
+interface UseSchoolsProductQuotaProps {
   schoolId?: string;
 }
 
-export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
+export const useSchoolsProductQuota = ({
+  schoolId,
+}: UseSchoolsProductQuotaProps) => {
   const { token, isTokenExpired } = useAuth();
   const { isAdmin } = useUser();
 
   const {
-    data: schoolsQuota,
-    refetch: refetchSchoolsQuota,
+    data: schoolsProductQuota,
+    refetch: refetchSchoolsProductQuota,
     error,
-  } = useGetCompetitionSchoolsSchoolIdSportsQuotas(
+  } = useGetCompetitionSchoolsSchoolIdProductQuotas(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -34,18 +35,14 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
     {
       enabled: isAdmin() && !isTokenExpired() && !!schoolId,
       retry: 0,
-      queryHash: "getSchoolsQuota",
+      queryHash: "getSchoolsProductQuota",
     },
   );
 
   const { mutate: mutateCreateQuota, isPending: isCreateLoading } =
-    usePostCompetitionSchoolsSchoolIdSportsSportIdQuotas();
+    usePostCompetitionSchoolsSchoolIdProductQuotas();
 
-  const createQuota = (
-    sportId: string,
-    body: SportQuotaInfo,
-    callback: () => void,
-  ) => {
+  const createQuota = (body: SchoolProductQuotaBase, callback: () => void) => {
     return mutateCreateQuota(
       {
         headers: {
@@ -53,7 +50,6 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
         },
         pathParams: {
           schoolId: schoolId!,
-          sportId,
         },
         body: body,
       },
@@ -69,7 +65,7 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
               variant: "destructive",
             });
           } else {
-            refetchSchoolsQuota();
+            refetchSchoolsProductQuota();
             callback();
             toast({
               title: "Quota ajoutée",
@@ -82,11 +78,11 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
   };
 
   const { mutate: mutateUpdateQuota, isPending: isUpdateLoading } =
-    usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas();
+    usePatchCompetitionSchoolsSchoolIdProductQuotasProductId();
 
   const updateQuota = (
-    sportId: string,
-    body: SportQuotaInfo,
+    productId: string,
+    body: SchoolProductQuotaBase,
     callback: () => void,
   ) => {
     return mutateUpdateQuota(
@@ -96,7 +92,7 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
         },
         pathParams: {
           schoolId: schoolId!,
-          sportId,
+          productId,
         },
         body: body,
       },
@@ -112,7 +108,7 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
               variant: "destructive",
             });
           } else {
-            refetchSchoolsQuota();
+            refetchSchoolsProductQuota();
             callback();
             toast({
               title: "Quota modifiée",
@@ -124,53 +120,13 @@ export const useSchoolsQuota = ({ schoolId }: UseSchoolsQuotaProps) => {
     );
   };
 
-  const { mutate: mutateDeleteQuota, isPending: isDeleteLoading } =
-    useDeleteCompetitionSchoolsSchoolIdSportsSportIdQuotas();
-
-  const deleteQuota = (sportId: string, callback: () => void) => {
-    return mutateDeleteQuota(
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        pathParams: {
-          schoolId: schoolId!,
-          sportId,
-        },
-      },
-      {
-        onSettled: (data, error) => {
-          if ((error as any).stack.body || (error as any).stack.detail) {
-            console.log(error);
-            toast({
-              title: "Erreur lors de la suppression du quota",
-              description:
-                (error as unknown as ErrorType).stack.body ||
-                (error as unknown as DetailedErrorType).stack.detail,
-              variant: "destructive",
-            });
-          } else {
-            refetchSchoolsQuota();
-            callback();
-            toast({
-              title: "Quota supprimée",
-              description: "Le quota a été supprimée avec succès.",
-            });
-          }
-        },
-      },
-    );
-  };
-
   return {
-    schoolsQuota,
+    schoolsProductQuota,
     error,
-    refetchSchoolsQuota,
+    refetchSchoolsProductQuota,
     isCreateLoading,
     createQuota,
     isUpdateLoading,
     updateQuota,
-    isDeleteLoading,
-    deleteQuota,
   };
 };

@@ -25,6 +25,15 @@ import { SportQuotaCard } from "@/src/components/admin/validation/SportQuotaCard
 import { fetchGetCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
+import { useSchoolsGeneralQuota } from "@/src/hooks/useSchoolsGeneralQuota";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/src/components/ui/tooltip";
+import { Button } from "@/src/components/ui/button";
+import { useSchoolsProductQuota } from "@/src/hooks/useSchoolsProductQuota";
+import { useProducts } from "@/src/hooks/useProducts";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -42,6 +51,15 @@ const Dashboard = () => {
 
   const searchParam = useSearchParams();
   const schoolId = searchParam.get("school_id");
+  const { schoolsGeneralQuota } = useSchoolsGeneralQuota({
+    schoolId: schoolId || undefined,
+  });
+
+  const { schoolsProductQuota } = useSchoolsProductQuota({
+    schoolId: schoolId || undefined,
+  });
+
+  const { products } = useProducts();
 
   const userSchoolId = currentUser?.school_id;
   const canAccessSchool = isAdmin() || schoolId === userSchoolId;
@@ -140,6 +158,63 @@ const Dashboard = () => {
     );
   }, [schoolParticipants, sports, participantPayments]);
 
+  // Helper to count validated users for each quota type
+  const validatedCounts: Record<string, number> = useMemo(() => {
+    const counts: Record<string, number> = {
+      athlete_quota: 0,
+      cameraman_quota: 0,
+      pompom_quota: 0,
+      fanfare_quota: 0,
+      athlete_cameraman_quota: 0,
+      athlete_pompom_quota: 0,
+      athlete_fanfare_quota: 0,
+      non_athlete_cameraman_quota: 0,
+      non_athlete_pompom_quota: 0,
+      non_athlete_fanfare_quota: 0,
+    };
+    participantTableData.forEach((p) => {
+      if (p.isValidated) {
+        // Athlete
+        if (p.participantType.includes("Athlète")) counts.athlete_quota++;
+        if (p.participantType.includes("Cameraman")) counts.cameraman_quota++;
+        if (p.participantType.includes("Pompom")) counts.pompom_quota++;
+        if (p.participantType.includes("Fanfare")) counts.fanfare_quota++;
+        // Combinations
+        if (
+          p.participantType.includes("Athlète") &&
+          p.participantType.includes("Cameraman")
+        )
+          counts.athlete_cameraman_quota++;
+        if (
+          p.participantType.includes("Athlète") &&
+          p.participantType.includes("Pompom")
+        )
+          counts.athlete_pompom_quota++;
+        if (
+          p.participantType.includes("Athlète") &&
+          p.participantType.includes("Fanfare")
+        )
+          counts.athlete_fanfare_quota++;
+        if (
+          !p.participantType.includes("Athlète") &&
+          p.participantType.includes("Cameraman")
+        )
+          counts.non_athlete_cameraman_quota++;
+        if (
+          !p.participantType.includes("Athlète") &&
+          p.participantType.includes("Pompom")
+        )
+          counts.non_athlete_pompom_quota++;
+        if (
+          !p.participantType.includes("Athlète") &&
+          p.participantType.includes("Fanfare")
+        )
+          counts.non_athlete_fanfare_quota++;
+      }
+    });
+    return counts;
+  }, [participantTableData]);
+
   const participantsBySport = useMemo(() => {
     return participantTableData.reduce(
       (acc, participant) => {
@@ -224,13 +299,73 @@ const Dashboard = () => {
       </div>
 
       {school && (
-        <GlobalQuotaCard
-          totalParticipants={totalParticipants}
-          totalValidated={totalValidated}
-          totalTeams={totalTeams}
-          sportQuotas={sportsQuota || []}
-          schoolName={formatSchoolName(school.school.name) || "École"}
-        />
+        <>
+          <div className="mb-6 flex items-center gap-4">
+            <div className="text-lg font-semibold mb-1">Quotas généraux</div>
+
+            {schoolsGeneralQuota && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="px-2 py-1 text-xs"
+                  >
+                    Quota général
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    {Object.entries(schoolsGeneralQuota).map(([key, value]) => (
+                      <div key={key} className="flex justify-between gap-2">
+                        <span className="font-medium text-xs text-muted-foreground">
+                          {key.replace(/_/g, " ")}
+                        </span>
+                        <span className="text-xs">{value ?? 0}</span>
+                      </div>
+                    ))}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            {schoolsProductQuota && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="px-2 py-1 text-xs"
+                  >
+                    Quota de produit
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    {schoolsProductQuota.map((value) => {
+                      const product = products?.find((p) => p.id === value.product_id);
+                      return (
+                        <div key={value.product_id} className="flex justify-between gap-2">
+                          <span className="font-medium text-xs text-muted-foreground">
+                            {product?.name}
+                          </span>
+                          <span className="text-xs">{value.quota}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+          <GlobalQuotaCard
+            totalParticipants={totalParticipants}
+            totalValidated={totalValidated}
+            totalTeams={totalTeams}
+            sportQuotas={sportsQuota || []}
+            schoolName={formatSchoolName(school.school.name) || "École"}
+          />
+        </>
       )}
 
       {sportsWithParticipants.length > 0 ? (

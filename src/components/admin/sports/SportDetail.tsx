@@ -16,7 +16,7 @@ import { QuotaDataTable } from "./QuotaDataTable";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { useSportsQuota } from "@/src/hooks/useSportsQuota";
 import { useSchools } from "@/src/hooks/useSchools";
-import { QuotaFormValues } from "@/src/forms/quota";
+import { SportQuotaFormValues } from "@/src/forms/sportQuota";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { sportCategories } from "@/src/forms/sport";
 import {
@@ -87,7 +87,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
     (q) => q.school_id === selectedSchool,
   );
 
-  const handleQuotaSubmit = (values: QuotaFormValues) => {
+  const handleQuotaSubmit = (values: SportQuotaFormValues) => {
     if (!selectedSchool) return;
 
     const quotaInfo: SportQuotaInfo = {

@@ -1,7 +1,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SchoolSportQuota, Sport } from "@/src/api/hyperionSchemas";
-import { QuotaFormValues, quotaFormSchema } from "@/src/forms/quota";
+import {
+  SchoolProductQuota,
+  SchoolSportQuota,
+  Sport,
+} from "@/src/api/hyperionSchemas";
+import { SportQuotaFormValues, sportQuotaFormSchema } from "@/src/forms/sportQuota";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
@@ -27,10 +31,10 @@ import {
 import { Plus } from "lucide-react";
 import { useEffect } from "react";
 
-interface QuotaDialogProps {
+interface SportQuotaDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (values: QuotaFormValues) => void;
+  onSubmit: (values: SportQuotaFormValues) => void;
   sports?: Sport[];
   selectedSport: string | null;
   setSelectedSport: (sportId: string | null) => void;
@@ -41,7 +45,7 @@ interface QuotaDialogProps {
   isLoading: boolean;
 }
 
-export function QuotaDialog({
+export function SportQuotaDialog({
   isOpen,
   onOpenChange,
   onSubmit,
@@ -53,9 +57,9 @@ export function QuotaDialog({
   description,
   submitLabel,
   isLoading,
-}: QuotaDialogProps) {
-  const quotaForm = useForm<QuotaFormValues>({
-    resolver: zodResolver(quotaFormSchema),
+}: SportQuotaDialogProps) {
+  const quotaForm = useForm<SportQuotaFormValues>({
+    resolver: zodResolver(sportQuotaFormSchema),
     defaultValues: {
       participant_quota: 0,
       team_quota: 0,

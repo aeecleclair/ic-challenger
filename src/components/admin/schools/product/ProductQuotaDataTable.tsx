@@ -40,29 +40,24 @@ import {
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
 
-// Extended QuotaInfo with sportId and sportName
-export interface QuotaWithSport {
-  sport_id: string;
-  sportName: string;
-  participant_quota: number;
-  team_quota: number;
+// Extended QuotaInfo with productId and productName
+export interface QuotaWithProduct {
+  product_id: string;
+  productName: string;
+  quota: number;
   school_id?: string;
   edition_id?: string;
 }
 
-interface QuotaDataTableProps {
-  data: QuotaWithSport[];
-  schoolName: string;
-  onEditQuota: (sportId: string) => void;
-  onDeleteQuota: (sportId: string) => void;
+interface ProductQuotaDataTableProps {
+  data: QuotaWithProduct[];
+  onEditQuota: (productId: string) => void;
 }
 
-export function QuotaDataTable({
+export function ProductQuotaDataTable({
   data,
-  schoolName,
   onEditQuota,
-  onDeleteQuota,
-}: QuotaDataTableProps) {
+}: ProductQuotaDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -70,55 +65,38 @@ export function QuotaDataTable({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
-  const columns: ColumnDef<QuotaWithSport>[] = [
+  const columns: ColumnDef<QuotaWithProduct>[] = [
     {
-      accessorKey: "sportName",
+      accessorKey: "productName",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Sport
+          Product
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("sportName")}</div>
+        <div className="font-medium">{row.getValue("productName")}</div>
       ),
       filterFn: "includesString",
     },
     {
-      accessorKey: "participant_quota",
+      accessorKey: "quota",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center justify-end w-full"
         >
-          Quota de participants
+          Quota
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => {
-        const quota = row.getValue("participant_quota") as number | undefined;
-        return <div className="text-right">{quota || "-"}</div>;
-      },
-    },
-    {
-      accessorKey: "team_quota",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-end w-full"
-        >
-          Quota d&apos;équipes
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const quota = row.getValue("team_quota") as number | undefined;
+        const quota = row.getValue("quota") as number | undefined;
         return <div className="text-right">{quota || "-"}</div>;
       },
     },
@@ -143,18 +121,11 @@ export function QuotaDataTable({
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => onEditQuota(quota.sport_id)}
+                        onClick={() => onEditQuota(quota.product_id)}
                         className="cursor-pointer"
                       >
                         <Pencil className="mr-2 h-4 w-4" />
                         Modifier
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => onDeleteQuota(quota.sport_id)}
-                        className="cursor-pointer text-destructive focus:text-destructive"
-                      >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Supprimer
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -191,12 +162,12 @@ export function QuotaDataTable({
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filtrer par sport..."
+          placeholder="Filtrer par product..."
           value={
-            (table.getColumn("sportName")?.getFilterValue() as string) || ""
+            (table.getColumn("productName")?.getFilterValue() as string) || ""
           }
           onChange={(e) =>
-            table.getColumn("sportName")?.setFilterValue(e.target.value)
+            table.getColumn("productName")?.setFilterValue(e.target.value)
           }
           className="max-w-sm"
         />

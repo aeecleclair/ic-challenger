@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CoreSchool, SchoolSportQuota } from "@/src/api/hyperionSchemas";
-import { QuotaFormValues, quotaFormSchema } from "@/src/forms/quota";
+import { SportQuotaFormValues, sportQuotaFormSchema } from "@/src/forms/sportQuota";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
@@ -31,7 +31,7 @@ import { useEffect } from "react";
 interface QuotaDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (values: QuotaFormValues) => void;
+  onSubmit: (values: SportQuotaFormValues) => void;
   schools?: CoreSchool[];
   selectedSchool: string | null;
   setSelectedSchool: (schoolId: string | null) => void;
@@ -55,8 +55,8 @@ export function QuotaDialog({
   submitLabel,
   isLoading,
 }: QuotaDialogProps) {
-  const quotaForm = useForm<QuotaFormValues>({
-    resolver: zodResolver(quotaFormSchema),
+  const SportquotaForm = useForm<SportQuotaFormValues>({
+    resolver: zodResolver(sportQuotaFormSchema),
     defaultValues: {
       participant_quota: 0,
       team_quota: 0,
@@ -65,16 +65,16 @@ export function QuotaDialog({
 
   useEffect(() => {
     if (existingQuota) {
-      quotaForm.reset({
+      SportquotaForm.reset({
         participant_quota: existingQuota.participant_quota || 0,
         team_quota: existingQuota.team_quota || 0,
       });
     }
-  }, [existingQuota, quotaForm]);
+  }, [existingQuota, SportquotaForm]);
 
   const handleCancel = () => {
     onOpenChange(false);
-    quotaForm.reset();
+    SportquotaForm.reset();
     setSelectedSchool(null);
   };
 
@@ -91,9 +91,9 @@ export function QuotaDialog({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <Form {...quotaForm}>
+        <Form {...SportquotaForm}>
           <form
-            onSubmit={quotaForm.handleSubmit(onSubmit)}
+            onSubmit={SportquotaForm.handleSubmit(onSubmit)}
             className="space-y-4 py-4"
           >
             <FormItem className="w-full">
@@ -122,7 +122,7 @@ export function QuotaDialog({
             </FormItem>
 
             <StyledFormField
-              form={quotaForm}
+              form={SportquotaForm}
               label="Quota de participants pour ce sport"
               id="participant_quota"
               input={(field) => (
@@ -138,7 +138,7 @@ export function QuotaDialog({
             />
 
             <StyledFormField
-              form={quotaForm}
+              form={SportquotaForm}
               label="Quota d'équipes pour ce sport"
               id="team_quota"
               input={(field) => (
