@@ -264,22 +264,24 @@ const Dashboard = () => {
           {/* Sports Grid */}
           {filteredSports && filteredSports.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredSports.map((sport) => (
-                <SportCard
-                  key={sport.id}
-                  sport={sport}
-                  onClick={() => {
-                    router.push(`/admin/sports?sport_id=${sport.id}`);
-                  }}
-                  onEdit={() => {
-                    router.push(`/admin/sports/edit?sport_id=${sport.id}`);
-                  }}
-                  onDelete={() => {
-                    setSportToDelete(sport.id);
-                    setIsDeleteDialogOpen(true);
-                  }}
-                />
-              ))}
+              {filteredSports
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((sport) => (
+                  <SportCard
+                    key={sport.id}
+                    sport={sport}
+                    onClick={() => {
+                      router.push(`/admin/sports?sport_id=${sport.id}`);
+                    }}
+                    onEdit={() => {
+                      router.push(`/admin/sports/edit?sport_id=${sport.id}`);
+                    }}
+                    onDelete={() => {
+                      setSportToDelete(sport.id);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                  />
+                ))}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">

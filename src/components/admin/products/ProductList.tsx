@@ -86,97 +86,97 @@ export const ProductList = ({ products }: ProductListProps) => {
 
       {/* Products list */}
       <div className="space-y-4">
-        {filteredProducts.map((product) => {
-          const { totalVariants, enabledVariants } = getProductStats(product);
-          const isExpanded = expandedProducts.has(product.id);
+        {filteredProducts
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((product) => {
+            const { totalVariants, enabledVariants } = getProductStats(product);
+            const isExpanded = expandedProducts.has(product.id);
 
-          return (
-            <Card key={product.id} className="overflow-hidden">
-              <Collapsible
-                open={isExpanded}
-                onOpenChange={() => toggleProductExpansion(product.id)}
-              >
-                <CollapsibleTrigger asChild>
-                  <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="p-2 bg-primary/10 rounded-lg">
-                          <Package className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2">
-                            <CardTitle className="text-lg">
-                              {product.name}
-                            </CardTitle>
-                            <Badge
-                              variant={
-                                enabledVariants > 0 ? "default" : "secondary"
-                              }
-                            >
-                              {enabledVariants > 0 ? "Actif" : "Inactif"}
-                            </Badge>
-                            {product.required && (
-                              <Badge className="ml-1">
-                                Obligatoire
+            return (
+              <Card key={product.id} className="overflow-hidden">
+                <Collapsible
+                  open={isExpanded}
+                  onOpenChange={() => toggleProductExpansion(product.id)}
+                >
+                  <CollapsibleTrigger asChild>
+                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="p-2 bg-primary/10 rounded-lg">
+                            <Package className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <CardTitle className="text-lg">
+                                {product.name}
+                              </CardTitle>
+                              <Badge
+                                variant={
+                                  enabledVariants > 0 ? "default" : "secondary"
+                                }
+                              >
+                                {enabledVariants > 0 ? "Actif" : "Inactif"}
                               </Badge>
+                              {product.required && (
+                                <Badge className="ml-1">Obligatoire</Badge>
+                              )}
+                            </div>
+                            {product.description && (
+                              <p className="text-sm text-muted-foreground mt-1">
+                                {product.description}
+                              </p>
                             )}
                           </div>
-                          {product.description && (
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {product.description}
-                            </p>
-                          )}
                         </div>
-                      </div>
 
-                      <div className="flex items-center space-x-4">
-                        {/* Product stats */}
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <div className="flex items-center space-x-1">
-                            <Package className="h-4 w-4" />
-                            <span>
-                              {totalVariants} variante
-                              {totalVariants !== 1 ? "s" : ""}
-                            </span>
+                        <div className="flex items-center space-x-4">
+                          {/* Product stats */}
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <div className="flex items-center space-x-1">
+                              <Package className="h-4 w-4" />
+                              <span>
+                                {totalVariants} variante
+                                {totalVariants !== 1 ? "s" : ""}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Actions */}
+                          <div className="flex items-center space-x-2">
+                            <ProductOptionsMenu product={product} />
+                            <ChevronRight
+                              className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                            />
                           </div>
                         </div>
+                      </div>
+                    </CardHeader>
+                  </CollapsibleTrigger>
 
-                        {/* Actions */}
-                        <div className="flex items-center space-x-2">
-                          <ProductOptionsMenu product={product} />
-                          <ChevronRight
-                            className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-90" : ""}`}
-                          />
+                  <CollapsibleContent>
+                    <CardContent className="pt-0">
+                      <div className="border-t pt-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-sm font-medium text-muted-foreground">
+                            Variantes ({totalVariants})
+                          </h4>
+                          {enabledVariants !== totalVariants && (
+                            <Badge variant="outline" className="text-xs">
+                              {enabledVariants} actives
+                            </Badge>
+                          )}
                         </div>
+                        <ProductVariantGrid
+                          product={product}
+                          variants={product.variants || []}
+                        />
                       </div>
-                    </div>
-                  </CardHeader>
-                </CollapsibleTrigger>
-
-                <CollapsibleContent>
-                  <CardContent className="pt-0">
-                    <div className="border-t pt-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-sm font-medium text-muted-foreground">
-                          Variantes ({totalVariants})
-                        </h4>
-                        {enabledVariants !== totalVariants && (
-                          <Badge variant="outline" className="text-xs">
-                            {enabledVariants} actives
-                          </Badge>
-                        )}
-                      </div>
-                      <ProductVariantGrid
-                        product={product}
-                        variants={product.variants || []}
-                      />
-                    </div>
-                  </CardContent>
-                </CollapsibleContent>
-              </Collapsible>
-            </Card>
-          );
-        })}
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
+              </Card>
+            );
+          })}
       </div>
 
       {/* Empty state */}

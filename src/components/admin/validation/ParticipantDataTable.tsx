@@ -451,29 +451,36 @@ export function ParticipantDataTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    if (cell.column.id === "searchField") return null;
+              table
+                .getRowModel()
+                .rows.sort((a, b) =>
+                  (a.getValue("fullName") as string).localeCompare(
+                    b.getValue("fullName") as string,
+                  ),
+                )
+                .map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      if (cell.column.id === "searchField") return null;
 
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        className={
-                          cell.column.id === "actions"
-                            ? "text-center"
-                            : "text-center"
-                        }
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          className={
+                            cell.column.id === "actions"
+                              ? "text-center"
+                              : "text-center"
+                          }
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))
             ) : (
               <TableRow>
                 <TableCell

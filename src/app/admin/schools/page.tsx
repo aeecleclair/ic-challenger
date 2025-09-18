@@ -244,24 +244,28 @@ const Dashboard = () => {
           {/* Schools Grid */}
           {filteredSchools && filteredSchools.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredSchools.map((school) => (
-                <SchoolCard
-                  key={school.school_id}
-                  school={school}
-                  onClick={() => {
-                    router.push(`/admin/schools?school_id=${school.school_id}`);
-                  }}
-                  onEdit={() => {
-                    router.push(
-                      `/admin/schools/edit?school_id=${school.school_id}`,
-                    );
-                  }}
-                  onDelete={() => {
-                    setSchoolToDelete(school.school_id);
-                    setIsDeleteDialogOpen(true);
-                  }}
-                />
-              ))}
+              {filteredSchools
+                .sort((a, b) => a.school.name.localeCompare(b.school.name))
+                .map((school) => (
+                  <SchoolCard
+                    key={school.school_id}
+                    school={school}
+                    onClick={() => {
+                      router.push(
+                        `/admin/schools?school_id=${school.school_id}`,
+                      );
+                    }}
+                    onEdit={() => {
+                      router.push(
+                        `/admin/schools/edit?school_id=${school.school_id}`,
+                      );
+                    }}
+                    onDelete={() => {
+                      setSchoolToDelete(school.school_id);
+                      setIsDeleteDialogOpen(true);
+                    }}
+                  />
+                ))}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">

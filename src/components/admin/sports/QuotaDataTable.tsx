@@ -224,23 +224,30 @@ export function QuotaDataTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={
-                        cell.column.id === "actions" ? "text-right" : ""
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table
+                .getRowModel()
+                .rows.sort((a, b) =>
+                  (a.getValue("schoolName") as string).localeCompare(
+                    b.getValue("schoolName") as string,
+                  ),
+                )
+                .map((row) => (
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          cell.column.id === "actions" ? "text-right" : ""
+                        }
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
             ) : (
               <TableRow>
                 <TableCell
