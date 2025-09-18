@@ -103,6 +103,44 @@ export const useEdition = () => {
     );
   };
 
+  const {
+    mutate: mutateCloseInscription,
+    isPending: isCloseInscriptionLoading,
+  } = usePostCompetitionEditionsEditionIdInscription();
+
+  const closeEditionInscription = async (
+    editionId: string,
+    callback?: () => void,
+  ) => {
+    mutateCloseInscription(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: { editionId },
+        body: false,
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Inscription fermée",
+            description: "L'inscription à l'édition est maintenant fermée.",
+          });
+          refetchEdition();
+          if (callback) callback();
+        },
+        onError: (error: any) => {
+          toast({
+            title: "Erreur lors de la fermeture de l'inscription",
+            description:
+              error?.stack?.body || error?.stack?.detail || "Erreur inconnue.",
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
   return {
     edition,
     error,
@@ -111,6 +149,8 @@ export const useEdition = () => {
     isCreationLoading,
     createEdition,
     openEditionInscription,
+    closeEditionInscription,
     isOpenInscriptionLoading,
+    isCloseInscriptionLoading,
   };
 };

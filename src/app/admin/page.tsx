@@ -30,7 +30,9 @@ const AdminPage = () => {
     createEdition,
     isCreationLoading,
     openEditionInscription,
+    closeEditionInscription,
     isOpenInscriptionLoading,
+    isCloseInscriptionLoading,
   } = useEdition();
   const { isAdmin } = useUser();
   const { schools } = useSchools();
@@ -114,7 +116,7 @@ const AdminPage = () => {
         />
       )}
 
-      {isAdmin() && edition && !isPreRegistration && (
+      {isAdmin() && edition && isPreRegistration && (
         <div className="space-y-6">
           {/* Edition Header */}
           <div className="space-y-2">
@@ -149,7 +151,9 @@ const AdminPage = () => {
                   locations={locations}
                   products={products}
                   onOpenInscription={openEditionInscription}
+                  onCloseInscription={closeEditionInscription}
                   isOpenInscriptionLoading={isOpenInscriptionLoading}
+                  isCloseInscriptionLoading={isCloseInscriptionLoading}
                 />
 
                 <LocationsCard locations={locations || []} />

@@ -211,6 +211,24 @@ export default function MapComponent({
           });
         }
       });
+
+      locations.forEach((location) => {
+        if (location.latitude && location.longitude) {
+          if (!editingLocation || editingLocation.id !== location.id) {
+            const marker = createLocationMarker(
+              L,
+              location.latitude,
+              location.longitude,
+              location,
+            );
+
+            if (mapInstanceRef.current) {
+              marker.addTo(mapInstanceRef.current);
+              locationMarkersRef.current.push(marker);
+            }
+          }
+        }
+      });
     };
 
     initMap().catch(console.error);
