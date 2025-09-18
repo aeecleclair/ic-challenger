@@ -76,8 +76,14 @@ const Register = () => {
   });
 
   useEffect(() => {
-    setState((prev) => ({
-      ...prev,
+    const newSubtitles = [...state.allHeaderSubtitles];
+    if (meCompetition?.is_athlete && state.allHeaderSubtitles[2] !== "Sport") {
+      newSubtitles.splice(2, 0, "Sport");
+    } else if (state.allHeaderSubtitles[2] === "Sport") {
+      newSubtitles.splice(2, 1);
+    }
+    setState({
+      ...state,
       onValidateCardActions: {
         Informations: (values, callback) => {
           if (values.phone !== me!.phone) {
@@ -147,9 +153,8 @@ const Register = () => {
         },
         Récapitulatif: (values, callback) => {},
       } as const,
-    }));
-  }),
-    [me, meCompetition, meParticipant, userPurchases];
+    });
+  }, [me, meCompetition, meParticipant, userPurchases]);
 
   return (
     <SidebarProvider>
