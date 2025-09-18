@@ -12,7 +12,7 @@ interface PackageCardProps {
   form: UseFormReturn<RegisteringFormValues>;
 }
 
-export const PackageCard = ({ form }: PackageCardProps) => {
+export const BasketCard = ({ form }: PackageCardProps) => {
   const { availableProducts } = useAvailableProducts();
   const purchases = form.watch("products");
   const ids = purchases.map((purchase) => purchase.product.id);

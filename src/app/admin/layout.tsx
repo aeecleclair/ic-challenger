@@ -42,6 +42,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     });
 
     const routeMap: { [key: string]: string } = {
+      edition: "Éditions",
       schools: "Écoles",
       sports: "Sports",
       locations: "Lieux",

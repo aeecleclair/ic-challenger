@@ -29,7 +29,9 @@ interface ConfigurationStatusCardProps {
   locations?: Location[];
   products?: AppModulesSportCompetitionSchemasSportCompetitionProductComplete[];
   onOpenInscription: (editionId: string) => void;
+  onCloseInscription: (editionId: string) => void;
   isOpenInscriptionLoading?: boolean;
+  isCloseInscriptionLoading?: boolean;
 }
 
 export const ConfigurationStatusCard = ({
@@ -40,7 +42,9 @@ export const ConfigurationStatusCard = ({
   locations = [],
   products = [],
   onOpenInscription,
+  onCloseInscription,
   isOpenInscriptionLoading,
+  isCloseInscriptionLoading,
 }: ConfigurationStatusCardProps) => {
   const NoSchoolId = "dce19aa2-8863-4c93-861e-fb7be8f610ed";
   const realSchools = schools.filter((school) => school.id !== NoSchoolId);
@@ -150,32 +154,34 @@ export const ConfigurationStatusCard = ({
             <div className="flex items-center justify-between">
               <span className="text-sm">Inscriptions</span>
               <div className="flex items-center gap-2">
-                {!edition.inscription_enabled ? (
-                  <Badge
-                    variant="destructive"
-                  >
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={() =>
-                        !isOpenInscriptionLoading &&
-                        onOpenInscription(edition.id)
-                      }
-                    >
-                      {isOpenInscriptionLoading
-                        ? "Ouverture..."
-                        : "Ouvrir les inscriptions"}
-                    </span>
-                  </Badge>
-                ) : (
-                  <Badge
-                    variant={
-                      edition.inscription_enabled ? "default" : "secondary"
+                <Badge
+                  variant="default"
+                  className={
+                    edition.inscription_enabled
+                      ? "bg-red-500 text-white hover:bg-red-700 cursor-pointer"
+                      : "bg-green-500 text-white hover:bg-green-700 cursor-pointer"
+                  }
+                >
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={() =>
+                      !isCloseInscriptionLoading &&
+                      !isOpenInscriptionLoading &&
+                      edition.inscription_enabled
+                        ? onCloseInscription(edition.id)
+                        : onOpenInscription(edition.id)
                     }
                   >
-                    {edition.inscription_enabled ? "Ouvertes" : "Fermées"}
-                  </Badge>
-                )}
+                    {isOpenInscriptionLoading
+                      ? "Ouverture..."
+                      : isCloseInscriptionLoading
+                        ? "Fermeture..."
+                        : edition.inscription_enabled
+                          ? "Fermer les inscriptions"
+                          : "Ouvrir les inscriptions"}
+                  </span>
+                </Badge>
               </div>
             </div>
           </div>

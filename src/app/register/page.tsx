@@ -24,20 +24,24 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
   CompetitionUserBase,
+  CompetitionUserEdit,
   ParticipantInfo,
 } from "@/src/api/hyperionSchemas";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
+import { useUserPayments } from "@/src/hooks/useUserPayments";
 
 const Register = () => {
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
-  const { meCompetition, createCompetitionUser } = useCompetitionUser();
+  const { meCompetition, createCompetitionUser, updateCompetitionUser } =
+    useCompetitionUser();
   const { meParticipant, createParticipant } = useParticipant();
   const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
+  const { payments } = useUserPayments();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -52,21 +56,21 @@ const Register = () => {
     allHeaderSubtitles: [
       "Informations",
       "Participation",
-      "Package",
+      "Panier",
       "Récapitulatif",
     ],
     pageFields: {
       Informations: ["phone", "sex"],
       Participation: [],
       Sport: ["sport.id", "sport.team_id"],
-      Package: [],
+      Panier: [],
       Récapitulatif: [],
     } as const,
     onValidateCardActions: {
       Informations: (values, callback) => {},
       Participation: (values, callback) => {},
       Sport: (values, callback) => {},
-      Package: (values, callback) => {},
+      Panier: (values, callback) => {},
       Récapitulatif: (values, callback) => {},
     } as const,
   });
@@ -109,7 +113,7 @@ const Register = () => {
           };
           createParticipant(body, values.sport!.id, callback);
         },
-        Package: (values, callback) => {
+        Panier: (values, callback) => {
           const newPurchases = values.products;
 
           const toCreate = newPurchases.filter(

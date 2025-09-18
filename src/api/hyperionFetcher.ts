@@ -64,7 +64,7 @@ export async function hyperionFetch<
       {
         signal,
         method: method.toUpperCase(),
-        body: body
+        body: body!==undefined
           ? body instanceof FormData
             ? body
             : JSON.stringify(body)
@@ -88,7 +88,10 @@ export async function hyperionFetch<
 
       throw error;
     }
-
+    if (response.status === 204) {
+      // No content
+      return {} as TData;
+    }
     if (response.headers.get("content-type")?.includes("json")) {
       return await response.json();
     } else {
