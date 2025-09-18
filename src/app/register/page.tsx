@@ -19,7 +19,7 @@ import {
   SidebarTrigger,
 } from "@/src/components/ui/sidebar";
 import { RegisterState } from "@/src/infra/registerState";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
@@ -63,75 +63,90 @@ const Register = () => {
       Récapitulatif: [],
     } as const,
     onValidateCardActions: {
-      Informations: (values, callback) => {
-        if (values.phone !== me!.phone) {
-          updateUser({ phone: "+" + values.phone }, callback);
-        } else {
-          callback();
-        }
-      },
-      Participation: (values, callback) => {
-        if (meCompetition !== undefined) {
-          callback();
-          return;
-        }
-        const body: CompetitionUserBase = {
-          sport_category: values.sex,
-          is_athlete: values.is_athlete,
-          is_cameraman: values.is_cameraman,
-          is_fanfare: values.is_fanfare,
-          is_pompom: values.is_pompom,
-          is_volunteer: values.is_volunteer,
-        };
-        createCompetitionUser(body, callback);
-      },
-      Sport: (values, callback) => {
-        if (meParticipant !== undefined) {
-          callback();
-          return;
-        }
-        const body: ParticipantInfo = {
-          license: values.sport!.license_number!,
-          team_id: values.sport!.team_id!,
-          substitute: values.sport!.substitute,
-        };
-        createParticipant(body, values.sport!.id, callback);
-      },
-      Package: (values, callback) => {
-        const newPurchases = values.products;
-
-        const toCreate = newPurchases.filter(
-          (newPurchase) =>
-            !userPurchases?.some(
-              (purchase) =>
-                purchase.product_variant_id === newPurchase.product.id,
-            ),
-        );
-        const toDelete = userPurchases?.filter(
-          (purchase) =>
-            !newPurchases.some(
-              (newPurchase) =>
-                newPurchase.product.id === purchase.product_variant_id,
-            ),
-        );
-
-        toCreate.map((purchase) => {
-          const body: AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase =
-            {
-              product_variant_id: purchase.product.id,
-              quantity: purchase.quantity,
-            };
-          createPurchase(body, () => {});
-        });
-
-        toDelete?.map((purchase) => {
-          deletePurchase(purchase.product_variant_id, () => {});
-        });
-        callback();
-      },
+      Informations: (values, callback) => {},
+      Participation: (values, callback) => {},
+      Sport: (values, callback) => {},
+      Package: (values, callback) => {},
       Récapitulatif: (values, callback) => {},
     } as const,
   });
+
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      onValidateCardActions: {
+        Informations: (values, callback) => {
+          if (values.phone !== me!.phone) {
+            updateUser({ phone: "+" + values.phone }, callback);
+          } else {
+            callback();
+          }
+        },
+        Participation: (values, callback) => {
+          if (meCompetition !== undefined) {
+            callback();
+            return;
+          }
+          const body: CompetitionUserBase = {
+            sport_category: values.sex,
+            is_athlete: values.is_athlete,
+            is_cameraman: values.is_cameraman,
+            is_fanfare: values.is_fanfare,
+            is_pompom: values.is_pompom,
+            is_volunteer: values.is_volunteer,
+          };
+          createCompetitionUser(body, callback);
+        },
+        Sport: (values, callback) => {
+          if (meParticipant !== undefined) {
+            callback();
+            return;
+          }
+          const body: ParticipantInfo = {
+            license: values.sport!.license_number!,
+            team_id: values.sport!.team_id!,
+            substitute: values.sport!.substitute,
+          };
+          createParticipant(body, values.sport!.id, callback);
+        },
+        Package: (values, callback) => {
+          const newPurchases = values.products;
+
+          const toCreate = newPurchases.filter(
+            (newPurchase) =>
+              !userPurchases?.some(
+                (purchase) =>
+                  purchase.product_variant_id === newPurchase.product.id,
+              ),
+          );
+          const toDelete = userPurchases?.filter(
+            (purchase) =>
+              !newPurchases.some(
+                (newPurchase) =>
+                  newPurchase.product.id === purchase.product_variant_id,
+              ),
+          );
+
+          toCreate.map((purchase) => {
+            const body: AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase =
+              {
+                product_variant_id: purchase.product.id,
+                quantity: purchase.quantity,
+              };
+            createPurchase(body, () => {});
+          });
+
+          toDelete?.map((purchase) => {
+            deletePurchase(purchase.product_variant_id, () => {});
+          });
+          callback();
+        },
+        Récapitulatif: (values, callback) => {},
+      } as const,
+    }));
+  }),
+    [me, meCompetition, meParticipant, userPurchases];
+
   return (
     <SidebarProvider>
       <AppSidebar state={state} />
