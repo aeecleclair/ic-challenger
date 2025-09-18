@@ -36,7 +36,7 @@ export function NavLicense() {
             onClick={() => router.push(`/admin/license`)}
             className="cursor-pointer hover:underline"
           >
-            Validation des license
+            Validation des licenses
           </div>
           <CollapsibleTrigger asChild>
             <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">
