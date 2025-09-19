@@ -133,9 +133,6 @@ export const useAuth = () => {
   }
 
   async function getTokenFromRequest() {
-    console.log(redirectUrlHost);
-    console.log(process.env.NEXT_PUBLIC_FRONTEND_URL);
-    console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
     setIsLoading(true);
     const code = generateRandomString(128);
     setCodeVerifier(code);
