@@ -6,7 +6,7 @@ import Image from "next/image";
 // import { useDocumentsStore } from "@/src/stores/documents";
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
-import { PdfViewer } from "./PdfViewer";
+// import { PdfViewer } from "./PdfViewer";
 import { ScrollArea } from "../ui/scroll-area";
 import { useDocument } from "@/src/hooks/useDocument";
 import { RegisteringFormValues } from "@/src/forms/registering";
@@ -36,7 +36,7 @@ export const DocumentDialog = ({
         <div className="flex flex-col items-center gap-4">
           {image?.type === "application/pdf" ? (
             <ScrollArea className="h-[400px]">
-              <PdfViewer file={image} width={550} />
+              {/* <PdfViewer file={image} width={550} /> */}
             </ScrollArea>
           ) : (
             <Image
