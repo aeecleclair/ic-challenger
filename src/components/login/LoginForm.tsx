@@ -10,9 +10,6 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"form">) {
   const router = useRouter();
 
-  console.log(process.env.NEXT_PUBLIC_FRONTEND_URL);
-  console.log(process.env.NEXT_PUBLIC_BACKEND_URL);
-
   return (
     <form className={cn("flex flex-col gap-12", className)} {...props}>
       <div className="flex flex-col items-center text-center">
