@@ -16,10 +16,12 @@ import { useEdition } from "@/src/hooks/useEdition";
 import { NavMatches } from "./NavMatches";
 import { NavSearch } from "./NavSearch";
 import { NavLocations } from "./NavLocations";
+import { useParticipant } from "@/src/hooks/useParticipant";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
   const router = useRouter();
+  const { meParticipant } = useParticipant();
 
   const handleLogoClick = () => {
     router.push("/");
@@ -53,9 +55,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        {edition && (<NavMatches />)}
-        {edition && (<NavSearch />)}
-        {edition && (<NavLocations />)}
+        {edition && meParticipant && <NavMatches />}
+        {edition && <NavSearch />}
+        {edition && <NavLocations />}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
