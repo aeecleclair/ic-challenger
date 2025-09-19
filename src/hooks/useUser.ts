@@ -12,7 +12,7 @@ import {
   APIErrorType,
 } from "../utils/errorTyping";
 
-const COMPETITION_ADMIN_GROUP_ID = "e9e6e3d3-9f5f-4e9b-8e5f-9f5f4e9b8e5f";
+const COMPETITION_ADMIN_GROUP_ID = "2b1fc736-1288-4043-b293-14bc23adae68";
 const SPORT_MANAGER = "sport_manager";
 const SCHOOLS_BDS = "schools_bds";
 export const useUser = () => {
