@@ -46,34 +46,34 @@ export function GeneralQuotaDialog({
   const quotaForm = useForm<GeneralQuotaFormValues>({
     resolver: zodResolver(generalQuotaFormSchema),
     defaultValues: {
-      athlete_quota: existingQuota?.athlete_quota || 0,
-      cameraman_quota: existingQuota?.cameraman_quota || 0,
-      pompom_quota: existingQuota?.pompom_quota || 0,
-      fanfare_quota: existingQuota?.fanfare_quota || 0,
-      athlete_cameraman_quota: existingQuota?.athlete_cameraman_quota || 0,
-      athlete_pompom_quota: existingQuota?.athlete_pompom_quota || 0,
-      athlete_fanfare_quota: existingQuota?.athlete_fanfare_quota || 0,
+      athlete_quota: existingQuota?.athlete_quota || undefined,
+      cameraman_quota: existingQuota?.cameraman_quota || undefined,
+      pompom_quota: existingQuota?.pompom_quota || undefined,
+      fanfare_quota: existingQuota?.fanfare_quota || undefined,
+      athlete_cameraman_quota: existingQuota?.athlete_cameraman_quota || undefined,
+      athlete_pompom_quota: existingQuota?.athlete_pompom_quota || undefined,
+      athlete_fanfare_quota: existingQuota?.athlete_fanfare_quota || undefined,
       non_athlete_cameraman_quota:
-        existingQuota?.non_athlete_cameraman_quota || 0,
-      non_athlete_pompom_quota: existingQuota?.non_athlete_pompom_quota || 0,
-      non_athlete_fanfare_quota: existingQuota?.non_athlete_fanfare_quota || 0,
+        existingQuota?.non_athlete_cameraman_quota || undefined,
+      non_athlete_pompom_quota: existingQuota?.non_athlete_pompom_quota || undefined,
+      non_athlete_fanfare_quota: existingQuota?.non_athlete_fanfare_quota || undefined,
     },
   });
 
   useEffect(() => {
     if (existingQuota) {
       quotaForm.reset({
-        athlete_quota: existingQuota.athlete_quota || 0,
-        cameraman_quota: existingQuota.cameraman_quota || 0,
-        pompom_quota: existingQuota.pompom_quota || 0,
-        fanfare_quota: existingQuota.fanfare_quota || 0,
-        athlete_cameraman_quota: existingQuota.athlete_cameraman_quota || 0,
-        athlete_pompom_quota: existingQuota.athlete_pompom_quota || 0,
-        athlete_fanfare_quota: existingQuota.athlete_fanfare_quota || 0,
+        athlete_quota: existingQuota.athlete_quota || undefined,
+        cameraman_quota: existingQuota.cameraman_quota || undefined,
+        pompom_quota: existingQuota.pompom_quota || undefined,
+        fanfare_quota: existingQuota.fanfare_quota || undefined,
+        athlete_cameraman_quota: existingQuota.athlete_cameraman_quota || undefined,
+        athlete_pompom_quota: existingQuota.athlete_pompom_quota || undefined,
+        athlete_fanfare_quota: existingQuota.athlete_fanfare_quota || undefined,
         non_athlete_cameraman_quota:
-          existingQuota.non_athlete_cameraman_quota || 0,
-        non_athlete_pompom_quota: existingQuota.non_athlete_pompom_quota || 0,
-        non_athlete_fanfare_quota: existingQuota.non_athlete_fanfare_quota || 0,
+          existingQuota.non_athlete_cameraman_quota || undefined,
+        non_athlete_pompom_quota: existingQuota.non_athlete_pompom_quota || undefined,
+        non_athlete_fanfare_quota: existingQuota.non_athlete_fanfare_quota || undefined,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,10 +111,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -126,10 +124,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -141,10 +137,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -156,10 +150,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -171,10 +163,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -186,10 +176,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -201,10 +189,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -216,10 +202,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -231,10 +215,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />
@@ -246,10 +228,8 @@ export function GeneralQuotaDialog({
                   <Input
                     type="number"
                     min="0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(parseInt(e.target.value) || 0)
-                    }
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 )}
               />

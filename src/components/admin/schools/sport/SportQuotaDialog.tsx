@@ -61,16 +61,16 @@ export function SportQuotaDialog({
   const quotaForm = useForm<SportQuotaFormValues>({
     resolver: zodResolver(sportQuotaFormSchema),
     defaultValues: {
-      participant_quota: 0,
-      team_quota: 0,
+      participant_quota: undefined,
+      team_quota: undefined,
     },
   });
 
   useEffect(() => {
     if (existingQuota) {
       quotaForm.reset({
-        participant_quota: existingQuota.participant_quota || 0,
-        team_quota: existingQuota.team_quota || 0,
+        participant_quota: existingQuota.participant_quota || undefined,
+        team_quota: existingQuota.team_quota || undefined,
       });
     }
   }, [existingQuota, quotaForm]);
@@ -143,9 +143,7 @@ export function SportQuotaDialog({
                   type="number"
                   min="0"
                   value={field.value}
-                  onChange={(e) =>
-                    field.onChange(parseInt(e.target.value) || 0)
-                  }
+                  onChange={field.onChange}
                 />
               )}
             />
@@ -159,9 +157,7 @@ export function SportQuotaDialog({
                   type="number"
                   min="0"
                   value={field.value}
-                  onChange={(e) =>
-                    field.onChange(parseInt(e.target.value) || 0)
-                  }
+                  onChange={field.onChange}
                 />
               )}
             />

@@ -65,14 +65,14 @@ export function ProductQuotaDialog({
   const quotaForm = useForm<ProductQuotaFormValues>({
     resolver: zodResolver(productQuotaFormSchema),
     defaultValues: {
-      quota: 0,
+      quota: undefined,
     },
   });
 
   useEffect(() => {
     if (existingQuota) {
       quotaForm.reset({
-        quota: existingQuota.quota || 0,
+        quota: existingQuota.quota || undefined,
       });
     }
   }, [existingQuota, quotaForm]);
@@ -144,10 +144,8 @@ export function ProductQuotaDialog({
                 <Input
                   type="number"
                   min="0"
-                  value={field.value ?? ""}
-                  onChange={(e) =>
-                    field.onChange(parseInt(e.target.value) || 0)
-                  }
+                  value={field.value}
+                  onChange={field.onChange}
                 />
               )}
             />
