@@ -36,13 +36,13 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <title>Inter Centrale</title>
+        <title>Inter Centrales</title>
         <link rel="shortcut icon" href="/favicon.ico" />
       </head>
 
       <Script
         defer
-        data-domain="inter-centrale.myecl.fr"
+        data-domain="challenger.myecl.fr"
         src="https://plausible.eclair.ec-lyon.fr/js/script.js"
         strategy="lazyOnload"
       />

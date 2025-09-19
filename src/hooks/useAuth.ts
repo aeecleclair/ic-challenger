@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCodeVerifierStore } from "../stores/codeVerifier";
 import { toast } from "../components/ui/use-toast";
 
-const clientId: string = "RaidRegistering";
+const clientId: string = "Challenger";
 const redirectUrlHost: string = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/login`;
 const backUrl: string =
   process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
