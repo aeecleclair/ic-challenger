@@ -5,26 +5,34 @@ on:
     types: [opened, edited, ready_for_review, synchronize]
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
+      - name: Corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.4 --activate
+
       - name: Setup Nodejs
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20.19.4
           cache: "yarn"
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          yarn install
 
       - name: Configure Dotenv
         run: |
           echo NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL} >> .env
+          echo NEXT_PUBLIC_FRONTEND_URL=${NEXT_PUBLIC_FRONTEND_URL} >> .env
         env:
-          NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_FRONTEND_URL: ${{ vars.NEXT_PUBLIC_FRONTEND_URL }}
 
       - name: Lint
         run: yarn lint
