@@ -3,7 +3,7 @@ name: Deploy on gh page
 on:
   push:
     branches:
-      - main # Set a branch that will trigger a deployment
+      - master # Set a branch that will trigger a deployment
 
 jobs:
   deploy:
