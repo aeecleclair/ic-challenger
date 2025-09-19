@@ -38,6 +38,7 @@ const Dashboard = () => {
       fromLyon: school?.from_lyon,
       active: school?.active,
       inscription_enabled: school?.inscription_enabled,
+      ffsu_id: school?.ffsu_id ?? undefined,
     },
     mode: "onChange",
   });
@@ -47,6 +48,7 @@ const Dashboard = () => {
       from_lyon: values.fromLyon,
       active: values.active,
       inscription_enabled: values.inscription_enabled,
+      ffsu_id: values.ffsu_id ?? undefined,
     };
     updateCompetitionSchool(school!.school_id, body, () => {
       form.reset({
@@ -54,6 +56,7 @@ const Dashboard = () => {
         fromLyon: values.fromLyon,
         active: values.active,
         inscription_enabled: values.inscription_enabled,
+        ffsu_id: values.ffsu_id,
       });
     });
   }

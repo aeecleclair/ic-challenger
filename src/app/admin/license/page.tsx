@@ -2,16 +2,11 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
-import { useCallback, useMemo, useEffect, useState } from "react";
-import {
-  ParticipantDataTable,
-  ParticipantData,
-} from "@/src/components/admin/license/ParticipantDataTable";
+import { useMemo } from "react";
+import { ParticipantDataTable } from "@/src/components/admin/license/ParticipantDataTable";
 import { useSports } from "@/src/hooks/useSports";
-import { useSportsQuota } from "@/src/hooks/useSportsQuota";
 import { useUser } from "@/src/hooks/useUser";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
-import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "@/src/components/ui/badge";
 import {
   Tabs,
@@ -19,20 +14,6 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/src/components/ui/tabs";
-import { Trophy } from "lucide-react";
-import { GlobalQuotaCard } from "@/src/components/admin/validation/GlobalQuotaCard";
-import { fetchGetCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
-import { useAuth } from "@/src/hooks/useAuth";
-import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
-import { useSchoolsGeneralQuota } from "@/src/hooks/useSchoolsGeneralQuota";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/src/components/ui/tooltip";
-import { Button } from "@/src/components/ui/button";
-import { useSchoolsProductQuota } from "@/src/hooks/useSchoolsProductQuota";
-import { useProducts } from "@/src/hooks/useProducts";
 import { useLicense } from "@/src/hooks/useLicense";
 
 const Dashboard = () => {
@@ -103,7 +84,6 @@ const Dashboard = () => {
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <Trophy className="h-4 w-4" />
                     {school.school.name}
                     <Badge variant={"secondary"} className="text-xs">
                       {participants?.length || 0}

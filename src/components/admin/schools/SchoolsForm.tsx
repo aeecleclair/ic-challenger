@@ -13,6 +13,7 @@ import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { SchoolFormValues } from "@/src/forms/schools";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { CoreSchool } from "@/src/api/hyperionSchemas";
+import { Input } from "../../ui/input";
 
 interface SchoolsFormProps {
   form: UseFormReturn<SchoolFormValues>;
@@ -57,6 +58,14 @@ export const SchoolsForm = ({
                     ))}
                 </SelectContent>
               </Select>
+            )}
+          />
+          <StyledFormField
+            form={form}
+            label="FFSU ID"
+            id="ffsu_id"
+            input={(field) => (
+              <Input placeholder="Identifiant FFSU (si connu)" {...field} />
             )}
           />
 
