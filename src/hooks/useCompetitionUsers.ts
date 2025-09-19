@@ -1,25 +1,19 @@
 import {
-  useGetCompetitionUsersMe,
-  usePostCompetitionUsers,
   usePatchCompetitionUsersUserIdInvalidate,
   usePatchCompetitionUsersUserIdValidate,
-  usePatchCompetitionUsersMe,
+  useGetCompetitionUsers,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { DetailedErrorType, ErrorType } from "../utils/errorTyping";
-import {
-  CompetitionUserBase,
-  CompetitionUserEdit,
-} from "../api/hyperionSchemas";
 
-export const useCompetitionUser = () => {
+export const useCompetitionUsers = () => {
   const { token, isTokenExpired } = useAuth();
   const {
-    data: meCompetition,
+    data: competitionUsers,
     isLoading,
-    refetch: refetchMeCompetition,
-  } = useGetCompetitionUsersMe(
+    refetch: refetchCompetitionUsers,
+  } = useGetCompetitionUsers(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -31,37 +25,37 @@ export const useCompetitionUser = () => {
     },
   );
 
-  const { mutate: mutateCreateUser, isPending: isCreateLoading } =
-    usePostCompetitionUsers();
 
-  const createCompetitionUser = async (
-    body: CompetitionUserBase,
-    callback: () => void,
-  ) => {
-    return mutateCreateUser(
+  const { mutate: mutateValidateCompetitionUser, isPending: isValidateLoading } =
+    usePatchCompetitionUsersUserIdValidate();
+
+  const validateCompetitionUser = (userId: string, callback: () => void) => {
+    return mutateValidateCompetitionUser(
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: body,
+        pathParams: {
+          userId: userId,
+        },
       },
       {
         onSettled: (data, error) => {
           if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
-              title: "Erreur lors de l'ajout de l'utilisateur",
+              title: "Erreur lors de la mise à jour",
               description:
-                (error as unknown as ErrorType).stack.body ||
+                (error as any).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
-            refetchMeCompetition();
+            refetchCompetitionUsers();
             callback();
             toast({
-              title: "Utilisateur ajouté",
-              description: "L'utilisateur a été ajouté avec succès.",
+              title: "Participant mis à jour",
+              description: "Le participant a été mis à jour avec succès.",
             });
           }
         },
@@ -69,37 +63,38 @@ export const useCompetitionUser = () => {
     );
   };
 
-  const { mutate: mutateUpdateUserMe, isPending: isUpdateLoading } =
-    usePatchCompetitionUsersMe();
+  const {
+    mutate: mutateInvalidateCompetitionUser,
+    isPending: isInvalidateLoading,
+  } = usePatchCompetitionUsersUserIdInvalidate();
 
-  const updateCompetitionUser = async (
-    body: CompetitionUserEdit,
-    callback: () => void,
-  ) => {
-    return mutateUpdateUserMe(
+  const invalidateCompetitionUser = (userId: string, callback: () => void) => {
+    return mutateInvalidateCompetitionUser(
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: body,
+        pathParams: {
+          userId: userId,
+        },
       },
       {
         onSettled: (data, error) => {
           if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
-              title: "Erreur lors de la modification de l'utilisateur",
+              title: "Erreur lors de la mise à jour",
               description:
                 (error as unknown as ErrorType).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
             });
           } else {
-            refetchMeCompetition();
+            refetchCompetitionUsers();
             callback();
             toast({
-              title: "Utilisateur modifié",
-              description: "L'utilisateur a été modifié avec succès.",
+              title: "Participant mis à jour",
+              description: "Le participant a été mis à jour avec succès.",
             });
           }
         },
@@ -108,11 +103,12 @@ export const useCompetitionUser = () => {
   };
 
   return {
-    meCompetition,
+    competitionUsers,
     isLoading,
-    refetchMeCompetition,
-    createCompetitionUser,
-    updateCompetitionUser,
-    isCreateLoading,
+    refetchCompetitionUsers,
+    validateCompetitionUser,
+    isValidateLoading,
+    isInvalidateLoading,
+    invalidateCompetitionUser,
   };
 };

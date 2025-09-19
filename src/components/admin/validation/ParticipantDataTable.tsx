@@ -41,13 +41,13 @@ import { DataTableToolbar } from "./DataTableToolbar";
 
 export interface ParticipantData {
   userId: string;
-  sportId: string;
-  sportName: string;
+  sportId?: string;
+  sportName?: string;
   fullName: string;
   email: string;
-  license: string;
-  teamId?: string | null;
-  teamName?: string | null;
+  isLicenseValid?: boolean;
+  teamId?: string;
+  teamName?: string;
   isSubstitute: boolean;
   isValidated: boolean;
   isCaptain: boolean;
@@ -58,7 +58,7 @@ export interface ParticipantData {
 interface ParticipantDataTableProps {
   data: ParticipantData[];
   schoolName: string;
-  onValidateParticipant: (userId: string, sportId: string) => void;
+  onValidateParticipant: (userId: string) => void;
   isLoading: boolean;
 }
 
@@ -73,6 +73,19 @@ export function ParticipantDataTable({
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+
+  const sports = React.useMemo(() => {
+    const sportSet = new Set<string>();
+    data.forEach((participant) => {
+      if (participant.sportName) {
+        sportSet.add(participant.sportName);
+      }
+    });
+    return Array.from(sportSet).map((sport) => ({
+      label: sport,
+      value: sport,
+    }));
+  }, [data]);
 
   const columns: ColumnDef<ParticipantData>[] = [
     {
@@ -281,6 +294,39 @@ export function ParticipantDataTable({
         return filterValue === true ? value === true : true;
       },
     },
+
+    {
+      accessorKey: "isLicenseValid",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center"
+        >
+          Validé
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div className="flex justify-center">
+          {row.getValue("isLicenseValid") ? (
+            <Badge
+              variant="secondary"
+              className="bg-green-100 text-green-800 hover:bg-green-200"
+            >
+              Oui
+            </Badge>
+          ) : (
+            <Badge variant="destructive">Non</Badge>
+          )}
+        </div>
+      ),
+      filterFn: (row, id, filterValue) => {
+        if (filterValue === undefined) return true;
+        const value = row.getValue<boolean>(id);
+        return filterValue === true ? value === true : true;
+      },
+    },
     {
       accessorKey: "isValidated",
       header: ({ column }) => (
@@ -363,12 +409,7 @@ export function ParticipantDataTable({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() =>
-                    onValidateParticipant(
-                      participant.userId,
-                      participant.sportId,
-                    )
-                  }
+                  onClick={() => onValidateParticipant(participant.userId)}
                   disabled={isLoading}
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
@@ -421,7 +462,11 @@ export function ParticipantDataTable({
 
   return (
     <div>
-      <DataTableToolbar table={table} typeOptions={participantTypes} />
+      <DataTableToolbar
+        table={table}
+        typeOptions={participantTypes}
+        sports={sports}
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader>
