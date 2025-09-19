@@ -23,6 +23,7 @@ import { NavProducts } from "./NavProducts";
 import { NavLocations } from "./NavLocations";
 import { NavPodiums } from "./NavPodiums";
 import { NavLicense } from "./NavLicense";
+import { useUser } from "@/src/hooks/useUser";
 
 const data = {
   navSecondary: [
@@ -41,6 +42,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
   const router = useRouter();
+  const { isAdmin, isSportManager, isBDS } = useUser();
 
   const handleLogoClick = () => {
     router.push("/admin");
@@ -66,16 +68,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         {edition && (
           <>
-            <NavSchools />
-            <NavSports />
-            <NavValidation />
-            <NavLicense />
-            <NavLocations />
-            <NavMatches />
-            <NavPodiums />
-            <NavGroups />
-            <NavProducts />
-            <NavSecondary items={data.navSecondary} className="mt-auto" />
+            {isAdmin() && <NavSchools />}
+            {isAdmin() && <NavSports />}
+            {(isAdmin() || isBDS()) && <NavValidation />}
+            {isAdmin() && <NavLicense />}
+            {isAdmin() && <NavLocations />}
+            {(isAdmin() || isSportManager()) && <NavMatches />}
+            {(isAdmin() || isSportManager()) && <NavPodiums />}
+            {isAdmin() && <NavGroups />}
+            {isAdmin() && <NavProducts />}
+            {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
           </>
         )}
       </SidebarContent>
