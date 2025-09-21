@@ -18,7 +18,6 @@ export const useSchoolsSportQuota = ({
   schoolId,
 }: UseSchoolsSportQuotaProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: schoolsSportQuota,

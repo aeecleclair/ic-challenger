@@ -15,7 +15,6 @@ interface UseUserPurchasesProps {
 
 export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: userPurchases,

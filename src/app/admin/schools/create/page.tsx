@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 const Dashboard = () => {
   const router = useRouter();
   const { filteredSchools } = useSchools();
+  const { sportSchools } = useSportSchools();
   const { createCompetitionSchool, isLoading } = useSportSchools();
   const form = useForm<SchoolFormValues>({
     resolver: zodResolver(schoolFormSchema),
@@ -31,6 +32,11 @@ const Dashboard = () => {
     },
     mode: "onChange",
   });
+
+  const noCompetitionSchools = filteredSchools?.filter(
+    (school) =>
+      !sportSchools?.some((sportSchool) => sportSchool.school_id === school.id),
+  );
 
   function onSubmit(values: SchoolFormValues) {
     const body: SchoolExtensionBase = {
@@ -83,7 +89,7 @@ const Dashboard = () => {
             isLoading={isLoading}
             onSubmit={onSubmit}
             submitLabel="Ajouter l'école"
-            schools={filteredSchools || []}
+            schools={noCompetitionSchools || []}
           />
         </CardContent>
       </Card>

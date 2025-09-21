@@ -13,6 +13,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface MatchCardProps {
   match: MatchComplete;
@@ -25,7 +26,7 @@ interface MatchCardProps {
   showSportCategoryBadges?: boolean; // New: show sport category badges
   showTeamBadges?: boolean; // New: show team badges when school+sport selected
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
-  schools?: Array<{ id: string; name: string }>;
+  schools?: Array<{ school_id: string; school: { id: string; name: string } }>;
   teams?: Array<{
     id: string;
     name: string;
@@ -63,7 +64,11 @@ export const MatchCard = ({
   };
 
   const getSchoolName = (schoolId: string) => {
-    return schools.find((school) => school.id === schoolId)?.name || "École";
+    return (
+      formatSchoolName(
+        schools.find((school) => school.school_id === schoolId)?.school.name,
+      ) || "École"
+    );
   };
 
   const getTeamName = (teamId: string) => {

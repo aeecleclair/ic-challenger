@@ -19,6 +19,8 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { Match, MatchComplete } from "../../api/hyperionSchemas";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface FullyRegisteredDashboardProps {
   edition: {
@@ -56,7 +58,7 @@ export const FullyRegisteredDashboard = ({
   });
 
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const userTeamId = meParticipant?.team_id;
 
@@ -64,8 +66,8 @@ export const FullyRegisteredDashboard = ({
   const userSport = sports?.find(
     (sport) => sport.id === meParticipant?.sport_id,
   );
-  const userSchool = schools?.find(
-    (school) => school.id === meParticipant?.school_id,
+  const userSchool = sportSchools?.find(
+    (school) => school.school_id === meParticipant?.school_id,
   );
 
   const matchStats = useMemo(() => {
@@ -208,7 +210,8 @@ export const FullyRegisteredDashboard = ({
                     École
                   </p>
                   <p className="font-semibold">
-                    {userSchool?.name || meParticipant?.school_id}
+                    {formatSchoolName(userSchool?.school.name) ||
+                      meParticipant?.school_id}
                   </p>
                 </div>
               </div>

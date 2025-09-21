@@ -4,7 +4,6 @@ import EditionForm from "@/src/components/admin/EditionForm";
 import { EditionFormSchema, editionFormSchema } from "@/src/forms/edition";
 import { useEdition } from "@/src/hooks/useEdition";
 import { useUser } from "@/src/hooks/useUser";
-import { useSchools } from "@/src/hooks/useSchools";
 import { useSports } from "@/src/hooks/useSports";
 import { useLocations } from "@/src/hooks/useLocations";
 import { useProducts } from "@/src/hooks/useProducts";
@@ -23,6 +22,7 @@ import {
   SportsCard,
   SchoolsCard,
 } from "@/src/components/admin/home";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 const AdminPage = () => {
   const {
@@ -35,7 +35,7 @@ const AdminPage = () => {
     isCloseInscriptionLoading,
   } = useEdition();
   const { isAdmin } = useUser();
-  const { schools } = useSchools();
+  const { sportSchools: schools } = useSportSchools();
   const { sports } = useSports();
   const { locations } = useLocations();
   const { products } = useProducts();

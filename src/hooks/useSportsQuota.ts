@@ -16,7 +16,6 @@ interface UseSportsQuotaProps {
 
 export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: sportsQuota,

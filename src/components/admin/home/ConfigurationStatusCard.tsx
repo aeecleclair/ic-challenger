@@ -16,7 +16,7 @@ import {
   CompetitionEdition,
   Sport,
   Location,
-  CoreSchool,
+  SchoolExtension,
 } from "@/src/api/hyperionSchemas";
 import { AppModulesSportCompetitionSchemasSportCompetitionProductComplete } from "@/src/api/hyperionSchemas";
 import React from "react";
@@ -25,7 +25,7 @@ interface ConfigurationStatusCardProps {
   edition: CompetitionEdition;
   podiumStats: { totalRankings: number; schoolsWithRankings: number } | null;
   sports?: Sport[];
-  schools?: CoreSchool[];
+  schools?: SchoolExtension[];
   locations?: Location[];
   products?: AppModulesSportCompetitionSchemasSportCompetitionProductComplete[];
   onOpenInscription: (editionId: string) => void;
@@ -47,7 +47,9 @@ export const ConfigurationStatusCard = ({
   isCloseInscriptionLoading,
 }: ConfigurationStatusCardProps) => {
   const NoSchoolId = "dce19aa2-8863-4c93-861e-fb7be8f610ed";
-  const realSchools = schools.filter((school) => school.id !== NoSchoolId);
+  const realSchools = schools.filter(
+    (school) => school.school_id !== NoSchoolId,
+  );
 
   const activeSports = sports.filter((sport) => sport.active !== false);
   const enabledProducts = products.filter(

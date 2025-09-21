@@ -18,7 +18,6 @@ interface UsePodiumsProps {
 
 export const usePodiums = (props?: UsePodiumsProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
   const { sportId, schoolId } = props || {};
 
   // Global podium

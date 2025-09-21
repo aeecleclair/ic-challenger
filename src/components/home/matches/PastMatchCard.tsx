@@ -2,6 +2,7 @@ import { Match, MatchComplete } from "../../../api/hyperionSchemas";
 import { Badge } from "../../ui/badge";
 import { Trophy, X, School, Users, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface PastMatchCardProps {
   match: MatchComplete;
@@ -12,7 +13,7 @@ interface PastMatchCardProps {
   showSportCategoryBadges?: boolean; // New: show sport category badges
   showTeamBadges?: boolean; // New: show team badges
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
-  schools?: Array<{ id: string; name: string }>;
+  schools?: Array<{ school_id: string; school: { id: string; name: string } }>;
   teams?: Array<{
     id: string;
     name: string;
@@ -53,7 +54,11 @@ export const PastMatchCard = ({
   };
 
   const getSchoolName = (schoolId: string) => {
-    return schools.find((school) => school.id === schoolId)?.name || "École";
+    return (
+      formatSchoolName(
+        schools.find((school) => school.school_id === schoolId)?.school.name,
+      ) || "École"
+    );
   };
 
   const getTeamName = (teamId: string) => {

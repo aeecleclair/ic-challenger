@@ -16,6 +16,7 @@ import {
 } from "@/src/components/ui/sidebar";
 import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 import { Match } from "../../api/hyperionSchemas";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 export default function LocationsPage() {
   const { locations, isLoading } = useLocations();
@@ -24,7 +25,6 @@ export default function LocationsPage() {
     sportId: meParticipant?.sport_id,
   });
   const { sports } = useSports();
-  const { filteredSchools: schools } = useSchools();
 
   const locationsWithMatches = useMemo(() => {
     if (!locations || !sportMatches) return [];
@@ -86,7 +86,6 @@ export default function LocationsPage() {
               locations={locations || []}
               locationsWithMatches={locationsWithMatches}
               sports={sports}
-              schools={schools}
               className="h-[700px] w-full"
             />
           </div>

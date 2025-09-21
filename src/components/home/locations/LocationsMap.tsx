@@ -23,7 +23,6 @@ export function LocationsMap({
   locations,
   locationsWithMatches,
   sports,
-  schools,
   className = "h-[calc(100vh-15rem)] w-full",
 }: LocationsMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -36,7 +35,6 @@ export function LocationsMap({
       location: LocationComplete,
       locationWithMatches: any,
       sports?: any[],
-      schools?: any[],
     ) => {
       if (!location.latitude || !location.longitude) return null;
 
@@ -55,7 +53,6 @@ export function LocationsMap({
           totalMatches={locationWithMatches?.totalMatches || 0}
           nextMatch={locationWithMatches?.nextMatch}
           sports={sports}
-          schools={schools}
         />,
       );
 
@@ -136,7 +133,6 @@ export function LocationsMap({
               location,
               locationWithMatches,
               sports,
-              schools,
             );
             if (marker) {
               marker.addTo(group);
@@ -164,6 +160,7 @@ export function LocationsMap({
         delete (mapRef.current as any)._leaflet_id;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -189,7 +186,6 @@ export function LocationsMap({
             location,
             locationWithMatches,
             sports,
-            schools,
           );
 
           if (marker && mapInstanceRef.current) {
@@ -201,7 +197,7 @@ export function LocationsMap({
     };
 
     updateMarkers().catch(console.error);
-  }, [locations, locationsWithMatches, sports, schools, createLocationMarker]);
+  }, [locations, locationsWithMatches, sports, createLocationMarker]);
 
   return (
     <div className="space-y-4">

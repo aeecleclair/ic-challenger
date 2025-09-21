@@ -15,7 +15,6 @@ interface UseGroupsProps {
 
 export const useGroups = ({ group }: UseGroupsProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: groups,

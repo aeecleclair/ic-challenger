@@ -10,7 +10,6 @@ interface UseSchoolParticipants {
 
 export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: schoolParticipants,

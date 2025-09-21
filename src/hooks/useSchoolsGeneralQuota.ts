@@ -1,18 +1,22 @@
-
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 import { SchoolGeneralQuotaBase, SportQuotaInfo } from "../api/hyperionSchemas";
-import { useGetCompetitionSchoolsSchoolIdGeneralQuota, usePatchCompetitionSchoolsSchoolIdGeneralQuota, usePostCompetitionSchoolsSchoolIdGeneralQuota } from "../api/hyperionComponents";
+import {
+  useGetCompetitionSchoolsSchoolIdGeneralQuota,
+  usePatchCompetitionSchoolsSchoolIdGeneralQuota,
+  usePostCompetitionSchoolsSchoolIdGeneralQuota,
+} from "../api/hyperionComponents";
 
 interface UseSchoolsGeneralQuotaProps {
   schoolId?: string;
 }
 
-export const useSchoolsGeneralQuota = ({ schoolId }: UseSchoolsGeneralQuotaProps) => {
+export const useSchoolsGeneralQuota = ({
+  schoolId,
+}: UseSchoolsGeneralQuotaProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: schoolsGeneralQuota,
@@ -28,7 +32,7 @@ export const useSchoolsGeneralQuota = ({ schoolId }: UseSchoolsGeneralQuotaProps
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!schoolId,
+      enabled: !isTokenExpired() && !!schoolId,
       retry: 0,
       queryHash: "getSchoolsGeneralQuota",
     },
@@ -37,10 +41,7 @@ export const useSchoolsGeneralQuota = ({ schoolId }: UseSchoolsGeneralQuotaProps
   const { mutate: mutateCreateQuota, isPending: isCreateLoading } =
     usePostCompetitionSchoolsSchoolIdGeneralQuota();
 
-  const createQuota = (
-    body: SchoolGeneralQuotaBase,
-    callback: () => void,
-  ) => {
+  const createQuota = (body: SchoolGeneralQuotaBase, callback: () => void) => {
     return mutateCreateQuota(
       {
         headers: {
@@ -78,10 +79,7 @@ export const useSchoolsGeneralQuota = ({ schoolId }: UseSchoolsGeneralQuotaProps
   const { mutate: mutateUpdateQuota, isPending: isUpdateLoading } =
     usePatchCompetitionSchoolsSchoolIdGeneralQuota();
 
-  const updateQuota = (
-    body: SchoolGeneralQuotaBase,
-    callback: () => void,
-  ) => {
+  const updateQuota = (body: SchoolGeneralQuotaBase, callback: () => void) => {
     return mutateUpdateQuota(
       {
         headers: {

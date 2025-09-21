@@ -12,7 +12,6 @@ import { SportBase, SportEdit } from "../api/hyperionSchemas";
 
 export const useSports = () => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: sports,

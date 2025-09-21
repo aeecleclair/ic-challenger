@@ -1,7 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CoreSchool, SchoolSportQuota } from "@/src/api/hyperionSchemas";
-import { SportQuotaFormValues, sportQuotaFormSchema } from "@/src/forms/sportQuota";
+import {
+  CoreSchool,
+  SchoolExtension,
+  SchoolSportQuota,
+} from "@/src/api/hyperionSchemas";
+import {
+  SportQuotaFormValues,
+  sportQuotaFormSchema,
+} from "@/src/forms/sportQuota";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
@@ -32,7 +39,7 @@ interface QuotaDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: SportQuotaFormValues) => void;
-  schools?: CoreSchool[];
+  schools?: SchoolExtension[];
   selectedSchool: string | null;
   setSelectedSchool: (schoolId: string | null) => void;
   existingQuota?: SchoolSportQuota;
@@ -110,8 +117,11 @@ export function QuotaDialog({
                     const hasQuota = !!existingQuota;
                     if (!hasQuota) {
                       return (
-                        <SelectItem key={school.id} value={school.id}>
-                          {formatSchoolName(school.name)}
+                        <SelectItem
+                          key={school.school_id}
+                          value={school.school_id}
+                        >
+                          {formatSchoolName(school.school.name)}
                         </SelectItem>
                       );
                     }

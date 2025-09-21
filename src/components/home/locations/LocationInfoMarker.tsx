@@ -25,7 +25,6 @@ interface LocationInfoMarkerProps {
   totalMatches: number;
   nextMatch?: MatchComplete;
   sports?: any[];
-  schools?: any[];
 }
 
 export function LocationInfoMarker({
@@ -34,7 +33,6 @@ export function LocationInfoMarker({
   totalMatches,
   nextMatch,
   sports,
-  schools,
 }: LocationInfoMarkerProps) {
   const openInMaps = () => {
     if (location.latitude && location.longitude) {

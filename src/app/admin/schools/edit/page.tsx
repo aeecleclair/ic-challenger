@@ -18,6 +18,7 @@ import {
 import { SchoolExtensionEdit } from "@/src/api/hyperionSchemas";
 import { schoolFormSchema, SchoolFormValues } from "@/src/forms/schools";
 import { ArrowLeft } from "lucide-react";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -30,6 +31,11 @@ const Dashboard = () => {
   const { filteredSchools } = useSchools();
   const { updateCompetitionSchool, isUpdateLoading: isLoading } =
     useSportSchools();
+
+  const noCompetitionSchools = filteredSchools?.filter(
+    (school) =>
+      !sportSchools?.some((sportSchool) => sportSchool.school_id === school.id),
+  );
 
   const form = useForm<SchoolFormValues>({
     resolver: zodResolver(schoolFormSchema),
@@ -69,7 +75,8 @@ const Dashboard = () => {
             Modifier une école
           </h1>
           <p className="text-muted-foreground">
-            Modifiez les paramètres de l&apos;école {school.school.name}
+            Modifiez les paramètres de l&apos;école{" "}
+            {formatSchoolName(school.school.name)}
           </p>
         </div>
         <Button
@@ -93,7 +100,7 @@ const Dashboard = () => {
             isLoading={isLoading}
             onSubmit={onSubmit}
             submitLabel="Modifier l'école"
-            schools={filteredSchools || []}
+            schools={noCompetitionSchools || []}
             isEdit={true}
           />
         </CardContent>

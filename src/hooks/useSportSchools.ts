@@ -15,7 +15,6 @@ import {
 
 export const useSportSchools = () => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: sportSchools,

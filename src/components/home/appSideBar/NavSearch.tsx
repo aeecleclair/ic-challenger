@@ -10,18 +10,19 @@ import {
 import { useSports } from "@/src/hooks/useSports";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useMemo } from "react";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 export function NavSearch() {
   const router = useRouter();
 
   const { sports } = useSports();
-  const { filteredSchools: schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const totalEntities = useMemo(() => {
     const sportsCount = sports?.length || 0;
-    const schoolsCount = schools?.length || 0;
+    const schoolsCount = sportSchools?.length || 0;
     return sportsCount + schoolsCount;
-  }, [sports, schools]);
+  }, [sports, sportSchools]);
 
   const handleSearchClick = () => {
     router.push("/search");

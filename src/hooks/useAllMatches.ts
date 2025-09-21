@@ -15,7 +15,6 @@ export const useAllMatches = ({
   schoolId,
 }: UseAllMatchesProps = {}) => {
   const { sports } = useSports();
-  const { schools } = useSchools();
 
   // If no specific filters, get matches from the first available sport as a fallback
   const defaultSportId = sports?.[0]?.id;

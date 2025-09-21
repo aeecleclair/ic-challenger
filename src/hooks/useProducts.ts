@@ -20,7 +20,6 @@ import {
 
 export const useProducts = () => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: products,

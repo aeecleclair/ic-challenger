@@ -47,6 +47,7 @@ import {
   Gamepad2,
   Flag,
 } from "lucide-react";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface MatchesFormProps {
   form: UseFormReturn<MatchFormValues>;
@@ -89,7 +90,7 @@ export const MatchesForm = ({
     schoolId: team2SchoolId || undefined,
     sportId: selectedSport || undefined,
   });
-  
+
   const team2Options = team2OptionsRaw?.filter(
     (team) => team.id !== form.getValues("team1_id"),
   );
@@ -256,7 +257,7 @@ export const MatchesForm = ({
                               </SelectItem>
                               {schoolOptions.map((school) => (
                                 <SelectItem key={school.id} value={school.id}>
-                                  {school.name}
+                                  {formatSchoolName(school.name)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -364,7 +365,7 @@ export const MatchesForm = ({
                               </SelectItem>
                               {schoolOptions.map((school) => (
                                 <SelectItem key={school.id} value={school.id}>
-                                  {school.name}
+                                  {formatSchoolName(school.name)}
                                 </SelectItem>
                               ))}
                             </SelectContent>

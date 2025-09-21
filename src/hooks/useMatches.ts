@@ -16,7 +16,6 @@ interface UseSportMatchesProps {
 
 export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   // Fetch matchs for a specific sport
   const {

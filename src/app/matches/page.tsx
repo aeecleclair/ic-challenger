@@ -22,6 +22,7 @@ import {
   SidebarTrigger,
 } from "@/src/components/ui/sidebar";
 import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 export default function MatchesPage() {
   const { meParticipant } = useParticipant();
@@ -33,7 +34,7 @@ export default function MatchesPage() {
     sportId: meParticipant?.sport_id,
   });
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const userTeamId = meParticipant?.team_id;
 
@@ -91,8 +92,8 @@ export default function MatchesPage() {
   const userSport = sports?.find(
     (sport) => sport.id === meParticipant?.sport_id,
   );
-  const userSchool = schools?.find(
-    (school) => school.id === meParticipant?.school_id,
+  const userSchool = sportSchools?.find(
+    (school) => school.school_id === meParticipant?.school_id,
   );
 
   useMemo(() => {

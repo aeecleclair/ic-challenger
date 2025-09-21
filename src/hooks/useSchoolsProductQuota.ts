@@ -17,7 +17,6 @@ export const useSchoolsProductQuota = ({
   schoolId,
 }: UseSchoolsProductQuotaProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: schoolsProductQuota,
@@ -33,7 +32,7 @@ export const useSchoolsProductQuota = ({
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!schoolId,
+      enabled: !isTokenExpired() && !!schoolId,
       retry: 0,
       queryHash: "getSchoolsProductQuota",
     },

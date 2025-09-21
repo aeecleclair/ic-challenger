@@ -12,7 +12,6 @@ import { LocationBase, LocationEdit } from "../api/hyperionSchemas";
 
 export const useLocations = () => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const {
     data: locations,

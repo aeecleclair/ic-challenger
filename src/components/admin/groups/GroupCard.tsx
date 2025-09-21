@@ -16,6 +16,7 @@ import {
   UserGroupMembershipComplete,
 } from "@/src/api/hyperionSchemas";
 import Link from "next/link";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface GroupCardProps {
   user: UserGroupMembershipComplete;
@@ -56,7 +57,9 @@ const GroupCard = ({ user, onClick, onRemove }: GroupCardProps) => {
           {user.user.school && (
             <div className="flex items-center gap-2">
               <School className="h-4 w-4" />
-              <span className="truncate">{user.user.school.name}</span>
+              <span className="truncate">
+                {formatSchoolName(user.user.school.name)}
+              </span>
             </div>
           )}
         </div>

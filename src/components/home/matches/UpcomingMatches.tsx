@@ -13,7 +13,7 @@ interface UpcomingMatchesProps {
   showSportCategoryBadges?: boolean;
   showTeamBadges?: boolean;
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
-  schools?: Array<{ id: string; name: string }>;
+  schools?: Array<{ school_id: string; school: { id: string; name: string } }>;
   teams?: Array<{
     id: string;
     name: string;

@@ -22,9 +22,12 @@ import {
   Settings,
   Users,
 } from "lucide-react";
-import { UserGroupMembership, UserGroupMembershipComplete } from "@/src/api/hyperionSchemas";
+import {
+  UserGroupMembership,
+  UserGroupMembershipComplete,
+} from "@/src/api/hyperionSchemas";
 import { AVAILABLE_GROUPS } from "@/src/infra/groups";
-
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface UserDetailProps {
   user: UserGroupMembershipComplete;
@@ -218,7 +221,9 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <School className="h-4 w-4" />
-                      <span className="text-sm">{user.user.school.name}</span>
+                      <span className="text-sm">
+                        {formatSchoolName(user.user.school.name)}
+                      </span>
                     </div>
                   </div>
                 )}

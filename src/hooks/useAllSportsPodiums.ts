@@ -9,7 +9,6 @@ interface UseAllSportsPodiumsProps {
 
 export const useAllSportsPodiums = ({ sportIds }: UseAllSportsPodiumsProps) => {
   const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
 
   const queries = useQueries({
     queries: sportIds.map((sportId) => ({

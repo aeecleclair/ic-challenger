@@ -33,6 +33,8 @@ import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";
 import { useTeams } from "../../hooks/useTeams";
 import { useSportMatches } from "../../hooks/useMatches";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface FilterState {
   sport: string;
@@ -59,7 +61,7 @@ const SPORT_CATEGORY_LABELS = {
 
 export default function SearchPage() {
   const { sports } = useSports();
-  const { filteredSchools: schools } = useSchools();
+  const { sportSchools: schools } = useSportSchools();
 
   const [filters, setFilters] = useState<FilterState>(FILTER_DEFAULTS);
 
@@ -209,7 +211,7 @@ export default function SearchPage() {
     const schoolName =
       computedValues.teamSelected || filters.school === "all"
         ? "Toutes les écoles"
-        : schools?.find((s) => s.id === filters.school)?.name ||
+        : schools?.find((s) => s.school_id === filters.school)?.school.name ||
           "Toutes les écoles";
 
     const teamName = (() => {
@@ -365,8 +367,11 @@ export default function SearchPage() {
                       <SelectContent>
                         <SelectItem value="all">Toutes les écoles</SelectItem>
                         {schools?.map((school) => (
-                          <SelectItem key={school.id} value={school.id}>
-                            {school.name}
+                          <SelectItem
+                            key={school.school_id}
+                            value={school.school_id}
+                          >
+                            {formatSchoolName(school.school.name)}
                           </SelectItem>
                         ))}
                       </SelectContent>

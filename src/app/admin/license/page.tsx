@@ -15,6 +15,7 @@ import {
   TabsTrigger,
 } from "@/src/components/ui/tabs";
 import { useLicense } from "@/src/hooks/useLicense";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -84,7 +85,7 @@ const Dashboard = () => {
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    {school.school.name}
+                    {formatSchoolName(school.school.name)}
                     <Badge variant={"secondary"} className="text-xs">
                       {participants?.length || 0}
                     </Badge>

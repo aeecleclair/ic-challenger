@@ -5,8 +5,7 @@ import { toast } from "../components/ui/use-toast";
 import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 
 export const useLicense = () => {
-  const { token, isTokenExpired } = useAuth();
-  const { isAdmin } = useUser();
+  const { token } = useAuth();
 
   const { mutate: mutateUpdateLicense, isPending: isUpdateLoading } =
     usePatchCompetitionParticipantsSportsSportIdUsersUserIdLicense();

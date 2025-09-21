@@ -12,10 +12,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/src/components/ui/popover";
-import { CoreSchool } from "@/src/api/hyperionSchemas";
+import { SchoolExtension } from "@/src/api/hyperionSchemas";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface SchoolsCardProps {
-  schools: CoreSchool[];
+  schools: SchoolExtension[];
 }
 
 export const SchoolsCard = ({ schools }: SchoolsCardProps) => {
@@ -25,15 +26,19 @@ export const SchoolsCard = ({ schools }: SchoolsCardProps) => {
 
   // Filter out the "no school" entry
   const NoSchoolId = "dce19aa2-8863-4c93-861e-fb7be8f610ed";
-  const filteredSchools = schools.filter((school) => school.id !== NoSchoolId);
+  const filteredSchools = schools.filter(
+    (school) => school.school_id !== NoSchoolId,
+  );
 
   if (filteredSchools.length === 0) {
     return null;
   }
 
-  const SchoolItem = ({ school }: { school: CoreSchool }) => (
+  const SchoolItem = ({ school }: { school: SchoolExtension }) => (
     <div className="flex items-center justify-between border-b pb-2 last:border-b-0">
-      <span className="font-medium">{school.name}</span>
+      <span className="font-medium">
+        {formatSchoolName(school.school.name)}
+      </span>
     </div>
   );
 
@@ -48,7 +53,7 @@ export const SchoolsCard = ({ schools }: SchoolsCardProps) => {
       <CardContent>
         <div className="space-y-2">
           {filteredSchools.slice(0, 3).map((school) => (
-            <SchoolItem key={school.id} school={school} />
+            <SchoolItem key={school.school_id} school={school} />
           ))}
           {filteredSchools.length > 3 && (
             <Popover>
@@ -60,7 +65,7 @@ export const SchoolsCard = ({ schools }: SchoolsCardProps) => {
               <PopoverContent className="w-80">
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {filteredSchools.slice(3).map((school) => (
-                    <SchoolItem key={school.id} school={school} />
+                    <SchoolItem key={school.school_id} school={school} />
                   ))}
                 </div>
               </PopoverContent>

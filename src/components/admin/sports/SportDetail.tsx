@@ -31,6 +31,7 @@ import {
   Trash2,
   Target,
 } from "lucide-react";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 interface SportDetailProps {
   sport: Sport;
@@ -51,7 +52,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
     sportId: sport.id,
   });
 
-  const { filteredSchools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -119,8 +120,9 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
 
   const getSchoolName = (schoolId: string) => {
     return (
-      formatSchoolName(filteredSchools?.find((s) => s.id === schoolId)?.name) ||
-      schoolId
+      formatSchoolName(
+        sportSchools?.find((s) => s.school_id === schoolId)?.school.name,
+      ) || schoolId
     );
   };
 
@@ -245,7 +247,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
               isOpen={isAddDialogOpen}
               onOpenChange={setIsAddDialogOpen}
               onSubmit={handleQuotaSubmit}
-              schools={filteredSchools}
+              schools={sportSchools}
               selectedSchool={selectedSchool}
               setSelectedSchool={setSelectedSchool}
               existingQuota={existingQuota}

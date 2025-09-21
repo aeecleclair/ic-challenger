@@ -9,6 +9,8 @@ import {
 } from "@/src/components/ui/card";
 import { Trophy, Medal, Award } from "lucide-react";
 import { useSchools } from "@/src/hooks/useSchools";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface GlobalPodiumCardProps {
   results: SchoolResult[];
@@ -16,7 +18,7 @@ interface GlobalPodiumCardProps {
 }
 
 export function GlobalPodiumCard({ results, title }: GlobalPodiumCardProps) {
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -65,7 +67,9 @@ export function GlobalPodiumCard({ results, title }: GlobalPodiumCardProps) {
         <div className="space-y-3">
           {sortedResults.length > 0 ? (
             sortedResults.map((result) => {
-              const school = schools?.find((s) => s.id === result.school_id);
+              const school = sportSchools?.find(
+                (s) => s.school_id === result.school_id,
+              );
               return (
                 <div
                   key={result.school_id}
@@ -75,7 +79,8 @@ export function GlobalPodiumCard({ results, title }: GlobalPodiumCardProps) {
                     {getRankIcon(result.rank)}
                     <div>
                       <p className="font-semibold">
-                        {school?.name || "École inconnue"}
+                        {formatSchoolName(school?.school.name) ||
+                          "École inconnue"}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         ID: {result.school_id}

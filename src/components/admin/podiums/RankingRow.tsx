@@ -19,6 +19,8 @@ import {
 import { Trash2 } from "lucide-react";
 import { useSchools } from "@/src/hooks/useSchools";
 import { useTeams } from "@/src/hooks/useTeams";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface RankingRowProps {
   form: any;
@@ -39,7 +41,7 @@ export function RankingRow({
 }: RankingRowProps) {
   const schoolId = form.watch(`rankings.${index}.school_id`);
   const { teams } = useTeams({ sportId, schoolId });
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   return (
     <div key={field.id} className="p-4 border rounded-lg space-y-4">
@@ -78,9 +80,9 @@ export function RankingRow({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {schools?.map((school) => (
-                    <SelectItem key={school.id} value={school.id}>
-                      {school.name}
+                  {sportSchools?.map((school) => (
+                    <SelectItem key={school.school_id} value={school.school_id}>
+                      {formatSchoolName(school.school.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
