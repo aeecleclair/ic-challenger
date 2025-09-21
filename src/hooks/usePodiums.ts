@@ -34,7 +34,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired(),
+      enabled: !isTokenExpired(),
       retry: 0,
       queryHash: "getGlobalPodium",
     },
@@ -56,7 +56,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
       },
     },
     {
-      enabled: !!sportId && isAdmin() && !isTokenExpired(),
+      enabled: !!sportId && !isTokenExpired(),
       retry: 0,
       queryHash: `getSportPodium-${sportId}`,
     },
@@ -78,7 +78,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
       },
     },
     {
-      enabled: !!schoolId && isAdmin() && !isTokenExpired(),
+      enabled: !!schoolId && !isTokenExpired(),
       retry: 0,
       queryHash: `getSchoolPodium-${schoolId}`,
     },

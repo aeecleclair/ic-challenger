@@ -36,16 +36,16 @@ import { useEffect } from "react";
 import { useSchools } from "../hooks/useSchools";
 import { useSportSchools } from "../hooks/useSportSchools";
 import { UnregisteredCard } from "../components/home/UnregisteredCard";
+import { useUserPurchases } from "../hooks/useUserPurchases";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
   const { me: user, isAdmin } = useUser();
   const { meCompetition, isLoading } = useCompetitionUser();
-  const { hasPaid } = useUserPayments();
+  const { hasPaid } = useUserPurchases({ userId: user?.id });
   const searchParams = useSearchParams();
   const router = useRouter();
   const { edition } = useEdition();
-  const { schools } = useSchools();
   const { sportSchools } = useSportSchools();
 
   const isEditionStarted = edition?.start_date
@@ -58,9 +58,8 @@ const Home = () => {
 
   const isFullyRegistered = meCompetition?.validated && hasPaid;
 
-  const userSchoolId = user?.school_id || user?.school?.id;
   const userSportSchool = sportSchools?.find(
-    (school) => school.school_id === userSchoolId,
+    (school) => school.school_id === user?.school_id,
   );
   const isSchoolInscriptionEnabled = userSportSchool?.inscription_enabled;
 

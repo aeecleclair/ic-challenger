@@ -33,7 +33,7 @@ export const useSportMatches = ({ sportId }: UseSportMatchesProps) => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!sportId,
+      enabled: !isTokenExpired() && !!sportId,
       retry: 0,
       queryHash: "getSportMatches",
     },

@@ -34,7 +34,7 @@ export const useSchoolsSportQuota = ({
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!schoolId,
+      enabled: !isTokenExpired() && !!schoolId,
       retry: 0,
       queryHash: "getschoolsSportQuota",
     },

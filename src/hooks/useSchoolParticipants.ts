@@ -26,7 +26,7 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!schoolId,
+      enabled: !isTokenExpired() && !!schoolId,
       retry: 0,
       queryHash: "getSchoolParticipants",
     },

@@ -23,7 +23,7 @@ export const useAllSportsPodiums = ({ sportIds }: UseAllSportsPodiumsProps) => {
             sportId,
           },
         }),
-      enabled: isAdmin() && !isTokenExpired(),
+      enabled: !isTokenExpired(),
       retry: 0,
       staleTime: 5 * 60 * 1000, // 5 minutes
     })),

@@ -31,7 +31,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!userId,
+      enabled: !isTokenExpired() && !!userId,
       retry: 0,
       queryHash: "getUserPurchases",
     },
@@ -78,10 +78,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
   const { mutate: mutateDeletePurchase, isPending: isDeletePurchaseLoading } =
     useDeleteCompetitionPurchasesProductVariantId();
 
-  const deletePurchase = (
-    productVariantId: string,
-    callback: () => void,
-  ) => {
+  const deletePurchase = (productVariantId: string, callback: () => void) => {
     return mutateDeletePurchase(
       {
         headers: {
@@ -115,8 +112,11 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
     );
   };
 
+  const hasPaid = userPurchases?.every((purchase) => purchase.validated);
+
   return {
     userPurchases,
+    hasPaid,
     error,
     refetchUserPurchases,
     createPurchase,

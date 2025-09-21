@@ -26,7 +26,7 @@ export const useLocations = () => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired(),
+      enabled: !isTokenExpired(),
       retry: 0,
       queryHash: "getLocations",
     },

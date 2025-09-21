@@ -31,7 +31,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && !!group,
+      enabled: !isTokenExpired() && !!group,
       retry: 0,
       queryHash: "getGroups",
     },
