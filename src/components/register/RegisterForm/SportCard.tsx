@@ -48,13 +48,13 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [open, setIsOpen] = useState(false);
 
-  const {data} = useDocument();
+  const { data } = useDocument();
 
   useEffect(() => {
     if (data) {
       form.setValue("sport.certificate", "Certificat chargé");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const { teams, createSchoolSportTeam, isCreateLoading } = useSchoolSportTeams(
@@ -85,7 +85,9 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
 
   return (
     <CardTemplate>
-      <h2 className="text-xl font-semibold">Ta participation au Challenge :</h2>
+      <h2 className="text-xl font-semibold">
+        Ta participation aux InterCentrales :
+      </h2>
       <StyledFormField
         form={form}
         label="Sport"
@@ -188,25 +190,35 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <p>Aucune équipe enregistrée pour ce sport.</p>
+                    <>
+                      <p>
+                        Aucune équipe enregistrée pour ce sport dans votre
+                        école.
+                      </p>
+                      <p>Créez une équipe en vous déclarant capitaine</p>
+                    </>
                   )
                 }
               />
-              <StyledFormField
-                form={form}
-                label="Remplaçant d'équipe"
-                id="sport.substitute"
-                input={(field) => (
-                  <div className="flex items-center space-x-2 pt-2 ">
-                    <Checkbox
-                      id="sport.substitute"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                    <Label htmlFor="sport.substitute">Je suis remplaçant</Label>
-                  </div>
-                )}
-              />
+              {form.watch("sport.team_id") && (
+                <StyledFormField
+                  form={form}
+                  label="Remplaçant d'équipe"
+                  id="sport.substitute"
+                  input={(field) => (
+                    <div className="flex items-center space-x-2 pt-2 ">
+                      <Checkbox
+                        id="sport.substitute"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <Label htmlFor="sport.substitute">
+                        Je suis remplaçant
+                      </Label>
+                    </div>
+                  )}
+                />
+              )}
             </div>
           )}
         </>
@@ -219,7 +231,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
           id="sport.license_number"
           input={(field) => <Input {...field} className="w-60" />}
         />
-        <StyledFormField
+        {/* <StyledFormField
           form={form}
           label="Certificat médical"
           id="sport.certificate"
@@ -260,7 +272,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
               </Dialog>
             </div>
           )}
-        />
+        /> */}
       </div>
     </CardTemplate>
   );
