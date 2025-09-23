@@ -23,11 +23,14 @@ import { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { isAdmin } = useUser();
+  const { isAdmin, isBDS, isSportManager } = useUser();
   const router = useRouter();
   const { edition } = useEdition();
 
-  if (!isAdmin() && typeof window !== "undefined") {
+  if (
+    !(isAdmin() || isBDS() || isSportManager()) &&
+    typeof window !== "undefined"
+  ) {
     router.replace("/?redirect=/admin");
   }
 

@@ -29,7 +29,7 @@ export const useUser = () => {
       },
     },
     {
-      enabled: user === undefined && !isTokenExpired(),
+      enabled: !isTokenExpired(),
       retry: 0,
     },
   );
@@ -40,7 +40,7 @@ export const useUser = () => {
       },
     },
     {
-      enabled: user === undefined && !isTokenExpired(),
+      enabled: !isTokenExpired(),
       retry: 0,
     },
   );
