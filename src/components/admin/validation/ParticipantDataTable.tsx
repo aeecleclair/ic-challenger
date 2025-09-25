@@ -22,7 +22,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, CheckCircle, MoreHorizontal, Users } from "lucide-react";
+import {
+  ArrowUpDown,
+  CheckCircle,
+  MoreHorizontal,
+  UserPlus,
+  Users,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,7 +78,11 @@ export function ParticipantDataTable({
     [],
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      isCaptain: false,
+      isSubstitute: false,
+      searchField: false,
+    });
 
   const sports = React.useMemo(() => {
     const sportSet = new Set<string>();
@@ -88,6 +98,26 @@ export function ParticipantDataTable({
   }, [data]);
 
   const columns: ColumnDef<ParticipantData>[] = [
+    {
+      accessorKey: "isCaptain",
+      header: "Capitaine",
+      enableHiding: true,
+      cell: () => null,
+      filterFn: (row, id, value) => {
+        if (value === undefined) return true;
+        return row.getValue<boolean>(id) === value;
+      },
+    },
+    {
+      accessorKey: "isSubstitute",
+      header: "Remplaçant",
+      enableHiding: true,
+      cell: () => null,
+      filterFn: (row, id, value) => {
+        if (value === undefined) return true;
+        return row.getValue<boolean>(id) === value;
+      },
+    },
     {
       id: "searchField",
       accessorFn: (row) => `${row.fullName} ${row.email}`.toLowerCase(),
@@ -113,6 +143,7 @@ export function ParticipantDataTable({
       cell: ({ row }) => {
         const fullName = row.getValue("fullName") as string;
         const isCaptain = row.original.isCaptain;
+        const isSubstitute = row.original.isSubstitute;
 
         return (
           <div className="font-medium text-center flex items-center justify-center gap-2">
@@ -126,6 +157,20 @@ export function ParticipantDataTable({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Capitaine d&apos;équipe</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            {isSubstitute && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <UserPlus className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Remplaçant</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -152,20 +197,20 @@ export function ParticipantDataTable({
       ),
     },
     {
-      accessorKey: "license",
+      accessorKey: "sportName",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Licence
+          Sport
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="text-center">
-          {row.getValue("license") || "Non renseignée"}
+        <div className="flex justify-center">
+          <Badge variant="secondary">{row.getValue("sportName") || "-"}</Badge>
         </div>
       ),
       filterFn: (row, id, filterValue) => {
@@ -268,34 +313,6 @@ export function ParticipantDataTable({
       },
     },
     {
-      accessorKey: "isSubstitute",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center"
-        >
-          Remplaçant
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <div className="flex justify-center">
-          {row.getValue("isSubstitute") ? (
-            <Badge variant="outline">Oui</Badge>
-          ) : (
-            <Badge variant="secondary">Non</Badge>
-          )}
-        </div>
-      ),
-      filterFn: (row, id, filterValue) => {
-        if (filterValue === undefined) return true;
-        const value = row.getValue<boolean>(id);
-        return filterValue === true ? value === true : true;
-      },
-    },
-
-    {
       accessorKey: "isLicenseValid",
       header: ({ column }) => (
         <Button
@@ -303,7 +320,7 @@ export function ParticipantDataTable({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Validé
+          License
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -314,10 +331,10 @@ export function ParticipantDataTable({
               variant="secondary"
               className="bg-green-100 text-green-800 hover:bg-green-200"
             >
-              Oui
+              Validée
             </Badge>
           ) : (
-            <Badge variant="destructive">Non</Badge>
+            <Badge variant="destructive">Non validée</Badge>
           )}
         </div>
       ),
@@ -335,7 +352,7 @@ export function ParticipantDataTable({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Validé
+          Inscription
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -346,10 +363,10 @@ export function ParticipantDataTable({
               variant="secondary"
               className="bg-green-100 text-green-800 hover:bg-green-200"
             >
-              Oui
+              Validée
             </Badge>
           ) : (
-            <Badge variant="destructive">Non</Badge>
+            <Badge variant="destructive">Non validée</Badge>
           )}
         </div>
       ),
