@@ -50,13 +50,16 @@ export function GeneralQuotaDialog({
       cameraman_quota: existingQuota?.cameraman_quota || undefined,
       pompom_quota: existingQuota?.pompom_quota || undefined,
       fanfare_quota: existingQuota?.fanfare_quota || undefined,
-      athlete_cameraman_quota: existingQuota?.athlete_cameraman_quota || undefined,
+      athlete_cameraman_quota:
+        existingQuota?.athlete_cameraman_quota || undefined,
       athlete_pompom_quota: existingQuota?.athlete_pompom_quota || undefined,
       athlete_fanfare_quota: existingQuota?.athlete_fanfare_quota || undefined,
       non_athlete_cameraman_quota:
         existingQuota?.non_athlete_cameraman_quota || undefined,
-      non_athlete_pompom_quota: existingQuota?.non_athlete_pompom_quota || undefined,
-      non_athlete_fanfare_quota: existingQuota?.non_athlete_fanfare_quota || undefined,
+      non_athlete_pompom_quota:
+        existingQuota?.non_athlete_pompom_quota || undefined,
+      non_athlete_fanfare_quota:
+        existingQuota?.non_athlete_fanfare_quota || undefined,
     },
   });
 
@@ -67,13 +70,16 @@ export function GeneralQuotaDialog({
         cameraman_quota: existingQuota.cameraman_quota || undefined,
         pompom_quota: existingQuota.pompom_quota || undefined,
         fanfare_quota: existingQuota.fanfare_quota || undefined,
-        athlete_cameraman_quota: existingQuota.athlete_cameraman_quota || undefined,
+        athlete_cameraman_quota:
+          existingQuota.athlete_cameraman_quota || undefined,
         athlete_pompom_quota: existingQuota.athlete_pompom_quota || undefined,
         athlete_fanfare_quota: existingQuota.athlete_fanfare_quota || undefined,
         non_athlete_cameraman_quota:
           existingQuota.non_athlete_cameraman_quota || undefined,
-        non_athlete_pompom_quota: existingQuota.non_athlete_pompom_quota || undefined,
-        non_athlete_fanfare_quota: existingQuota.non_athlete_fanfare_quota || undefined,
+        non_athlete_pompom_quota:
+          existingQuota.non_athlete_pompom_quota || undefined,
+        non_athlete_fanfare_quota:
+          existingQuota.non_athlete_fanfare_quota || undefined,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

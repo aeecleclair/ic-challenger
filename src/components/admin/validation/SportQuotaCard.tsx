@@ -30,7 +30,6 @@
 //   schoolName,
 // }: SportQuotaCardProps) => {
 
-
 //   return (
 //     <Card className="h-full">
 //       <CardHeader className="pb-3">

@@ -6,7 +6,7 @@ const publicType = [
   "fanfare",
   "cameraman",
   "athlete",
-  "volunteer"
+  "volunteer",
 ] as const;
 
 export const variantFormSchema = z.object({

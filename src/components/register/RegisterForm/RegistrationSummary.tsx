@@ -29,7 +29,6 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
     userId: me?.id,
   });
 
-  
   const purchasedItems = userPurchases?.map((purchase) => {
     return availableProducts?.find(
       (product) => product.id === purchase.product_variant_id,
@@ -38,7 +37,13 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
 
   const total = purchasedItems?.reduce((acc, item) => {
     if (item) {
-      return acc + (item.price * (userPurchases?.find(p => p.product_variant_id === item.id)?.quantity || 1)) / 100;
+      return (
+        acc +
+        (item.price *
+          (userPurchases?.find((p) => p.product_variant_id === item.id)
+            ?.quantity || 1)) /
+          100
+      );
     }
     return acc;
   }, 0);
@@ -182,10 +187,7 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
 
                 <div className="flex items-center gap-2 mt-2">
                   <p className="text-sm text-muted-foreground">Total:</p>
-                  <Badge variant="outline">
-                    {total?.toFixed(2)}
-                    €
-                  </Badge>
+                  <Badge variant="outline">{total?.toFixed(2)}€</Badge>
                 </div>
               </div>
             ) : (

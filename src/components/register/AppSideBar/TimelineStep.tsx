@@ -21,7 +21,7 @@ export const TimelineStep = ({
     <TimelineItem>
       <TimelineConnector>
         <TimelineDot variant={isCompleted ? "outline" : "default"}>
-          {isCompleted && <CheckIcon className="p-[2px]"/>}
+          {isCompleted && <CheckIcon className="p-[2px]" />}
         </TimelineDot>
       </TimelineConnector>
       <TimelineContent>

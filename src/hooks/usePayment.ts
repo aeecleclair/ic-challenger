@@ -9,9 +9,7 @@ export const usePayment = () => {
   const { mutate: mutateGetPaymentUrl, isPending: isPaymentLoading } =
     usePostCompetitionPay();
 
-  const getPaymentUrl = (
-    callback: (paymentUrl: string) => void,
-  ) => {
+  const getPaymentUrl = (callback: (paymentUrl: string) => void) => {
     return mutateGetPaymentUrl(
       {
         headers: {

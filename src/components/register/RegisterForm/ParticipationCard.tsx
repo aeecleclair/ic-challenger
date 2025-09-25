@@ -9,9 +9,7 @@ interface ParticipationCardProps {
   form: UseFormReturn<RegisteringFormValues>;
 }
 
-export const ParticipationCard = ({
-  form,
-}: ParticipationCardProps) => {
+export const ParticipationCard = ({ form }: ParticipationCardProps) => {
   return (
     <CardTemplate>
       <h2 className="text-xl font-semibold">Ta participation au Challenge</h2>

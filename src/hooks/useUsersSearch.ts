@@ -6,9 +6,7 @@ interface UseUserSearchProps {
   query: string;
 }
 
-export const useUserSearch = (
-  { query }: UseUserSearchProps
-) => {
+export const useUserSearch = ({ query }: UseUserSearchProps) => {
   const { token, isTokenExpired } = useAuth();
   const { isAdmin } = useUser();
 

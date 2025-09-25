@@ -80,7 +80,6 @@ const Dashboard = () => {
     schoolId: effectiveSchoolId || "",
   });
 
-
   const {
     competitionUsers,
     validateCompetitionUser,
@@ -137,7 +136,7 @@ const Dashboard = () => {
 
   const onInvalidate = (userId: string) => {
     invalidateCompetitionUser(userId, () => {});
-  }
+  };
 
   const participantTableData: ParticipantData[] = useMemo(() => {
     return (

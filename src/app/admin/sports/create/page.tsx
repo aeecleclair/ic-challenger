@@ -43,13 +43,10 @@ const Dashboard = () => {
       substitute_max: values.substituteMax,
       active: values.active,
     };
-    createSport(
-      body,
-      () => {
-        form.reset();
-        router.push("/admin/sports");
-      },
-    );
+    createSport(body, () => {
+      form.reset();
+      router.push("/admin/sports");
+    });
   }
 
   return (

@@ -101,8 +101,7 @@ export const AddProductDialog = ({
                     onCheckedChange={field.onChange}
                   />
                   <span className="text-sm text-muted-foreground">
-                    Ce produit doit être sélectionné lors de
-                    l&apos;inscription
+                    Ce produit doit être sélectionné lors de l&apos;inscription
                   </span>
                 </div>
               )}

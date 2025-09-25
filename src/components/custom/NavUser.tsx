@@ -66,9 +66,7 @@ export function NavUser() {
                 {isOnAdminPage ? "Utilisateur" : "Administration"}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem
-              onClick={logout}
-            >
+            <DropdownMenuItem onClick={logout}>
               <LogOut className="mr-2 h-4 w-4" />
               Se déconnecter
             </DropdownMenuItem>

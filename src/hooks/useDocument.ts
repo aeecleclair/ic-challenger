@@ -18,7 +18,11 @@ export const useDocument = () => {
   const { token, userId } = useAuth();
   // const { document, setDocument } = useDocumentsStore();
 
-  const uploadDocument = (file: File, sportId: string, callback: () => void) => {
+  const uploadDocument = (
+    file: File,
+    sportId: string,
+    callback: () => void,
+  ) => {
     const formData = new FormData();
     formData.append("certificate", file);
     axios

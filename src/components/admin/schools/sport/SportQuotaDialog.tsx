@@ -5,7 +5,10 @@ import {
   SchoolSportQuota,
   Sport,
 } from "@/src/api/hyperionSchemas";
-import { SportQuotaFormValues, sportQuotaFormSchema } from "@/src/forms/sportQuota";
+import {
+  SportQuotaFormValues,
+  sportQuotaFormSchema,
+} from "@/src/forms/sportQuota";
 import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";

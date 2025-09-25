@@ -81,7 +81,9 @@ export const WaitingPage = () => {
     const toCreate = newPurchases.filter(
       (newPurchase) =>
         !userPurchases?.some(
-          (purchase) => purchase.product_variant_id === newPurchase.product.id && purchase.quantity === newPurchase.quantity,
+          (purchase) =>
+            purchase.product_variant_id === newPurchase.product.id &&
+            purchase.quantity === newPurchase.quantity,
         ),
     );
     const toDelete = userPurchases?.filter(
@@ -120,7 +122,9 @@ export const WaitingPage = () => {
         </Card>
 
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTitle className="text-2xl font-bold mb-4">Modifier ma formule</DialogTitle>
+          <DialogTitle className="text-2xl font-bold mb-4">
+            Modifier ma formule
+          </DialogTitle>
           <RegistrationSummary onEdit={() => setOpen(true)} />
           <DialogContent>
             <Form {...form}>

@@ -25,9 +25,10 @@ export const useCompetitionUsers = () => {
     },
   );
 
-
-  const { mutate: mutateValidateCompetitionUser, isPending: isValidateLoading } =
-    usePatchCompetitionUsersUserIdValidate();
+  const {
+    mutate: mutateValidateCompetitionUser,
+    isPending: isValidateLoading,
+  } = usePatchCompetitionUsersUserIdValidate();
 
   const validateCompetitionUser = (userId: string, callback: () => void) => {
     return mutateValidateCompetitionUser(

@@ -29,11 +29,7 @@ export const InformationCard = ({ form }: InformationCardProps) => {
           form={form}
           label="Numéro de téléphone"
           id="phone"
-          input={(field) => (
-            <PhoneCustomInput
-              {...field}
-            />
-          )}
+          input={(field) => <PhoneCustomInput {...field} />}
         />
 
         <StyledFormField

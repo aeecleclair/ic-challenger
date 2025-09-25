@@ -35,7 +35,7 @@ export default function PodiumsPage() {
 
   const { sports } = useSports();
   const { podiumsBySport } = useAllSportsPodiums({
-    sportIds: sports?.map(sport => sport.id) || [],
+    sportIds: sports?.map((sport) => sport.id) || [],
   });
   const {
     globalPodium,
@@ -202,15 +202,20 @@ export default function PodiumsPage() {
             data={
               sports?.map((sport) => {
                 const podiumData = podiumsBySport[sport.id];
-                const sortedPodium = podiumData ? [...podiumData].sort((a, b) => a.rank - b.rank) : [];
-                
+                const sortedPodium = podiumData
+                  ? [...podiumData].sort((a, b) => a.rank - b.rank)
+                  : [];
+
                 return {
                   id: sport.id,
                   name: sport.name,
                   active: sport.active ?? true,
-                  firstPlace: sortedPodium.find(p => p.rank === 1)?.team?.name || null,
-                  secondPlace: sortedPodium.find(p => p.rank === 2)?.team?.name || null,
-                  thirdPlace: sortedPodium.find(p => p.rank === 3)?.team?.name || null,
+                  firstPlace:
+                    sortedPodium.find((p) => p.rank === 1)?.team?.name || null,
+                  secondPlace:
+                    sortedPodium.find((p) => p.rank === 2)?.team?.name || null,
+                  thirdPlace:
+                    sortedPodium.find((p) => p.rank === 3)?.team?.name || null,
                 };
               }) || []
             }

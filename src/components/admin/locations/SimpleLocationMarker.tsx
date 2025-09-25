@@ -38,11 +38,7 @@ export function SimpleLocationMarker({
             <h3 className="font-medium text-base text-gray-900 truncate">
               {locationName}
             </h3>
-            <Button
-              size="sm"
-              onClick={handleEdit}
-              className="w-6 h-6 p-0"
-            >
+            <Button size="sm" onClick={handleEdit} className="w-6 h-6 p-0">
               <Edit className="h-3 w-3" />
             </Button>
           </div>
