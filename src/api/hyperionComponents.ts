@@ -14884,6 +14884,84 @@ export const usePostCompetitionUsers = (
   });
 };
 
+export type GetCompetitionUsersSchoolsSchoolIdPathParams = {
+  /**
+   * @format uuid
+   */
+  schoolId: string;
+};
+
+export type GetCompetitionUsersSchoolsSchoolIdError = Fetcher.ErrorWrapper<{
+  status: 422;
+  payload: Schemas.HTTPValidationError;
+}>;
+
+export type GetCompetitionUsersSchoolsSchoolIdResponse =
+  Schemas.CompetitionUser[];
+
+export type GetCompetitionUsersSchoolsSchoolIdVariables = {
+  pathParams: GetCompetitionUsersSchoolsSchoolIdPathParams;
+} & HyperionContext["fetcherOptions"];
+
+/**
+ * Get all competition users for the current edition by school.
+ */
+export const fetchGetCompetitionUsersSchoolsSchoolId = (
+  variables: GetCompetitionUsersSchoolsSchoolIdVariables,
+  signal?: AbortSignal,
+) =>
+  hyperionFetch<
+    GetCompetitionUsersSchoolsSchoolIdResponse,
+    GetCompetitionUsersSchoolsSchoolIdError,
+    undefined,
+    {},
+    {},
+    GetCompetitionUsersSchoolsSchoolIdPathParams
+  >({
+    url: "/competition/users/schools/{schoolId}",
+    method: "get",
+    ...variables,
+    signal,
+  });
+
+/**
+ * Get all competition users for the current edition by school.
+ */
+export const useGetCompetitionUsersSchoolsSchoolId = <
+  TData = GetCompetitionUsersSchoolsSchoolIdResponse,
+>(
+  variables: GetCompetitionUsersSchoolsSchoolIdVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<
+      GetCompetitionUsersSchoolsSchoolIdResponse,
+      GetCompetitionUsersSchoolsSchoolIdError,
+      TData
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  >,
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } =
+    useHyperionContext(options);
+  return reactQuery.useQuery<
+    GetCompetitionUsersSchoolsSchoolIdResponse,
+    GetCompetitionUsersSchoolsSchoolIdError,
+    TData
+  >({
+    queryKey: queryKeyFn({
+      path: "/competition/users/schools/{schoolId}",
+      operationId: "getCompetitionUsersSchoolsSchoolId",
+      variables,
+    }),
+    queryFn: ({ signal }) =>
+      fetchGetCompetitionUsersSchoolsSchoolId(
+        { ...fetcherOptions, ...variables },
+        signal,
+      ),
+    ...options,
+    ...queryOptions,
+  });
+};
+
 export type GetCompetitionUsersMeError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetCompetitionUsersMeVariables = HyperionContext["fetcherOptions"];
@@ -31798,6 +31876,11 @@ export type QueryOperation =
       path: "/competition/users";
       operationId: "getCompetitionUsers";
       variables: GetCompetitionUsersVariables;
+    }
+  | {
+      path: "/competition/users/schools/{schoolId}";
+      operationId: "getCompetitionUsersSchoolsSchoolId";
+      variables: GetCompetitionUsersSchoolsSchoolIdVariables;
     }
   | {
       path: "/competition/users/me";
