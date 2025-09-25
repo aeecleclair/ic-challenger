@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ParticipantDataTable } from "@/src/components/admin/license/ParticipantDataTable";
 import { useSports } from "@/src/hooks/useSports";
 import { useUser } from "@/src/hooks/useUser";
@@ -24,6 +24,10 @@ const Dashboard = () => {
   const { me: currentUser } = useUser();
   const { updateLicense, isUpdateLoading } = useLicense();
 
+  const [schoolParticipantsCounter, setSchoolParticipantsCounter] = useState<
+    string[][]
+  >([]);
+
   const searchParam = useSearchParams();
   const schoolId = searchParam.get("school_id");
 
@@ -39,6 +43,33 @@ const Dashboard = () => {
     useSchoolParticipants({
       schoolId: effectiveSchoolId || null,
     });
+
+  useEffect(() => {
+    if (effectiveSchoolId) {
+      refetchParticipantSchools();
+    }
+  }, [effectiveSchoolId, refetchParticipantSchools]);
+
+  useEffect(() => {
+    if (schoolParticipants) {
+      if (schoolParticipantsCounter.find((s) => s[0] === effectiveSchoolId)) {
+        setSchoolParticipantsCounter((prev) => {
+          const newCounter = prev.map((s) =>
+            s[0] === effectiveSchoolId
+              ? [s[0], schoolParticipants.length.toString()]
+              : s,
+          );
+          return newCounter;
+        });
+      } else {
+        setSchoolParticipantsCounter((prev) => [
+          ...prev,
+          [effectiveSchoolId!, schoolParticipants.length.toString()],
+        ]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [schoolParticipants]);
 
   const participants = useMemo(() => {
     return schoolParticipants?.map((participant) => ({
@@ -80,14 +111,22 @@ const Dashboard = () => {
                   key={school.school_id}
                   value={school.school_id}
                   className="relative"
-                  onAbort={() => {
+                  onClick={() => {
                     router.push(`/admin/license?school_id=${school.school_id}`);
                   }}
                 >
                   <div className="flex items-center gap-2">
                     {formatSchoolName(school.school.name)}
                     <Badge variant={"secondary"} className="text-xs">
-                      {participants?.length || 0}
+                      {schoolParticipantsCounter.find(
+                        (s) => s[0] === school.school_id,
+                      )
+                        ? schoolParticipantsCounter.find(
+                            (s) => s[0] === school.school_id,
+                          )![1]
+                        : participants
+                          ? participants.length
+                          : 0}
                     </Badge>
                   </div>
                 </TabsTrigger>

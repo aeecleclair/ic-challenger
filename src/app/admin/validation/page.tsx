@@ -140,59 +140,67 @@ const Dashboard = () => {
 
   const participantTableData: ParticipantData[] = useMemo(() => {
     return (
-      competitionUsers?.map((user) => {
-        const getSportName = (sportId: string) => {
-          return sports?.find((s) => s.id === sportId)?.name || sportId;
-        };
+      competitionUsers
+        ?.filter((user) => user.user.school_id === effectiveSchoolId)
+        .map((user) => {
+          const getSportName = (sportId: string) => {
+            return sports?.find((s) => s.id === sportId)?.name || sportId;
+          };
 
-        const getParticipantType = (user: CompetitionUser) => {
-          const types = [];
-          if (user.is_athlete) types.push("Athlète");
-          if (user.is_pompom) types.push("Pompom");
-          if (user.is_fanfare) types.push("Fanfare");
-          if (user.is_cameraman) types.push("Cameraman");
-          if (user.is_volunteer) types.push("Bénévole");
-          return types.join(", ");
-        };
+          const getParticipantType = (user: CompetitionUser) => {
+            const types = [];
+            if (user.is_athlete) types.push("Athlète");
+            if (user.is_pompom) types.push("Pompom");
+            if (user.is_fanfare) types.push("Fanfare");
+            if (user.is_cameraman) types.push("Cameraman");
+            if (user.is_volunteer) types.push("Bénévole");
+            return types.join(", ");
+          };
 
-        if (user.is_athlete) {
-          const participant = schoolParticipants?.find(
-            (p) => p.user_id === user.user_id,
-          );
+          if (user.is_athlete) {
+            const participant = schoolParticipants?.find(
+              (p) => p.user_id === user.user_id,
+            );
+            return {
+              userId: user.user_id,
+              sportId: participant?.sport_id || "",
+              sportName: getSportName(participant?.sport_id || ""),
+              fullName: `${user.user?.firstname || ""} ${user.user?.name || ""}`,
+              email: user.user?.email || "",
+              isLicenseValid: participant?.is_license_valid || false,
+              teamId: participant?.team_id || "",
+              teamName: participant?.team.name || "",
+              isCaptain: participant?.team.captain_id === user.user_id || false,
+              isSubstitute: participant?.substitute || false,
+              isValidated: participant?.user?.validated || false,
+              participantType: getParticipantType(user),
+              hasPaid: participantPayments[user.user_id],
+            };
+          }
           return {
             userId: user.user_id,
-            sportId: participant?.sport_id || "",
-            sportName: getSportName(participant?.sport_id || ""),
+            sportId: undefined,
+            sportName: undefined,
             fullName: `${user.user?.firstname || ""} ${user.user?.name || ""}`,
             email: user.user?.email || "",
-            isLicenseValid: participant?.is_license_valid || false,
-            teamId: participant?.team_id || "",
-            teamName: participant?.team.name || "",
-            isCaptain: participant?.team.captain_id === user.user_id || false,
-            isSubstitute: participant?.substitute || false,
-            isValidated: participant?.user?.validated || false,
+            isLicenseValid: undefined,
+            teamId: undefined,
+            teamName: undefined,
+            isCaptain: false,
+            isSubstitute: false,
+            isValidated: false,
             participantType: getParticipantType(user),
             hasPaid: participantPayments[user.user_id],
           };
-        }
-        return {
-          userId: user.user_id,
-          sportId: undefined,
-          sportName: undefined,
-          fullName: `${user.user?.firstname || ""} ${user.user?.name || ""}`,
-          email: user.user?.email || "",
-          isLicenseValid: undefined,
-          teamId: undefined,
-          teamName: undefined,
-          isCaptain: false,
-          isSubstitute: false,
-          isValidated: false,
-          participantType: getParticipantType(user),
-          hasPaid: participantPayments[user.user_id],
-        };
-      }) || []
+        }) || []
     );
-  }, [competitionUsers, sports, participantPayments, schoolParticipants]);
+  }, [
+    competitionUsers,
+    sports,
+    participantPayments,
+    schoolParticipants,
+    effectiveSchoolId,
+  ]);
 
   const validatedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {

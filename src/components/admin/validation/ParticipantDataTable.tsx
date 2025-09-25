@@ -328,20 +328,27 @@ export function ParticipantDataTable({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="flex justify-center">
-          {row.getValue("isLicenseValid") ? (
-            <Badge
-              variant="secondary"
-              className="bg-green-100 text-green-800 hover:bg-green-200"
-            >
-              Validée
-            </Badge>
-          ) : (
-            <Badge variant="destructive">Non validée</Badge>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const participantType = row.getValue("participantType") as string;
+        const types = participantType.split(", ");
+        if (!types.includes("Athlète")) {
+          return <div className="text-center text-muted-foreground">-</div>;
+        }
+        return (
+          <div className="flex justify-center">
+            {row.getValue("isLicenseValid") ? (
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-800 hover:bg-green-200"
+              >
+                Validée
+              </Badge>
+            ) : (
+              <Badge variant="destructive">En attente de validation</Badge>
+            )}
+          </div>
+        );
+      },
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
         const value = row.getValue<boolean>(id);
