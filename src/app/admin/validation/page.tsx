@@ -14,6 +14,12 @@ import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "@/src/components/ui/badge";
 import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/src/components/ui/card";
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -316,31 +322,46 @@ const Dashboard = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="px-2 py-1 text-xs"
+                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10"
                   >
                     Quota général
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                  <div className="space-y-1">
-                    {Object.entries(schoolsGeneralQuota).map(([key, value]) => (
-                      <div key={key} className="flex flex-col gap-1">
-                        <div className="flex justify-between gap-2">
-                          <span className="font-medium text-xs text-muted-foreground">
-                            {key.replace(/_/g, " ")}
-                          </span>
-                          <span className="text-xs">Quota: {value ?? 0}</span>
-                        </div>
-                        <div className="flex justify-between gap-2">
-                          <span className="text-xs text-muted-foreground">
-                            Utilisé
-                          </span>
-                          <span className="text-xs">
-                            {validatedCounts[key] ?? 0}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="text-base flex items-center mb-2 text-primary font-semibold">
+                    Détail des quotas généraux
+                  </div>
+                  <div className="space-y-2">
+                    {Object.entries(schoolsGeneralQuota)
+                      .filter(([key]) => !key.toLowerCase().includes("id"))
+                      .map(([key, value]) => {
+                        // Format quota name: replace underscores, add spaces before uppercase, capitalize first letter, remove last word
+                        let formattedName = key
+                          .replace(/_/g, " ")
+                          .replace(/([a-z])([A-Z])/g, "$1 $2")
+                          .replace(/\b\w/g, (c) => c.toUpperCase());
+                        const words = formattedName.split(" ");
+                        if (
+                          words.length > 1 &&
+                          words[words.length - 1].toLowerCase() === "quota"
+                        ) {
+                          formattedName = words.slice(0, -1).join(" ");
+                        }
+                        return (
+                          <div
+                            key={key}
+                            className="flex justify-between items-center gap-2 py-1 px-2"
+                          >
+                            <span className="font-medium text-xs text-muted-foreground">
+                              {formattedName}
+                            </span>
+                            <span className="text-xs font-bold text-primary">
+                              Utilisé: {validatedCounts[key] ?? 0} /{" "}
+                              {value ?? 0}
+                            </span>
+                          </div>
+                        );
+                      })}
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -352,13 +373,16 @@ const Dashboard = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="px-2 py-1 text-xs"
+                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10"
                   >
                     Quota de produit
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                  <div className="space-y-1">
+                  <div className="text-base flex items-center mb-2 text-primary font-semibold">
+                    Détail des quotas produits
+                  </div>
+                  <div className="space-y-2">
                     {schoolsProductQuota.map((value) => {
                       const product = products?.find(
                         (p) => p.id === value.product_id,
@@ -366,12 +390,14 @@ const Dashboard = () => {
                       return (
                         <div
                           key={value.product_id}
-                          className="flex justify-between gap-2"
+                          className="flex justify-between items-center gap-2 py-1 px-2"
                         >
                           <span className="font-medium text-xs text-muted-foreground">
                             {product?.name}
                           </span>
-                          <span className="text-xs">{value.quota}</span>
+                          <span className="text-xs font-bold text-primary">
+                            {value.quota}
+                          </span>
                         </div>
                       );
                     })}
