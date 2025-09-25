@@ -53,7 +53,7 @@ export const RegisterFormField = ({
       allHeaderSubtitles: newSubtitles,
       stepDone: Math.min(state.stepDone, 2),
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSportFields]);
 
   return (

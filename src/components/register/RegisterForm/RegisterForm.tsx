@@ -45,7 +45,7 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
 
   async function onSubmit(values: RegisteringFormValues) {
     setIsLoading(true);
-    router.push("/");
+    router.push("/register");
   }
 
   useEffect(() => {
@@ -110,7 +110,9 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
   }, [meCompetition, meParticipant]);
 
   return meCompetition === undefined ||
-    (meCompetition.is_athlete && meParticipant === undefined) ? (
+    (meCompetition.is_athlete && meParticipant === undefined) ||
+    userPurchases === undefined ||
+    userPurchases.length === 0 ? (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(() => {})}>
         <RegisterFormField
