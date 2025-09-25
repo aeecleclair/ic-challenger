@@ -28,6 +28,7 @@ import {
   MoreHorizontal,
   UserPlus,
   Users,
+  XCircle,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -44,6 +45,7 @@ import {
 } from "@/src/components/ui/tooltip";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
+import { toast } from "../../ui/use-toast";
 
 export interface ParticipantData {
   userId: string;
@@ -65,12 +67,14 @@ interface ParticipantDataTableProps {
   data: ParticipantData[];
   schoolName: string;
   onValidateParticipant: (userId: string) => void;
+  onInvalidateParticipant: (userId: string) => void;
   isLoading: boolean;
 }
 
 export function ParticipantDataTable({
   data,
   onValidateParticipant,
+  onInvalidateParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -426,11 +430,35 @@ export function ParticipantDataTable({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() => onValidateParticipant(participant.userId)}
+                  onClick={() => {
+                    if (participant?.isValidated) {
+                      if (participant?.hasPaid) {
+                        toast({
+                          title: "Erreur",
+                          description:
+                            "Vous ne pouvez pas dévailder un utilisateur ayant payé",
+                          variant: "destructive",
+                        });
+                      } else {
+                        onInvalidateParticipant(participant.userId);
+                      }
+                    } else {
+                      onValidateParticipant(participant.userId);
+                    }
+                  }}
                   disabled={isLoading}
                 >
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Valider
+                  {participant?.isValidated ? (
+                    <>
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Invalider
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Valider
+                    </>
+                  )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

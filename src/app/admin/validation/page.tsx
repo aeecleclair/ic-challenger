@@ -80,9 +80,6 @@ const Dashboard = () => {
     schoolId: effectiveSchoolId || "",
   });
 
-  const { teams: schoolSportTeams } = useSchoolSportTeams({
-    schoolId: effectiveSchoolId,
-  });
 
   const {
     competitionUsers,
@@ -137,6 +134,10 @@ const Dashboard = () => {
   const onValidate = (userId: string) => {
     validateCompetitionUser(userId, () => {});
   };
+
+  const onInvalidate = (userId: string) => {
+    invalidateCompetitionUser(userId, () => {});
+  }
 
   const participantTableData: ParticipantData[] = useMemo(() => {
     return (
@@ -314,18 +315,32 @@ const Dashboard = () => {
       {school && (
         <>
           <div className="mb-6 flex items-center gap-4">
-            <div className="text-lg font-semibold mb-1">Quotas généraux</div>
+            <div className="text-lg font-semibold mb-1">
+              Quotas de{" "}
+              {school ? formatSchoolName(school.school.name) : "l'école"}
+            </div>
 
             {schoolsGeneralQuota && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10"
-                  >
-                    Quota général
-                  </Button>
+                  {(() => {
+                    const hasExceeded = Object.entries(schoolsGeneralQuota)
+                      .filter(([key]) => !key.toLowerCase().includes("id"))
+                      .some(([key, value]) => {
+                        const used = validatedCounts[key] ?? 0;
+                        const quota = (value as number) ?? 0;
+                        return used > quota;
+                      });
+                    return (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`px-2 py-1 text-xs border-primary hover:bg-primary/10${hasExceeded ? " text-red-600" : " text-primary"}`}
+                      >
+                        Quota général
+                      </Button>
+                    );
+                  })()}
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
                   <div className="text-base flex items-center mb-2 text-primary font-semibold">
@@ -335,7 +350,6 @@ const Dashboard = () => {
                     {Object.entries(schoolsGeneralQuota)
                       .filter(([key]) => !key.toLowerCase().includes("id"))
                       .map(([key, value]) => {
-                        // Format quota name: replace underscores, add spaces before uppercase, capitalize first letter, remove last word
                         let formattedName = key
                           .replace(/_/g, " ")
                           .replace(/([a-z])([A-Z])/g, "$1 $2")
@@ -347,17 +361,23 @@ const Dashboard = () => {
                         ) {
                           formattedName = words.slice(0, -1).join(" ");
                         }
+                        const used = validatedCounts[key] ?? 0;
+                        const quota = (value as number) ?? 0;
+                        const exceeded = used > quota;
                         return (
                           <div
                             key={key}
                             className="flex justify-between items-center gap-2 py-1 px-2"
                           >
-                            <span className="font-medium text-xs text-muted-foreground">
+                            <span
+                              className={`font-medium text-xs text-muted-foreground${exceeded ? " text-red-600" : ""}`}
+                            >
                               {formattedName}
                             </span>
-                            <span className="text-xs font-bold text-primary">
-                              Utilisé: {validatedCounts[key] ?? 0} /{" "}
-                              {value ?? 0}
+                            <span
+                              className={`text-xs font-bold${exceeded ? " text-red-600" : " text-primary"}`}
+                            >
+                              Utilisé: {used} / {quota}
                             </span>
                           </div>
                         );
@@ -419,6 +439,7 @@ const Dashboard = () => {
                 data={participantTableData}
                 schoolName={formatSchoolName(school.school.name) || "École"}
                 onValidateParticipant={onValidate}
+                onInvalidateParticipant={onInvalidate}
                 isLoading={isValidateLoading || isInvalidateLoading}
               />
             </div>
