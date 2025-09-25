@@ -2223,14 +2223,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-big-calendar@npm:^1.16.2":
-  version: 1.16.2
-  resolution: "@types/react-big-calendar@npm:1.16.2"
+"@types/react-big-calendar@npm:^1.16.3":
+  version: 1.16.3
+  resolution: "@types/react-big-calendar@npm:1.16.3"
   dependencies:
     "@types/date-arithmetic": "npm:*"
     "@types/prop-types": "npm:*"
     "@types/react": "npm:*"
-  checksum: 10c0/a2ea4116b999cf8dac014fdc4a9f0c10fb2fd9d9886857e93649c0a601057e93e73e3d9096a756b76e227e08f68e4c979f91bf4cfd96692aea3ab7f3df0745d0
+  checksum: 10c0/c913260ecb4764acdeee07da0ca0bac880ec6120d171558cd6644cbbf7d06ae5ea7f220c7cbd6063801ec972c1df9295c17f2f38260280aab76bf5d1a7719290
   languageName: node
   linkType: hard
 
@@ -6838,7 +6838,7 @@ __metadata:
     "@types/node": "npm:^22"
     "@types/qs": "npm:^6.9.12"
     "@types/react": "npm:18"
-    "@types/react-big-calendar": "npm:^1.16.2"
+    "@types/react-big-calendar": "npm:^1.16.3"
     "@types/react-dom": "npm:18"
     "@types/react-input-mask": "npm:^2"
     "@types/utf8": "npm:^3.0.3"
@@ -6864,7 +6864,7 @@ __metadata:
     prettier: "npm:3.2.5"
     qs: "npm:^6.11.2"
     react: "npm:^18"
-    react-big-calendar: "npm:^1.19.2"
+    react-big-calendar: "npm:^1.19.4"
     react-circular-progressbar: "npm:^2.1.0"
     react-currency-input-field: "npm:^3.8.0"
     react-day-picker: "npm:^8.10.0"
@@ -6901,9 +6901,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-big-calendar@npm:^1.19.2":
-  version: 1.19.2
-  resolution: "react-big-calendar@npm:1.19.2"
+"react-big-calendar@npm:^1.19.4":
+  version: 1.19.4
+  resolution: "react-big-calendar@npm:1.19.4"
   dependencies:
     "@babel/runtime": "npm:^7.20.7"
     clsx: "npm:^1.2.1"
@@ -6924,7 +6924,7 @@ __metadata:
   peerDependencies:
     react: ^16.14.0 || ^17 || ^18 || ^19
     react-dom: ^16.14.0 || ^17 || ^18 || ^19
-  checksum: 10c0/d60b12733d6c0dfb1b3bf89226a18b613dff66b3a4e03d90b0e7a68ad90478a3f4150b859a803474bfa98730bad3be622dc94326e90ac998e2e78ab36cef74db
+  checksum: 10c0/78730e6396c06a27b24af860fa64d063f6407ccd12546116eb8cb2f274d827891c68a701b9c83f9903f63e5dea03fb6a3dd46d6a0a9186b3ab2f7e1d994fe86b
   languageName: node
   linkType: hard
 
