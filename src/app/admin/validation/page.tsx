@@ -153,18 +153,6 @@ const Dashboard = () => {
           const participant = schoolParticipants?.find(
             (p) => p.user_id === user.user_id,
           );
-
-          let teamName: string | undefined = undefined;
-          if (
-            participant?.team_id &&
-            participant?.sport_id &&
-            schoolSportTeams
-          ) {
-            const team = schoolSportTeams?.find(
-              (t) => t.id === participant.team_id,
-            );
-            teamName = team?.name;
-          }
           return {
             userId: user.user_id,
             sportId: participant?.sport_id || "",
@@ -173,8 +161,8 @@ const Dashboard = () => {
             email: user.user?.email || "",
             isLicenseValid: participant?.is_license_valid || false,
             teamId: participant?.team_id || "",
-            teamName,
-            isCaptain: false,
+            teamName: participant?.team.name || "",
+            isCaptain: participant?.team.captain_id === user.user_id || false,
             isSubstitute: participant?.substitute || false,
             isValidated: participant?.user?.validated || false,
             participantType: getParticipantType(user),
@@ -198,13 +186,7 @@ const Dashboard = () => {
         };
       }) || []
     );
-  }, [
-    competitionUsers,
-    sports,
-    participantPayments,
-    schoolParticipants,
-    schoolSportTeams,
-  ]);
+  }, [competitionUsers, sports, participantPayments, schoolParticipants]);
 
   const validatedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {
