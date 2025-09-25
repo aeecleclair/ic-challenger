@@ -252,6 +252,7 @@ export default function MapComponent({
         delete (container as any)._leaflet_id;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -382,6 +383,7 @@ export default function MapComponent({
     };
 
     updateEditMarker().catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingLocation]);
 
   useEffect(() => {
