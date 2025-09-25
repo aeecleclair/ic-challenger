@@ -14,6 +14,12 @@ import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "@/src/components/ui/badge";
 import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/src/components/ui/card";
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -21,7 +27,7 @@ import {
 } from "@/src/components/ui/tabs";
 import { Trophy } from "lucide-react";
 import { GlobalQuotaCard } from "@/src/components/admin/validation/GlobalQuotaCard";
-import { SportQuotaCard } from "@/src/components/admin/validation/SportQuotaCard";
+
 import { fetchGetCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
@@ -34,6 +40,10 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { useSchoolsProductQuota } from "@/src/hooks/useSchoolsProductQuota";
 import { useProducts } from "@/src/hooks/useProducts";
+import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
+import { CompetitionUser } from "@/src/api/hyperionSchemas";
+import { useTeams } from "@/src/hooks/useTeams";
+import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -66,12 +76,18 @@ const Dashboard = () => {
 
   const effectiveSchoolId = schoolId || userSchoolId;
 
-  const { schoolParticipants, error } = useSchoolParticipants({
-    schoolId: effectiveSchoolId || null,
+  const { schoolParticipants } = useSchoolParticipants({
+    schoolId: effectiveSchoolId || "",
   });
 
-  const { validateParticipants, isValidateLoading, refetchMeCompetition } =
-    useCompetitionUser();
+
+  const {
+    competitionUsers,
+    validateCompetitionUser,
+    isValidateLoading,
+    invalidateCompetitionUser,
+    isInvalidateLoading,
+  } = useCompetitionUsers();
 
   const { sportsQuota } = useSportsQuota({ sportId: undefined });
 
@@ -116,49 +132,69 @@ const Dashboard = () => {
   );
 
   const onValidate = (userId: string) => {
-    validateParticipants(userId, () => {});
+    validateCompetitionUser(userId, () => {});
   };
+
+  const onInvalidate = (userId: string) => {
+    invalidateCompetitionUser(userId, () => {});
+  }
 
   const participantTableData: ParticipantData[] = useMemo(() => {
     return (
-      schoolParticipants?.map((participant) => {
+      competitionUsers?.map((user) => {
         const getSportName = (sportId: string) => {
           return sports?.find((s) => s.id === sportId)?.name || sportId;
         };
 
-        const getParticipantType = (participant: any) => {
+        const getParticipantType = (user: CompetitionUser) => {
           const types = [];
-
-          types.push("Athlète");
-
-          if (participant.user?.is_pompom) types.push("Pompom");
-          if (participant.user?.is_fanfare) types.push("Fanfare");
-          if (participant.user?.is_cameraman) types.push("Cameraman");
-          if (participant.user?.is_volunteer) types.push("Bénévole");
-
+          if (user.is_athlete) types.push("Athlète");
+          if (user.is_pompom) types.push("Pompom");
+          if (user.is_fanfare) types.push("Fanfare");
+          if (user.is_cameraman) types.push("Cameraman");
+          if (user.is_volunteer) types.push("Bénévole");
           return types.join(", ");
         };
 
+        if (user.is_athlete) {
+          const participant = schoolParticipants?.find(
+            (p) => p.user_id === user.user_id,
+          );
+          return {
+            userId: user.user_id,
+            sportId: participant?.sport_id || "",
+            sportName: getSportName(participant?.sport_id || ""),
+            fullName: `${user.user?.firstname || ""} ${user.user?.name || ""}`,
+            email: user.user?.email || "",
+            isLicenseValid: participant?.is_license_valid || false,
+            teamId: participant?.team_id || "",
+            teamName: participant?.team.name || "",
+            isCaptain: participant?.team.captain_id === user.user_id || false,
+            isSubstitute: participant?.substitute || false,
+            isValidated: participant?.user?.validated || false,
+            participantType: getParticipantType(user),
+            hasPaid: participantPayments[user.user_id],
+          };
+        }
         return {
-          userId: participant.user_id,
-          sportId: participant.sport_id,
-          sportName: getSportName(participant.sport_id),
-          fullName: `${participant.user?.user?.firstname || ""} ${participant.user?.user?.name || ""}`,
-          email: participant.user?.user?.email || "",
-          license: participant.license || "",
-          teamId: participant.team_id,
-          teamName: null,
+          userId: user.user_id,
+          sportId: undefined,
+          sportName: undefined,
+          fullName: `${user.user?.firstname || ""} ${user.user?.name || ""}`,
+          email: user.user?.email || "",
+          isLicenseValid: undefined,
+          teamId: undefined,
+          teamName: undefined,
           isCaptain: false,
-          isSubstitute: participant.substitute || false,
-          isValidated: participant.user?.validated || false,
-          participantType: getParticipantType(participant),
-          hasPaid: participantPayments[participant.user_id],
+          isSubstitute: false,
+          isValidated: false,
+          participantType: getParticipantType(user),
+          hasPaid: participantPayments[user.user_id],
         };
       }) || []
     );
-  }, [schoolParticipants, sports, participantPayments]);
+  }, [competitionUsers, sports, participantPayments, schoolParticipants]);
 
-  // Helper to count validated users for each quota type
   const validatedCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = {
       athlete_quota: 0,
@@ -174,12 +210,11 @@ const Dashboard = () => {
     };
     participantTableData.forEach((p) => {
       if (p.isValidated) {
-        // Athlete
         if (p.participantType.includes("Athlète")) counts.athlete_quota++;
         if (p.participantType.includes("Cameraman")) counts.cameraman_quota++;
         if (p.participantType.includes("Pompom")) counts.pompom_quota++;
         if (p.participantType.includes("Fanfare")) counts.fanfare_quota++;
-        // Combinations
+
         if (
           p.participantType.includes("Athlète") &&
           p.participantType.includes("Cameraman")
@@ -213,26 +248,6 @@ const Dashboard = () => {
       }
     });
     return counts;
-  }, [participantTableData]);
-
-  const participantsBySport = useMemo(() => {
-    return participantTableData.reduce(
-      (acc, participant) => {
-        const sportId = participant.sportId;
-        if (!acc[sportId]) {
-          acc[sportId] = {
-            sportName: participant.sportName,
-            participants: [],
-          };
-        }
-        acc[sportId].participants.push(participant);
-        return acc;
-      },
-      {} as Record<
-        string,
-        { sportName: string; participants: ParticipantData[] }
-      >,
-    );
   }, [participantTableData]);
 
   useEffect(() => {
@@ -278,7 +293,6 @@ const Dashboard = () => {
   }
 
   const school = sportSchools?.find((s) => s.school_id === effectiveSchoolId);
-  const sportsWithParticipants = Object.entries(participantsBySport);
 
   const totalParticipants = participantTableData.length;
   const totalValidated = participantTableData.filter(
@@ -301,29 +315,73 @@ const Dashboard = () => {
       {school && (
         <>
           <div className="mb-6 flex items-center gap-4">
-            <div className="text-lg font-semibold mb-1">Quotas généraux</div>
+            <div className="text-lg font-semibold mb-1">
+              Quotas de{" "}
+              {school ? formatSchoolName(school.school.name) : "l'école"}
+            </div>
 
             {schoolsGeneralQuota && (
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="px-2 py-1 text-xs"
-                  >
-                    Quota général
-                  </Button>
+                  {(() => {
+                    const hasExceeded = Object.entries(schoolsGeneralQuota)
+                      .filter(([key]) => !key.toLowerCase().includes("id"))
+                      .some(([key, value]) => {
+                        const used = validatedCounts[key] ?? 0;
+                        const quota = (value as number) ?? 0;
+                        return used > quota;
+                      });
+                    return (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`px-2 py-1 text-xs border-primary hover:bg-primary/10${hasExceeded ? " text-red-600" : " text-primary"}`}
+                      >
+                        Quota général
+                      </Button>
+                    );
+                  })()}
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                  <div className="space-y-1">
-                    {Object.entries(schoolsGeneralQuota).map(([key, value]) => (
-                      <div key={key} className="flex justify-between gap-2">
-                        <span className="font-medium text-xs text-muted-foreground">
-                          {key.replace(/_/g, " ")}
-                        </span>
-                        <span className="text-xs">{value ?? 0}</span>
-                      </div>
-                    ))}
+                  <div className="text-base flex items-center mb-2 text-primary font-semibold">
+                    Détail des quotas généraux
+                  </div>
+                  <div className="space-y-2">
+                    {Object.entries(schoolsGeneralQuota)
+                      .filter(([key]) => !key.toLowerCase().includes("id"))
+                      .map(([key, value]) => {
+                        let formattedName = key
+                          .replace(/_/g, " ")
+                          .replace(/([a-z])([A-Z])/g, "$1 $2")
+                          .replace(/\b\w/g, (c) => c.toUpperCase());
+                        const words = formattedName.split(" ");
+                        if (
+                          words.length > 1 &&
+                          words[words.length - 1].toLowerCase() === "quota"
+                        ) {
+                          formattedName = words.slice(0, -1).join(" ");
+                        }
+                        const used = validatedCounts[key] ?? 0;
+                        const quota = (value as number) ?? 0;
+                        const exceeded = used > quota;
+                        return (
+                          <div
+                            key={key}
+                            className="flex justify-between items-center gap-2 py-1 px-2"
+                          >
+                            <span
+                              className={`font-medium text-xs text-muted-foreground${exceeded ? " text-red-600" : ""}`}
+                            >
+                              {formattedName}
+                            </span>
+                            <span
+                              className={`text-xs font-bold${exceeded ? " text-red-600" : " text-primary"}`}
+                            >
+                              Utilisé: {used} / {quota}
+                            </span>
+                          </div>
+                        );
+                      })}
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -335,21 +393,31 @@ const Dashboard = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="px-2 py-1 text-xs"
+                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10"
                   >
                     Quota de produit
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
-                  <div className="space-y-1">
+                  <div className="text-base flex items-center mb-2 text-primary font-semibold">
+                    Détail des quotas produits
+                  </div>
+                  <div className="space-y-2">
                     {schoolsProductQuota.map((value) => {
-                      const product = products?.find((p) => p.id === value.product_id);
+                      const product = products?.find(
+                        (p) => p.id === value.product_id,
+                      );
                       return (
-                        <div key={value.product_id} className="flex justify-between gap-2">
+                        <div
+                          key={value.product_id}
+                          className="flex justify-between items-center gap-2 py-1 px-2"
+                        >
                           <span className="font-medium text-xs text-muted-foreground">
                             {product?.name}
                           </span>
-                          <span className="text-xs">{value.quota}</span>
+                          <span className="text-xs font-bold text-primary">
+                            {value.quota}
+                          </span>
                         </div>
                       );
                     })}
@@ -365,75 +433,24 @@ const Dashboard = () => {
             sportQuotas={sportsQuota || []}
             schoolName={formatSchoolName(school.school.name) || "École"}
           />
-        </>
-      )}
-
-      {sportsWithParticipants.length > 0 ? (
-        <Tabs defaultValue={sportsWithParticipants[0]?.[0]} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6">
-            {sportsWithParticipants.map(
-              ([sportId, { sportName, participants }]) => {
-                const quota = sportsQuota?.find(
-                  (q: any) => q.sport_id === sportId,
-                );
-                const isOverQuota =
-                  quota && participants.length > (quota.participant_quota || 0);
-
-                return (
-                  <TabsTrigger
-                    key={sportId}
-                    value={sportId}
-                    className="relative"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4" />
-                      {sportName}
-                      <Badge
-                        variant={isOverQuota ? "destructive" : "secondary"}
-                        className="text-xs"
-                      >
-                        {participants.length}
-                      </Badge>
-                    </div>
-                  </TabsTrigger>
-                );
-              },
-            )}
-          </TabsList>
-
-          {sportsWithParticipants.map(
-            ([sportId, { sportName, participants }]) => {
-              const quota = sportsQuota?.find(
-                (q: any) => q.sport_id === sportId,
-              );
-
-              return (
-                <TabsContent key={sportId} value={sportId}>
-                  <SportQuotaCard
-                    sportId={sportId}
-                    sportName={sportName}
-                    participants={participants}
-                    quota={quota}
-                    onValidateParticipant={onValidate}
-                    isLoading={isValidateLoading}
-                    schoolId={effectiveSchoolId || ""}
-                    schoolName={
-                      school
-                        ? formatSchoolName(school.school.name) || "École"
-                        : "École"
-                    }
-                  />
-                </TabsContent>
-              );
-            },
+          {participantTableData?.length > 0 ? (
+            <div className="overflow-y-auto">
+              <ParticipantDataTable
+                data={participantTableData}
+                schoolName={formatSchoolName(school.school.name) || "École"}
+                onValidateParticipant={onValidate}
+                onInvalidateParticipant={onInvalidate}
+                isLoading={isValidateLoading || isInvalidateLoading}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full mt-10">
+              <p className="text-gray-500">
+                Aucun participant trouvé pour cette école
+              </p>
+            </div>
           )}
-        </Tabs>
-      ) : (
-        <div className="flex items-center justify-center h-full mt-10">
-          <p className="text-gray-500">
-            Aucun participant trouvé pour cette école
-          </p>
-        </div>
+        </>
       )}
     </div>
   );

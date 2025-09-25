@@ -4,12 +4,24 @@ import { Cross2Icon } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/src/components/ui/button";
+import React, { useMemo } from "react";
 import { Input } from "@/src/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/src/components/ui/select";
 import { DataTableFacetedFilter } from "../registered-table/DataTableFacetedFilter";
 import { DataTableFilterCheckBox } from "../registered-table/DataTableFilterCheckBox";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
+  sports: {
+    label: string;
+    value: string;
+  }[];
   typeOptions: {
     label: string;
     value: string;
@@ -19,6 +31,7 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
   table,
   typeOptions,
+  sports,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -36,6 +49,14 @@ export function DataTableToolbar<TData>({
           className="h-8 max-w-sm"
         />
 
+        {table.getColumn("sportName") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("sportName")}
+            title="Sport"
+            options={sports}
+          />
+        )}
+
         {table.getColumn("participantType") && (
           <DataTableFacetedFilter
             column={table.getColumn("participantType")}
@@ -44,10 +65,17 @@ export function DataTableToolbar<TData>({
           />
         )}
 
-        {table.getColumn("license") && (
+        {table.getColumn("isLicenseValid") && (
           <DataTableFilterCheckBox
-            column={table.getColumn("license")}
-            title="Licence"
+            column={table.getColumn("isLicenseValid")}
+            title="Licence valide"
+          />
+        )}
+
+        {table.getColumn("isCaptain") && (
+          <DataTableFilterCheckBox
+            column={table.getColumn("isCaptain")}
+            title="Capitaine"
           />
         )}
 
@@ -61,7 +89,7 @@ export function DataTableToolbar<TData>({
         {table.getColumn("isValidated") && (
           <DataTableFilterCheckBox
             column={table.getColumn("isValidated")}
-            title="Validé"
+            title="Inscription validée"
           />
         )}
 

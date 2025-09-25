@@ -22,7 +22,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, CheckCircle, MoreHorizontal, Users } from "lucide-react";
+import {
+  ArrowUpDown,
+  CheckCircle,
+  MoreHorizontal,
+  UserPlus,
+  Users,
+  XCircle,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,16 +45,17 @@ import {
 } from "@/src/components/ui/tooltip";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
+import { toast } from "../../ui/use-toast";
 
 export interface ParticipantData {
   userId: string;
-  sportId: string;
-  sportName: string;
+  sportId?: string;
+  sportName?: string;
   fullName: string;
   email: string;
-  license: string;
-  teamId?: string | null;
-  teamName?: string | null;
+  isLicenseValid?: boolean;
+  teamId?: string;
+  teamName?: string;
   isSubstitute: boolean;
   isValidated: boolean;
   isCaptain: boolean;
@@ -58,13 +66,15 @@ export interface ParticipantData {
 interface ParticipantDataTableProps {
   data: ParticipantData[];
   schoolName: string;
-  onValidateParticipant: (userId: string, sportId: string) => void;
+  onValidateParticipant: (userId: string) => void;
+  onInvalidateParticipant: (userId: string) => void;
   isLoading: boolean;
 }
 
 export function ParticipantDataTable({
   data,
   onValidateParticipant,
+  onInvalidateParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -72,9 +82,46 @@ export function ParticipantDataTable({
     [],
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      isCaptain: false,
+      isSubstitute: false,
+      searchField: false,
+    });
+
+  const sports = React.useMemo(() => {
+    const sportSet = new Set<string>();
+    data.forEach((participant) => {
+      if (participant.sportName) {
+        sportSet.add(participant.sportName);
+      }
+    });
+    return Array.from(sportSet).map((sport) => ({
+      label: sport,
+      value: sport,
+    }));
+  }, [data]);
 
   const columns: ColumnDef<ParticipantData>[] = [
+    {
+      accessorKey: "isCaptain",
+      header: "Capitaine",
+      enableHiding: true,
+      cell: () => null,
+      filterFn: (row, id, value) => {
+        if (value === undefined) return true;
+        return row.getValue<boolean>(id) === value;
+      },
+    },
+    {
+      accessorKey: "isSubstitute",
+      header: "Remplaçant",
+      enableHiding: true,
+      cell: () => null,
+      filterFn: (row, id, value) => {
+        if (value === undefined) return true;
+        return row.getValue<boolean>(id) === value;
+      },
+    },
     {
       id: "searchField",
       accessorFn: (row) => `${row.fullName} ${row.email}`.toLowerCase(),
@@ -100,6 +147,7 @@ export function ParticipantDataTable({
       cell: ({ row }) => {
         const fullName = row.getValue("fullName") as string;
         const isCaptain = row.original.isCaptain;
+        const isSubstitute = row.original.isSubstitute;
 
         return (
           <div className="font-medium text-center flex items-center justify-center gap-2">
@@ -113,6 +161,20 @@ export function ParticipantDataTable({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Capitaine d&apos;équipe</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            {isSubstitute && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <UserPlus className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Remplaçant</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -139,20 +201,20 @@ export function ParticipantDataTable({
       ),
     },
     {
-      accessorKey: "license",
+      accessorKey: "sportName",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Licence
+          Sport
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="text-center">
-          {row.getValue("license") || "Non renseignée"}
+        <div className="flex justify-center">
+          <Badge variant="secondary">{row.getValue("sportName") || "-"}</Badge>
         </div>
       ),
       filterFn: (row, id, filterValue) => {
@@ -255,23 +317,28 @@ export function ParticipantDataTable({
       },
     },
     {
-      accessorKey: "isSubstitute",
+      accessorKey: "isLicenseValid",
       header: ({ column }) => (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Remplaçant
+          License
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
         <div className="flex justify-center">
-          {row.getValue("isSubstitute") ? (
-            <Badge variant="outline">Oui</Badge>
+          {row.getValue("isLicenseValid") ? (
+            <Badge
+              variant="secondary"
+              className="bg-green-100 text-green-800 hover:bg-green-200"
+            >
+              Validée
+            </Badge>
           ) : (
-            <Badge variant="secondary">Non</Badge>
+            <Badge variant="destructive">Non validée</Badge>
           )}
         </div>
       ),
@@ -289,7 +356,7 @@ export function ParticipantDataTable({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex items-center"
         >
-          Validé
+          Inscription
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -300,10 +367,10 @@ export function ParticipantDataTable({
               variant="secondary"
               className="bg-green-100 text-green-800 hover:bg-green-200"
             >
-              Oui
+              Validée
             </Badge>
           ) : (
-            <Badge variant="destructive">Non</Badge>
+            <Badge variant="destructive">Non validée</Badge>
           )}
         </div>
       ),
@@ -363,16 +430,35 @@ export function ParticipantDataTable({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
-                  onClick={() =>
-                    onValidateParticipant(
-                      participant.userId,
-                      participant.sportId,
-                    )
-                  }
+                  onClick={() => {
+                    if (participant?.isValidated) {
+                      if (participant?.hasPaid) {
+                        toast({
+                          title: "Erreur",
+                          description:
+                            "Vous ne pouvez pas dévailder un utilisateur ayant payé",
+                          variant: "destructive",
+                        });
+                      } else {
+                        onInvalidateParticipant(participant.userId);
+                      }
+                    } else {
+                      onValidateParticipant(participant.userId);
+                    }
+                  }}
                   disabled={isLoading}
                 >
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Valider
+                  {participant?.isValidated ? (
+                    <>
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Invalider
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Valider
+                    </>
+                  )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -421,7 +507,11 @@ export function ParticipantDataTable({
 
   return (
     <div>
-      <DataTableToolbar table={table} typeOptions={participantTypes} />
+      <DataTableToolbar
+        table={table}
+        typeOptions={participantTypes}
+        sports={sports}
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader>

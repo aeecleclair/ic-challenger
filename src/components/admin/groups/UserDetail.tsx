@@ -154,7 +154,7 @@ const UserDetail = ({ user, onEdit, onRemoveFromGroup }: UserDetailProps) => {
                   École
                 </p>
                 <p className="text-lg font-bold text-purple-600 font-mono">
-                  {user.user.school?.name}
+                  {formatSchoolName(user.user.school?.name)}
                 </p>
               </div>
             </div>
