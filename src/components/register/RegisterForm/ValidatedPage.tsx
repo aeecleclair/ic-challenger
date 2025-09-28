@@ -19,8 +19,10 @@ import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase } from "@/src/api/hyperionSchemas";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
+import { useRouter } from "next/navigation";
 
 export const ValidatedPage = () => {
+  const router = useRouter();
   const { availableProducts } = useAvailableProducts();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,14 +37,12 @@ export const ValidatedPage = () => {
   const {
     hasPaid,
     isLoading: isPaymentsLoading,
-    refetchPayments,
   } = useUserPayments();
 
   const handlePaymentRefetch = () => {
     getPaymentUrl((paymentUrl) => {
       setIsPaymentDialogOpened(false);
-      refetchPayments();
-      window.location.href = paymentUrl;
+      router.push(paymentUrl);
     });
   };
 
