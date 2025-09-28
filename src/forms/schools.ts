@@ -9,7 +9,6 @@ export const schoolFormSchema = z.object({
   fromLyon: z.boolean(),
   active: z.boolean(),
   inscription_enabled: z.boolean(),
-  ffsu_id: z.string().optional(),
 });
 
 export type SchoolFormValues = z.infer<typeof schoolFormSchema>;

@@ -28,7 +28,6 @@ const Dashboard = () => {
       fromLyon: false,
       active: true,
       inscription_enabled: false,
-      ffsu_id: undefined,
     },
     mode: "onChange",
   });
@@ -44,7 +43,6 @@ const Dashboard = () => {
       from_lyon: values.fromLyon,
       active: values.active,
       inscription_enabled: values.inscription_enabled,
-      ffsu_id: values.ffsu_id ?? undefined,
     };
     createCompetitionSchool(body, () => {
       form.reset();

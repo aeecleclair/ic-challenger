@@ -171,11 +171,6 @@ const SchoolDetail = ({ school, onEdit, onDelete }: SchoolDetailProps) => {
                 {school.inscription_enabled ? "ouvertes" : "fermées"}
               </Badge>
             </div>
-            {school.ffsu_id && (
-              <span className="inline-flex items-center mt-2">
-                FFSU ID: {school.ffsu_id}
-              </span>
-            )}
           </div>
           <div className="flex gap-2">
             <Button

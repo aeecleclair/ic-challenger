@@ -60,14 +60,6 @@ export const SchoolsForm = ({
               </Select>
             )}
           />
-          <StyledFormField
-            form={form}
-            label="FFSU ID"
-            id="ffsu_id"
-            input={(field) => (
-              <Input placeholder="Identifiant FFSU (si connu)" {...field} />
-            )}
-          />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <StyledFormField

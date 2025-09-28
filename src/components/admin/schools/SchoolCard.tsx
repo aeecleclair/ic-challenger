@@ -69,11 +69,6 @@ export const SchoolCard = ({
             </Badge>
           )}
         </div>
-        {school.ffsu_id && (
-          <span className="inline-flex items-center mt-2 text-sm text-muted-foreground">
-            FFSU ID: {school.ffsu_id}
-          </span>
-        )}
       </CardHeader>
 
       <CardContent className="py-3">
