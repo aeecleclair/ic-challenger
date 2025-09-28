@@ -354,6 +354,13 @@ export function ParticipantDataTable({
         const value = row.getValue<boolean>(id);
         return filterValue === true ? value === true : true;
       },
+      sortingFn: (rowA, rowB) => {
+        const a = rowA.original;
+        const b = rowB.original;
+        if (a.isLicenseValid === b.isLicenseValid) return 0;
+        if (a.isLicenseValid) return -1;
+        return 1;
+      },
     },
     {
       accessorKey: "isValidated",
@@ -367,24 +374,45 @@ export function ParticipantDataTable({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="flex justify-center">
-          {row.getValue("isValidated") ? (
-            <Badge
-              variant="secondary"
-              className="bg-green-100 text-green-800 hover:bg-green-200"
-            >
-              Validée
-            </Badge>
-          ) : (
-            <Badge variant="destructive">Non validée</Badge>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const participant = row.original;
+        return !participant.isValidated ? (
+          <Badge variant="destructive">Non validée</Badge>
+        ) : participant.hasPaid === undefined ? (
+          <Badge variant="outline" className="bg-gray-100 text-gray-600">
+            Validé : Paiement inconnu
+          </Badge>
+        ) : !participant.hasPaid ? (
+          <Badge
+            variant="secondary"
+            className="bg-blue-100 text-blue-800 hover:bg-blue-200"
+          >
+            En attente de paiement
+          </Badge>
+        ) : (
+          <Badge
+            variant="secondary"
+            className="bg-green-100 text-green-800 hover:bg-green-200"
+          >
+            Validé et Payé
+          </Badge>
+        );
+      },
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
         const value = row.getValue<boolean>(id);
         return filterValue === true ? value === true : true;
+      },
+      sortingFn: (rowA, rowB) => {
+        const a = rowA.original;
+        const b = rowB.original;
+        if (a.isValidated === b.isValidated) {
+          if (a.hasPaid === b.hasPaid) return 0;
+          if (a.hasPaid) return -1;
+          return 1;
+        }
+        if (a.isValidated) return -1;
+        return 1;
       },
     },
     {
@@ -392,35 +420,6 @@ export function ParticipantDataTable({
       header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => {
         const participant = row.original;
-
-        if (participant.isValidated) {
-          const hasPaid = participant.hasPaid;
-
-          if (hasPaid === undefined) {
-            return (
-              <div className="flex justify-center">
-                <Badge variant="outline" className="bg-gray-100 text-gray-600">
-                  Paiement: Inconnu
-                </Badge>
-              </div>
-            );
-          }
-
-          return (
-            <div className="flex justify-center">
-              {hasPaid ? (
-                <Badge
-                  variant="secondary"
-                  className="bg-green-100 text-green-800 hover:bg-green-200"
-                >
-                  Payé
-                </Badge>
-              ) : (
-                <Badge variant="destructive">En attente de paiement</Badge>
-              )}
-            </div>
-          );
-        }
 
         return (
           <div className="flex justify-center">
@@ -548,36 +547,29 @@ export function ParticipantDataTable({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.length > 0 ? (
-              table
-                .getRowModel()
-                .rows.sort((a, b) =>
-                  (a.getValue("fullName") as string).localeCompare(
-                    b.getValue("fullName") as string,
-                  ),
-                )
-                .map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => {
-                      if (cell.column.id === "searchField") return null;
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    if (cell.column.id === "searchField") return null;
 
-                      return (
-                        <TableCell
-                          key={cell.id}
-                          className={
-                            cell.column.id === "actions"
-                              ? "text-center"
-                              : "text-center"
-                          }
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={
+                          cell.column.id === "actions"
+                            ? "text-center"
+                            : "text-center"
+                        }
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
             ) : (
               <TableRow>
                 <TableCell

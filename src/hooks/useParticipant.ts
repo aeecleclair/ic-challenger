@@ -1,4 +1,5 @@
 import {
+  useDeleteCompetitionSportsSportIdWithdraw,
   useGetCompetitionParticipantsMe,
   usePostCompetitionSportsSportIdParticipate,
 } from "@/src/api/hyperionComponents";
@@ -70,11 +71,50 @@ export const useParticipant = () => {
     );
   };
 
+  const { mutate: mutateWithdrawParticipant, isPending: isWithdrawalLoading } =
+    useDeleteCompetitionSportsSportIdWithdraw();
+
+  const withdrawParticipant = async (sportId: string, callback: () => void) => {
+    return mutateWithdrawParticipant(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          sportId: sportId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la désinscription",
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchMeParticipant();
+            callback();
+            toast({
+              title: "Désinscription enregistrée",
+              description: "Votre désinscription a été effectuée avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   return {
     meParticipant,
     refetchMeParticipant,
     error,
     createParticipant,
     isCreateLoading,
+    withdrawParticipant,
+    isWithdrawalLoading,
   };
 };

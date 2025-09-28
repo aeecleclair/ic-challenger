@@ -172,7 +172,7 @@ const Dashboard = () => {
               teamName: participant?.team.name || "",
               isCaptain: participant?.team.captain_id === user.user_id || false,
               isSubstitute: participant?.substitute || false,
-              isValidated: participant?.user?.validated || false,
+              isValidated: user.validated || false,
               participantType: getParticipantType(user),
               hasPaid: participantPayments[user.user_id],
             };
@@ -188,7 +188,7 @@ const Dashboard = () => {
             teamName: undefined,
             isCaptain: false,
             isSubstitute: false,
-            isValidated: false,
+            isValidated: user.validated || false,
             participantType: getParticipantType(user),
             hasPaid: participantPayments[user.user_id],
           };

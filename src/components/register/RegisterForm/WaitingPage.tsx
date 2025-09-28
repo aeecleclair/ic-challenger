@@ -56,7 +56,7 @@ export const WaitingPage = () => {
       (purchase) => purchase.product.id,
     );
 
-    const hasAllRequired = requiredProductIds.every((id) =>
+    const hasAllRequired = requiredProductIds.some((id) =>
       allPurchasesProductIds.includes(id),
     );
 

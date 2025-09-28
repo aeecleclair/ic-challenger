@@ -49,7 +49,8 @@ const Register = () => {
   const { me, updateUser } = useUser();
   const { meCompetition, createCompetitionUser, updateCompetitionUser } =
     useCompetitionUser();
-  const { meParticipant, createParticipant } = useParticipant();
+  const { meParticipant, createParticipant, withdrawParticipant } =
+    useParticipant();
   const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
@@ -143,7 +144,21 @@ const Register = () => {
         },
         Participation: (values, callback) => {
           if (meCompetition !== undefined) {
-            callback();
+            if (!values.is_athlete && meParticipant !== undefined) {
+              withdrawParticipant(meParticipant.sport_id, () => {});
+              return;
+            }
+            updateCompetitionUser(
+              {
+                sport_category: values.sex,
+                is_athlete: values.is_athlete,
+                is_cameraman: values.is_cameraman,
+                is_fanfare: values.is_fanfare,
+                is_pompom: values.is_pompom,
+                is_volunteer: values.is_volunteer,
+              },
+              callback,
+            );
             return;
           }
           const body: CompetitionUserBase = {
@@ -158,7 +173,17 @@ const Register = () => {
         },
         Sport: (values, callback) => {
           if (meParticipant !== undefined) {
-            callback();
+            withdrawParticipant(meParticipant.sport_id, () =>
+              createParticipant(
+                {
+                  license: values.sport!.license_number!,
+                  team_id: values.sport!.team_id!,
+                  substitute: values.sport!.substitute,
+                },
+                values.sport!.id,
+                callback,
+              ),
+            );
             return;
           }
           const body: ParticipantInfo = {
@@ -181,7 +206,7 @@ const Register = () => {
             (purchase) => purchase.product.id,
           );
 
-          const hasAllRequired = requiredProductIds.every((id) =>
+          const hasAllRequired = requiredProductIds.some((id) =>
             allPurchasesProductIds.includes(id),
           );
 

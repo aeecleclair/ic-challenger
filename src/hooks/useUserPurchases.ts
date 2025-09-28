@@ -8,6 +8,7 @@ import { useAuth } from "./useAuth";
 import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase } from "../api/hyperionSchemas";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
+import { useCompetitionUser } from "./useCompetitionUser";
 
 interface UseUserPurchasesProps {
   userId?: string;
@@ -15,6 +16,7 @@ interface UseUserPurchasesProps {
 
 export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
   const { token, isTokenExpired } = useAuth();
+  const { refetchMeCompetition } = useCompetitionUser();
 
   const {
     data: userPurchases,
@@ -63,6 +65,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
             });
           } else {
             refetchUserPurchases();
+            refetchMeCompetition();
             callback();
             toast({
               title: "Variante ajoutée",
@@ -100,6 +103,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
             });
           } else {
             refetchUserPurchases();
+            refetchMeCompetition();
             callback();
             toast({
               title: "Variante supprimée",
