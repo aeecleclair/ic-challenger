@@ -12,7 +12,7 @@ export const HelloAssoButton = ({
 }: HelloAssoButtonProps) => {
   return (
     <Button
-      className="border-[#3d33a6] group-hover:border-[#3d33a6] p-0 group"
+      className="border-[#3d33a6] group-hover:border-[#3d33a6] p-0 group [&_svg]:size-12"
       variant="outline"
       disabled={isLoading}
       onClick={onClick}
@@ -22,7 +22,7 @@ export const HelloAssoButton = ({
         viewBox="20 0 40 50"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="pl-3 w-14"
+        className="pl-4 w-14"
       >
         <g clip-path="url(#clip0_16_2460)">
           <path
