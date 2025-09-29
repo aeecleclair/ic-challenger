@@ -10,6 +10,12 @@ import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { useState } from "react";
+import { StyledFormField } from "../../custom/StyledFormField";
+import { Input } from "../../ui/input";
+import { Form, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { licenseFormSchema, LicenseFormValues } from "@/src/forms/license";
+import { Button } from "react-day-picker";
 
 interface RegistrationSummaryProps {
   onEdit?: () => void;
@@ -19,7 +25,8 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
   const { me } = useUser();
   const { availableProducts } = useAvailableProducts();
   const { meCompetition } = useCompetitionUser();
-  const { meParticipant } = useParticipant();
+  const { meParticipant, createParticipant, withdrawParticipant } =
+    useParticipant();
   const { sports } = useSports();
   const { teams } = useSchoolSportTeams({
     schoolId: me?.school_id,
@@ -49,6 +56,29 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
   }, 0);
 
   const team = teams?.find((team) => team.id === meParticipant?.team_id);
+
+  const form = useForm<LicenseFormValues>({
+    resolver: zodResolver(licenseFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      license_number: meParticipant?.license || "",
+    },
+  });
+
+  const onSubmit = (values: LicenseFormValues) => {
+    if (!meParticipant?.sport_id) return;
+    withdrawParticipant(meParticipant.sport_id, () =>
+      createParticipant(
+        {
+          license: values.license_number!,
+          team_id: meParticipant.team_id!,
+          substitute: meParticipant.substitute,
+        },
+        meParticipant.sport_id,
+        () => {},
+      ),
+    );
+  };
 
   return (
     <>
@@ -109,6 +139,39 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
                         <p>
                           {team?.name || "-"}{" "}
                           {team?.captain_id === me?.id ? "(capitaine)" : ""}
+                        </p>
+                      </div>
+                    )}
+
+                    {meParticipant.license === null ||
+                    meParticipant.license === undefined ? (
+                      <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                          <div className="flex items-center gap-2">
+                            <StyledFormField
+                              form={form}
+                              label="Numéro de licence"
+                              id="sport.license_number"
+                              input={(field) => (
+                                <Input {...field} className="w-60" />
+                              )}
+                            />
+                            <Button
+                              type="submit"
+                              disabled={!form.formState.isValid}
+                            >
+                              Enregistrer
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    ) : (
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          License{" "}
+                          {meParticipant.is_license_valid
+                            ? "Validée"
+                            : "non validée"}
                         </p>
                       </div>
                     )}

@@ -96,7 +96,6 @@ export const useParticipant = () => {
               variant: "destructive",
             });
           } else {
-            refetchMeParticipant();
             callback();
             toast({
               title: "Désinscription enregistrée",
