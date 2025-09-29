@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 export const ValidatedPage = () => {
   const router = useRouter();
   const { availableProducts } = useAvailableProducts();
-  const [open, setOpen] = useState(false);
+  const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
   const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
@@ -34,10 +34,7 @@ export const ValidatedPage = () => {
   const [isPaymentDialogOpened, setIsPaymentDialogOpened] = useState(false);
 
   const { getPaymentUrl, isPaymentLoading } = usePayment();
-  const {
-    hasPaid,
-    isLoading: isPaymentsLoading,
-  } = useUserPayments();
+  const { hasPaid, isLoading: isPaymentsLoading } = useUserPayments();
 
   const handlePaymentRefetch = () => {
     getPaymentUrl((paymentUrl) => {
@@ -46,7 +43,7 @@ export const ValidatedPage = () => {
     });
   };
 
-  const form = useForm<EditProductValues>({
+  const productForm = useForm<EditProductValues>({
     resolver: zodResolver(editProductSchema),
     mode: "onChange",
     defaultValues: {
@@ -66,7 +63,7 @@ export const ValidatedPage = () => {
     },
   });
 
-  async function onSubmit(values: EditProductValues) {
+  async function onProductFormSubmit(values: EditProductValues) {
     setIsLoading(true);
     const newPurchases = values.products;
 
@@ -93,10 +90,13 @@ export const ValidatedPage = () => {
           const index = newPurchases.findIndex(
             (purchase) => purchase.product.id === id,
           );
-          form.setError(index !== -1 ? `products.${index}` : "products", {
-            type: "manual",
-            message: `Le produit ${productName} est requis.`,
-          });
+          productForm.setError(
+            index !== -1 ? `products.${index}` : "products",
+            {
+              type: "manual",
+              message: `Le produit ${productName} est requis.`,
+            },
+          );
         }
       }
       return;
@@ -134,7 +134,7 @@ export const ValidatedPage = () => {
     await refetchMeCompetition();
 
     setIsLoading(false);
-    setOpen(false);
+    setPurchaseDialogOpen(false);
   }
 
   return (
@@ -211,18 +211,20 @@ export const ValidatedPage = () => {
             </CardDescription>
           </Card>
         )}
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={purchaseDialogOpen} onOpenChange={setPurchaseDialogOpen}>
           <DialogTitle className="text-2xl font-bold mb-4">
             Modifier ma formule
           </DialogTitle>
-          <RegistrationSummary onEdit={() => setOpen(true)} />
+          <RegistrationSummary
+            onPurchaseEdit={() => setPurchaseDialogOpen(true)}
+          />
           <DialogContent>
-            <Form {...form}>
+            <Form {...productForm}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={productForm.handleSubmit(onProductFormSubmit)}
                 className="space-y-4"
               >
-                <BasketCard form={form} />
+                <BasketCard form={productForm} />
                 <LoadingButton type="submit" isLoading={isLoading}>
                   Valider
                 </LoadingButton>

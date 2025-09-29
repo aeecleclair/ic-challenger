@@ -1,5 +1,5 @@
 import { Card, CardDescription, CardTitle } from "../../ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "../../ui/dialog";
+import { Dialog, DialogContent } from "../../ui/dialog";
 import { useState } from "react";
 import { BasketCard } from "./BasketCard";
 import { RegistrationSummary } from "./RegistrationSummary";
@@ -12,17 +12,59 @@ import { Form } from "../../ui/form";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase } from "@/src/api/hyperionSchemas";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { licenseFormSchema, LicenseFormValues } from "@/src/forms/license";
+import { useParticipant } from "@/src/hooks/useParticipant";
+import { StyledFormField } from "../../custom/StyledFormField";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
+import { toast } from "../../ui/use-toast";
 
 export const WaitingPage = () => {
   const { availableProducts } = useAvailableProducts();
-  const [open, setOpen] = useState(false);
+  const { meParticipant, createParticipant, withdrawParticipant } =
+    useParticipant();
+  const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
+  const [licenseDialogOpen, setLicenseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
   const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
-  const form = useForm<EditProductValues>({
+
+  const licenseForm = useForm<LicenseFormValues>({
+    resolver: zodResolver(licenseFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      license_number: meParticipant?.license || "",
+    },
+  });
+
+  const onLicenseFormSubmit = (values: LicenseFormValues) => {
+    if (!meParticipant?.sport_id) {
+      setLicenseDialogOpen(false);
+      toast({
+        title: "Erreur",
+        description: "Vous devez d'abord sélectionner un sport.",
+        variant: "destructive",
+      });
+      return;
+    }
+    withdrawParticipant(meParticipant.sport_id, () =>
+      createParticipant(
+        {
+          license: values.license_number!,
+          team_id: meParticipant.team_id!,
+          substitute: meParticipant.substitute,
+        },
+        meParticipant.sport_id,
+        () => {
+          setLicenseDialogOpen(false);
+        },
+      ),
+    );
+  };
+
+  const productForm = useForm<EditProductValues>({
     resolver: zodResolver(editProductSchema),
     mode: "onChange",
     defaultValues: {
@@ -42,7 +84,7 @@ export const WaitingPage = () => {
     },
   });
 
-  async function onSubmit(values: EditProductValues) {
+  async function onProductFormSubmit(values: EditProductValues) {
     setIsLoading(true);
     const newPurchases = values.products;
 
@@ -69,10 +111,13 @@ export const WaitingPage = () => {
           const index = newPurchases.findIndex(
             (purchase) => purchase.product.id === id,
           );
-          form.setError(index !== -1 ? `products.${index}` : "products", {
-            type: "manual",
-            message: `Le produit ${productName} est requis.`,
-          });
+          productForm.setError(
+            index !== -1 ? `products.${index}` : "products",
+            {
+              type: "manual",
+              message: `Le produit ${productName} est requis.`,
+            },
+          );
         }
       }
       return;
@@ -108,7 +153,7 @@ export const WaitingPage = () => {
     });
 
     setIsLoading(false);
-    setOpen(false);
+    setPurchaseDialogOpen(false);
   }
 
   return (
@@ -121,21 +166,43 @@ export const WaitingPage = () => {
           </CardDescription>
         </Card>
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTitle className="text-2xl font-bold mb-4">
-            Modifier ma formule
-          </DialogTitle>
-          <RegistrationSummary onEdit={() => setOpen(true)} />
+        <Dialog open={purchaseDialogOpen} onOpenChange={setPurchaseDialogOpen}>
+          <RegistrationSummary
+            onPurchaseEdit={() => setPurchaseDialogOpen(true)}
+            onLicenseEdit={() => setLicenseDialogOpen(true)}
+          />
           <DialogContent>
-            <Form {...form}>
+            <Form {...productForm}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={productForm.handleSubmit(onProductFormSubmit)}
                 className="space-y-4"
               >
-                <BasketCard form={form} />
+                <BasketCard form={productForm} />
                 <LoadingButton type="submit" isLoading={isLoading}>
                   Valider
                 </LoadingButton>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={licenseDialogOpen} onOpenChange={setLicenseDialogOpen}>
+          <DialogContent>
+            <Form {...licenseForm}>
+              <form onSubmit={licenseForm.handleSubmit(onLicenseFormSubmit)}>
+                <div className="flex flex-col items-center gap-8">
+                  <StyledFormField
+                    form={licenseForm}
+                    label="Numéro de licence"
+                    id="license_number"
+                    input={(field) => <Input {...field} className="" />}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={!licenseForm.formState.isValid}
+                  >
+                    Enregistrer
+                  </Button>
+                </div>
               </form>
             </Form>
           </DialogContent>

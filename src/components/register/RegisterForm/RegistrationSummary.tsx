@@ -9,24 +9,21 @@ import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
-import { useState } from "react";
-import { StyledFormField } from "../../custom/StyledFormField";
-import { Input } from "../../ui/input";
-import { Form, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { licenseFormSchema, LicenseFormValues } from "@/src/forms/license";
-import { Button } from "react-day-picker";
+import { Button } from "../../ui/button";
 
 interface RegistrationSummaryProps {
-  onEdit?: () => void;
+  onPurchaseEdit?: () => void;
+  onLicenseEdit?: () => void;
 }
 
-export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
+export const RegistrationSummary = ({
+  onPurchaseEdit,
+  onLicenseEdit,
+}: RegistrationSummaryProps) => {
   const { me } = useUser();
   const { availableProducts } = useAvailableProducts();
   const { meCompetition } = useCompetitionUser();
-  const { meParticipant, createParticipant, withdrawParticipant } =
-    useParticipant();
+  const { meParticipant } = useParticipant();
   const { sports } = useSports();
   const { teams } = useSchoolSportTeams({
     schoolId: me?.school_id,
@@ -56,29 +53,6 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
   }, 0);
 
   const team = teams?.find((team) => team.id === meParticipant?.team_id);
-
-  const form = useForm<LicenseFormValues>({
-    resolver: zodResolver(licenseFormSchema),
-    mode: "onChange",
-    defaultValues: {
-      license_number: meParticipant?.license || "",
-    },
-  });
-
-  const onSubmit = (values: LicenseFormValues) => {
-    if (!meParticipant?.sport_id) return;
-    withdrawParticipant(meParticipant.sport_id, () =>
-      createParticipant(
-        {
-          license: values.license_number!,
-          team_id: meParticipant.team_id!,
-          substitute: meParticipant.substitute,
-        },
-        meParticipant.sport_id,
-        () => {},
-      ),
-    );
-  };
 
   return (
     <>
@@ -144,27 +118,16 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
                     )}
 
                     {meParticipant.license === null ||
-                    meParticipant.license === undefined ? (
-                      <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-                          <div className="flex items-center gap-2">
-                            <StyledFormField
-                              form={form}
-                              label="Numéro de licence"
-                              id="sport.license_number"
-                              input={(field) => (
-                                <Input {...field} className="w-60" />
-                              )}
-                            />
-                            <Button
-                              type="submit"
-                              disabled={!form.formState.isValid}
-                            >
-                              Enregistrer
-                            </Button>
-                          </div>
-                        </form>
-                      </Form>
+                    meParticipant.license === undefined ||
+                    meParticipant.license === "" ? (
+                      <Button
+                        type="button"
+                        aria-label="Modifier les produits"
+                        onClick={onLicenseEdit}
+                      >
+                        <Edit className="h-4 w-4" />
+                        Modifier ma license
+                      </Button>
                     ) : (
                       <div>
                         <p className="text-sm text-muted-foreground">
@@ -212,15 +175,14 @@ export const RegistrationSummary = ({ onEdit }: RegistrationSummaryProps) => {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold">Produits sélectionnés</h3>
-              {onEdit && (
-                <button
+              {onPurchaseEdit && (
+                <Button
                   type="button"
-                  className="p-1 rounded hover:bg-muted transition-colors"
                   aria-label="Modifier les produits"
-                  onClick={onEdit}
+                  onClick={onPurchaseEdit}
                 >
-                  <Edit className="h-4 w-4 text-primary" />
-                </button>
+                  <Edit className="h-4 w-4" />
+                </Button>
               )}
             </div>
 
