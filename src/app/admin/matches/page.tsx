@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
@@ -54,6 +54,13 @@ const MatchesDashboard = () => {
   } = useSportMatches({
     sportId: selectedSportId || undefined,
   });
+
+  // Auto-select first sport when sports are loaded
+  useEffect(() => {
+    if (sports && sports.length > 0 && !selectedSportId) {
+      setSelectedSportId(sports[0].id);
+    }
+  }, [sports, selectedSportId]);
 
   const filteredMatches = useMemo(() => {
     if (!sportMatches) return [];
@@ -198,10 +205,9 @@ const MatchesDashboard = () => {
           <div className="flex gap-2">
             <Select value={selectedSportId} onValueChange={setSelectedSportId}>
               <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Tous les sports" />
+                <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les sports</SelectItem>
                 {sports?.map((sport) => (
                   <SelectItem key={sport.id} value={sport.id}>
                     {sport.name}
