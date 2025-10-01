@@ -13,10 +13,9 @@ import {
 } from "../../components/home/volunteer-shifts";
 import { useVolunteer } from "../../hooks/useVolunteer";
 import { useVolunteerShifts } from "../../hooks/useVolunteerShifts";
-import UserVolunteerShiftDetail from "../../components/home/volunteer-shifts/UserVolunteerShiftDetail";
 import { Users, Award, TrendingUp } from "lucide-react";
 import { VolunteerRegistrationComplete } from "../../api/hyperionSchemas";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   SidebarInset,
   SidebarProvider,
@@ -27,8 +26,6 @@ import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 export default function VolunteerShiftsPage() {
   const { volunteer, isLoading } = useVolunteer();
   const { volunteerShifts } = useVolunteerShifts();
-
-  const [selectedShiftId, setSelectedShiftId] = useState<string | null>(null);
 
   const volunteerStats = useMemo(() => {
     if (!volunteer || volunteer.length === 0) {
@@ -152,59 +149,41 @@ export default function VolunteerShiftsPage() {
               </Card>
 
               {/* Value Cards for New Users */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Valeur Acquise
-                    </CardTitle>
-                    <Award className="h-4 w-4 text-green-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-green-600">
-                      0.0 pts
+              <Card className="p-4">
+                <div className="flex items-center justify-between gap-6">
+                  <div className="flex items-center gap-3">
+                    <Award className="h-5 w-5 text-green-600" />
+                    <div>
+                      <div className="text-lg font-bold text-green-600">
+                        0.0 pts
+                      </div>
+                      <p className="text-xs text-muted-foreground">Acquise</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Créneaux terminés
-                    </p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Valeur Potentielle
-                    </CardTitle>
-                    <TrendingUp className="h-4 w-4 text-blue-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-blue-600">
-                      0.0 pts
+                  </div>
+                  <div className="h-8 w-px bg-border" />
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-lg font-bold text-blue-600">
+                        0.0 pts
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Potentielle
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Tous vos créneaux
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
+                  </div>
+                </div>
+              </Card>
 
               {/* Available Shifts for New Users */}
               <div>
                 <AvailableVolunteerShifts
                   shifts={volunteerShifts || []}
                   registeredShiftIds={[]}
-                  onShiftClick={(shiftId) => setSelectedShiftId(shiftId)}
                 />
               </div>
             </div>
           </div>
-
-          {/* Shift Detail Modal */}
-          {selectedShiftId && (
-            <UserVolunteerShiftDetail
-              shiftId={selectedShiftId}
-              onClose={() => setSelectedShiftId(null)}
-            />
-          )}
         </SidebarInset>
       </SidebarProvider>
     );
@@ -233,40 +212,29 @@ export default function VolunteerShiftsPage() {
             </div>
 
             {/* Value Cards */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Valeur Acquise
-                  </CardTitle>
-                  <Award className="h-4 w-4 text-green-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    {doneValue.toFixed(1)} pts
+            <Card className="p-4">
+              <div className="flex items-center justify-between gap-6">
+                <div className="flex items-center gap-3">
+                  <Award className="h-5 w-5" />
+                  <div>
+                    <div className="text-lg font-bold">
+                      {doneValue.toFixed(0)} pts
+                    </div>
+                    <p className="text-xs text-muted-foreground">Acquis</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Créneaux terminés
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Valeur Potentielle
-                  </CardTitle>
-                  <TrendingUp className="h-4 w-4 text-blue-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold text-blue-600">
-                    {potentialValue.toFixed(1)} pts
+                </div>
+                <div className="h-8 w-px bg-border" />
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="h-5 w-5" />
+                  <div>
+                    <div className="text-lg font-bold">
+                      {potentialValue.toFixed(0)} pts
+                    </div>
+                    <p className="text-xs text-muted-foreground">Potentiel</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    Tous vos créneaux
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </div>
+            </Card>
 
             {/* Volunteer Shifts Sections */}
             <div>
@@ -276,7 +244,6 @@ export default function VolunteerShiftsPage() {
               <AvailableVolunteerShifts
                 shifts={volunteerShifts || []}
                 registeredShiftIds={registeredShiftIds}
-                onShiftClick={(shiftId) => setSelectedShiftId(shiftId)}
               />
             </div>
             <div>
@@ -284,14 +251,6 @@ export default function VolunteerShiftsPage() {
             </div>
           </div>
         </div>
-
-        {/* Shift Detail Modal */}
-        {selectedShiftId && (
-          <UserVolunteerShiftDetail
-            shiftId={selectedShiftId}
-            onClose={() => setSelectedShiftId(null)}
-          />
-        )}
       </SidebarInset>
     </SidebarProvider>
   );

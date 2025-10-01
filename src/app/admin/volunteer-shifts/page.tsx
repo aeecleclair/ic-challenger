@@ -28,12 +28,6 @@ export default function VolunteerShiftsPage() {
   const [editingShift, setEditingShift] = useState<string | null>(null);
   const [prefilledDate, setPrefilledDate] = useState<Date | null>(null);
 
-  // Filter and search logic (simplified for calendar)
-  const filteredShifts = useMemo(() => {
-    if (!volunteerShifts) return [];
-    return volunteerShifts;
-  }, [volunteerShifts]);
-
   const handleCreateShift = (date?: Date) => {
     setEditingShift(null);
     setPrefilledDate(date || null);
@@ -114,7 +108,7 @@ export default function VolunteerShiftsPage() {
       </div>
 
       {/* Content */}
-      {filteredShifts.length === 0 ? (
+      {!volunteerShifts || volunteerShifts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center bg-muted/30 rounded-lg border-2 border-dashed">
           <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">
@@ -132,7 +126,7 @@ export default function VolunteerShiftsPage() {
       ) : (
         <div>
           <VolunteerShiftCalendar
-            shifts={filteredShifts}
+            shifts={volunteerShifts}
             onEventClick={(shift: VolunteerShiftComplete) =>
               setSelectedShift(shift.id)
             }

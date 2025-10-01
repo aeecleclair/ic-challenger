@@ -21,6 +21,7 @@ import { Progress } from "../../ui/progress";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
+import { useLocations } from "../../../hooks/useLocations";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 import {
@@ -29,6 +30,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
+import {
+  getLocationName,
+  getLocationDetails,
+  openLocationMap,
+} from "../../../utils/locationColors";
 
 interface VolunteerShiftDetailProps {
   shiftId: string;
@@ -43,6 +49,7 @@ export default function VolunteerShiftDetail({
 }: VolunteerShiftDetailProps) {
   const { volunteerShifts, deleteVolunteerShift, isDeleteLoading } =
     useVolunteerShifts();
+  const { locations } = useLocations();
 
   const shift = volunteerShifts?.find(
     (s: VolunteerShiftComplete) => s.id === shiftId,
@@ -67,10 +74,9 @@ export default function VolunteerShiftDetail({
   const isPast = endDate < now;
   const isActive = !isUpcoming && !isPast;
 
-  const durationHours =
-    Math.round(
-      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60),
-    );
+  const durationHours = Math.round(
+    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60),
+  );
 
   // Calculate registration statistics
   const registeredCount = shift.registrations?.length || 0;
@@ -124,11 +130,8 @@ export default function VolunteerShiftDetail({
     return { color: "default", text: "Complet" } as const;
   };
 
-  // Helper function to open map
-  const openMap = (location: string) => {
-    const query = encodeURIComponent(location);
-    const url = `https://www.google.com/maps/search/?api=1&query=${query}`;
-    window.open(url, "_blank");
+  const openMap = (locationId: string | null | undefined) => {
+    openLocationMap(locationId, locations);
   };
 
   const handleDelete = () => {
@@ -213,7 +216,9 @@ export default function VolunteerShiftDetail({
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Début</span>
-                    <span className="font-medium">{format(startDate, "HH:mm", { locale: fr })}</span>
+                    <span className="font-medium">
+                      {format(startDate, "HH:mm", { locale: fr })}
+                    </span>
                   </div>
                   {shift.location && (
                     <div className="flex items-center justify-between">
@@ -221,14 +226,20 @@ export default function VolunteerShiftDetail({
                         Lieu
                       </span>
                       <div className="flex items-center gap-1">
-                        <span className="font-medium text-sm truncate max-w-[120px]">
-                          {shift.location}
+                        <span
+                          className="font-medium text-sm truncate max-w-[120px]"
+                          title={
+                            getLocationDetails(shift.location, locations).name
+                          }
+                        >
+                          {getLocationDetails(shift.location, locations).name}
                         </span>
                         <Button
                           variant="ghost"
                           size="sm"
                           className="h-6 w-6 p-0"
-                          onClick={() => openMap(shift.location!)}
+                          onClick={() => openMap(shift.location)}
+                          title={`Ouvrir ${getLocationDetails(shift.location, locations).latitude && getLocationDetails(shift.location, locations).longitude ? "coordonnées précises" : "adresse"} dans Google Maps`}
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>
@@ -242,7 +253,6 @@ export default function VolunteerShiftDetail({
 
           {/* Right Column - Detailed Information */}
           <div className="lg:col-span-2 space-y-4">
-
             {/* Registered Volunteers Section */}
             <Card>
               <CardHeader>

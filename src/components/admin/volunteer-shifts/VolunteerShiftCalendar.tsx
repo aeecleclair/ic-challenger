@@ -19,31 +19,12 @@ import {
   ChevronRight,
   Calendar as CalendarIcon,
 } from "lucide-react";
+import { generateLocationColor } from "../../../utils/locationColors";
 
 interface VolunteerShiftCalendarProps {
   shifts: VolunteerShiftComplete[];
   onEventClick?: (shift: VolunteerShiftComplete) => void;
   onEmptySlotClick?: (date: Date, hour?: number) => void;
-}
-
-// Generate consistent colors for locations using a hash function
-function generateLocationColor(location: string | null | undefined): string {
-  if (!location) return "#94a3b8"; // gray-400 for null locations
-
-  // Simple hash function to generate a number from the location string
-  let hash = 0;
-  for (let i = 0; i < location.length; i++) {
-    const char = location.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-
-  // Generate RGB values from the hash
-  const hue = Math.abs(hash) % 360; // Hue: 0-359
-  const saturation = 65 + (Math.abs(hash >> 8) % 25); // Saturation: 65-90%
-  const lightness = 45 + (Math.abs(hash >> 16) % 20); // Lightness: 45-65%
-
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 export default function VolunteerShiftCalendar({
@@ -106,23 +87,6 @@ export default function VolunteerShiftCalendar({
 
           {/* Legend */}
           <div className="flex items-center justify-center gap-6 p-4">
-            <div className="flex items-center gap-2">
-              <div className="flex gap-1">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: "hsl(45, 70%, 55%)" }}
-                />
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: "hsl(120, 70%, 55%)" }}
-                />
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: "hsl(200, 70%, 55%)" }}
-                />
-              </div>
-              <span className="text-sm">Couleurs générées par lieu</span>
-            </div>
             {shifts.length > 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">

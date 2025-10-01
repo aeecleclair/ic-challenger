@@ -1,13 +1,25 @@
-"use client";
-
-import { Calendar, Clock, MapPin, Users, Award, UserPlus } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Award,
+  UserPlus,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "../../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Badge } from "../../ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../../ui/tooltip";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useVolunteer } from "../../../hooks/useVolunteer";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
+import { useLocations } from "../../../hooks/useLocations";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 import {
@@ -16,6 +28,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
+import {
+  generateLocationColor,
+  getLocationDetails,
+  openLocationMap,
+} from "../../../utils/locationColors";
 
 interface UserVolunteerShiftDetailProps {
   shiftId: string;
@@ -33,6 +50,7 @@ export default function UserVolunteerShiftDetail({
     refetchVolunteer,
   } = useVolunteer();
   const { volunteerShifts } = useVolunteerShifts();
+  const { locations } = useLocations();
 
   const shift = volunteerShifts?.find(
     (s: VolunteerShiftComplete) => s.id === shiftId,
@@ -79,132 +97,184 @@ export default function UserVolunteerShiftDetail({
     });
   };
 
+  const locationDetails = getLocationDetails(shift.location, locations);
+  const locationColor = generateLocationColor(locationDetails.id);
+
+  const openMap = () => {
+    openLocationMap(shift.location, locations);
+  };
+
+  const getVolunteerTooltip = () => {
+    const registeredCount = shift.registrations?.length || 0;
+    if (registeredCount === 0) {
+      return "Aucun bénévole inscrit";
+    }
+    const volunteerNames =
+      shift.registrations
+        ?.slice(0, 5)
+        .map(
+          (reg) =>
+            `${reg.user.user.firstname} ${reg.user.user.name.charAt(0)}.`,
+        )
+        .join(", ") || "";
+    const remaining = registeredCount - 5;
+    return remaining > 0
+      ? `${volunteerNames} et ${remaining} autre${remaining > 1 ? "s" : ""}`
+      : volunteerNames;
+  };
+
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>{shift.name}</span>
-            <Badge variant={getStatusColor()}>{getStatusText()}</Badge>
-          </DialogTitle>
-        </DialogHeader>
-
-        <div className="space-y-6">
-          {/* Basic Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Informations générales</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {shift.description && (
-                <div>
-                  <h4 className="font-medium mb-2">Description</h4>
-                  <p className="text-muted-foreground">{shift.description}</p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">Date</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(startDate, "dd MMMM yyyy", { locale: fr })}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">Horaires</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      ({durationHours}h)
-                    </p>
-                  </div>
-                </div>
-
-                {shift.location && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <div>
-                      <p className="font-medium">Lieu</p>
-                      <p className="text-sm text-muted-foreground">
-                        {shift.location}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">Capacité</p>
-                    <p className="text-sm text-muted-foreground">
-                      {shift.registrations?.length || 0}/{shift.max_volunteers}{" "}
-                      bénévoles
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Award className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">Valeur</p>
-                    <p className="text-sm text-muted-foreground">
-                      {shift.value} points
-                    </p>
-                  </div>
-                </div>
+    <TooltipProvider>
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-4 h-4 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: locationColor }}
+                />
+                <span>{shift.name}</span>
               </div>
-            </CardContent>
-          </Card>
+              <Badge variant={getStatusColor()}>{getStatusText()}</Badge>
+            </DialogTitle>
+          </DialogHeader>
 
-          {/* Registration Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Inscription</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isRegistered ? (
-                <div className="text-center py-4">
-                  <Badge variant="default" className="mb-2">
-                    ✅ Vous êtes inscrit à ce créneau
-                  </Badge>
-                  <p className="text-sm text-muted-foreground">
-                    Vous recevrez des notifications concernant ce créneau
+          <div className="space-y-4">
+            {/* Description */}
+            {shift.description && (
+              <p className="text-sm text-muted-foreground">
+                {shift.description}
+              </p>
+            )}
+
+            {/* Compact Information Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-sm">
+              {/* Date */}
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground">
+                    Date
+                  </p>
+                  <p className="truncate">
+                    {format(startDate, "dd MMM", { locale: fr })}
                   </p>
                 </div>
-              ) : (
-                <div className="text-center py-4">
-                  {isPast ? (
-                    <p className="text-muted-foreground">
-                      Ce créneau est terminé, inscription impossible
+              </div>
+
+              {/* Time */}
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground">
+                    Horaires
+                  </p>
+                  <p className="truncate">
+                    {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    ({durationHours}h)
+                  </p>
+                </div>
+              </div>
+
+              {/* Location */}
+              {shift.location && (
+                <div className="flex items-start gap-2">
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: locationColor }}
+                    />
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-xs text-muted-foreground">
+                      Lieu
                     </p>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground">
-                        Vous pouvez vous inscrire à ce créneau de bénévolat
-                      </p>
-                      <LoadingButton
-                        onClick={handleRegister}
-                        isLoading={isRegisterLoading}
-                        className="w-full"
+                    <div className="flex items-center gap-1">
+                      <p
+                        className="truncate text-sm"
+                        title={locationDetails.name}
                       >
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        S&apos;inscrire au créneau
-                      </LoadingButton>
+                        {locationDetails.name}
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-5 w-5 p-0 flex-shrink-0 opacity-60 hover:opacity-100"
+                        onClick={openMap}
+                        title={`Ouvrir ${locationDetails.latitude && locationDetails.longitude ? "coordonnées précises" : "adresse"} dans Google Maps`}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </Button>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
-      </DialogContent>
-    </Dialog>
+
+              {/* Volunteers */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-2 cursor-help">
+                    <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-xs text-muted-foreground">
+                        Bénévoles
+                      </p>
+                      <p className="truncate">
+                        {shift.registrations?.length || 0}/
+                        {shift.max_volunteers}
+                      </p>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{getVolunteerTooltip()}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Points */}
+              <div className="flex items-center gap-2">
+                <Award className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-xs text-muted-foreground">
+                    Points
+                  </p>
+                  <p className="truncate">{shift.value} pts</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Registration Action */}
+            <div className="flex justify-end pt-4 border-t">
+              {isRegistered ? (
+                <Badge variant="default" className="px-4 py-2">
+                  ✅ Inscrit
+                </Badge>
+              ) : (
+                <>
+                  {isPast ? (
+                    <Badge variant="secondary" className="px-4 py-2">
+                      Terminé
+                    </Badge>
+                  ) : (
+                    <LoadingButton
+                      onClick={handleRegister}
+                      isLoading={isRegisterLoading}
+                      size="sm"
+                    >
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      S&apos;inscrire
+                    </LoadingButton>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </TooltipProvider>
   );
 }

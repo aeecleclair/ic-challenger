@@ -99,7 +99,7 @@ export default function VolunteerShiftForm({
       value: data.value,
       start_time: data.start_time.toISOString(),
       end_time: data.end_time.toISOString(),
-      location: selectedLocation ? selectedLocation.name : null,
+      location: data.location_id,
       max_volunteers: data.max_volunteers,
     };
 

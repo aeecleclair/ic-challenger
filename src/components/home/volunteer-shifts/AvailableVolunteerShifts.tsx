@@ -3,19 +3,26 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Calendar, Users, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { AvailableVolunteerShiftCard } from "./AvailableVolunteerShiftCard";
+import { useVolunteer } from "../../../hooks/useVolunteer";
 
 interface AvailableVolunteerShiftsProps {
   shifts: VolunteerShiftComplete[];
   registeredShiftIds: string[];
-  onShiftClick: (shiftId: string) => void;
 }
 
 export const AvailableVolunteerShifts = ({
   shifts,
   registeredShiftIds,
-  onShiftClick,
 }: AvailableVolunteerShiftsProps) => {
   const [showAllShifts, setShowAllShifts] = useState(false);
+  const { registerVolunteerShift, isRegisterLoading, refetchVolunteer } =
+    useVolunteer();
+
+  const handleRegister = (shiftId: string) => {
+    registerVolunteerShift(shiftId, () => {
+      refetchVolunteer();
+    });
+  };
 
   // Filter out past shifts and already registered shifts
   const now = new Date();
@@ -59,7 +66,7 @@ export const AvailableVolunteerShifts = ({
           <div key={shift.id}>
             <AvailableVolunteerShiftCard
               shift={shift}
-              onClick={() => onShiftClick(shift.id)}
+              onClick={() => handleRegister(shift.id)}
             />
             {index < displayedShifts.length - 1 && (
               <div className="my-4">
