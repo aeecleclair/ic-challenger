@@ -173,16 +173,6 @@ const MatchDetail = ({ match }: MatchDetailProps) => {
           </div>
         </CardContent>
       </Card>
-
-      <WarningDialog
-        isOpened={isDeleteDialogOpen}
-        callback={handleDelete}
-        title="Supprimer le match"
-        description={`Êtes-vous sûr de vouloir supprimer le match "${match.name}" ? Cette action est irréversible.`}
-        validateLabel="Supprimer"
-        setIsOpened={setIsDeleteDialogOpen}
-        isLoading={isDeleteLoading}
-      />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { VariantProps, cva } from "class-variance-authority";
 import {
   Locale,
   addDays,
+  addHours,
   addMonths,
   addWeeks,
   addYears,
@@ -24,6 +25,9 @@ import {
   subMonths,
   subWeeks,
   subYears,
+  isWithinInterval,
+  startOfDay,
+  endOfDay,
 } from "date-fns";
 import { enUS } from "date-fns/locale/en-US";
 import {
@@ -78,6 +82,7 @@ type ContextType = {
   setEvents: (date: CalendarEvent[]) => void;
   onChangeView?: (view: View) => void;
   onEventClick?: (event: CalendarEvent) => void;
+  onEmptySlotClick?: (date: Date, hour?: number) => void;
   enableHotkeys?: boolean;
   today: Date;
 };
@@ -89,7 +94,13 @@ export type CalendarEvent = {
   start: Date;
   end: Date;
   title: string;
-  color?: VariantProps<typeof monthEventVariants>["variant"];
+  subtitle?: string;
+  color?: VariantProps<typeof monthEventVariants>["variant"] | string;
+  metadata?: {
+    registeredCount?: number;
+    maxVolunteers?: number;
+    location?: string | null;
+  };
 };
 
 type CalendarProps = {
@@ -101,6 +112,7 @@ type CalendarProps = {
   enableHotkeys?: boolean;
   onChangeView?: (view: View) => void;
   onEventClick?: (event: CalendarEvent) => void;
+  onEmptySlotClick?: (date: Date, hour?: number) => void;
 };
 
 const Calendar = ({
@@ -110,6 +122,7 @@ const Calendar = ({
   enableHotkeys = true,
   view: _defaultMode = "month",
   onEventClick,
+  onEmptySlotClick,
   events: defaultEvents = [],
   onChangeView,
 }: CalendarProps) => {
@@ -134,6 +147,7 @@ const Calendar = ({
         locale,
         enableHotkeys,
         onEventClick,
+        onEmptySlotClick,
         onChangeView,
         today: new Date(),
       }}
@@ -177,31 +191,144 @@ const EventGroup = ({
   events: CalendarEvent[];
   hour: Date;
 }) => {
-  return (
-    <div className="h-20 border-t last:border-b">
-      {events
-        .filter((event) => isSameHour(event.start, hour))
-        .map((event) => {
-          const hoursDifference =
-            differenceInMinutes(event.end, event.start) / 60;
-          const startPosition = event.start.getMinutes() / 60;
+  const { onEventClick, onEmptySlotClick } = useCalendar();
 
-          return (
-            <div
-              key={event.id}
-              className={cn(
-                "relative",
-                dayEventVariants({ variant: event.color }),
-              )}
-              style={{
-                top: `${startPosition * 100}%`,
-                height: `${hoursDifference * 100}%`,
-              }}
-            >
-              {event.title}
+  // Filter and position events that intersect with this hour
+  const hourEvents = events
+    .filter((event) => {
+      const hourStart = hour;
+      const hourEnd = addHours(hour, 1);
+
+      // Event intersects if it starts before hour ends AND ends after hour starts
+      return event.start < hourEnd && event.end > hourStart;
+    })
+    .map((event, index) => {
+      const hourStart = hour;
+      const hourEnd = addHours(hour, 1);
+
+      // Calculate the visible portion of the event within this hour
+      const visibleStart = event.start > hourStart ? event.start : hourStart;
+      const visibleEnd = event.end < hourEnd ? event.end : hourEnd;
+
+      // Calculate position and height based on minutes within the hour
+      const startMinutesFromHour = Math.max(
+        0,
+        differenceInMinutes(visibleStart, hourStart),
+      );
+      const durationMinutes = differenceInMinutes(visibleEnd, visibleStart);
+
+      const startPosition = (startMinutesFromHour / 60) * 100; // Percentage from top
+      const height = Math.max((durationMinutes / 60) * 100, 8); // Minimum 8% height
+
+      return {
+        ...event,
+        startPosition,
+        height,
+        index,
+        isStartingHere: isSameHour(event.start, hour),
+        isEndingHere: isSameHour(event.end, hour),
+      };
+    });
+
+  const handleEmptySpaceClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget && onEmptySlotClick) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const minutes = Math.floor((y / rect.height) * 60);
+      const clickedTime = setHours(hour, hour.getHours());
+      clickedTime.setMinutes(minutes);
+      onEmptySlotClick(clickedTime, hour.getHours());
+    }
+  };
+
+  // If no events, render empty hour slot
+  if (hourEvents.length === 0) {
+    return (
+      <div
+        className="h-20 border-t last:border-b cursor-pointer hover:bg-muted/20 transition-colors"
+        onClick={handleEmptySpaceClick}
+      />
+    );
+  }
+
+  // Calculate positions for overlapping events
+  const eventWidth =
+    hourEvents.length > 1 ? `${95 / hourEvents.length}%` : "95%";
+
+  return (
+    <div
+      className="h-20 border-t last:border-b relative cursor-pointer hover:bg-muted/10 transition-colors"
+      onClick={handleEmptySpaceClick}
+    >
+      {hourEvents.map((event, idx) => {
+        const leftPosition =
+          hourEvents.length > 1
+            ? `${(idx * 95) / hourEvents.length + 2}%`
+            : "2%";
+        const showStartTime = event.isStartingHere;
+        const showEndTime = event.isEndingHere && event.height > 25;
+
+        // Check if color is a custom color string or a variant
+        const isCustomColor =
+          event.color &&
+          !["default", "blue", "green", "pink", "purple"].includes(event.color);
+        const customStyle =
+          isCustomColor && event.color
+            ? {
+                backgroundColor: `${event.color}30`, // 30 for 30% opacity
+                borderLeftColor: event.color,
+                color: event.color,
+              }
+            : {};
+
+        return (
+          <div
+            key={event.id}
+            className={cn(
+              "absolute cursor-pointer z-10 transition-all duration-200 hover:z-20 hover:shadow-lg overflow-hidden",
+              isCustomColor
+                ? "font-bold border-l-4 rounded p-2 text-xs"
+                : dayEventVariants({
+                    variant: event.color as VariantProps<
+                      typeof dayEventVariants
+                    >["variant"],
+                  }),
+            )}
+            style={{
+              top: `${event.startPosition}%`,
+              height: `${event.height}%`,
+              left: leftPosition,
+              width: eventWidth,
+              minHeight: "16px",
+              ...customStyle,
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEventClick && onEventClick(event);
+            }}
+            title={`${event.title}${event.subtitle ? ` - ${event.subtitle}` : ""} - ${format(event.start, "HH:mm")} à ${format(event.end, "HH:mm")}`}
+          >
+            <div className="p-1 h-full flex flex-col justify-between">
+              <div className="flex-1 min-h-0">
+                <div className="truncate text-[10px] font-medium leading-tight">
+                  {event.title}
+                </div>
+                {event.subtitle && (
+                  <div className="truncate text-[8px] text-muted-foreground/80 mt-0.5">
+                    {event.subtitle}
+                  </div>
+                )}
+              </div>
+
+              {/* Time display */}
+              <div className="flex justify-between text-[8px] text-muted-foreground/70 leading-none">
+                {showStartTime && <span>{format(event.start, "HH:mm")}</span>}
+                {showEndTime && <span>{format(event.end, "HH:mm")}</span>}
+              </div>
             </div>
-          );
-        })}
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -214,7 +341,7 @@ const CalendarDayView = () => {
   const hours = [...Array(24)].map((_, i) => setHours(date, i));
 
   return (
-    <div className="flex relative pt-2 overflow-auto h-full">
+    <div className="flex relative pt-2 h-full">
       <TimeTable />
       <div className="flex-1">
         {hours.map((hour) => (
@@ -253,7 +380,7 @@ const CalendarWeekView = () => {
   if (view !== "week") return null;
 
   return (
-    <div className="flex flex-col relative overflow-auto h-full">
+    <div className="flex flex-col relative h-full">
       <div className="flex sticky top-0 bg-card z-10 border-b mb-3">
         <div className="w-12"></div>
         {headerDays.map((date, i) => (
@@ -308,7 +435,7 @@ const CalendarWeekView = () => {
 };
 
 const CalendarMonthView = () => {
-  const { date, view, events, locale } = useCalendar();
+  const { date, view, events, locale, onEventClick } = useCalendar();
 
   const monthDates = useMemo(() => getDaysInMonth(date), [date]);
   const weekDays = useMemo(() => generateWeekdays(locale), [locale]);
@@ -332,14 +459,21 @@ const CalendarMonthView = () => {
       </div>
       <div className="grid overflow-hidden -mt-px flex-1 auto-rows-fr p-px grid-cols-7 gap-px">
         {monthDates.map((_date) => {
-          const currentEvents = events.filter((event) =>
-            isSameDay(event.start, _date),
-          );
+          const currentEvents = events.filter((event) => {
+            // Show events that either start on this date or span across this date
+            return (
+              isSameDay(event.start, _date) ||
+              isWithinInterval(_date, {
+                start: startOfDay(event.start),
+                end: endOfDay(event.end),
+              })
+            );
+          });
 
           return (
             <div
               className={cn(
-                "ring-1 p-2 text-sm text-muted-foreground ring-border overflow-auto",
+                "ring-1 p-2 text-sm text-muted-foreground ring-border",
                 !isSameMonth(date, _date) && "text-muted-foreground/50",
               )}
               key={_date.toString()}
@@ -357,13 +491,39 @@ const CalendarMonthView = () => {
                 return (
                   <div
                     key={event.id}
-                    className="px-1 rounded text-sm flex items-center gap-1"
+                    className="px-1 rounded text-sm flex items-center gap-1 cursor-pointer hover:bg-muted/50"
+                    onClick={() => onEventClick && onEventClick(event)}
                   >
                     <div
                       className={cn(
                         "shrink-0",
-                        monthEventVariants({ variant: event.color }),
+                        event.color &&
+                          ![
+                            "default",
+                            "blue",
+                            "green",
+                            "pink",
+                            "purple",
+                          ].includes(event.color)
+                          ? "size-2 rounded-full"
+                          : monthEventVariants({
+                              variant: event.color as VariantProps<
+                                typeof monthEventVariants
+                              >["variant"],
+                            }),
                       )}
+                      style={
+                        event.color &&
+                        ![
+                          "default",
+                          "blue",
+                          "green",
+                          "pink",
+                          "purple",
+                        ].includes(event.color)
+                          ? { backgroundColor: event.color }
+                          : {}
+                      }
                     ></div>
                     <span className="flex-1 truncate">{event.title}</span>
                     <time className="tabular-nums text-muted-foreground/50 text-xs">
@@ -542,6 +702,11 @@ CalendarTodayTrigger.displayName = "CalendarTodayTrigger";
 const CalendarCurrentDate = ({ locale = enUS }) => {
   const { date, view } = useCalendar();
 
+  // Safety check to prevent undefined date errors
+  if (!date) {
+    return null;
+  }
+
   return (
     <time dateTime={date.toISOString()} className="tabular-nums">
       {format(date, view === "day" ? "dd MMMM yyyy" : "MMMM yyyy", {
@@ -564,12 +729,12 @@ const TimeTable = () => {
           >
             {now.getHours() === hour && (
               <div
-                className="absolute z- left-full translate-x-2 w-dvw h-[2px] bg-red-500"
+                className="absolute z- left-full translate-x-2 w-dvw h-[2px] bg-gray-500"
                 style={{
                   top: `${(now.getMinutes() / 60) * 100}%`,
                 }}
               >
-                <div className="size-2 rounded-full bg-red-500 absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="size-2 rounded-full bg-gray-500 absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
               </div>
             )}
             <p className="top-0 -translate-y-1/2">

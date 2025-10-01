@@ -23,6 +23,7 @@ import { NavProducts } from "./NavProducts";
 import { NavLocations } from "./NavLocations";
 import { NavPodiums } from "./NavPodiums";
 import { NavLicense } from "./NavLicense";
+import { NavVolunteerShifts } from "./NavVolunteerShifts";
 import { useUser } from "@/src/hooks/useUser";
 
 const data = {
@@ -77,6 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {(isAdmin() || isSportManager()) && <NavPodiums />}
             {isAdmin() && <NavGroups />}
             {isAdmin() && <NavProducts />}
+            {isAdmin() && <NavVolunteerShifts />}
             {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
           </>
         )}
