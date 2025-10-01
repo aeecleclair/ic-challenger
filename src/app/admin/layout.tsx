@@ -48,6 +48,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       edition: "Éditions",
       schools: "Écoles",
       sports: "Sports",
+      "volunteer-shifts": "Créneaux Bénévoles",
       locations: "Lieux",
       products: "Produits",
       matches: "Matchs",
