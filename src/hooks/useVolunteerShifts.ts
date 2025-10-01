@@ -47,7 +47,7 @@ export const useVolunteerShifts = () => {
           if ((error as any).stack.body || (error as any).stack.detail) {
             console.log(error);
             toast({
-              title: "Erreur lors de l'assignation du bénévole",
+              title: "Erreur lors de la création du créneau",
               description:
                 (error as any).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
@@ -57,45 +57,8 @@ export const useVolunteerShifts = () => {
             refetchVolunteerShifts();
             callback();
             toast({
-              title: "Bénévole assigné",
-              description: "Le bénévole a été assigné avec succès.",
-            });
-          }
-        },
-      },
-    );
-  };
-
-  const { mutate: mutateRegisterVolunteerShift, isPending: isRegisterLoading } =
-    usePostCompetitionVolunteersShiftsShiftIdRegister();
-
-  const registerVolunteerShift = (shiftId: string, callback: () => void) => {
-    return mutateRegisterVolunteerShift(
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        pathParams: {
-          shiftId: shiftId,
-        },
-      },
-      {
-        onSettled: (data, error) => {
-          if ((error as any).stack.body || (error as any).stack.detail) {
-            console.log(error);
-            toast({
-              title: "Erreur lors de l'assignation du bénévole",
-              description:
-                (error as any).stack.body ||
-                (error as unknown as DetailedErrorType).stack.detail,
-              variant: "destructive",
-            });
-          } else {
-            refetchVolunteerShifts();
-            callback();
-            toast({
-              title: "Bénévole assigné",
-              description: "Le bénévole a été assigné avec succès.",
+              title: "Créneau créé",
+              description: "Le créneau a été créé avec succès.",
             });
           }
         },
@@ -131,8 +94,8 @@ export const useVolunteerShifts = () => {
             refetchVolunteerShifts();
             callback();
             toast({
-              title: "Bénévole mis à jour",
-              description: "Le bénévole a été mis à jour avec succès.",
+              title: "Créneau mis à jour",
+              description: "Le créneau a été mis à jour avec succès.",
             });
           }
         },
@@ -168,8 +131,8 @@ export const useVolunteerShifts = () => {
             refetchVolunteerShifts();
             callback();
             toast({
-              title: "Bénévole supprimé",
-              description: "Le bénévole a été supprimé avec succès.",
+              title: "Créneau supprimé",
+              description: "Le créneau a été supprimé avec succès.",
             });
           }
         },
@@ -183,8 +146,6 @@ export const useVolunteerShifts = () => {
     refetchVolunteerShifts,
     createVolunteerShift,
     isCreateLoading,
-    registerVolunteerShift,
-    isRegisterLoading,
     updateVolunteerShift,
     isUpdateLoading,
     deleteVolunteerShift,

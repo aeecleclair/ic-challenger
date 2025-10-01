@@ -9,11 +9,14 @@ import {
 import {
   UpcomingVolunteerShifts,
   PastVolunteerShifts,
+  AvailableVolunteerShifts,
 } from "../../components/home/volunteer-shifts";
 import { useVolunteer } from "../../hooks/useVolunteer";
-import { Calendar, Users, Clock, Award } from "lucide-react";
+import { useVolunteerShifts } from "../../hooks/useVolunteerShifts";
+import UserVolunteerShiftDetail from "../../components/home/volunteer-shifts/UserVolunteerShiftDetail";
+import { Users, Award, TrendingUp } from "lucide-react";
 import { VolunteerRegistrationComplete } from "../../api/hyperionSchemas";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   SidebarInset,
   SidebarProvider,
@@ -23,15 +26,17 @@ import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 
 export default function VolunteerShiftsPage() {
   const { volunteer, isLoading } = useVolunteer();
+  const { volunteerShifts } = useVolunteerShifts();
+
+  const [selectedShiftId, setSelectedShiftId] = useState<string | null>(null);
 
   const volunteerStats = useMemo(() => {
     if (!volunteer || volunteer.length === 0) {
       return {
         upcomingShifts: [],
         pastShifts: [],
-        totalShifts: 0,
-        totalPoints: 0,
-        totalHours: 0,
+        doneValue: 0,
+        potentialValue: 0,
       };
     }
 
@@ -42,14 +47,9 @@ export default function VolunteerShiftsPage() {
       (acc, registration: VolunteerRegistrationComplete) => {
         const shift = registration.shift;
         const shiftStartTime = new Date(shift.start_time).getTime();
-        const shiftEndTime = new Date(shift.end_time).getTime();
 
-        // Calculate hours for this shift
-        const hours = (shiftEndTime - shiftStartTime) / (1000 * 60 * 60);
-
-        acc.totalShifts++;
-        acc.totalPoints += shift.value;
-        acc.totalHours += hours;
+        // Add to total potential value
+        acc.potentialValue += shift.value;
 
         if (shiftStartTime > nowTime) {
           acc.upcomingShifts.push({
@@ -57,6 +57,8 @@ export default function VolunteerShiftsPage() {
             _shiftStartTime: shiftStartTime,
           });
         } else {
+          // Add to done value for past shifts
+          acc.doneValue += shift.value;
           acc.pastShifts.push({
             ...registration,
             _shiftStartTime: shiftStartTime,
@@ -72,14 +74,20 @@ export default function VolunteerShiftsPage() {
         pastShifts: [] as (VolunteerRegistrationComplete & {
           _shiftStartTime: number;
         })[],
-        totalShifts: 0,
-        totalPoints: 0,
-        totalHours: 0,
+        doneValue: 0,
+        potentialValue: 0,
       },
     );
   }, [volunteer]);
 
-  const { upcomingShifts, pastShifts, totalShifts, totalPoints, totalHours } =
+  const registeredShiftIds = useMemo(() => {
+    if (!volunteer || volunteer.length === 0) {
+      return [];
+    }
+    return volunteer.map((reg) => reg.shift.id);
+  }, [volunteer]);
+
+  const { upcomingShifts, pastShifts, doneValue, potentialValue } =
     volunteerStats;
 
   // Sort shifts by time
@@ -142,8 +150,61 @@ export default function VolunteerShiftsPage() {
                   </p>
                 </CardContent>
               </Card>
+
+              {/* Value Cards for New Users */}
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Valeur Acquise
+                    </CardTitle>
+                    <Award className="h-4 w-4 text-green-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-green-600">
+                      0.0 pts
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Créneaux terminés
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Valeur Potentielle
+                    </CardTitle>
+                    <TrendingUp className="h-4 w-4 text-blue-600" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-blue-600">
+                      0.0 pts
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Tous vos créneaux
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Available Shifts for New Users */}
+              <div>
+                <AvailableVolunteerShifts
+                  shifts={volunteerShifts || []}
+                  registeredShiftIds={[]}
+                  onShiftClick={(shiftId) => setSelectedShiftId(shiftId)}
+                />
+              </div>
             </div>
           </div>
+
+          {/* Shift Detail Modal */}
+          {selectedShiftId && (
+            <UserVolunteerShiftDetail
+              shiftId={selectedShiftId}
+              onClose={() => setSelectedShiftId(null)}
+            />
+          )}
         </SidebarInset>
       </SidebarProvider>
     );
@@ -171,54 +232,38 @@ export default function VolunteerShiftsPage() {
               </div>
             </div>
 
-            {/* Statistics Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {/* Value Cards */}
+            <div className="grid gap-4 md:grid-cols-2">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Créneaux
+                    Valeur Acquise
                   </CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <Award className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{totalShifts}</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">À Venir</CardTitle>
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {upcomingShifts.length}
+                  <div className="text-2xl font-bold text-green-600">
+                    {doneValue.toFixed(1)} pts
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Créneaux terminés
+                  </p>
                 </CardContent>
               </Card>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
-                    Total Points
+                    Valeur Potentielle
                   </CardTitle>
-                  <Award className="h-4 w-4 text-muted-foreground" />
+                  <TrendingUp className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
-                    {totalPoints.toFixed(1)}
+                  <div className="text-2xl font-bold text-blue-600">
+                    {potentialValue.toFixed(1)} pts
                   </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total Heures
-                  </CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {totalHours.toFixed(1)}h
-                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Tous vos créneaux
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -228,10 +273,25 @@ export default function VolunteerShiftsPage() {
               <UpcomingVolunteerShifts shifts={upcomingShifts} />
             </div>
             <div>
+              <AvailableVolunteerShifts
+                shifts={volunteerShifts || []}
+                registeredShiftIds={registeredShiftIds}
+                onShiftClick={(shiftId) => setSelectedShiftId(shiftId)}
+              />
+            </div>
+            <div>
               <PastVolunteerShifts shifts={pastShifts} />
             </div>
           </div>
         </div>
+
+        {/* Shift Detail Modal */}
+        {selectedShiftId && (
+          <UserVolunteerShiftDetail
+            shiftId={selectedShiftId}
+            onClose={() => setSelectedShiftId(null)}
+          />
+        )}
       </SidebarInset>
     </SidebarProvider>
   );

@@ -6,10 +6,10 @@ import { Button } from "../../ui/button";
 import { Badge } from "../../ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { VolunteerShift } from "../../../api/hyperionSchemas";
+import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 
 interface VolunteerShiftCardProps {
-  shift: VolunteerShift;
+  shift: VolunteerShiftComplete;
   onEdit: () => void;
   onView: () => void;
   onDelete?: () => void;
@@ -94,7 +94,10 @@ export default function VolunteerShiftCard({
 
           <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 text-muted-foreground" />
-            <span>Max {shift.max_volunteers} bénévoles</span>
+            <span>
+              {shift.registrations?.length || 0}/{shift.max_volunteers}{" "}
+              bénévoles
+            </span>
           </div>
         </div>
 

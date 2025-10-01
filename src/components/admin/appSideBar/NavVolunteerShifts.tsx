@@ -1,16 +1,13 @@
 "use client";
-import { ChevronRight, Users } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarMenuAction,
 } from "../../ui/sidebar";
 
 import { useRouter } from "next/navigation";
 import {
-  CollapsibleContent,
   Collapsible,
   CollapsibleTrigger,
 } from "../../ui/collapsible";
@@ -33,21 +30,12 @@ export function NavVolunteerShifts() {
             Créneaux Bénévoles
           </div>
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton className="data-[state=open]:rotate-90">
+            <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">
               <ChevronRight />
-            </SidebarMenuButton>
+              <span className="sr-only">Toggle</span>
+            </SidebarMenuAction>
           </CollapsibleTrigger>
         </SidebarGroupLabel>
-        <CollapsibleContent>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton onClick={() => handleClick("")}>
-                <Users />
-                Gestion des Créneaux
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </CollapsibleContent>
       </SidebarGroup>
     </Collapsible>
   );

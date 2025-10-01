@@ -1,13 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/button";
-import { Plus } from "lucide-react";
-import { VolunteerShift } from "../../../api/hyperionSchemas";
+import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 import {
   Calendar,
   CalendarCurrentDate,
-  CalendarMonthView,
+  CalendarWeekView,
   CalendarNextTrigger,
   CalendarPrevTrigger,
   CalendarTodayTrigger,
@@ -17,100 +14,132 @@ import {
 import { useMemo } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon,
+} from "lucide-react";
 
 interface VolunteerShiftCalendarProps {
-  shifts: VolunteerShift[];
-  onShiftClick: (shift: VolunteerShift) => void;
-  onCreateShift: () => void;
+  shifts: VolunteerShiftComplete[];
+  onEventClick?: (shift: VolunteerShiftComplete) => void;
+  onEmptySlotClick?: (date: Date, hour?: number) => void;
+}
+
+// Generate consistent colors for locations using a hash function
+function generateLocationColor(location: string | null | undefined): string {
+  if (!location) return "#94a3b8"; // gray-400 for null locations
+
+  // Simple hash function to generate a number from the location string
+  let hash = 0;
+  for (let i = 0; i < location.length; i++) {
+    const char = location.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+
+  // Generate RGB values from the hash
+  const hue = Math.abs(hash) % 360; // Hue: 0-359
+  const saturation = 65 + (Math.abs(hash >> 8) % 25); // Saturation: 65-90%
+  const lightness = 45 + (Math.abs(hash >> 16) % 20); // Lightness: 45-65%
+
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 export default function VolunteerShiftCalendar({
   shifts,
-  onShiftClick,
-  onCreateShift,
+  onEventClick,
+  onEmptySlotClick,
 }: VolunteerShiftCalendarProps) {
-  // Convert volunteer shifts to calendar events
-  const calendarEvents: CalendarEvent[] = useMemo(() => {
-    return shifts.map((shift) => {
-      const startDate = new Date(shift.start_time);
-      const endDate = new Date(shift.end_time);
-      const isUpcoming = startDate > new Date();
-      const isPast = endDate < new Date();
-
-      // Determine color based on status
-      let color: CalendarEvent["color"] = "default";
-      if (isPast) {
-        color = "blue"; // Past events
-      } else if (isUpcoming) {
-        color = "green"; // Upcoming events
-      } else {
-        color = "purple"; // Current/active events
-      }
-
-      return {
-        id: shift.id,
-        start: startDate,
-        end: endDate,
-        title: shift.name,
-        color,
-      };
-    });
+  const events: CalendarEvent[] = useMemo(() => {
+    return shifts.map((shift) => ({
+      id: shift.id?.toString() || "",
+      title: shift.name || "Créneau",
+      subtitle: `${shift.registrations?.length || 0} bénévole${(shift.registrations?.length || 0) !== 1 ? "s" : ""}`,
+      start: new Date(shift.start_time),
+      end: new Date(shift.end_time),
+      color: generateLocationColor(shift.location),
+      metadata: {
+        registeredCount: shift.registrations?.length || 0,
+        maxVolunteers: shift.max_volunteers || 0,
+        location: shift.location,
+      },
+    }));
   }, [shifts]);
 
   const handleEventClick = (event: CalendarEvent) => {
-    const shift = shifts.find((s) => s.id === event.id);
-    if (shift) {
-      onShiftClick(shift);
+    if (onEventClick) {
+      // Find the original shift by ID
+      const shift = shifts.find((s) => s.id?.toString() === event.id);
+      if (shift) {
+        onEventClick(shift);
+      }
     }
   };
 
   return (
-    <Card className="h-[800px]">
-      <CardHeader>
+    <Calendar
+      events={events}
+      onEventClick={handleEventClick}
+      onEmptySlotClick={onEmptySlotClick}
+      locale={fr}
+      view="week"
+    >
+      <div className="flex flex-col space-y-4">
+        {/* Calendar Header */}
         <div className="flex items-center justify-between">
-          <CardTitle>Calendrier des Créneaux Bénévoles</CardTitle>
-          <Button onClick={onCreateShift} size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Nouveau Créneau
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="h-[calc(100%-100px)]">
-        <Calendar
-          events={calendarEvents}
-          onEventClick={handleEventClick}
-          defaultDate={new Date()}
-          view="month"
-          locale={fr}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <CalendarPrevTrigger />
-              <CalendarTodayTrigger />
-              <CalendarNextTrigger />
-            </div>
-            <CalendarCurrentDate />
-            <CalendarViewTrigger view="month">Mois</CalendarViewTrigger>
+          <div className="flex items-center space-x-1">
+            <CalendarPrevTrigger className="p-2 hover:bg-muted rounded">
+              <ChevronLeft className="h-4 w-4" />
+            </CalendarPrevTrigger>
+            <CalendarTodayTrigger className="px-3 py-1 text-sm border rounded hover:bg-muted">
+              Aujourd&apos;hui
+            </CalendarTodayTrigger>
+            <CalendarNextTrigger className="p-2 hover:bg-muted rounded">
+              <ChevronRight className="h-4 w-4" />
+            </CalendarNextTrigger>
           </div>
-          <CalendarMonthView />
-        </Calendar>
+          <div className="flex items-center space-x-2">
+            <CalendarIcon className="h-5 w-5" />
+            <CalendarCurrentDate locale={fr} />
+          </div>
 
-        {/* Legend */}
-        <div className="flex items-center justify-center gap-6 mt-4 p-4 bg-muted/50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-blue-500" />
-            <span className="text-sm">Terminé</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span className="text-sm">À venir</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-purple-500" />
-            <span className="text-sm">En cours</span>
+          {/* Legend */}
+          <div className="flex items-center justify-center gap-6 p-4">
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: "hsl(45, 70%, 55%)" }}
+                />
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: "hsl(120, 70%, 55%)" }}
+                />
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: "hsl(200, 70%, 55%)" }}
+                />
+              </div>
+              <span className="text-sm">Couleurs générées par lieu</span>
+            </div>
+            {shifts.length > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {shifts.reduce(
+                    (sum, shift) => sum + (shift.registrations?.length || 0),
+                    0,
+                  )}{" "}
+                  bénévoles inscrits au total
+                </span>
+              </div>
+            )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Calendar */}
+        <CalendarWeekView />
+      </div>
+    </Calendar>
   );
 }

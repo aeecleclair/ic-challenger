@@ -13,8 +13,9 @@ import { Label } from "../../ui/label";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { DateTimePicker } from "../../custom/DateTimePicker";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
+import { useLocations } from "../../../hooks/useLocations";
 import {
-  VolunteerShift,
+  VolunteerShiftComplete,
   VolunteerShiftBase,
 } from "../../../api/hyperionSchemas";
 import {
@@ -31,15 +32,24 @@ import {
   FormLabel,
   FormMessage,
 } from "../../ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
 
 interface VolunteerShiftFormProps {
   shiftId?: string | null;
+  prefilledDate?: Date | null;
   onClose: () => void;
   onSuccess: () => void;
 }
 
 export default function VolunteerShiftForm({
   shiftId,
+  prefilledDate,
   onClose,
   onSuccess,
 }: VolunteerShiftFormProps) {
@@ -51,9 +61,11 @@ export default function VolunteerShiftForm({
     isUpdateLoading,
   } = useVolunteerShifts();
 
+  const { locations } = useLocations();
+
   const isEditing = !!shiftId;
   const shift = isEditing
-    ? volunteerShifts?.find((s: VolunteerShift) => s.id === shiftId)
+    ? volunteerShifts?.find((s: VolunteerShiftComplete) => s.id === shiftId)
     : null;
 
   const form = useForm<VolunteerShiftFormSchema>({
@@ -62,23 +74,32 @@ export default function VolunteerShiftForm({
       name: shift?.name || "",
       description: shift?.description || "",
       value: shift?.value || 1,
-      start_time: shift ? new Date(shift.start_time) : new Date(),
+      start_time: shift
+        ? new Date(shift.start_time)
+        : prefilledDate || new Date(),
       end_time: shift
         ? new Date(shift.end_time)
-        : new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours later
-      location: shift?.location || "",
+        : new Date(
+            (prefilledDate || new Date()).getTime() + 2 * 60 * 60 * 1000,
+          ), // 2 hours later
+      location_id: shift?.location || "",
       max_volunteers: shift?.max_volunteers || 5,
     },
   });
 
   const onSubmit = (data: VolunteerShiftFormSchema) => {
+    // Find the location name from the location ID
+    const selectedLocation = locations?.find(
+      (loc) => loc.id === data.location_id,
+    );
+
     const shiftData: VolunteerShiftBase = {
       name: data.name,
       description: data.description || null,
       value: data.value,
       start_time: data.start_time.toISOString(),
       end_time: data.end_time.toISOString(),
-      location: data.location || null,
+      location: selectedLocation ? selectedLocation.name : null,
       max_volunteers: data.max_volunteers,
     };
 
@@ -182,12 +203,26 @@ export default function VolunteerShiftForm({
 
               <FormField
                 control={form.control}
-                name="location"
+                name="location_id"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Lieu</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Hall d'accueil" {...field} />
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez un lieu" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {locations?.map((location) => (
+                            <SelectItem key={location.id} value={location.id}>
+                              {location.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

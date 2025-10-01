@@ -18,11 +18,13 @@ import { NavVolunteerShifts } from "./NavVolunteerShifts";
 import { NavSearch } from "./NavSearch";
 import { NavLocations } from "./NavLocations";
 import { useParticipant } from "@/src/hooks/useParticipant";
+import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
   const router = useRouter();
   const { meParticipant } = useParticipant();
+  const { meCompetition } = useCompetitionUser();
 
   const handleLogoClick = () => {
     router.push("/");
@@ -57,7 +59,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         {edition && meParticipant && <NavMatches />}
-        {edition && <NavVolunteerShifts />}
+        {edition && meCompetition?.is_volunteer && <NavVolunteerShifts />}
         {edition && <NavSearch />}
         {edition && <NavLocations />}
       </SidebarContent>

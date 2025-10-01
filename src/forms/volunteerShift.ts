@@ -13,7 +13,7 @@ export const volunteerShiftFormSchema = z
       required_error: "L'heure de fin est requise",
       invalid_type_error: "L'heure de fin doit être une date valide",
     }),
-    location: z.string().optional(),
+    location_id: z.string().optional(),
     max_volunteers: z
       .number()
       .min(0, "Le nombre maximum de bénévoles doit être au moins 0"),

@@ -225,7 +225,7 @@ const MatchesDashboard = () => {
                   <SelectValue placeholder="Tous les sports" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tous les sports</SelectItem>
+                  <SelectItem value="all">Tous les sports</SelectItem>
                   {sports?.map((sport) => (
                     <SelectItem key={sport.id} value={sport.id}>
                       {sport.name}
