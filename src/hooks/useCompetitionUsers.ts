@@ -6,6 +6,7 @@ import {
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { DetailedErrorType, ErrorType } from "../utils/errorTyping";
+import { useMemo } from "react";
 
 export const useCompetitionUsers = () => {
   const { token, isTokenExpired } = useAuth();
@@ -103,8 +104,17 @@ export const useCompetitionUsers = () => {
     );
   };
 
+  const volunteers = useMemo(
+    () =>
+      competitionUsers
+        ? competitionUsers.filter((user) => user.is_volunteer)
+        : [],
+    [competitionUsers],
+  );
+
   return {
     competitionUsers,
+    volunteers,
     isLoading,
     refetchCompetitionUsers,
     validateCompetitionUser,
