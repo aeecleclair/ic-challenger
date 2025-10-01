@@ -7,10 +7,7 @@ import {
 } from "../../ui/sidebar";
 
 import { useRouter } from "next/navigation";
-import {
-  Collapsible,
-  CollapsibleTrigger,
-} from "../../ui/collapsible";
+import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 
 export function NavVolunteerShifts() {
   const router = useRouter();

@@ -79,9 +79,7 @@ export default function VolunteerShiftForm({
         : prefilledDate || new Date(),
       end_time: shift
         ? new Date(shift.end_time)
-        : new Date(
-            (prefilledDate || new Date()).getTime() + 60 * 60 * 1000,
-          ), // 2 hours later
+        : new Date((prefilledDate || new Date()).getTime() + 60 * 60 * 1000), // 2 hours later
       location_id: shift?.location || "",
       max_volunteers: shift?.max_volunteers || 5,
     },
