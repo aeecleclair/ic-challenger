@@ -14,6 +14,7 @@ import {
 import { NavUser } from "../../custom/NavUser";
 import { useEdition } from "@/src/hooks/useEdition";
 import { NavMatches } from "./NavMatches";
+import { NavVolunteerShifts } from "./NavVolunteerShifts";
 import { NavSearch } from "./NavSearch";
 import { NavLocations } from "./NavLocations";
 import { useParticipant } from "@/src/hooks/useParticipant";
@@ -56,6 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         {edition && meParticipant && <NavMatches />}
+        {edition && <NavVolunteerShifts />}
         {edition && <NavSearch />}
         {edition && <NavLocations />}
       </SidebarContent>
