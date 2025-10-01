@@ -2,7 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { volunteerShiftFormSchema, VolunteerShiftFormSchema } from "../../../forms/volunteerShift";
+import {
+  volunteerShiftFormSchema,
+  VolunteerShiftFormSchema,
+} from "../../../forms/volunteerShift";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
@@ -10,7 +13,10 @@ import { Label } from "../../ui/label";
 import { LoadingButton } from "../../custom/LoadingButton";
 import { DateTimePicker } from "../../custom/DateTimePicker";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
-import { VolunteerShift, VolunteerShiftBase } from "../../../api/hyperionSchemas";
+import {
+  VolunteerShift,
+  VolunteerShiftBase,
+} from "../../../api/hyperionSchemas";
 import {
   Dialog,
   DialogContent,
@@ -37,10 +43,18 @@ export default function VolunteerShiftForm({
   onClose,
   onSuccess,
 }: VolunteerShiftFormProps) {
-  const { volunteerShifts, createVolunteerShift, updateVolunteerShift, isCreateLoading, isUpdateLoading } = useVolunteerShifts();
-  
+  const {
+    volunteerShifts,
+    createVolunteerShift,
+    updateVolunteerShift,
+    isCreateLoading,
+    isUpdateLoading,
+  } = useVolunteerShifts();
+
   const isEditing = !!shiftId;
-  const shift = isEditing ? volunteerShifts?.find((s: VolunteerShift) => s.id === shiftId) : null;
+  const shift = isEditing
+    ? volunteerShifts?.find((s: VolunteerShift) => s.id === shiftId)
+    : null;
 
   const form = useForm<VolunteerShiftFormSchema>({
     resolver: zodResolver(volunteerShiftFormSchema),
@@ -49,7 +63,9 @@ export default function VolunteerShiftForm({
       description: shift?.description || "",
       value: shift?.value || 1,
       start_time: shift ? new Date(shift.start_time) : new Date(),
-      end_time: shift ? new Date(shift.end_time) : new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours later
+      end_time: shift
+        ? new Date(shift.end_time)
+        : new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours later
       location: shift?.location || "",
       max_volunteers: shift?.max_volunteers || 5,
     },
@@ -133,7 +149,9 @@ export default function VolunteerShiftForm({
                         date={field.value}
                         setDate={field.onChange}
                         fromDate={new Date()}
-                        toDate={new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)} // 1 year from now
+                        toDate={
+                          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                        } // 1 year from now
                       />
                     </FormControl>
                     <FormMessage />
@@ -152,7 +170,9 @@ export default function VolunteerShiftForm({
                         date={field.value}
                         setDate={field.onChange}
                         fromDate={new Date()}
-                        toDate={new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)} // 1 year from now
+                        toDate={
+                          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                        } // 1 year from now
                       />
                     </FormControl>
                     <FormMessage />
@@ -167,10 +187,7 @@ export default function VolunteerShiftForm({
                   <FormItem>
                     <FormLabel>Lieu</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Ex: Hall d'accueil"
-                        {...field}
-                      />
+                      <Input placeholder="Ex: Hall d'accueil" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -188,7 +205,9 @@ export default function VolunteerShiftForm({
                         type="number"
                         min="1"
                         {...field}
-                        onChange={(e) => field.onChange(parseInt(e.target.value))}
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -208,7 +227,9 @@ export default function VolunteerShiftForm({
                         min="0"
                         step="0.1"
                         {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                        onChange={(e) =>
+                          field.onChange(parseFloat(e.target.value))
+                        }
                       />
                     </FormControl>
                     <FormMessage />

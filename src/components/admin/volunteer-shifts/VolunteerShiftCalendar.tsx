@@ -36,7 +36,7 @@ export default function VolunteerShiftCalendar({
       const endDate = new Date(shift.end_time);
       const isUpcoming = startDate > new Date();
       const isPast = endDate < new Date();
-      
+
       // Determine color based on status
       let color: CalendarEvent["color"] = "default";
       if (isPast) {
@@ -58,7 +58,7 @@ export default function VolunteerShiftCalendar({
   }, [shifts]);
 
   const handleEventClick = (event: CalendarEvent) => {
-    const shift = shifts.find(s => s.id === event.id);
+    const shift = shifts.find((s) => s.id === event.id);
     if (shift) {
       onShiftClick(shift);
     }
@@ -76,7 +76,7 @@ export default function VolunteerShiftCalendar({
         </div>
       </CardHeader>
       <CardContent className="h-[calc(100%-100px)]">
-        <Calendar 
+        <Calendar
           events={calendarEvents}
           onEventClick={handleEventClick}
           defaultDate={new Date()}
@@ -94,7 +94,7 @@ export default function VolunteerShiftCalendar({
           </div>
           <CalendarMonthView />
         </Calendar>
-        
+
         {/* Legend */}
         <div className="flex items-center justify-center gap-6 mt-4 p-4 bg-muted/50 rounded-lg">
           <div className="flex items-center gap-2">

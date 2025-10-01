@@ -28,8 +28,9 @@ export default function VolunteerShiftDetail({
   onClose,
   onEdit,
 }: VolunteerShiftDetailProps) {
-  const { volunteerShifts, deleteVolunteerShift, isDeleteLoading } = useVolunteerShifts();
-  
+  const { volunteerShifts, deleteVolunteerShift, isDeleteLoading } =
+    useVolunteerShifts();
+
   const shift = volunteerShifts?.find((s: VolunteerShift) => s.id === shiftId);
 
   if (!shift) {
@@ -48,7 +49,10 @@ export default function VolunteerShiftDetail({
   const endDate = new Date(shift.end_time);
   const isUpcoming = startDate > new Date();
   const isPast = endDate < new Date();
-  const durationHours = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 10)) / 10;
+  const durationHours =
+    Math.round(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 10),
+    ) / 10;
 
   const getStatusColor = () => {
     if (isPast) return "secondary";
@@ -121,7 +125,9 @@ export default function VolunteerShiftDetail({
                     <MapPin className="h-4 w-4 text-muted-foreground" />
                     <div>
                       <p className="font-medium">Lieu</p>
-                      <p className="text-sm text-muted-foreground">{shift.location}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {shift.location}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -159,7 +165,8 @@ export default function VolunteerShiftDetail({
                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Fonctionnalité en cours de développement</p>
                 <p className="text-sm">
-                  Les informations sur les bénévoles inscrits seront bientôt disponibles
+                  Les informations sur les bénévoles inscrits seront bientôt
+                  disponibles
                 </p>
               </div>
             </CardContent>

@@ -25,7 +25,10 @@ export default function VolunteerShiftCard({
   const endDate = new Date(shift.end_time);
   const isUpcoming = startDate > new Date();
   const isPast = endDate < new Date();
-  const duration = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 100)) / 10;
+  const duration =
+    Math.round(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 100),
+    ) / 10;
 
   const getStatusColor = () => {
     if (isPast) return "secondary";
@@ -72,9 +75,7 @@ export default function VolunteerShiftCard({
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span>
-              {format(startDate, "dd MMM yyyy", { locale: fr })}
-            </span>
+            <span>{format(startDate, "dd MMM yyyy", { locale: fr })}</span>
           </div>
 
           <div className="flex items-center gap-2 text-sm">

@@ -2,7 +2,12 @@
 
 import { Plus, Search, Eye, Calendar } from "lucide-react";
 import { Button } from "../../../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import {
   Select,
@@ -24,8 +29,9 @@ import {
 import { VolunteerShift } from "../../../api/hyperionSchemas";
 
 export default function VolunteerShiftsPage() {
-  const { volunteerShifts, isLoading, refetchVolunteerShifts } = useVolunteerShifts();
-  
+  const { volunteerShifts, isLoading, refetchVolunteerShifts } =
+    useVolunteerShifts();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const [dateFilter, setDateFilter] = useState<string>("");
@@ -39,13 +45,16 @@ export default function VolunteerShiftsPage() {
     if (!volunteerShifts) return [];
 
     return volunteerShifts.filter((shift: VolunteerShift) => {
-      const matchesSearch = shift.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch =
+        shift.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         shift.description?.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesLocation = selectedLocation === "" || 
+
+      const matchesLocation =
+        selectedLocation === "" ||
         shift.location?.toLowerCase().includes(selectedLocation.toLowerCase());
 
-      const matchesDate = dateFilter === "" || 
+      const matchesDate =
+        dateFilter === "" ||
         format(new Date(shift.start_time), "yyyy-MM-dd") === dateFilter;
 
       return matchesSearch && matchesLocation && matchesDate;
@@ -54,18 +63,28 @@ export default function VolunteerShiftsPage() {
 
   // Statistics
   const stats = useMemo(() => {
-    if (!volunteerShifts) return { total: 0, upcoming: 0, totalValue: 0, locations: 0 };
+    if (!volunteerShifts)
+      return { total: 0, upcoming: 0, totalValue: 0, locations: 0 };
 
     const now = new Date();
-    const upcoming = volunteerShifts.filter((shift: VolunteerShift) => new Date(shift.start_time) > now).length;
-    const totalValue = volunteerShifts.reduce((sum: number, shift: VolunteerShift) => sum + shift.value, 0);
-    const uniqueLocations = new Set(volunteerShifts.map((shift: VolunteerShift) => shift.location).filter(Boolean));
+    const upcoming = volunteerShifts.filter(
+      (shift: VolunteerShift) => new Date(shift.start_time) > now,
+    ).length;
+    const totalValue = volunteerShifts.reduce(
+      (sum: number, shift: VolunteerShift) => sum + shift.value,
+      0,
+    );
+    const uniqueLocations = new Set(
+      volunteerShifts
+        .map((shift: VolunteerShift) => shift.location)
+        .filter(Boolean),
+    );
 
     return {
       total: volunteerShifts.length,
       upcoming,
       totalValue,
-      locations: uniqueLocations.size
+      locations: uniqueLocations.size,
     };
   }, [volunteerShifts]);
 
@@ -73,7 +92,11 @@ export default function VolunteerShiftsPage() {
   const locations = useMemo(() => {
     if (!volunteerShifts) return [];
     const uniqueLocations = Array.from(
-      new Set(volunteerShifts.map((shift: VolunteerShift) => shift.location).filter(Boolean))
+      new Set(
+        volunteerShifts
+          .map((shift: VolunteerShift) => shift.location)
+          .filter(Boolean),
+      ),
     );
     return uniqueLocations;
   }, [volunteerShifts]);
@@ -110,7 +133,9 @@ export default function VolunteerShiftsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Créneaux Bénévoles</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Créneaux Bénévoles
+          </h1>
           <p className="text-muted-foreground">
             Gérez les créneaux de bénévolat pour l&apos;événement
           </p>
@@ -143,7 +168,9 @@ export default function VolunteerShiftsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Créneaux</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Créneaux
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -151,7 +178,9 @@ export default function VolunteerShiftsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Créneaux à Venir</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Créneaux à Venir
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.upcoming}</div>
@@ -188,11 +217,16 @@ export default function VolunteerShiftsPage() {
                 <Input
                   placeholder="Rechercher par nom ou description..."
                   value={searchTerm}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchTerm(e.target.value)
+                  }
                   className="pl-10"
                 />
               </div>
-              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <Select
+                value={selectedLocation}
+                onValueChange={setSelectedLocation}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Lieu" />
                 </SelectTrigger>
@@ -208,7 +242,9 @@ export default function VolunteerShiftsPage() {
               <Input
                 type="date"
                 value={dateFilter}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDateFilter(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setDateFilter(e.target.value)
+                }
                 className="w-[150px]"
               />
               {(searchTerm || selectedLocation || dateFilter) && (
