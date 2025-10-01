@@ -56,6 +56,8 @@ interface MatchesFormProps {
   submitLabel: string;
   isEditing?: boolean;
   onSportChange?: (sportId: string) => void;
+  initialTeam1SchoolId?: string | null;
+  initialTeam2SchoolId?: string | null;
 }
 
 export const MatchesForm = ({
@@ -65,6 +67,8 @@ export const MatchesForm = ({
   submitLabel,
   isEditing = false,
   onSportChange,
+  initialTeam1SchoolId,
+  initialTeam2SchoolId,
 }: MatchesFormProps) => {
   const { sports } = useSports();
   const { edition } = useEdition();
@@ -100,6 +104,21 @@ export const MatchesForm = ({
       form.setValue("edition_id", edition.id);
     }
   }, [edition, form]);
+
+  useEffect(() => {
+    if (isEditing && initialTeam1SchoolId && !team1SchoolId) {
+      setTeam1SchoolId(initialTeam1SchoolId);
+    }
+    if (isEditing && initialTeam2SchoolId && !team2SchoolId) {
+      setTeam2SchoolId(initialTeam2SchoolId);
+    }
+  }, [
+    isEditing,
+    initialTeam1SchoolId,
+    initialTeam2SchoolId,
+    team1SchoolId,
+    team2SchoolId,
+  ]);
 
   useEffect(() => {
     if (selectedSport && sportSchools) {

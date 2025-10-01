@@ -18,6 +18,9 @@ const EditMatchPage = () => {
   const matchId = searchParam.get("match_id");
 
   const [sportId, setSportId] = useState<string | undefined>();
+  const [team1SchoolId, setTeam1SchoolId] = useState<string | null>(null);
+  const [team2SchoolId, setTeam2SchoolId] = useState<string | null>(null);
+
   const { sportMatches, updateMatch, isUpdateLoading } = useSportMatches({
     sportId,
   });
@@ -29,6 +32,18 @@ const EditMatchPage = () => {
       setSportId(match.sport_id);
     }
   }, [match, sportId]);
+
+  // Set school IDs when match data is available
+  useEffect(() => {
+    if (match) {
+      if (match.team1?.school_id && team1SchoolId !== match.team1.school_id) {
+        setTeam1SchoolId(match.team1.school_id);
+      }
+      if (match.team2?.school_id && team2SchoolId !== match.team2.school_id) {
+        setTeam2SchoolId(match.team2.school_id);
+      }
+    }
+  }, [match, team1SchoolId, team2SchoolId]);
 
   const form = useForm<MatchFormValues>({
     resolver: zodResolver(matchFormSchema),
@@ -80,13 +95,13 @@ const EditMatchPage = () => {
     };
 
     updateMatch(matchId, matchData, () => {
-      router.push(`/admin/matches?match_id=${matchId}`);
+      router.push("/admin/matches");
     });
   }
 
   return (
-    <div className="flex w-full flex-col min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="flex w-full flex-col min-h-screen">
+      <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
@@ -95,14 +110,14 @@ const EditMatchPage = () => {
             <p className="text-gray-600 mt-1">
               {match
                 ? `Modifiez les détails du match "${match.name}"`
-                : "Chargement..."}
+                : "Chargement des détails du match..."}
             </p>
           </div>
           <Link
-            href={`/admin/matches${match ? `?match_id=${match.id}` : ""}`}
+            href="/admin/matches"
             className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
-            ← Retour aux détails
+            ← Retour à la liste
           </Link>
         </div>
 
@@ -112,7 +127,10 @@ const EditMatchPage = () => {
             onSubmit={onSubmit}
             isLoading={isUpdateLoading}
             submitLabel="Mettre à jour le match"
+            onSportChange={setSportId}
             isEditing={true}
+            initialTeam1SchoolId={team1SchoolId}
+            initialTeam2SchoolId={team2SchoolId}
           />
         ) : (
           <div className="space-y-6">
