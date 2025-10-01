@@ -20,8 +20,7 @@ import {
 import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 
 export default function VolunteerShiftsPage() {
-  const { volunteerShifts, isLoading } =
-    useVolunteerShifts();
+  const { volunteerShifts, isLoading } = useVolunteerShifts();
 
   const [selectedShift, setSelectedShift] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -47,7 +46,6 @@ export default function VolunteerShiftsPage() {
   };
 
   const handleEmptySlotClick = (date: Date, hour?: number) => {
-    // If hour is provided, set the date to that specific hour
     const shiftDate = new Date(date);
     if (hour !== undefined) {
       shiftDate.setHours(hour, 0, 0, 0);
@@ -126,6 +124,7 @@ export default function VolunteerShiftsPage() {
       ) : (
         <div>
           <VolunteerShiftCalendar
+            key={`shifts-${volunteerShifts?.length || 0}-${volunteerShifts?.map((s) => s.id).join("-") || "empty"}`}
             shifts={volunteerShifts}
             onEventClick={(shift: VolunteerShiftComplete) =>
               setSelectedShift(shift.id)

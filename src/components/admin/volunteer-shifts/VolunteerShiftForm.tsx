@@ -80,7 +80,7 @@ export default function VolunteerShiftForm({
       end_time: shift
         ? new Date(shift.end_time)
         : new Date(
-            (prefilledDate || new Date()).getTime() + 2 * 60 * 60 * 1000,
+            (prefilledDate || new Date()).getTime() + 60 * 60 * 1000,
           ), // 2 hours later
       location_id: shift?.location || "",
       max_volunteers: shift?.max_volunteers || 5,
@@ -88,11 +88,6 @@ export default function VolunteerShiftForm({
   });
 
   const onSubmit = (data: VolunteerShiftFormSchema) => {
-    // Find the location name from the location ID
-    const selectedLocation = locations?.find(
-      (loc) => loc.id === data.location_id,
-    );
-
     const shiftData: VolunteerShiftBase = {
       name: data.name,
       description: data.description || null,
@@ -104,7 +99,7 @@ export default function VolunteerShiftForm({
     };
 
     if (isEditing && shiftId) {
-      updateVolunteerShift(shiftId, onSuccess);
+      updateVolunteerShift(shiftId, shiftData, onSuccess);
     } else {
       createVolunteerShift(shiftData, onSuccess);
     }

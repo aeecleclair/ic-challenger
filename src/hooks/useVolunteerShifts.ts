@@ -69,7 +69,11 @@ export const useVolunteerShifts = () => {
   const { mutate: mutateUpdateVolunteerShift, isPending: isUpdateLoading } =
     usePatchCompetitionVolunteersShiftsShiftId();
 
-  const updateVolunteerShift = (shiftId: string, callback: () => void) => {
+  const updateVolunteerShift = (
+    shiftId: string,
+    body: VolunteerShiftBase,
+    callback: () => void,
+  ) => {
     return mutateUpdateVolunteerShift(
       {
         headers: {
@@ -78,6 +82,7 @@ export const useVolunteerShifts = () => {
         pathParams: {
           shiftId: shiftId,
         },
+        body: body,
       },
       {
         onSettled: (data, error) => {
