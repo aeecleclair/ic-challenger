@@ -29,11 +29,11 @@ export const RegistrationSummary = ({
     schoolId: me?.school_id,
     sportId: meParticipant?.sport_id,
   });
-  const { userPurchases } = useUserPurchases({
+  const { userMePurchases } = useUserPurchases({
     userId: me?.id,
   });
 
-  const purchasedItems = userPurchases?.map((purchase) => {
+  const purchasedItems = userMePurchases?.map((purchase) => {
     return availableProducts?.find(
       (product) => product.id === purchase.product_variant_id,
     );
@@ -44,7 +44,7 @@ export const RegistrationSummary = ({
       return (
         acc +
         (item.price *
-          (userPurchases?.find((p) => p.product_variant_id === item.id)
+          (userMePurchases?.find((p) => p.product_variant_id === item.id)
             ?.quantity || 1)) /
           100
       );
@@ -186,9 +186,9 @@ export const RegistrationSummary = ({
               )}
             </div>
 
-            {userPurchases && userPurchases.length > 0 ? (
+            {userMePurchases && userMePurchases.length > 0 ? (
               <div className="grid grid-cols-1 gap-2 mt-2">
-                {userPurchases.map((productItem, index) => {
+                {userMePurchases.map((productItem, index) => {
                   const product = availableProducts?.find(
                     (p) => p.id === productItem.product_variant_id,
                   );

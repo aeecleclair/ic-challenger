@@ -27,7 +27,7 @@ export const WaitingPage = () => {
   const [licenseDialogOpen, setLicenseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
-  const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
+  const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
 
@@ -69,7 +69,7 @@ export const WaitingPage = () => {
     mode: "onChange",
     defaultValues: {
       products:
-        userPurchases
+        userMePurchases
           ?.map((purchase) => {
             const productItem = availableProducts?.find(
               (product) => product.id === purchase.product_variant_id,
@@ -125,13 +125,13 @@ export const WaitingPage = () => {
 
     const toCreate = newPurchases.filter(
       (newPurchase) =>
-        !userPurchases?.some(
+        !userMePurchases?.some(
           (purchase) =>
             purchase.product_variant_id === newPurchase.product.id &&
             purchase.quantity === newPurchase.quantity,
         ),
     );
-    const toDelete = userPurchases?.filter(
+    const toDelete = userMePurchases?.filter(
       (purchase) =>
         !newPurchases.some(
           (newPurchase) =>

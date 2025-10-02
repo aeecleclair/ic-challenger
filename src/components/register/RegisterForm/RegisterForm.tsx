@@ -31,7 +31,7 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
   const { me } = useUser();
   const { meCompetition } = useCompetitionUser();
   const { meParticipant } = useParticipant();
-  const { userPurchases } = useUserPurchases({ userId: me?.id });
+  const { userMePurchases } = useUserPurchases({ userId: me?.id });
   const router = useRouter();
   useEffect(() => {
     form.setValue("phone", me?.phone || meCompetition?.user.phone || "");
@@ -70,7 +70,7 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
       api?.scrollTo(2);
       return;
     }
-    if (userPurchases === undefined || userPurchases.length === 0) {
+    if (userMePurchases === undefined || userMePurchases.length === 0) {
       setState({
         ...state,
         currentStep: !!meParticipant ? 4 : 3,
@@ -111,8 +111,8 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
 
   return meCompetition === undefined ||
     (meCompetition.is_athlete && meParticipant === undefined) ||
-    userPurchases === undefined ||
-    userPurchases.length === 0 ? (
+    userMePurchases === undefined ||
+    userMePurchases.length === 0 ? (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(() => {})}>
         <RegisterFormField
