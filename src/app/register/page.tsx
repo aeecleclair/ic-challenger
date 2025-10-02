@@ -51,7 +51,7 @@ const Register = () => {
     useCompetitionUser();
   const { meParticipant, createParticipant, withdrawParticipant } =
     useParticipant();
-  const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
+  const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
   const { payments } = useUserPayments();
@@ -83,7 +83,7 @@ const Register = () => {
         team_leader: false,
       },
       products:
-        userPurchases
+        userMePurchases
           ?.map((purchase) => {
             const productItem = availableProducts?.find(
               (product) => product.id === purchase.product_variant_id,
@@ -230,13 +230,13 @@ const Register = () => {
 
           const toCreate = newPurchases.filter(
             (newPurchase) =>
-              !userPurchases?.some(
+              !userMePurchases?.some(
                 (purchase) =>
                   purchase.product_variant_id === newPurchase.product.id &&
                   purchase.quantity === newPurchase.quantity,
               ),
           );
-          const toDelete = userPurchases?.filter(
+          const toDelete = userMePurchases?.filter(
             (purchase) =>
               !newPurchases.some(
                 (newPurchase) =>
@@ -262,7 +262,7 @@ const Register = () => {
       } as const,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [me, meCompetition, meParticipant, userPurchases, availableProducts]);
+  }, [me, meCompetition, meParticipant, userMePurchases, availableProducts]);
 
   return (
     <SidebarProvider>

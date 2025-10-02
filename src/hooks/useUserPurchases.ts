@@ -1,5 +1,6 @@
 import {
   useDeleteCompetitionPurchasesProductVariantId,
+  useGetCompetitionPurchasesMe,
   useGetCompetitionPurchasesUsersUserId,
   usePostCompetitionPurchasesMe,
 } from "@/src/api/hyperionComponents";
@@ -35,6 +36,22 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
       enabled: !isTokenExpired() && !!userId,
       retry: 0,
       queryHash: "getUserPurchases",
+    },
+  );
+
+   const {
+    data: userMePurchases,
+    refetch: refetchUserMePurchases,
+  } = useGetCompetitionPurchasesMe(
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+    {
+      enabled: !isTokenExpired(),
+      retry: 0,
+      queryHash: "getUserMePurchases",
     },
   );
 
@@ -119,9 +136,11 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
 
   return {
     userPurchases,
+    userMePurchases,
     hasPaid,
     error,
     refetchUserPurchases,
+    refetchUserMePurchases,
     createPurchase,
     isCreatePurchaseLoading,
     deletePurchase,
