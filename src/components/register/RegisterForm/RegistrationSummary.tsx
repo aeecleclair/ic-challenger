@@ -10,15 +10,18 @@ import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { Button } from "../../ui/button";
+import { Purchase } from "@/src/api/hyperionSchemas";
 
 interface RegistrationSummaryProps {
   onPurchaseEdit?: () => void;
   onLicenseEdit?: () => void;
+  userPurchases?: Purchase[];
 }
 
 export const RegistrationSummary = ({
   onPurchaseEdit,
   onLicenseEdit,
+  userPurchases,
 }: RegistrationSummaryProps) => {
   const { me } = useUser();
   const { availableProducts } = useAvailableProducts();
@@ -28,9 +31,6 @@ export const RegistrationSummary = ({
   const { teams } = useSchoolSportTeams({
     schoolId: me?.school_id,
     sportId: meParticipant?.sport_id,
-  });
-  const { userPurchases } = useUserPurchases({
-    userId: me?.id,
   });
 
   const purchasedItems = userPurchases?.map((purchase) => {

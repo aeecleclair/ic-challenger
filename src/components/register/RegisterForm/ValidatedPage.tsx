@@ -17,17 +17,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
-import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase } from "@/src/api/hyperionSchemas";
+import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase, Purchase } from "@/src/api/hyperionSchemas";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useRouter } from "next/navigation";
 
-export const ValidatedPage = () => {
+interface ValidatedPageProps {
+  userPurchases?: Purchase[];
+}
+
+export const ValidatedPage = (
+  { userPurchases }: ValidatedPageProps
+) => {
   const router = useRouter();
   const { availableProducts } = useAvailableProducts();
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
-  const { userPurchases, createPurchase, deletePurchase } = useUserPurchases({
+  const { createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
   const { refetchMeCompetition } = useCompetitionUser();
@@ -217,6 +223,7 @@ export const ValidatedPage = () => {
           </DialogTitle>
           <RegistrationSummary
             onPurchaseEdit={() => setPurchaseDialogOpen(true)}
+            userPurchases={userPurchases}
           />
           <DialogContent>
             <Form {...productForm}>
