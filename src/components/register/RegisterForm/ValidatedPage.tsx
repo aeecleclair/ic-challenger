@@ -17,7 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
-import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase, Purchase } from "@/src/api/hyperionSchemas";
+import {
+  AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
+  Purchase,
+} from "@/src/api/hyperionSchemas";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useRouter } from "next/navigation";
 
@@ -25,9 +28,7 @@ interface ValidatedPageProps {
   userMePurchases?: Purchase[];
 }
 
-export const ValidatedPage = (
-  { userMePurchases }: ValidatedPageProps
-) => {
+export const ValidatedPage = ({ userMePurchases }: ValidatedPageProps) => {
   const router = useRouter();
   const { availableProducts } = useAvailableProducts();
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);

@@ -10,7 +10,10 @@ import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useUser } from "@/src/hooks/useUser";
 import { Form } from "../../ui/form";
 import { LoadingButton } from "../../custom/LoadingButton";
-import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase, Purchase } from "@/src/api/hyperionSchemas";
+import {
+  AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
+  Purchase,
+} from "@/src/api/hyperionSchemas";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { licenseFormSchema, LicenseFormValues } from "@/src/forms/license";
 import { useParticipant } from "@/src/hooks/useParticipant";

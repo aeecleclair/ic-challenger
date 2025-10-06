@@ -39,21 +39,19 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
     },
   );
 
-   const {
-    data: userMePurchases,
-    refetch: refetchUserMePurchases,
-  } = useGetCompetitionPurchasesMe(
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  const { data: userMePurchases, refetch: refetchUserMePurchases } =
+    useGetCompetitionPurchasesMe(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    },
-    {
-      enabled: !isTokenExpired(),
-      retry: 0,
-      queryHash: "getUserMePurchases",
-    },
-  );
+      {
+        enabled: !isTokenExpired(),
+        retry: 0,
+        queryHash: "getUserMePurchases",
+      },
+    );
 
   const { mutate: mutateCreatePurchase, isPending: isCreatePurchaseLoading } =
     usePostCompetitionPurchasesMe();

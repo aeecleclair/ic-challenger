@@ -25,7 +25,12 @@ interface RegisterFormProps {
   userMePurchases?: Purchase[];
 }
 
-export const RegisterForm = ({ setState, state, form, userMePurchases }: RegisterFormProps) => {
+export const RegisterForm = ({
+  setState,
+  state,
+  form,
+  userMePurchases,
+}: RegisterFormProps) => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -130,8 +135,12 @@ export const RegisterForm = ({ setState, state, form, userMePurchases }: Registe
     </Form>
   ) : (
     <>
-      {meCompetition && !meCompetition.validated && <WaitingPage userMePurchases={userMePurchases} />}
-      {meCompetition && meCompetition.validated && <ValidatedPage userMePurchases={userMePurchases} />}
+      {meCompetition && !meCompetition.validated && (
+        <WaitingPage userMePurchases={userMePurchases} />
+      )}
+      {meCompetition && meCompetition.validated && (
+        <ValidatedPage userMePurchases={userMePurchases} />
+      )}
     </>
   );
 };
