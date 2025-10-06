@@ -2,7 +2,7 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useUser } from "@/src/hooks/useUser";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "../../ui/badge";
-import { Edit } from "lucide-react";
+import { Edit, XIcon } from "lucide-react";
 import { CheckCircle2 } from "lucide-react";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
@@ -120,15 +120,32 @@ export const RegistrationSummary = ({
                     {meParticipant.license === null ||
                     meParticipant.license === undefined ||
                     meParticipant.license === "" ||
-                    meParticipant.is_license_valid ? (
-                      <Button
-                        type="button"
-                        aria-label="Modifier la license"
-                        onClick={onLicenseEdit}
-                      >
-                        <Edit className="h-4 w-4" />
-                        Modifier ma license
-                      </Button>
+                    !meParticipant.is_license_valid ? (
+                      <>
+                        {
+                          !(
+                            meParticipant.license === null ||
+                            meParticipant.license === undefined ||
+                            (meParticipant.license === "" && (
+                              <div>
+                                <XIcon className="h-4 w-4 text-red-500" />
+                                <p className="text-sm text-muted-foreground">
+                                  License
+                                </p>
+                                <p>{meParticipant.license}</p>
+                              </div>
+                            ))
+                          )
+                        }
+                        <Button
+                          type="button"
+                          aria-label="Modifier la license"
+                          onClick={onLicenseEdit}
+                        >
+                          <Edit className="h-4 w-4" />
+                          Modifier ma license
+                        </Button>
+                      </>
                     ) : (
                       <div>
                         <p className="text-sm text-muted-foreground">
