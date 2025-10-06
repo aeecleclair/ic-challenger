@@ -122,10 +122,11 @@ export const RegistrationSummary = ({
 
                     {meParticipant.license === null ||
                     meParticipant.license === undefined ||
-                    meParticipant.license === "" ? (
+                    meParticipant.license === "" ||
+                    meParticipant.is_license_valid ? (
                       <Button
                         type="button"
-                        aria-label="Modifier les produits"
+                        aria-label="Modifier la license"
                         onClick={onLicenseEdit}
                       >
                         <Edit className="h-4 w-4" />
@@ -134,10 +135,7 @@ export const RegistrationSummary = ({
                     ) : (
                       <div>
                         <p className="text-sm text-muted-foreground">
-                          License{" "}
-                          {meParticipant.is_license_valid
-                            ? "Validée"
-                            : "non validée"}
+                          License Validée
                         </p>
                       </div>
                     )}
