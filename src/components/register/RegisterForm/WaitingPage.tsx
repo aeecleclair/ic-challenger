@@ -20,10 +20,10 @@ import { Button } from "../../ui/button";
 import { toast } from "../../ui/use-toast";
 
 interface WaitingPageProps {
-  userPurchases?: Purchase[];
+  userMePurchases?: Purchase[];
 }
 
-export const WaitingPage = ({ userPurchases }: WaitingPageProps) => {
+export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
   const { availableProducts } = useAvailableProducts();
   const { meParticipant, createParticipant, withdrawParticipant } =
     useParticipant();
@@ -31,7 +31,7 @@ export const WaitingPage = ({ userPurchases }: WaitingPageProps) => {
   const [licenseDialogOpen, setLicenseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
-  const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
+  const { createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
 
@@ -174,7 +174,7 @@ export const WaitingPage = ({ userPurchases }: WaitingPageProps) => {
           <RegistrationSummary
             onPurchaseEdit={() => setPurchaseDialogOpen(true)}
             onLicenseEdit={() => setLicenseDialogOpen(true)}
-            userPurchases={userPurchases}
+            userMePurchases={userMePurchases}
           />
           <DialogContent>
             <Form {...productForm}>

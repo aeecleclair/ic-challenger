@@ -22,10 +22,10 @@ interface RegisterFormProps {
   setState: (state: RegisterState) => void;
   state: RegisterState;
   form: UseFormReturn<RegisteringFormValues>;
-  userPurchases?: Purchase[];
+  userMePurchases?: Purchase[];
 }
 
-export const RegisterForm = ({ setState, state, form, userPurchases }: RegisterFormProps) => {
+export const RegisterForm = ({ setState, state, form, userMePurchases }: RegisterFormProps) => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,7 +33,6 @@ export const RegisterForm = ({ setState, state, form, userPurchases }: RegisterF
   const { me } = useUser();
   const { meCompetition } = useCompetitionUser();
   const { meParticipant } = useParticipant();
-  const { userMePurchases } = useUserPurchases({ userId: me?.id });
   const router = useRouter();
   useEffect(() => {
     form.setValue("phone", me?.phone || meCompetition?.user.phone || "");
@@ -131,8 +130,8 @@ export const RegisterForm = ({ setState, state, form, userPurchases }: RegisterF
     </Form>
   ) : (
     <>
-      {meCompetition && !meCompetition.validated && <WaitingPage userPurchases={userPurchases} />}
-      {meCompetition && meCompetition.validated && <ValidatedPage userPurchases={userPurchases} />}
+      {meCompetition && !meCompetition.validated && <WaitingPage userMePurchases={userMePurchases} />}
+      {meCompetition && meCompetition.validated && <ValidatedPage userMePurchases={userMePurchases} />}
     </>
   );
 };

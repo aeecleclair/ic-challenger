@@ -286,7 +286,12 @@ const Register = () => {
             </Breadcrumb>
           </div>
         </header>
-        <RegisterForm setState={setState} state={state} form={form} userPurchases={userPurchases} />
+        <RegisterForm
+          setState={setState}
+          state={state}
+          form={form}
+          userMePurchases={userMePurchases}
+        />
       </SidebarInset>
     </SidebarProvider>
   );

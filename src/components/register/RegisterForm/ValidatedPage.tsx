@@ -22,18 +22,18 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useRouter } from "next/navigation";
 
 interface ValidatedPageProps {
-  userPurchases?: Purchase[];
+  userMePurchases?: Purchase[];
 }
 
 export const ValidatedPage = (
-  { userPurchases }: ValidatedPageProps
+  { userMePurchases }: ValidatedPageProps
 ) => {
   const router = useRouter();
   const { availableProducts } = useAvailableProducts();
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
-  const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
+  const { createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
   const { refetchMeCompetition } = useCompetitionUser();
@@ -223,7 +223,7 @@ export const ValidatedPage = (
           </DialogTitle>
           <RegistrationSummary
             onPurchaseEdit={() => setPurchaseDialogOpen(true)}
-            userPurchases={userPurchases}
+            userMePurchases={userMePurchases}
           />
           <DialogContent>
             <Form {...productForm}>

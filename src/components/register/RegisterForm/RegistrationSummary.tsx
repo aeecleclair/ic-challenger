@@ -15,13 +15,13 @@ import { Purchase } from "@/src/api/hyperionSchemas";
 interface RegistrationSummaryProps {
   onPurchaseEdit?: () => void;
   onLicenseEdit?: () => void;
-  userPurchases?: Purchase[];
+  userMePurchases?: Purchase[];
 }
 
 export const RegistrationSummary = ({
   onPurchaseEdit,
   onLicenseEdit,
-  userPurchases,
+  userMePurchases,
 }: RegistrationSummaryProps) => {
   const { me } = useUser();
   const { availableProducts } = useAvailableProducts();
@@ -31,9 +31,6 @@ export const RegistrationSummary = ({
   const { teams } = useSchoolSportTeams({
     schoolId: me?.school_id,
     sportId: meParticipant?.sport_id,
-  });
-  const { userMePurchases } = useUserPurchases({
-    userId: me?.id,
   });
 
   const purchasedItems = userMePurchases?.map((purchase) => {
