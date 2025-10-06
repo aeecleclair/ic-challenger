@@ -16,14 +16,16 @@ import { useRouter } from "next/navigation";
 import { CarouselApi } from "../../ui/carousel";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { UseFormReturn } from "react-hook-form";
+import { Purchase } from "@/src/api/hyperionSchemas";
 
 interface RegisterFormProps {
   setState: (state: RegisterState) => void;
   state: RegisterState;
   form: UseFormReturn<RegisteringFormValues>;
+  userPurchases?: Purchase[];
 }
 
-export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
+export const RegisterForm = ({ setState, state, form, userPurchases }: RegisterFormProps) => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -129,8 +131,8 @@ export const RegisterForm = ({ setState, state, form }: RegisterFormProps) => {
     </Form>
   ) : (
     <>
-      {meCompetition && !meCompetition.validated && <WaitingPage />}
-      {meCompetition && meCompetition.validated && <ValidatedPage />}
+      {meCompetition && !meCompetition.validated && <WaitingPage userPurchases={userPurchases} />}
+      {meCompetition && meCompetition.validated && <ValidatedPage userPurchases={userPurchases} />}
     </>
   );
 };

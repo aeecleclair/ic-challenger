@@ -10,15 +10,18 @@ import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { Button } from "../../ui/button";
+import { Purchase } from "@/src/api/hyperionSchemas";
 
 interface RegistrationSummaryProps {
   onPurchaseEdit?: () => void;
   onLicenseEdit?: () => void;
+  userPurchases?: Purchase[];
 }
 
 export const RegistrationSummary = ({
   onPurchaseEdit,
   onLicenseEdit,
+  userPurchases,
 }: RegistrationSummaryProps) => {
   const { me } = useUser();
   const { availableProducts } = useAvailableProducts();
