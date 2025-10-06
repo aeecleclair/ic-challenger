@@ -30,7 +30,6 @@ import {
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
-import { useUserPayments } from "@/src/hooks/useUserPayments";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import {
   registeringFormSchema,
@@ -54,7 +53,6 @@ const Register = () => {
   const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
-  const { payments } = useUserPayments();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -288,7 +286,12 @@ const Register = () => {
             </Breadcrumb>
           </div>
         </header>
-        <RegisterForm setState={setState} state={state} form={form} />
+        <RegisterForm
+          setState={setState}
+          state={state}
+          form={form}
+          userMePurchases={userMePurchases}
+        />
       </SidebarInset>
     </SidebarProvider>
   );

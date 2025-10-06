@@ -10,7 +10,10 @@ import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useUser } from "@/src/hooks/useUser";
 import { Form } from "../../ui/form";
 import { LoadingButton } from "../../custom/LoadingButton";
-import { AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase } from "@/src/api/hyperionSchemas";
+import {
+  AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
+  Purchase,
+} from "@/src/api/hyperionSchemas";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { licenseFormSchema, LicenseFormValues } from "@/src/forms/license";
 import { useParticipant } from "@/src/hooks/useParticipant";
@@ -19,7 +22,11 @@ import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { toast } from "../../ui/use-toast";
 
-export const WaitingPage = () => {
+interface WaitingPageProps {
+  userMePurchases?: Purchase[];
+}
+
+export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
   const { availableProducts } = useAvailableProducts();
   const { meParticipant, createParticipant, withdrawParticipant } =
     useParticipant();
@@ -27,7 +34,7 @@ export const WaitingPage = () => {
   const [licenseDialogOpen, setLicenseDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
-  const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
+  const { createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
 
@@ -170,6 +177,7 @@ export const WaitingPage = () => {
           <RegistrationSummary
             onPurchaseEdit={() => setPurchaseDialogOpen(true)}
             onLicenseEdit={() => setLicenseDialogOpen(true)}
+            userMePurchases={userMePurchases}
           />
           <DialogContent>
             <Form {...productForm}>

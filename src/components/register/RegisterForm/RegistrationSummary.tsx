@@ -2,7 +2,7 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useUser } from "@/src/hooks/useUser";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "../../ui/badge";
-import { Edit } from "lucide-react";
+import { Edit, XIcon } from "lucide-react";
 import { CheckCircle2 } from "lucide-react";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
@@ -10,15 +10,18 @@ import { useSports } from "@/src/hooks/useSports";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { Button } from "../../ui/button";
+import { Purchase } from "@/src/api/hyperionSchemas";
 
 interface RegistrationSummaryProps {
   onPurchaseEdit?: () => void;
   onLicenseEdit?: () => void;
+  userMePurchases?: Purchase[];
 }
 
 export const RegistrationSummary = ({
   onPurchaseEdit,
   onLicenseEdit,
+  userMePurchases,
 }: RegistrationSummaryProps) => {
   const { me } = useUser();
   const { availableProducts } = useAvailableProducts();
@@ -28,9 +31,6 @@ export const RegistrationSummary = ({
   const { teams } = useSchoolSportTeams({
     schoolId: me?.school_id,
     sportId: meParticipant?.sport_id,
-  });
-  const { userMePurchases } = useUserPurchases({
-    userId: me?.id,
   });
 
   const purchasedItems = userMePurchases?.map((purchase) => {
@@ -119,22 +119,37 @@ export const RegistrationSummary = ({
 
                     {meParticipant.license === null ||
                     meParticipant.license === undefined ||
-                    meParticipant.license === "" ? (
-                      <Button
-                        type="button"
-                        aria-label="Modifier les produits"
-                        onClick={onLicenseEdit}
-                      >
-                        <Edit className="h-4 w-4" />
-                        Modifier ma license
-                      </Button>
+                    meParticipant.license === "" ||
+                    !meParticipant.is_license_valid ? (
+                      <>
+                        {
+                          !(
+                            meParticipant.license === null ||
+                            meParticipant.license === undefined ||
+                            (meParticipant.license === "" && (
+                              <div>
+                                <XIcon className="h-4 w-4 text-red-500" />
+                                <p className="text-sm text-muted-foreground">
+                                  License
+                                </p>
+                                <p>{meParticipant.license}</p>
+                              </div>
+                            ))
+                          )
+                        }
+                        <Button
+                          type="button"
+                          aria-label="Modifier la license"
+                          onClick={onLicenseEdit}
+                        >
+                          <Edit className="h-4 w-4" />
+                          Modifier ma license
+                        </Button>
+                      </>
                     ) : (
                       <div>
                         <p className="text-sm text-muted-foreground">
-                          License{" "}
-                          {meParticipant.is_license_valid
-                            ? "Validée"
-                            : "non validée"}
+                          License Validée
                         </p>
                       </div>
                     )}
