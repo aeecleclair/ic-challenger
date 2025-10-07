@@ -51,7 +51,7 @@ export const RegisterForm = ({
 
   async function onSubmit(values: RegisteringFormValues) {
     setIsLoading(true);
-    router.push("/register");
+    router.refresh();
   }
 
   useEffect(() => {
