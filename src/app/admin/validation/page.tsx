@@ -44,6 +44,7 @@ import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { CompetitionUser } from "@/src/api/hyperionSchemas";
 import { useTeams } from "@/src/hooks/useTeams";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
+import { ValidationTab } from "@/src/components/admin/validation/ValidationTab";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -58,16 +59,20 @@ const Dashboard = () => {
   const [checkedParticipants, setCheckedParticipants] = useState<Set<string>>(
     new Set(),
   );
+  const [schoolCompetitionUsersCounter, setSchoolCompetitionUsersCounter] =
+    useState<string[][]>([]);
 
   const searchParam = useSearchParams();
   const schoolId = searchParam.get("school_id");
-  const { schoolsGeneralQuota } = useSchoolsGeneralQuota({
-    schoolId: schoolId || undefined,
-  });
+  const { schoolsGeneralQuota, refetchSchoolsGeneralQuota } =
+    useSchoolsGeneralQuota({
+      schoolId: schoolId || undefined,
+    });
 
-  const { schoolsProductQuota } = useSchoolsProductQuota({
-    schoolId: schoolId || undefined,
-  });
+  const { schoolsProductQuota, refetchSchoolsProductQuota } =
+    useSchoolsProductQuota({
+      schoolId: schoolId || undefined,
+    });
 
   const { products } = useProducts();
 
@@ -76,9 +81,10 @@ const Dashboard = () => {
 
   const effectiveSchoolId = schoolId || userSchoolId;
 
-  const { schoolParticipants } = useSchoolParticipants({
-    schoolId: effectiveSchoolId || "",
-  });
+  const { schoolParticipants, refetchParticipantSchools } =
+    useSchoolParticipants({
+      schoolId: effectiveSchoolId || "",
+    });
 
   const {
     competitionUsers,
@@ -88,7 +94,9 @@ const Dashboard = () => {
     isInvalidateLoading,
   } = useCompetitionUsers();
 
-  const { sportsQuota } = useSportsQuota({ sportId: undefined });
+  const { sportsQuota, refetchSportsQuota } = useSportsQuota({
+    sportId: undefined,
+  });
 
   const checkPaymentStatus = useCallback(
     async (userId: string) => {
@@ -281,6 +289,33 @@ const Dashboard = () => {
     isTokenExpired,
   ]);
 
+  useEffect(() => {
+    if (effectiveSchoolId) {
+      refetchParticipantSchools();
+      refetchSchoolsGeneralQuota();
+      refetchSchoolsProductQuota();
+      refetchSportsQuota();
+    }
+  }, [
+    effectiveSchoolId,
+    refetchParticipantSchools,
+    refetchSchoolsGeneralQuota,
+    refetchSchoolsProductQuota,
+    refetchSportsQuota,
+  ]);
+
+  useEffect(() => {
+    if (competitionUsers && sportSchools) {
+      const newCounter: string[][] = sportSchools.map((school) => {
+        const participants = competitionUsers.filter(
+          (user) => user.user.school_id === school.school_id,
+        );
+        return [school.school_id, participants.length.toString()];
+      });
+      setSchoolCompetitionUsersCounter(newCounter);
+    }
+  }, [competitionUsers, sportSchools]);
+
   if (!schoolId && userSchoolId) {
     router.push(`/admin/validation?school_id=${userSchoolId}`);
     return null;
@@ -319,145 +354,82 @@ const Dashboard = () => {
         </span>
       </div>
 
-      {school && (
-        <>
-          <div className="mb-6 flex items-center gap-4">
-            <div className="text-lg font-semibold mb-1">
-              Quotas de{" "}
-              {school ? formatSchoolName(school.school.name) : "l'école"}
-            </div>
+      {isAdmin() ? (
+        sportSchools &&
+        sportSchools.length > 0 && (
+          <Tabs defaultValue={sportSchools[0].school_id} className="w-full">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-6">
+              {sportSchools.map((school) => {
+                const participants = schoolParticipants?.filter(
+                  (p) => p.school_id === school.school_id,
+                );
 
-            {schoolsGeneralQuota && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {(() => {
-                    const hasExceeded = Object.entries(schoolsGeneralQuota)
-                      .filter(([key]) => !key.toLowerCase().includes("id"))
-                      .some(([key, value]) => {
-                        const used = validatedCounts[key] ?? 0;
-                        const quota = (value as number) ?? 0;
-                        return used > quota;
-                      });
-                    return (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={`px-2 py-1 text-xs border-primary hover:bg-primary/10${hasExceeded ? " text-red-600" : " text-primary"}`}
-                      >
-                        Quota général
-                      </Button>
-                    );
-                  })()}
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <div className="text-base flex items-center mb-2 text-primary font-semibold">
-                    Détail des quotas généraux
-                  </div>
-                  <div className="space-y-2">
-                    {Object.entries(schoolsGeneralQuota)
-                      .filter(([key]) => !key.toLowerCase().includes("id"))
-                      .map(([key, value]) => {
-                        let formattedName = key
-                          .replace(/_/g, " ")
-                          .replace(/([a-z])([A-Z])/g, "$1 $2")
-                          .replace(/\b\w/g, (c) => c.toUpperCase());
-                        const words = formattedName.split(" ");
-                        if (
-                          words.length > 1 &&
-                          words[words.length - 1].toLowerCase() === "quota"
-                        ) {
-                          formattedName = words.slice(0, -1).join(" ");
-                        }
-                        const used = validatedCounts[key] ?? 0;
-                        const quota = (value as number) ?? 0;
-                        const exceeded = used > quota;
-                        return (
-                          <div
-                            key={key}
-                            className="flex justify-between items-center gap-2 py-1 px-2"
-                          >
-                            <span
-                              className={`font-medium text-xs text-muted-foreground${exceeded ? " text-red-600" : ""}`}
-                            >
-                              {formattedName}
-                            </span>
-                            <span
-                              className={`text-xs font-bold${exceeded ? " text-red-600" : " text-primary"}`}
-                            >
-                              Utilisé: {used} / {quota}
-                            </span>
-                          </div>
-                        );
-                      })}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            )}
-
-            {schoolsProductQuota && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10"
+                return (
+                  <TabsTrigger
+                    key={school.school_id}
+                    value={school.school_id}
+                    className="relative"
+                    onClick={() => {
+                      router.push(
+                        `/admin/validation?school_id=${school.school_id}`,
+                      );
+                    }}
                   >
-                    Quota de produit
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <div className="text-base flex items-center mb-2 text-primary font-semibold">
-                    Détail des quotas produits
-                  </div>
-                  <div className="space-y-2">
-                    {schoolsProductQuota.map((value) => {
-                      const product = products?.find(
-                        (p) => p.id === value.product_id,
-                      );
-                      return (
-                        <div
-                          key={value.product_id}
-                          className="flex justify-between items-center gap-2 py-1 px-2"
-                        >
-                          <span className="font-medium text-xs text-muted-foreground">
-                            {product?.name}
-                          </span>
-                          <span className="text-xs font-bold text-primary">
-                            {value.quota}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </div>
-          <GlobalQuotaCard
-            totalParticipants={totalParticipants}
-            totalValidated={totalValidated}
-            totalTeams={totalTeams}
-            sportQuotas={sportsQuota || []}
-            schoolName={formatSchoolName(school.school.name) || "École"}
-          />
-          {participantTableData?.length > 0 ? (
-            <div className="overflow-y-auto">
-              <ParticipantDataTable
-                data={participantTableData}
-                schoolName={formatSchoolName(school.school.name) || "École"}
-                onValidateParticipant={onValidate}
-                onInvalidateParticipant={onInvalidate}
-                isLoading={isValidateLoading || isInvalidateLoading}
+                    <div className="flex items-center gap-2">
+                      {formatSchoolName(school.school.name)}
+                      <Badge variant={"secondary"} className="text-xs">
+                        {schoolCompetitionUsersCounter.find(
+                          (s) => s[0] === school.school_id,
+                        )
+                          ? schoolCompetitionUsersCounter.find(
+                              (s) => s[0] === school.school_id,
+                            )![1]
+                          : participants
+                            ? participants.length
+                            : 0}
+                      </Badge>
+                    </div>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+            <TabsContent key={effectiveSchoolId} value={effectiveSchoolId!}>
+              <ValidationTab
+                participantTableData={participantTableData}
+                onValidate={onValidate}
+                onInvalidate={onInvalidate}
+                isValidateLoading={isValidateLoading}
+                isInvalidateLoading={isInvalidateLoading}
+                school={school}
+                totalParticipants={totalParticipants}
+                totalValidated={totalValidated}
+                totalTeams={totalTeams}
+                sportsQuota={sportsQuota || []}
+                schoolsProductQuota={schoolsProductQuota}
+                schoolsGeneralQuota={schoolsGeneralQuota}
+                products={products}
+                validatedCounts={validatedCounts}
               />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center h-full mt-10">
-              <p className="text-gray-500">
-                Aucun participant trouvé pour cette école
-              </p>
-            </div>
-          )}
-        </>
+            </TabsContent>
+          </Tabs>
+        )
+      ) : (
+        <ValidationTab
+          participantTableData={participantTableData}
+          onValidate={onValidate}
+          onInvalidate={onInvalidate}
+          isValidateLoading={isValidateLoading}
+          isInvalidateLoading={isInvalidateLoading}
+          school={school}
+          totalParticipants={totalParticipants}
+          totalValidated={totalValidated}
+          totalTeams={totalTeams}
+          sportsQuota={sportsQuota || []}
+          schoolsProductQuota={schoolsProductQuota}
+          schoolsGeneralQuota={schoolsGeneralQuota}
+          products={products}
+          validatedCounts={validatedCounts}
+        />
       )}
     </div>
   );
