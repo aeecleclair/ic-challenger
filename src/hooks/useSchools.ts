@@ -111,6 +111,7 @@ export const useSchools = () => {
   const filteredSchools = schools?.filter((school) => school.id !== NoSchoolId);
 
   return {
+    NoSchoolId,
     schools,
     filteredSchools,
     createSchool,

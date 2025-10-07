@@ -33,6 +33,7 @@ import { FullyRegisteredDashboard } from "../components/home/FullyRegisteredDash
 import { useSportSchools } from "../hooks/useSportSchools";
 import { UnregisteredCard } from "../components/home/UnregisteredCard";
 import { useUserPurchases } from "../hooks/useUserPurchases";
+import { useSchools } from "../hooks/useSchools";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
@@ -43,6 +44,7 @@ const Home = () => {
   const router = useRouter();
   const { edition } = useEdition();
   const { sportSchools } = useSportSchools();
+  const { NoSchoolId } = useSchools();
 
   const isEditionStarted = edition?.start_date
     ? new Date() >= new Date(edition.start_date)
@@ -72,57 +74,69 @@ const Home = () => {
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
-        <div className="flex flex-col relative overflow-auto h-full m-6">
-          {!edition && (
-            <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
-              Veuillez patienter, l&apos;édition n&apos;est pas encore prête.
+        {user?.school_id == NoSchoolId ? (
+          <div className="flex flex-col relative overflow-auto h-full m-6">
+            <span className="text-xl text-muted-foreground text-center px-4 justify-center items-center flex h-full">
+              Vous n&apos;êtes pas connecté avec une addresse mail académique ou
+              celle-ci n&apos;est pas reconnue par le système.
+              <br />
+              Veuillez vous connecter avec une adresse académique valide pour
+              accéder à la compétition.
             </span>
-          )}
-          {edition &&
-            (!edition.inscription_enabled || !isSchoolInscriptionEnabled) &&
-            !(isEditionStarted || isEditionEnded) && (
-              <EditionWaitingCard
-                edition={{
-                  year: edition.year,
-                  name: edition.name,
-                  start_date: edition.start_date,
-                  inscription_enabled: edition.inscription_enabled || false,
-                }}
-                isSchoolInscriptionEnabled={!!isSchoolInscriptionEnabled}
-              />
+          </div>
+        ) : (
+          <div className="flex flex-col relative overflow-auto h-full m-6">
+            {!edition && (
+              <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
+                Veuillez patienter, l&apos;édition n&apos;est pas encore prête.
+              </span>
             )}
-          {edition &&
-            edition.inscription_enabled &&
-            isSchoolInscriptionEnabled &&
-            isFullyRegistered &&
-            meCompetition && (
-              <FullyRegisteredDashboard
-                edition={edition}
-                meCompetition={meCompetition}
-              />
-            )}
-          {edition &&
-            edition.inscription_enabled &&
-            isSchoolInscriptionEnabled &&
-            meCompetition &&
-            !isFullyRegistered && (
-              <IncompleteRegistrationCard
-                edition={edition}
-                meCompetition={meCompetition}
-                hasPaid={hasPaid}
-              />
-            )}
-          {edition &&
-            edition.inscription_enabled &&
-            isSchoolInscriptionEnabled &&
-            !meCompetition &&
-            !isLoading &&
-            user &&
-            !(isEditionStarted || isEditionEnded) &&
-            isSchoolInscriptionEnabled && (
-              <UnregisteredCard edition={edition} />
-            )}
-        </div>
+            {edition &&
+              (!edition.inscription_enabled || !isSchoolInscriptionEnabled) &&
+              !(isEditionStarted || isEditionEnded) && (
+                <EditionWaitingCard
+                  edition={{
+                    year: edition.year,
+                    name: edition.name,
+                    start_date: edition.start_date,
+                    inscription_enabled: edition.inscription_enabled || false,
+                  }}
+                  isSchoolInscriptionEnabled={!!isSchoolInscriptionEnabled}
+                />
+              )}
+            {edition &&
+              edition.inscription_enabled &&
+              isSchoolInscriptionEnabled &&
+              isFullyRegistered &&
+              meCompetition && (
+                <FullyRegisteredDashboard
+                  edition={edition}
+                  meCompetition={meCompetition}
+                />
+              )}
+            {edition &&
+              edition.inscription_enabled &&
+              isSchoolInscriptionEnabled &&
+              meCompetition &&
+              !isFullyRegistered && (
+                <IncompleteRegistrationCard
+                  edition={edition}
+                  meCompetition={meCompetition}
+                  hasPaid={hasPaid}
+                />
+              )}
+            {edition &&
+              edition.inscription_enabled &&
+              isSchoolInscriptionEnabled &&
+              !meCompetition &&
+              !isLoading &&
+              user &&
+              !(isEditionStarted || isEditionEnded) &&
+              isSchoolInscriptionEnabled && (
+                <UnregisteredCard edition={edition} />
+              )}
+          </div>
+        )}
       </SidebarInset>
     </SidebarProvider>
   );
