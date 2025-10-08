@@ -52,6 +52,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       locations: "Lieux",
       products: "Produits",
       matches: "Matchs",
+      teams: "Équipes",
       podiums: "Podiums",
       groups: "Groupes",
       validation: "Validation",

@@ -19,6 +19,7 @@ import { NavSchools } from "./NavSchools";
 import { NavSports } from "./NavSports";
 import { NavGroups } from "./NavGroups";
 import { NavMatches } from "./NavMatches";
+import { NavTeams } from "./NavTeams";
 import { NavProducts } from "./NavProducts";
 import { NavLocations } from "./NavLocations";
 import { NavPodiums } from "./NavPodiums";
@@ -75,6 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {isAdmin() && <NavLicense />}
             {isAdmin() && <NavLocations />}
             {(isAdmin() || isSportManager()) && <NavMatches />}
+            {(isAdmin() || isSportManager()) && <NavTeams />}
             {(isAdmin() || isSportManager()) && <NavPodiums />}
             {isAdmin() && <NavGroups />}
             {isAdmin() && <NavProducts />}
