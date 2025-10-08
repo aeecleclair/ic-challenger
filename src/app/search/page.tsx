@@ -31,7 +31,7 @@ import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";
-import { useTeams } from "../../hooks/useTeams";
+import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
 import { useSportMatches } from "../../hooks/useMatches";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
@@ -77,7 +77,7 @@ export default function SearchPage() {
   });
 
   // Get teams using real hooks - only when both sport and school are selected
-  const { teams } = useTeams({
+  const { teams } = useSchoolSportTeams({
     sportId: filters.sport !== "all" ? filters.sport : undefined,
     schoolId: filters.school !== "all" ? filters.school : undefined,
   });
@@ -86,7 +86,7 @@ export default function SearchPage() {
     if (filters.school === "all" || filters.sport === "all" || !teams) {
       return [];
     }
-    // The useTeams hook already filters by sport and school, so teams is already filtered
+    // The useSchoolSportTeams hook already filters by sport and school, so teams is already filtered
     return teams;
   }, [filters.school, filters.sport, teams]);
 

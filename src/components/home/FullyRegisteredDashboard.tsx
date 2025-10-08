@@ -2,7 +2,7 @@ import { UserStatusBadges } from "./UserStatusBadges";
 import { MatchCard } from "./matches/MatchCard";
 import { useParticipant } from "../../hooks/useParticipant";
 import { useSportMatches } from "../../hooks/useMatches";
-import { useTeams } from "../../hooks/useTeams";
+import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";
 import { useUser } from "../../hooks/useUser";
@@ -52,7 +52,7 @@ export const FullyRegisteredDashboard = ({
     sportId: meParticipant?.sport_id,
   });
 
-  const { teams } = useTeams({
+  const { teams } = useSchoolSportTeams({
     sportId: meParticipant?.sport_id,
     schoolId: meParticipant?.school_id,
   });

@@ -18,7 +18,7 @@ import {
 } from "@/src/components/ui/select";
 import { Trash2 } from "lucide-react";
 import { useSchools } from "@/src/hooks/useSchools";
-import { useTeams } from "@/src/hooks/useTeams";
+import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
@@ -40,7 +40,7 @@ export function RankingRow({
   showRemove,
 }: RankingRowProps) {
   const schoolId = form.watch(`rankings.${index}.school_id`);
-  const { teams } = useTeams({ sportId, schoolId });
+  const { teams } = useSchoolSportTeams({ sportId, schoolId });
   const { sportSchools } = useSportSchools();
 
   return (

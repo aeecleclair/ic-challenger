@@ -10,7 +10,7 @@ import { UpcomingMatches } from "../../components/home/matches/UpcomingMatches";
 import { PastMatches } from "../../components/home/matches/PastMatches";
 import { useSportMatches } from "../../hooks/useMatches";
 import { useParticipant } from "../../hooks/useParticipant";
-import { useTeams } from "../../hooks/useTeams";
+import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";
 import { Calendar, Trophy, Users, GraduationCap, Zap } from "lucide-react";
@@ -26,7 +26,7 @@ import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 export default function MatchesPage() {
   const { meParticipant } = useParticipant();
-  const { teams } = useTeams({
+  const { teams } = useSchoolSportTeams({
     sportId: meParticipant?.sport_id,
     schoolId: meParticipant?.school_id,
   });
