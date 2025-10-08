@@ -16,10 +16,15 @@ import {
 } from "@/src/api/hyperionSchemas";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { licenseFormSchema, LicenseFormValues } from "@/src/forms/license";
+import {
+  substituteFormSchema,
+  SubstituteFormValues,
+} from "@/src/forms/substitute";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { StyledFormField } from "../../custom/StyledFormField";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
+import { Checkbox } from "../../ui/checkbox";
 import { toast } from "../../ui/use-toast";
 
 interface WaitingPageProps {
@@ -32,6 +37,7 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
     useParticipant();
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [licenseDialogOpen, setLicenseDialogOpen] = useState(false);
+  const [substituteDialogOpen, setSubstituteDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
   const { createPurchase, deletePurchase } = useUserPurchases({
@@ -43,6 +49,14 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
     mode: "onChange",
     defaultValues: {
       license_number: meParticipant?.license || "",
+    },
+  });
+
+  const substituteForm = useForm<SubstituteFormValues>({
+    resolver: zodResolver(substituteFormSchema),
+    mode: "onChange",
+    defaultValues: {
+      substitute: meParticipant?.substitute || false,
     },
   });
 
@@ -66,6 +80,35 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
         meParticipant.sport_id,
         () => {
           setLicenseDialogOpen(false);
+        },
+      ),
+    );
+  };
+
+  const onSubstituteFormSubmit = (values: SubstituteFormValues) => {
+    if (!meParticipant?.sport_id) {
+      setSubstituteDialogOpen(false);
+      toast({
+        title: "Erreur",
+        description: "Vous devez d'abord sélectionner un sport.",
+        variant: "destructive",
+      });
+      return;
+    }
+    withdrawParticipant(meParticipant.sport_id, () =>
+      createParticipant(
+        {
+          license: meParticipant.license || "",
+          team_id: meParticipant.team_id!,
+          substitute: values.substitute,
+        },
+        meParticipant.sport_id,
+        () => {
+          setSubstituteDialogOpen(false);
+          toast({
+            title: "Statut de remplaçant mis à jour",
+            description: `Vous êtes maintenant ${values.substitute ? "remplaçant" : "titulaire"}.`,
+          });
         },
       ),
     );
@@ -177,6 +220,7 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
           <RegistrationSummary
             onPurchaseEdit={() => setPurchaseDialogOpen(true)}
             onLicenseEdit={() => setLicenseDialogOpen(true)}
+            onSubstituteEdit={() => setSubstituteDialogOpen(true)}
             userMePurchases={userMePurchases}
           />
           <DialogContent>

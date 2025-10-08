@@ -15,12 +15,14 @@ import { Purchase } from "@/src/api/hyperionSchemas";
 interface RegistrationSummaryProps {
   onPurchaseEdit?: () => void;
   onLicenseEdit?: () => void;
+  onSubstituteEdit?: () => void;
   userMePurchases?: Purchase[];
 }
 
 export const RegistrationSummary = ({
   onPurchaseEdit,
   onLicenseEdit,
+  onSubstituteEdit,
   userMePurchases,
 }: RegistrationSummaryProps) => {
   const { me } = useUser();
@@ -117,6 +119,44 @@ export const RegistrationSummary = ({
                       </div>
                     )}
 
+                    <div className="col-span-2">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm text-muted-foreground">Statut</p>
+                        {onSubstituteEdit && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            aria-label="Modifier le statut remplaçant"
+                            onClick={onSubstituteEdit}
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {meParticipant.substitute ? (
+                          <>
+                            <Badge
+                              variant="outline"
+                              className="text-orange-600 border-orange-600"
+                            >
+                              Remplaçant
+                            </Badge>
+                          </>
+                        ) : (
+                          <>
+                            <Badge
+                              variant="outline"
+                              className="text-green-600 border-green-600"
+                            >
+                              Titulaire
+                            </Badge>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
                     {meParticipant.license === null ||
                     meParticipant.license === undefined ||
                     meParticipant.license === "" ||
@@ -187,16 +227,20 @@ export const RegistrationSummary = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold">Produits sélectionnés</h3>
+          <div className="bg-gray-50 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="font-semibold text-gray-900">
+                Produits sélectionnés
+              </h3>
               {onPurchaseEdit && (
                 <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   aria-label="Modifier les produits"
                   onClick={onPurchaseEdit}
                 >
-                  <Edit className="h-4 w-4" />
+                  <Edit className="h-3 w-3" />
                 </Button>
               )}
             </div>
