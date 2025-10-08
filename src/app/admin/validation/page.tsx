@@ -43,7 +43,6 @@ import { useProducts } from "@/src/hooks/useProducts";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { CompetitionUser } from "@/src/api/hyperionSchemas";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
-import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { ValidationTab } from "@/src/components/admin/validation/ValidationTab";
 
 const Dashboard = () => {
