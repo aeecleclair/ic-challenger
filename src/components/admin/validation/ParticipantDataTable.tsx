@@ -61,6 +61,7 @@ export interface ParticipantData {
   isCaptain: boolean;
   participantType: string;
   hasPaid?: boolean;
+  partialPaid?: boolean;
 }
 
 interface ParticipantDataTableProps {
@@ -388,6 +389,13 @@ export function ParticipantDataTable({
             className="bg-blue-100 text-blue-800 hover:bg-blue-200"
           >
             En attente de paiement
+          </Badge>
+        ) : participant.partialPaid ? (
+          <Badge
+            variant="secondary"
+            className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+          >
+            Validé et Paiement partiel
           </Badge>
         ) : (
           <Badge

@@ -2,11 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
-import { useCallback, useMemo, useEffect, useState } from "react";
-import {
-  ParticipantDataTable,
-  ParticipantData,
-} from "@/src/components/admin/validation/ParticipantDataTable";
+import { useMemo, useEffect, useState } from "react";
+import { ParticipantData } from "@/src/components/admin/validation/ParticipantDataTable";
 import { useSports } from "@/src/hooks/useSports";
 import { useSportsQuota } from "@/src/hooks/useSportsQuota";
 import { useUser } from "@/src/hooks/useUser";
@@ -14,50 +11,25 @@ import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { Badge } from "@/src/components/ui/badge";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/src/components/ui/card";
-import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/src/components/ui/tabs";
-import { Trophy } from "lucide-react";
-import { GlobalQuotaCard } from "@/src/components/admin/validation/GlobalQuotaCard";
-
-import { fetchGetCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
-import { useAuth } from "@/src/hooks/useAuth";
-import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useSchoolsGeneralQuota } from "@/src/hooks/useSchoolsGeneralQuota";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/src/components/ui/tooltip";
-import { Button } from "@/src/components/ui/button";
 import { useSchoolsProductQuota } from "@/src/hooks/useSchoolsProductQuota";
 import { useProducts } from "@/src/hooks/useProducts";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { CompetitionUser } from "@/src/api/hyperionSchemas";
-import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { ValidationTab } from "@/src/components/admin/validation/ValidationTab";
+import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
 
 const Dashboard = () => {
   const router = useRouter();
   const { sportSchools } = useSportSchools();
   const { sports } = useSports();
   const { me: currentUser, isAdmin } = useUser();
-  const { token, isTokenExpired } = useAuth();
 
-  const [participantPayments, setParticipantPayments] = useState<
-    Record<string, boolean | undefined>
-  >({});
-  const [checkedParticipants, setCheckedParticipants] = useState<Set<string>>(
-    new Set(),
-  );
   const [schoolCompetitionUsersCounter, setSchoolCompetitionUsersCounter] =
     useState<string[][]>([]);
 
@@ -84,6 +56,9 @@ const Dashboard = () => {
     useSchoolParticipants({
       schoolId: effectiveSchoolId || "",
     });
+  const { schoolsPurchases, refetchSchoolsPurchases } = useSchoolsPurchases({
+    schoolId: effectiveSchoolId || "",
+  });
 
   const {
     competitionUsers,
@@ -96,46 +71,6 @@ const Dashboard = () => {
   const { sportsQuota, refetchSportsQuota } = useSportsQuota({
     sportId: undefined,
   });
-
-  const checkPaymentStatus = useCallback(
-    async (userId: string) => {
-      if (checkedParticipants.has(userId) || !token || isTokenExpired()) {
-        return;
-      }
-
-      try {
-        const payments = await fetchGetCompetitionUsersUserIdPayments({
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          pathParams: {
-            userId: userId,
-          },
-        });
-
-        const hasPaid = payments && payments.length > 0;
-        setParticipantPayments((prev) => ({
-          ...prev,
-          [userId]: hasPaid,
-        }));
-      } catch (error: any) {
-        console.error(
-          "Error checking payment status for user",
-          userId,
-          ":",
-          error,
-        );
-
-        setParticipantPayments((prev) => ({
-          ...prev,
-          [userId]: undefined,
-        }));
-      } finally {
-        setCheckedParticipants((prev) => new Set(prev).add(userId));
-      }
-    },
-    [token, isTokenExpired, checkedParticipants],
-  );
 
   const onValidate = (userId: string) => {
     validateCompetitionUser(userId, () => {});
@@ -164,6 +99,24 @@ const Dashboard = () => {
             return types.join(", ");
           };
 
+          const userPurchases = schoolsPurchases
+            ? schoolsPurchases[user.user_id]
+              ? schoolsPurchases[user.user_id]
+              : []
+            : [];
+          const hasPaid = userPurchases
+            .filter((purchase) => {
+              const product = products?.find(
+                (p) => p.id === purchase.product_variant.product_id,
+              );
+              return product && product.required;
+            })
+            .some((purchase) => purchase.validated);
+
+          const partialPaid = userPurchases.some(
+            (purchase) => !purchase.validated,
+          );
+
           if (user.is_athlete) {
             const participant = schoolParticipants?.find(
               (p) => p.user_id === user.user_id,
@@ -181,7 +134,8 @@ const Dashboard = () => {
               isSubstitute: participant?.substitute || false,
               isValidated: user.validated || false,
               participantType: getParticipantType(user),
-              hasPaid: participantPayments[user.user_id],
+              hasPaid: hasPaid,
+              partialPaid: partialPaid,
             };
           }
           return {
@@ -197,16 +151,18 @@ const Dashboard = () => {
             isSubstitute: false,
             isValidated: user.validated || false,
             participantType: getParticipantType(user),
-            hasPaid: participantPayments[user.user_id],
+            hasPaid: hasPaid,
+            partialPaid: partialPaid,
           };
         }) || []
     );
   }, [
     competitionUsers,
     sports,
-    participantPayments,
     schoolParticipants,
     effectiveSchoolId,
+    schoolsPurchases,
+    products,
   ]);
 
   const validatedCounts: Record<string, number> = useMemo(() => {
@@ -265,34 +221,11 @@ const Dashboard = () => {
   }, [participantTableData]);
 
   useEffect(() => {
-    if (participantTableData.length > 0 && token && !isTokenExpired()) {
-      const validatedParticipantsToCheck = participantTableData
-        .filter(
-          (participant) =>
-            participant.isValidated &&
-            !checkedParticipants.has(participant.userId),
-        )
-        .slice(0, 20);
-
-      validatedParticipantsToCheck.forEach((participant, index) => {
-        setTimeout(() => {
-          checkPaymentStatus(participant.userId);
-        }, index * 100);
-      });
-    }
-  }, [
-    participantTableData,
-    checkPaymentStatus,
-    checkedParticipants,
-    token,
-    isTokenExpired,
-  ]);
-
-  useEffect(() => {
     if (effectiveSchoolId) {
       refetchParticipantSchools();
       refetchSchoolsGeneralQuota();
       refetchSchoolsProductQuota();
+      refetchSchoolsPurchases();
       refetchSportsQuota();
     }
   }, [
@@ -300,6 +233,7 @@ const Dashboard = () => {
     refetchParticipantSchools,
     refetchSchoolsGeneralQuota,
     refetchSchoolsProductQuota,
+    refetchSchoolsPurchases,
     refetchSportsQuota,
   ]);
 
