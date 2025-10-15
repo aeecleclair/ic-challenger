@@ -82,13 +82,7 @@ const TeamsDashboard = () => {
   // Enhanced setters that update URL
   const handleSportChange = (sportId: string) => {
     setSelectedSportId(sportId);
-    // Reset school when sport changes, but not during initial load
-    if (selectedSportId) {
-      setSelectedSchoolId("");
-      updateURL(sportId, "");
-    } else {
-      updateURL(sportId, selectedSchoolId);
-    }
+    updateURL(sportId, selectedSchoolId);
   };
 
   const handleSchoolChange = (schoolId: string) => {
@@ -140,24 +134,6 @@ const TeamsDashboard = () => {
       return matchesSearch;
     });
   }, [teams, searchQuery]);
-
-  const stats = useMemo(() => {
-    if (!teams) return { total: 0, withCaptain: 0, avgMembers: 0 };
-
-    const withCaptain = teams.filter((t) => t.captain_id).length;
-    const totalMembers = teams.reduce(
-      (sum, t) => sum + (t.participants?.length || 0),
-      0,
-    );
-    const avgMembers =
-      teams.length > 0 ? Math.round(totalMembers / teams.length) : 0;
-
-    return {
-      total: teams.length,
-      withCaptain,
-      avgMembers,
-    };
-  }, [teams]);
 
   // Form for creating/editing teams
   const form = useForm<TeamFormValues>({
