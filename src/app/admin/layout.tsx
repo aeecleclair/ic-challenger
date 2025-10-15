@@ -23,11 +23,12 @@ import { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { isAdmin, isBDS, isSportManager } = useUser();
+  const { me, isAdmin, isBDS, isSportManager } = useUser();
   const router = useRouter();
   const { edition } = useEdition();
 
   if (
+    me &&
     !(isAdmin() || isBDS() || isSportManager()) &&
     typeof window !== "undefined"
   ) {

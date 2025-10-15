@@ -79,15 +79,9 @@ const TeamsDashboard = () => {
     [router],
   );
 
-  // Enhanced setters that update URL
   const handleSportChange = (sportId: string) => {
     setSelectedSportId(sportId);
-    // Reset school when sport changes, but not during initial load
-    if (selectedSportId) {
-      updateURL(sportId, "");
-    } else {
-      updateURL(sportId, selectedSchoolId);
-    }
+    updateURL(sportId, selectedSchoolId);
   };
 
   const handleSchoolChange = (schoolId: string) => {
