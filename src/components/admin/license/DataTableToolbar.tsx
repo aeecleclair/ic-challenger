@@ -34,7 +34,7 @@ export function DataTableToolbar<TData>({
         {table.getColumn("isValidated") && (
           <DataTableFilterCheckBox
             column={table.getColumn("isValidated")}
-            title="Validé"
+            title="Non Validée"
           />
         )}
 

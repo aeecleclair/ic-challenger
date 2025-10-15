@@ -28,8 +28,8 @@ export function DataTableFilterCheckBox<TData, TValue>({
       // @ts-ignore - We know this is a valid filter function
       column.columnDef.filterFn = (row, columnId, filterValue) => {
         const value = row.getValue(columnId);
-        // If filter value is true, only show rows where the column value is true
-        return filterValue === true ? Boolean(value) === true : true;
+        // If filter value is true, only show rows where the column value is false
+        return filterValue === true ? Boolean(value) === false : true;
       };
     }
   }, [column]);
