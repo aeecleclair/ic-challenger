@@ -62,6 +62,13 @@ const MatchesDashboard = () => {
     }
   }, [sports, selectedSportId]);
 
+  // Refetch matches when selected sport changes
+  useEffect(() => {
+    if (selectedSportId) {
+      refetchSportMatches();
+    }
+  }, [selectedSportId, refetchSportMatches]);
+
   const filteredMatches = useMemo(() => {
     if (!sportMatches) return [];
 
