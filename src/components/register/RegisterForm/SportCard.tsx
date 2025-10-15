@@ -102,9 +102,10 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                 {sports
                   .filter(
                     (sport) =>
-                      sport.sport_category === null ||
-                      sport.sport_category === undefined ||
-                      sport.sport_category === userSportCategories,
+                      (sport.sport_category === null ||
+                        sport.sport_category === undefined ||
+                        sport.sport_category === userSportCategories) &&
+                      sport.active,
                   )
                   .map((sport) => (
                     <SelectItem key={sport.id} value={sport.id}>

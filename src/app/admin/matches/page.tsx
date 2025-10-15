@@ -215,11 +215,13 @@ const MatchesDashboard = () => {
                 <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
-                {sports?.map((sport) => (
-                  <SelectItem key={sport.id} value={sport.id}>
-                    {sport.name}
-                  </SelectItem>
-                ))}
+                {sports
+                  ?.filter((sport) => sport.active)
+                  .map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             <DropdownMenu>

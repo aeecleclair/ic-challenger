@@ -122,9 +122,7 @@ export const MatchesForm = ({
 
   useEffect(() => {
     if (selectedSport && sportSchools) {
-      const schoolsForSport = sportSchools.filter(
-        (school) => school.active === true,
-      );
+      const schoolsForSport = sportSchools.filter((school) => school.active);
 
       setSchoolOptions(
         schoolsForSport.map((school) => ({
@@ -204,11 +202,13 @@ export const MatchesForm = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {sports?.map((sport) => (
-                          <SelectItem key={sport.id} value={sport.id}>
-                            {sport.name}
-                          </SelectItem>
-                        ))}
+                        {sports
+                          ?.filter((sport) => sport.active)
+                          .map((sport) => (
+                            <SelectItem key={sport.id} value={sport.id}>
+                              {sport.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     {isEditing && (

@@ -47,11 +47,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { teamFormSchema, TeamFormValues } from "@/src/forms/team";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { toast } from "@/src/components/ui/use-toast";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 const TeamsDashboard = () => {
   const router = useRouter();
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const [deleteTeamId, setDeleteTeamId] = useState<string | null>(null);
   const [editTeamId, setEditTeamId] = useState<string | null>(null);
@@ -83,10 +84,15 @@ const TeamsDashboard = () => {
   }, [sports, selectedSportId]);
 
   useEffect(() => {
-    if (schools && schools.length > 0 && !selectedSchoolId && selectedSportId) {
-      setSelectedSchoolId(schools[0].id);
+    if (
+      sportSchools &&
+      sportSchools.length > 0 &&
+      !selectedSchoolId &&
+      selectedSportId
+    ) {
+      setSelectedSchoolId(sportSchools[0].school_id);
     }
-  }, [schools, selectedSchoolId, selectedSportId]);
+  }, [sportSchools, selectedSchoolId, selectedSportId]);
 
   const filteredTeams = useMemo(() => {
     if (!teams) return [];
@@ -101,12 +107,15 @@ const TeamsDashboard = () => {
   }, [teams, searchQuery]);
 
   const stats = useMemo(() => {
-    if (!teams)
-      return { total: 0, withCaptain: 0, avgMembers: 0 };
+    if (!teams) return { total: 0, withCaptain: 0, avgMembers: 0 };
 
     const withCaptain = teams.filter((t) => t.captain_id).length;
-    const totalMembers = teams.reduce((sum, t) => sum + (t.participants?.length || 0), 0);
-    const avgMembers = teams.length > 0 ? Math.round(totalMembers / teams.length) : 0;
+    const totalMembers = teams.reduce(
+      (sum, t) => sum + (t.participants?.length || 0),
+      0,
+    );
+    const avgMembers =
+      teams.length > 0 ? Math.round(totalMembers / teams.length) : 0;
 
     return {
       total: teams.length,
@@ -137,7 +146,7 @@ const TeamsDashboard = () => {
   // Get team being edited
   const editingTeam = useMemo(() => {
     if (!editTeamId || !teams) return null;
-    return teams.find(t => t.id === editTeamId) || null;
+    return teams.find((t) => t.id === editTeamId) || null;
   }, [editTeamId, teams]);
 
   // Populate form when editing
@@ -160,7 +169,7 @@ const TeamsDashboard = () => {
         school_id: values.school_id,
         captain_id: values.captain_id,
       };
-      
+
       createSchoolSportTeam(teamData, () => {
         setShowCreateForm(false);
         form.reset();
@@ -172,13 +181,13 @@ const TeamsDashboard = () => {
 
   const handleUpdateTeam = async (values: TeamFormValues) => {
     if (!editTeamId) return;
-    
+
     try {
       const teamData = {
         name: values.name,
         captain_id: values.captain_id || null,
       };
-      
+
       updateSchoolSportTeam(editTeamId, teamData, () => {
         setEditTeamId(null);
         form.reset();
@@ -232,7 +241,7 @@ const TeamsDashboard = () => {
               Gestion des Équipes
             </h1>
           </div>
-          <Button 
+          <Button
             onClick={() => setShowCreateForm(true)}
             className="flex items-center gap-2"
           >
@@ -240,7 +249,7 @@ const TeamsDashboard = () => {
             Nouvelle équipe
           </Button>
         </div>
-    </div>
+      </div>
 
       {/* Filters */}
       <div className="flex flex-col gap-4 bg-white rounded-lg border p-4">
@@ -256,28 +265,23 @@ const TeamsDashboard = () => {
               />
             </div>
 
-            <Select 
-              value={selectedSportId} 
-              onValueChange={(value) => {
-                setSelectedSportId(value);
-                // Reset school when sport changes
-                setSelectedSchoolId("");
-              }}
-            >
+            <Select value={selectedSportId} onValueChange={setSelectedSportId}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
-                {sports?.map((sport) => (
-                  <SelectItem key={sport.id} value={sport.id}>
-                    {sport.name}
-                  </SelectItem>
-                ))}
+                {sports
+                  ?.filter((sport) => sport.active)
+                  .map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
 
-            <Select 
-              value={selectedSchoolId} 
+            <Select
+              value={selectedSchoolId}
               onValueChange={setSelectedSchoolId}
               disabled={!selectedSportId}
             >
@@ -285,11 +289,15 @@ const TeamsDashboard = () => {
                 <SelectValue placeholder="Sélectionnez une école" />
               </SelectTrigger>
               <SelectContent>
-                {schools?.map((school) => (
-                  <SelectItem key={school.id} value={school.id}>
-                    {school.name ? formatSchoolName(school.name) : school.id}
-                  </SelectItem>
-                ))}
+                {sportSchools
+                  ?.filter((school) => school.active)
+                  .map((school) => (
+                    <SelectItem key={school.school_id} value={school.school_id}>
+                      {school.school.name
+                        ? formatSchoolName(school.school.name)
+                        : school.school_id}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
@@ -320,14 +328,19 @@ const TeamsDashboard = () => {
             </div>
           )}
         </div>
-        )}
-     
+      )}
+
       {/* Create/Edit Dialog */}
-      <Dialog open={showCreateForm || !!editTeamId} onOpenChange={handleCloseDialog}>
+      <Dialog
+        open={showCreateForm || !!editTeamId}
+        onOpenChange={handleCloseDialog}
+      >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {editTeamId ? "Modifier l&apos;équipe" : "Créer une nouvelle équipe"}
+              {editTeamId
+                ? "Modifier l&apos;équipe"
+                : "Créer une nouvelle équipe"}
             </DialogTitle>
           </DialogHeader>
           <TeamsForm
@@ -336,12 +349,16 @@ const TeamsDashboard = () => {
             isLoading={editTeamId ? isUpdateLoading : isCreateLoading}
             submitLabel={editTeamId ? "Mettre à jour" : "Créer"}
             isEditing={!!editTeamId}
-            initialData={editingTeam ? {
-              name: editingTeam.name,
-              sport_id: editingTeam.sport_id,
-              school_id: editingTeam.school_id,
-              captain_id: editingTeam.captain_id || undefined,
-            } : undefined}
+            initialData={
+              editingTeam
+                ? {
+                    name: editingTeam.name,
+                    sport_id: editingTeam.sport_id,
+                    school_id: editingTeam.school_id,
+                    captain_id: editingTeam.captain_id || undefined,
+                  }
+                : undefined
+            }
           />
         </DialogContent>
       </Dialog>
@@ -353,7 +370,7 @@ const TeamsDashboard = () => {
           if (!value) setDeleteTeamId(null);
         }}
         isLoading={isDeleteLoading}
-        title="Supprimer l&apos;équipe"
+        title="Supprimer l'équipe"
         description="Êtes-vous sûr de vouloir supprimer cette équipe ? Cette action est irréversible."
         validateLabel="Supprimer"
         callback={handleDeleteTeam}

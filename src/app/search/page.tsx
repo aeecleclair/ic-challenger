@@ -140,6 +140,7 @@ export default function SearchPage() {
       const categoryValue =
         filters.sportCategory === "mixed" ? null : filters.sportCategory;
       const categorySportIds = sports
+        .filter((sport) => sport.active)
         .filter((sport) => sport.sport_category === categoryValue)
         .map((sport) => sport.id);
 
@@ -345,11 +346,13 @@ export default function SearchPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Tous les sports</SelectItem>
-                        {sports?.map((sport) => (
-                          <SelectItem key={sport.id} value={sport.id}>
-                            {sport.name}
-                          </SelectItem>
-                        ))}
+                        {sports
+                          ?.filter((sport) => sport.active)
+                          .map((sport) => (
+                            <SelectItem key={sport.id} value={sport.id}>
+                              {sport.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -366,14 +369,16 @@ export default function SearchPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">Toutes les écoles</SelectItem>
-                        {schools?.map((school) => (
-                          <SelectItem
-                            key={school.school_id}
-                            value={school.school_id}
-                          >
-                            {formatSchoolName(school.school.name)}
-                          </SelectItem>
-                        ))}
+                        {schools
+                          ?.filter((school) => school.active)
+                          .map((school) => (
+                            <SelectItem
+                              key={school.school_id}
+                              value={school.school_id}
+                            >
+                              {formatSchoolName(school.school.name)}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>
