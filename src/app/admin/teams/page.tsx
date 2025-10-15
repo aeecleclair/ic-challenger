@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -47,19 +47,54 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { teamFormSchema, TeamFormValues } from "@/src/forms/team";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { toast } from "@/src/components/ui/use-toast";
-import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 const TeamsDashboard = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { sports } = useSports();
-  const { sportSchools } = useSportSchools();
+  const { schools } = useSchools();
 
   const [deleteTeamId, setDeleteTeamId] = useState<string | null>(null);
   const [editTeamId, setEditTeamId] = useState<string | null>(null);
-  const [selectedSportId, setSelectedSportId] = useState<string>("");
-  const [selectedSchoolId, setSelectedSchoolId] = useState<string>("");
+  const [selectedSportId, setSelectedSportId] = useState<string>(
+    searchParams.get("sport_id") || "",
+  );
+  const [selectedSchoolId, setSelectedSchoolId] = useState<string>(
+    searchParams.get("school_id") || "",
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  // Function to update URL with current selections
+  const updateURL = useCallback(
+    (sportId: string, schoolId: string) => {
+      const params = new URLSearchParams();
+      if (sportId) params.set("sport_id", sportId);
+      if (schoolId) params.set("school_id", schoolId);
+
+      const query = params.toString();
+      const newUrl = query ? `/admin/teams?${query}` : "/admin/teams";
+      router.replace(newUrl);
+    },
+    [router],
+  );
+
+  // Enhanced setters that update URL
+  const handleSportChange = (sportId: string) => {
+    setSelectedSportId(sportId);
+    // Reset school when sport changes, but not during initial load
+    if (selectedSportId) {
+      setSelectedSchoolId("");
+      updateURL(sportId, "");
+    } else {
+      updateURL(sportId, selectedSchoolId);
+    }
+  };
+
+  const handleSchoolChange = (schoolId: string) => {
+    setSelectedSchoolId(schoolId);
+    updateURL(selectedSportId, schoolId);
+  };
 
   const {
     teams,
@@ -76,23 +111,23 @@ const TeamsDashboard = () => {
     schoolId: selectedSchoolId || undefined,
   });
 
-  // Auto-select first sport and school when loaded
+  // Auto-select first sport when sports are loaded and no sport is selected
   useEffect(() => {
     if (sports && sports.length > 0 && !selectedSportId) {
-      setSelectedSportId(sports[0].id);
+      const firstSportId = sports[0].id;
+      setSelectedSportId(firstSportId);
+      updateURL(firstSportId, selectedSchoolId);
     }
-  }, [sports, selectedSportId]);
+  }, [sports, selectedSportId, selectedSchoolId, updateURL]);
 
+  // Auto-select first school when schools are loaded and sport is selected but no school
   useEffect(() => {
-    if (
-      sportSchools &&
-      sportSchools.length > 0 &&
-      !selectedSchoolId &&
-      selectedSportId
-    ) {
-      setSelectedSchoolId(sportSchools[0].school_id);
+    if (schools && schools.length > 0 && selectedSportId && !selectedSchoolId) {
+      const firstSchoolId = schools[0].id;
+      setSelectedSchoolId(firstSchoolId);
+      updateURL(selectedSportId, firstSchoolId);
     }
-  }, [sportSchools, selectedSchoolId, selectedSportId]);
+  }, [schools, selectedSportId, selectedSchoolId, updateURL]);
 
   const filteredTeams = useMemo(() => {
     if (!teams) return [];
@@ -221,10 +256,67 @@ const TeamsDashboard = () => {
 
   if (!selectedSportId || !selectedSchoolId) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold flex items-center gap-2">
+                <Shield className="h-8 w-8 text-primary" />
+                Gestion des Équipes
+              </h1>
+              <p className="text-muted-foreground">
+                Gérez les équipes de votre compétition
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col gap-4 bg-white rounded-lg border p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Select value={selectedSportId} onValueChange={handleSportChange}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Sélectionnez un sport" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sports?.map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={selectedSchoolId}
+                onValueChange={handleSchoolChange}
+                disabled={!selectedSportId}
+              >
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Sélectionnez une école" />
+                </SelectTrigger>
+                <SelectContent>
+                  {schools?.map((school) => (
+                    <SelectItem key={school.id} value={school.id}>
+                      {school.name ? formatSchoolName(school.name) : school.id}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
+          <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+          <p className="text-blue-600 text-lg font-medium mb-2">
+            Sélection requise
+          </p>
           <p className="text-blue-600">
-            Veuillez sélectionner un sport et une école pour voir les équipes.
+            Veuillez sélectionner un sport et une école pour voir les équipes
+            correspondantes.
           </p>
         </div>
       </div>
@@ -244,6 +336,7 @@ const TeamsDashboard = () => {
           <Button
             onClick={() => setShowCreateForm(true)}
             className="flex items-center gap-2"
+            disabled={!selectedSportId || !selectedSchoolId}
           >
             <Plus className="h-4 w-4" />
             Nouvelle équipe
@@ -265,39 +358,33 @@ const TeamsDashboard = () => {
               />
             </div>
 
-            <Select value={selectedSportId} onValueChange={setSelectedSportId}>
+            <Select value={selectedSportId} onValueChange={handleSportChange}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
-                {sports
-                  ?.filter((sport) => sport.active)
-                  .map((sport) => (
-                    <SelectItem key={sport.id} value={sport.id}>
-                      {sport.name}
-                    </SelectItem>
-                  ))}
+                {sports?.map((sport) => (
+                  <SelectItem key={sport.id} value={sport.id}>
+                    {sport.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
             <Select
               value={selectedSchoolId}
-              onValueChange={setSelectedSchoolId}
+              onValueChange={handleSchoolChange}
               disabled={!selectedSportId}
             >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Sélectionnez une école" />
               </SelectTrigger>
               <SelectContent>
-                {sportSchools
-                  ?.filter((school) => school.active)
-                  .map((school) => (
-                    <SelectItem key={school.school_id} value={school.school_id}>
-                      {school.school.name
-                        ? formatSchoolName(school.school.name)
-                        : school.school_id}
-                    </SelectItem>
-                  ))}
+                {schools?.map((school) => (
+                  <SelectItem key={school.id} value={school.id}>
+                    {school.name ? formatSchoolName(school.name) : school.id}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

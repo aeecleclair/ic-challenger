@@ -95,7 +95,13 @@ const EditMatchPage = () => {
     };
 
     updateMatch(matchId, matchData, () => {
-      router.push("/admin/matches");
+      const currentSearchParams = new URLSearchParams();
+      if (match?.sport_id) {
+        currentSearchParams.set("sport_id", match.sport_id);
+      }
+      const query = currentSearchParams.toString();
+      const returnUrl = query ? `/admin/matches?${query}` : "/admin/matches";
+      router.push(returnUrl);
     });
   }
 
@@ -114,7 +120,14 @@ const EditMatchPage = () => {
             </p>
           </div>
           <Link
-            href="/admin/matches"
+            href={(() => {
+              const params = new URLSearchParams();
+              if (match?.sport_id) {
+                params.set("sport_id", match.sport_id);
+              }
+              const query = params.toString();
+              return query ? `/admin/matches?${query}` : "/admin/matches";
+            })()}
             className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
             ← Retour à la liste

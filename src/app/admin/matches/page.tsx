@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
@@ -36,14 +36,39 @@ import { Skeleton } from "@/src/components/ui/skeleton";
 
 const MatchesDashboard = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { sports } = useSports();
 
   const [deleteMatchId, setDeleteMatchId] = useState<string | null>(null);
-  const [selectedSportId, setSelectedSportId] = useState<string>("");
+  const [selectedSportId, setSelectedSportId] = useState<string>(
+    searchParams.get("sport_id") || "",
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<
     "all" | "scheduled" | "finished" | "ongoing"
   >("all");
+
+  // Function to update URL with current sport selection
+  const updateURL = useCallback(
+    (sportId: string) => {
+      const params = new URLSearchParams();
+      if (sportId) params.set("sport_id", sportId);
+
+      const query = params.toString();
+      const newUrl = query ? `/admin/matches?${query}` : "/admin/matches";
+      router.replace(newUrl);
+    },
+    [router],
+  );
+
+  // Enhanced sport change handler that updates URL
+  const handleSportChange = useCallback(
+    (sportId: string) => {
+      setSelectedSportId(sportId);
+      updateURL(sportId);
+    },
+    [updateURL],
+  );
 
   const {
     sportMatches,
@@ -55,19 +80,14 @@ const MatchesDashboard = () => {
     sportId: selectedSportId || undefined,
   });
 
-  // Auto-select first sport when sports are loaded
+  // Auto-select first sport when sports are loaded and no sport is selected
   useEffect(() => {
     if (sports && sports.length > 0 && !selectedSportId) {
-      setSelectedSportId(sports[0].id);
+      const firstSportId = sports[0].id;
+      setSelectedSportId(firstSportId);
+      updateURL(firstSportId);
     }
-  }, [sports, selectedSportId]);
-
-  // Refetch matches when selected sport changes
-  useEffect(() => {
-    if (selectedSportId) {
-      refetchSportMatches();
-    }
-  }, [selectedSportId, refetchSportMatches]);
+  }, [sports, selectedSportId, updateURL]);
 
   const filteredMatches = useMemo(() => {
     if (!sportMatches) return [];
@@ -210,18 +230,16 @@ const MatchesDashboard = () => {
             </div>
           </div>
           <div className="flex gap-2">
-            <Select value={selectedSportId} onValueChange={setSelectedSportId}>
+            <Select value={selectedSportId} onValueChange={handleSportChange}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
-                {sports
-                  ?.filter((sport) => sport.active)
-                  .map((sport) => (
-                    <SelectItem key={sport.id} value={sport.id}>
-                      {sport.name}
-                    </SelectItem>
-                  ))}
+                {sports?.map((sport) => (
+                  <SelectItem key={sport.id} value={sport.id}>
+                    {sport.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <DropdownMenu>

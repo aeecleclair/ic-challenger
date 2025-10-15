@@ -74,7 +74,11 @@ const CreateMatchPage = () => {
     };
 
     createMatch(matchData, () => {
-      router.push("/admin/matches");
+      const params = new URLSearchParams();
+      if (sportIdToUse) {
+        params.set('sport_id', sportIdToUse);
+      }
+      router.push(`/admin/matches?${params.toString()}`);
     });
   }
 
@@ -92,7 +96,7 @@ const CreateMatchPage = () => {
             </p>
           </div>
           <Link
-            href="/admin/matches"
+            href={`/admin/matches${sportIdParam ? `?sport_id=${sportIdParam}` : ''}`}
             className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
             ← Retour à la liste
