@@ -186,7 +186,7 @@ export function ParticipantDataTable({
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
         const value = row.getValue<boolean>(id);
-        return filterValue === true ? value === true : true;
+        return filterValue === true ? value === false : true;
       },
       sortingFn: (rowA, rowB) => {
         const a = rowA.original;
