@@ -35,7 +35,6 @@ export default function VolunteerShiftCard({
   onView,
   onDelete,
 }: VolunteerShiftCardProps) {
-  const { locations } = useLocations();
   const startDate = new Date(shift.start_time);
   const endDate = new Date(shift.end_time);
   const isUpcoming = startDate > new Date();
@@ -57,26 +56,13 @@ export default function VolunteerShiftCard({
     return "En cours";
   };
 
-  const locationDetails = getLocationDetails(shift.location, locations);
-  const locationColor = generateLocationColor(locationDetails.id);
-
-  const openMap = () => {
-    openLocationMap(shift.location, locations);
-  };
-
   return (
-    <Card
-      className="group hover:shadow-md transition-shadow border-l-4"
-      style={{ borderLeftColor: locationColor }}
-    >
+    <Card className="group hover:shadow-md transition-shadow border-l-4">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: locationColor }}
-              />
+              <div className="w-3 h-3 rounded-full flex-shrink-0" />
               <CardTitle className="text-lg">{shift.name}</CardTitle>
             </div>
             <Badge variant={getStatusColor()}>{getStatusText()}</Badge>
@@ -119,38 +105,15 @@ export default function VolunteerShiftCard({
           {shift.location && (
             <div className="flex items-start gap-2 text-sm">
               <div className="flex items-center gap-1.5 mt-0.5">
-                <div
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: locationColor }}
-                />
+                <div className="w-3 h-3 rounded-full flex-shrink-0" />
                 <MapPin className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span
-                    className="font-medium truncate"
-                    title={locationDetails.name}
-                  >
-                    {locationDetails.name}
+                  <span className="font-medium truncate" title={shift.location}>
+                    {shift.location}
                   </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0 flex-shrink-0"
-                    onClick={openMap}
-                    title={`Ouvrir ${locationDetails.latitude && locationDetails.longitude ? "coordonnées précises" : "adresse"} dans Google Maps`}
-                  >
-                    <ExternalLink className="h-3 w-3" />
-                  </Button>
                 </div>
-                {locationDetails.address && (
-                  <p
-                    className="text-xs text-muted-foreground truncate"
-                    title={locationDetails.address}
-                  >
-                    {locationDetails.address}
-                  </p>
-                )}
               </div>
             </div>
           )}
