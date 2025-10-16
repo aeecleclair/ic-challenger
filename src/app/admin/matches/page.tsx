@@ -114,7 +114,7 @@ const MatchesDashboard = () => {
     });
     return filteringResult.sort((a, b) => {
       if (a.date && b.date) {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
       }
       return 0;
     });
