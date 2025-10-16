@@ -42,7 +42,7 @@ export function LocationsMap({
 
       const markerDiv = document.createElement("div");
       markerDiv.className = "location-marker-container";
-      markerDiv.style.zIndex = "1000";
+      markerDiv.style.zIndex = "10";
       markerDiv.style.position = "relative";
 
       const root = createRoot(markerDiv);
