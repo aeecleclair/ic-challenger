@@ -147,6 +147,13 @@ const MatchesDashboard = () => {
     }
   };
 
+  // Refetch matches when selected sport changes
+  useEffect(() => {
+    if (selectedSportId) {
+      refetchSportMatches();
+    }
+  }, [selectedSportId, refetchSportMatches]);
+
   return (
     <div className="flex w-full flex-col">
       <div className="space-y-6">
@@ -235,11 +242,13 @@ const MatchesDashboard = () => {
                 <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
-                {sports?.map((sport) => (
-                  <SelectItem key={sport.id} value={sport.id}>
-                    {sport.name}
-                  </SelectItem>
-                ))}
+                {sports
+                  ?.filter((sport) => sport.active)
+                  ?.map((sport) => (
+                    <SelectItem key={sport.id} value={sport.id}>
+                      {sport.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
             <DropdownMenu>
