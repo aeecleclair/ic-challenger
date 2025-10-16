@@ -61,8 +61,6 @@ export default function VolunteerShiftForm({
     isUpdateLoading,
   } = useVolunteerShifts();
 
-  const { locations } = useLocations();
-
   const isEditing = !!shiftId;
   const shift = isEditing
     ? volunteerShifts?.find((s: VolunteerShiftComplete) => s.id === shiftId)
@@ -80,7 +78,7 @@ export default function VolunteerShiftForm({
       end_time: shift
         ? new Date(shift.end_time)
         : new Date((prefilledDate || new Date()).getTime() + 60 * 60 * 1000), // 2 hours later
-      location_id: shift?.location || "",
+      location: shift?.location || "",
       max_volunteers: shift?.max_volunteers || 5,
     },
   });
@@ -92,7 +90,7 @@ export default function VolunteerShiftForm({
       value: data.value,
       start_time: data.start_time.toISOString(),
       end_time: data.end_time.toISOString(),
-      location: data.location_id,
+      location: data.location,
       max_volunteers: data.max_volunteers,
     };
 
@@ -196,26 +194,12 @@ export default function VolunteerShiftForm({
 
               <FormField
                 control={form.control}
-                name="location_id"
+                name="location"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Lieu</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez un lieu" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {locations?.map((location) => (
-                            <SelectItem key={location.id} value={location.id}>
-                              {location.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input placeholder="Ex: W1bis" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

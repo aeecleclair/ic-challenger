@@ -49,7 +49,6 @@ export default function VolunteerShiftDetail({
 }: VolunteerShiftDetailProps) {
   const { volunteerShifts, deleteVolunteerShift, isDeleteLoading } =
     useVolunteerShifts();
-  const { locations } = useLocations();
 
   const shift = volunteerShifts?.find(
     (s: VolunteerShiftComplete) => s.id === shiftId,
@@ -128,10 +127,6 @@ export default function VolunteerShiftDetail({
     if (registeredCount < shift.max_volunteers)
       return { color: "default", text: "Partiellement rempli" } as const;
     return { color: "default", text: "Complet" } as const;
-  };
-
-  const openMap = (locationId: string | null | undefined) => {
-    openLocationMap(locationId, locations);
   };
 
   const handleDelete = () => {
@@ -228,21 +223,10 @@ export default function VolunteerShiftDetail({
                       <div className="flex items-center gap-1">
                         <span
                           className="font-medium text-sm truncate max-w-[120px]"
-                          title={
-                            getLocationDetails(shift.location, locations).name
-                          }
+                          title={shift.location}
                         >
-                          {getLocationDetails(shift.location, locations).name}
+                          {shift.location}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0"
-                          onClick={() => openMap(shift.location)}
-                          title={`Ouvrir ${getLocationDetails(shift.location, locations).latitude && getLocationDetails(shift.location, locations).longitude ? "coordonnées précises" : "adresse"} dans Google Maps`}
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </Button>
                       </div>
                     </div>
                   )}
