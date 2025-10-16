@@ -118,26 +118,34 @@ export function LocationsMap({
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(mapInstanceRef.current);
 
+      // Render markers immediately when map is initialized
+      locations.forEach((location) => {
+        if (location.latitude && location.longitude) {
+          const locationWithMatches = locationsWithMatches.find(
+            (lwm) => lwm.id === location.id,
+          );
+
+          const marker = createLocationMarker(
+            L,
+            location,
+            locationWithMatches,
+            sports,
+          );
+
+          if (marker && mapInstanceRef.current) {
+            marker.addTo(mapInstanceRef.current);
+            markersRef.current.push(marker);
+          }
+        }
+      });
+
+      // Fit bounds to show all markers if we have valid locations
       if (locations.length > 0) {
         const validLocations = locations.filter(
           (loc) => loc.latitude && loc.longitude,
         );
-        if (validLocations.length > 0) {
-          const group = new (L as any).featureGroup();
-          validLocations.forEach((location) => {
-            const locationWithMatches = locationsWithMatches.find(
-              (lwm) => lwm.id === location.id,
-            );
-            const marker = createLocationMarker(
-              L,
-              location,
-              locationWithMatches,
-              sports,
-            );
-            if (marker) {
-              marker.addTo(group);
-            }
-          });
+        if (validLocations.length > 0 && markersRef.current.length > 0) {
+          const group = new (L as any).featureGroup(markersRef.current);
           mapInstanceRef.current.fitBounds(group.getBounds().pad(0.1));
         }
       }
@@ -160,8 +168,7 @@ export function LocationsMap({
         delete (mapRef.current as any)._leaflet_id;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [locations, locationsWithMatches, sports, createLocationMarker]);
 
   useEffect(() => {
     if (!mapInstanceRef.current || !locations) return;
