@@ -92,7 +92,7 @@ const MatchesDashboard = () => {
   const filteredMatches = useMemo(() => {
     if (!sportMatches) return [];
 
-    return sportMatches.filter((match) => {
+    const filteringResult = sportMatches.filter((match) => {
       const matchesSearch = match.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -111,6 +111,12 @@ const MatchesDashboard = () => {
           !match.score_team2);
 
       return matchesSearch && matchesStatus;
+    });
+    return filteringResult.sort((a, b) => {
+      if (a.date && b.date) {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      }
+      return 0;
     });
   }, [sportMatches, searchQuery, filterStatus]);
 
