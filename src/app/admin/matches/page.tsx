@@ -33,11 +33,13 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 
 const MatchesDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { sports } = useSports();
+  const { competitionUsers } = useCompetitionUsers();
 
   const [deleteMatchId, setDeleteMatchId] = useState<string | null>(null);
   const [selectedSportId, setSelectedSportId] = useState<string>(
@@ -304,6 +306,7 @@ const MatchesDashboard = () => {
                     router.push(`/admin/matches/edit?match_id=${match.id}`);
                   }}
                   onDelete={() => handleDelete(match.id)}
+                  competitionUsers={competitionUsers}
                 />
               ))}
             </div>

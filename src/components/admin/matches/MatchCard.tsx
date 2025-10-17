@@ -1,6 +1,6 @@
 "use client";
 
-import { Match, MatchComplete } from "@/src/api/hyperionSchemas";
+import { CompetitionUser, Match, MatchComplete } from "@/src/api/hyperionSchemas";
 import {
   Card,
   CardContent,
@@ -25,14 +25,16 @@ import { useLocations } from "@/src/hooks/useLocations";
 import { useSports } from "@/src/hooks/useSports";
 import { useSchools } from "@/src/hooks/useSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { TeamScoreDisplay } from "./TeamScoreDisplay";
 
 interface MatchCardProps {
   match: MatchComplete;
   onEdit?: () => void;
   onDelete?: () => void;
+  competitionUsers?: CompetitionUser[];
 }
 
-const MatchCard = ({ match, onEdit, onDelete }: MatchCardProps) => {
+const MatchCard = ({ match, onEdit, onDelete, competitionUsers }: MatchCardProps) => {
   const { locations } = useLocations();
   const { sports } = useSports();
   const { schools } = useSchools();
@@ -81,23 +83,14 @@ const MatchCard = ({ match, onEdit, onDelete }: MatchCardProps) => {
       <CardContent className="py-3 flex-grow">
         {/* Score Display */}
         <div className="grid grid-cols-3 gap-2 mb-3 p-2 bg-gray-50 rounded-lg">
-          <div className="col-span-1 flex flex-col items-center justify-center">
-            <div className="text-sm font-medium text-center mb-0.5">
-              {match.team1?.name || "Équipe 1"}
-            </div>
-            {team1School && (
-              <div className="text-xs text-muted-foreground text-center mb-0.5">
-                {formatSchoolName(team1School)}
-              </div>
+          <TeamScoreDisplay
+            teamName={match.team1?.name || "Équipe 1"}
+            schoolName={team1School}
+            score={match.score_team1}
+            captain={competitionUsers?.find(
+              (user) => user.user_id === match.team1?.captain_id,
             )}
-            {match.score_team1 !== null ? (
-              <div className="text-2xl font-bold text-primary">
-                {match.score_team1}
-              </div>
-            ) : (
-              <div className="text-sm text-muted-foreground">-</div>
-            )}
-          </div>
+          />
 
           <div className="col-span-1 flex items-center justify-center">
             <Badge variant="outline" className="bg-white font-semibold">
@@ -105,23 +98,14 @@ const MatchCard = ({ match, onEdit, onDelete }: MatchCardProps) => {
             </Badge>
           </div>
 
-          <div className="col-span-1 flex flex-col items-center justify-center">
-            <div className="text-sm font-medium text-center mb-0.5">
-              {match.team2?.name || "Équipe 2"}
-            </div>
-            {team2School && (
-              <div className="text-xs text-muted-foreground text-center mb-0.5">
-                {formatSchoolName(team2School)}
-              </div>
+          <TeamScoreDisplay
+            teamName={match.team2?.name || "Équipe 2"}
+            schoolName={team2School}
+            score={match.score_team2}
+            captain={competitionUsers?.find(
+              (user) => user.user_id === match.team2?.captain_id,
             )}
-            {match.score_team2 !== null ? (
-              <div className="text-2xl font-bold text-primary">
-                {match.score_team2}
-              </div>
-            ) : (
-              <div className="text-sm text-muted-foreground">-</div>
-            )}
-          </div>
+          />
         </div>
 
         {/* Match Details */}
