@@ -53,7 +53,7 @@ const TeamsDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { sports } = useSports();
-  const { sportSchools } = useSportSchools();
+  const { sportSchools, NoSchoolId } = useSportSchools();
 
   const [deleteTeamId, setDeleteTeamId] = useState<string | null>(null);
   const [editTeamId, setEditTeamId] = useState<string | null>(null);
@@ -65,6 +65,10 @@ const TeamsDashboard = () => {
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const filteredSportSchools = useMemo(() => {
+    return sportSchools?.filter((school) => school.school_id !== NoSchoolId);
+  }, [sportSchools, NoSchoolId]);
 
   // Function to update URL with current selections
   const updateURL = useCallback(
@@ -117,16 +121,16 @@ const TeamsDashboard = () => {
   // Auto-select first school when schools are loaded and sport is selected but no school
   useEffect(() => {
     if (
-      sportSchools &&
-      sportSchools.length > 0 &&
+      filteredSportSchools &&
+      filteredSportSchools.length > 0 &&
       selectedSportId &&
       !selectedSchoolId
     ) {
-      const firstSchoolId = sportSchools[0].school_id;
+      const firstSchoolId = filteredSportSchools[0].school_id;
       setSelectedSchoolId(firstSchoolId);
       updateURL(selectedSportId, firstSchoolId);
     }
-  }, [sportSchools, selectedSportId, selectedSchoolId, updateURL]);
+  }, [filteredSportSchools, selectedSportId, selectedSchoolId, updateURL]);
 
   const filteredTeams = useMemo(() => {
     if (!teams) return [];
@@ -279,7 +283,7 @@ const TeamsDashboard = () => {
                   <SelectValue placeholder="Sélectionnez une école" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sportSchools?.map((school) => (
+                  {filteredSportSchools?.map((school) => (
                     <SelectItem key={school.school_id} value={school.school_id}>
                       {school.school.name
                         ? formatSchoolName(school.school.name)
@@ -363,7 +367,7 @@ const TeamsDashboard = () => {
                 <SelectValue placeholder="Sélectionnez une école" />
               </SelectTrigger>
               <SelectContent>
-                {sportSchools?.map((school) => (
+                {filteredSportSchools?.map((school) => (
                   <SelectItem key={school.school_id} value={school.school_id}>
                     {school.school.name
                       ? formatSchoolName(school.school.name)
