@@ -30,6 +30,7 @@ import { useCompetitionUser } from "../hooks/useCompetitionUser";
 import { EditionWaitingCard } from "../components/home/EditionWaitingCard";
 import { IncompleteRegistrationCard } from "../components/home/IncompleteRegistrationCard";
 import { FullyRegisteredDashboard } from "../components/home/FullyRegisteredDashboard";
+import { UserDashboard } from "../components/home/UserDashboard";
 import { useSportSchools } from "../hooks/useSportSchools";
 import { UnregisteredCard } from "../components/home/UnregisteredCard";
 import { useUserPurchases } from "../hooks/useUserPurchases";
@@ -104,11 +105,15 @@ const Home = () => {
                   isSchoolInscriptionEnabled={!!isSchoolInscriptionEnabled}
                 />
               )}
+            {edition && isEditionStarted && !isEditionEnded && (
+              <UserDashboard edition={edition} meCompetition={meCompetition} />
+            )}
             {edition &&
               edition.inscription_enabled &&
               isSchoolInscriptionEnabled &&
               isFullyRegistered &&
-              meCompetition && (
+              meCompetition &&
+              (!isEditionStarted || isEditionEnded) && (
                 <FullyRegisteredDashboard
                   edition={edition}
                   meCompetition={meCompetition}
@@ -131,8 +136,7 @@ const Home = () => {
               !meCompetition &&
               !isLoading &&
               user &&
-              !(isEditionStarted || isEditionEnded) &&
-              isSchoolInscriptionEnabled && (
+              !(isEditionStarted || isEditionEnded) && (
                 <UnregisteredCard edition={edition} />
               )}
           </div>
