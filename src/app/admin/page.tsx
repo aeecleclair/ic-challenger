@@ -116,7 +116,7 @@ const AdminPage = () => {
         />
       )}
 
-      {isAdmin() && edition && isPreRegistration && (
+      {isAdmin() && edition && (
         <div className="space-y-6">
           {/* Edition Header */}
           <div className="space-y-2">
