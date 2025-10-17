@@ -47,12 +47,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { teamFormSchema, TeamFormValues } from "@/src/forms/team";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { toast } from "@/src/components/ui/use-toast";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 const TeamsDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const [deleteTeamId, setDeleteTeamId] = useState<string | null>(null);
   const [editTeamId, setEditTeamId] = useState<string | null>(null);
@@ -115,12 +116,17 @@ const TeamsDashboard = () => {
 
   // Auto-select first school when schools are loaded and sport is selected but no school
   useEffect(() => {
-    if (schools && schools.length > 0 && selectedSportId && !selectedSchoolId) {
-      const firstSchoolId = schools[0].id;
+    if (
+      sportSchools &&
+      sportSchools.length > 0 &&
+      selectedSportId &&
+      !selectedSchoolId
+    ) {
+      const firstSchoolId = sportSchools[0].school_id;
       setSelectedSchoolId(firstSchoolId);
       updateURL(selectedSportId, firstSchoolId);
     }
-  }, [schools, selectedSportId, selectedSchoolId, updateURL]);
+  }, [sportSchools, selectedSportId, selectedSchoolId, updateURL]);
 
   const filteredTeams = useMemo(() => {
     if (!teams) return [];
@@ -273,9 +279,11 @@ const TeamsDashboard = () => {
                   <SelectValue placeholder="Sélectionnez une école" />
                 </SelectTrigger>
                 <SelectContent>
-                  {schools?.map((school) => (
-                    <SelectItem key={school.id} value={school.id}>
-                      {school.name ? formatSchoolName(school.name) : school.id}
+                  {sportSchools?.map((school) => (
+                    <SelectItem key={school.school_id} value={school.school_id}>
+                      {school.school.name
+                        ? formatSchoolName(school.school.name)
+                        : school.school_id}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -355,9 +363,11 @@ const TeamsDashboard = () => {
                 <SelectValue placeholder="Sélectionnez une école" />
               </SelectTrigger>
               <SelectContent>
-                {schools?.map((school) => (
-                  <SelectItem key={school.id} value={school.id}>
-                    {school.name ? formatSchoolName(school.name) : school.id}
+                {sportSchools?.map((school) => (
+                  <SelectItem key={school.school_id} value={school.school_id}>
+                    {school.school.name
+                      ? formatSchoolName(school.school.name)
+                      : school.school_id}
                   </SelectItem>
                 ))}
               </SelectContent>

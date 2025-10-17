@@ -13,6 +13,7 @@ import { Button } from "@/src/components/ui/button";
 import { useSports } from "@/src/hooks/useSports";
 import { useSchools } from "@/src/hooks/useSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 interface TeamCardProps {
   team: TeamComplete;
@@ -22,12 +23,13 @@ interface TeamCardProps {
 
 const TeamCard = ({ team, onEdit, onDelete }: TeamCardProps) => {
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const sportName =
     sports?.find((sport) => sport.id === team.sport_id)?.name || team.sport_id;
   const schoolName =
-    schools?.find((school) => school.id === team.school_id)?.name || "";
+    sportSchools?.find((school) => school.school_id === team.school_id)?.school
+      .name || "";
 
   return (
     <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">

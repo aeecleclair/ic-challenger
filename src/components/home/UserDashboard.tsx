@@ -39,6 +39,7 @@ import { useLocations } from "@/src/hooks/useLocations";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useVolunteerShifts } from "@/src/hooks/useVolunteerShifts";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 interface UserDashboardProps {
   edition: CompetitionEdition;
@@ -54,7 +55,7 @@ export const UserDashboard = ({
 
   const { matches: allMatches } = useAllMatches();
   const { sports } = useSports();
-  const { schools, NoSchoolId } = useSchools();
+  const { sportSchools, NoSchoolId } = useSportSchools();
   const { locations } = useLocations();
   const { meParticipant } = useParticipant();
   const { volunteerShifts } = useVolunteerShifts();
@@ -65,7 +66,7 @@ export const UserDashboard = ({
   }, []);
 
   const processedData = useMemo(() => {
-    if (!allMatches || !sports || !schools || !locations) {
+    if (!allMatches || !sports || !sportSchools || !locations) {
       return {
         liveMatches: [] as MatchComplete[],
         todaySchedule: [],
@@ -102,15 +103,15 @@ export const UserDashboard = ({
           "Lieu non défini",
       }));
 
-    const schoolStats = schools.reduce((acc: any[], school) => {
-      if (school.id === NoSchoolId) {
+    const schoolStats = sportSchools.reduce((acc: any[], school) => {
+      if (school.school_id === NoSchoolId) {
         return acc;
       }
 
       const schoolMatches = allMatches.filter(
         (match) =>
-          match.team1?.school_id === school.id ||
-          match.team2?.school_id === school.id,
+          match.team1?.school_id === school.school_id ||
+          match.team2?.school_id === school.school_id,
       );
 
       const wins = schoolMatches.filter((match) => {
@@ -119,18 +120,18 @@ export const UserDashboard = ({
           (m) =>
             (m.team1_id === match.winner_id ||
               m.team2_id === match.winner_id) &&
-            (m.team1?.school_id === school.id ||
-              m.team2?.school_id === school.id),
+            (m.team1?.school_id === school.school_id ||
+              m.team2?.school_id === school.school_id),
         );
         return (
-          winnerTeam?.team1?.school_id === school.id ||
-          winnerTeam?.team2?.school_id === school.id
+          winnerTeam?.team1?.school_id === school.school_id ||
+          winnerTeam?.team2?.school_id === school.school_id
         );
       }).length;
 
       acc.push({
         rank: 0,
-        school: school.name,
+        school: school.school.name,
         points: wins * 3,
         wins: wins,
       });
@@ -189,7 +190,7 @@ export const UserDashboard = ({
   }, [
     allMatches,
     sports,
-    schools,
+    sportSchools,
     locations,
     meParticipant,
     NoSchoolId,

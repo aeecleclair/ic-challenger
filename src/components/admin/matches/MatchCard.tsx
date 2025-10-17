@@ -1,6 +1,10 @@
 "use client";
 
-import { CompetitionUser, Match, MatchComplete } from "@/src/api/hyperionSchemas";
+import {
+  CompetitionUser,
+  Match,
+  MatchComplete,
+} from "@/src/api/hyperionSchemas";
 import {
   Card,
   CardContent,
@@ -26,6 +30,7 @@ import { useSports } from "@/src/hooks/useSports";
 import { useSchools } from "@/src/hooks/useSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { TeamScoreDisplay } from "./TeamScoreDisplay";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 interface MatchCardProps {
   match: MatchComplete;
@@ -34,10 +39,15 @@ interface MatchCardProps {
   competitionUsers?: CompetitionUser[];
 }
 
-const MatchCard = ({ match, onEdit, onDelete, competitionUsers }: MatchCardProps) => {
+const MatchCard = ({
+  match,
+  onEdit,
+  onDelete,
+  competitionUsers,
+}: MatchCardProps) => {
   const { locations } = useLocations();
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const locationName =
     locations?.find((loc) => loc.id === match.location_id)?.name ||
@@ -47,9 +57,11 @@ const MatchCard = ({ match, onEdit, onDelete, competitionUsers }: MatchCardProps
     match.sport_id;
 
   const team1School =
-    schools?.find((school) => school.id === match.team1?.school_id)?.name || "";
+    sportSchools?.find((school) => school.school_id === match.team1?.school_id)
+      ?.school.name || "";
   const team2School =
-    schools?.find((school) => school.id === match.team2?.school_id)?.name || "";
+    sportSchools?.find((school) => school.school_id === match.team2?.school_id)
+      ?.school.name || "";
   return (
     <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
       <CardHeader className="pb-2">

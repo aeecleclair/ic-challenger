@@ -15,6 +15,7 @@ import {
 
 export const useSportSchools = () => {
   const { token, isTokenExpired } = useAuth();
+  const NoSchoolId = "dce19aa2-8863-4c93-861e-fb7be8f610ed";
 
   const {
     data: sportSchools,
@@ -151,6 +152,7 @@ export const useSportSchools = () => {
   };
 
   return {
+    NoSchoolId,
     sportSchools,
     createCompetitionSchool,
     updateCompetitionSchool,

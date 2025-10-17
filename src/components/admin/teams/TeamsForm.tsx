@@ -34,6 +34,7 @@ import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { TeamFormValues } from "@/src/forms/team";
 import { Shield, Trophy, School, Crown, Users, Flag } from "lucide-react";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 interface TeamsFormProps {
   form: UseFormReturn<TeamFormValues>;
@@ -58,7 +59,7 @@ export const TeamsForm = ({
   initialData,
 }: TeamsFormProps) => {
   const { sports } = useSports();
-  const { schools } = useSchools();
+  const { sportSchools } = useSportSchools();
 
   const [selectedSportId, setSelectedSportId] = useState<string | null>(
     form.getValues("sport_id") || initialData?.sport_id || null,
@@ -181,13 +182,16 @@ export const TeamsForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {schools?.map((school) => (
-                        <SelectItem key={school.id} value={school.id}>
+                      {sportSchools?.map((school) => (
+                        <SelectItem
+                          key={school.school_id}
+                          value={school.school_id}
+                        >
                           <div className="flex items-center gap-2">
                             <School className="h-4 w-4" />
-                            {school.name
-                              ? formatSchoolName(school.name)
-                              : school.id}
+                            {school.school.name
+                              ? formatSchoolName(school.school.name)
+                              : school.school.id}
                           </div>
                         </SelectItem>
                       ))}
