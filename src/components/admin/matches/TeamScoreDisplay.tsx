@@ -45,7 +45,8 @@ export const TeamScoreDisplay = ({
         <div className="text-xs text-muted-foreground text-center mb-1">
           <div className="font-medium">
             <UsersIcon className="inline-block h-3 w-3 mr-1" />
-            {captain.user.firstname} {captain.user.name}</div>
+            {captain.user.firstname} {captain.user.name}
+          </div>
           {captain.user.phone && (
             <div className="flex items-center justify-center gap-1 mt-1">
               <a
