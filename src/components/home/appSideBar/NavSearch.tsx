@@ -35,7 +35,7 @@ export function NavSearch() {
           onClick={handleSearchClick}
           className="cursor-pointer hover:underline"
         >
-          Rechercher {totalEntities > 0 && `(${totalEntities})`}
+          Matchs
         </div>
         <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">
           <ChevronRight />
