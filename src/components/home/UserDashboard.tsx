@@ -40,6 +40,7 @@ import { useParticipant } from "@/src/hooks/useParticipant";
 import { useVolunteerShifts } from "@/src/hooks/useVolunteerShifts";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { usePodiums } from "@/src/hooks/usePodiums";
 
 interface UserDashboardProps {
   edition: CompetitionEdition;
@@ -59,6 +60,7 @@ export const UserDashboard = ({
   const { locations } = useLocations();
   const { meParticipant } = useParticipant();
   const { volunteerShifts } = useVolunteerShifts();
+  const { globalPodium } = usePodiums();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -70,7 +72,6 @@ export const UserDashboard = ({
       return {
         liveMatches: [] as MatchComplete[],
         todaySchedule: [],
-        standings: [],
         participantUpcomingMatches: [] as MatchComplete[],
         volunteerNextShifts: [],
       };
@@ -446,37 +447,44 @@ export const UserDashboard = ({
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {processedData.standings.slice(0, 5).map((school) => (
-              <div
-                key={school.rank}
-                className="flex items-center justify-between p-2 rounded hover:bg-gray-50"
-              >
-                <div className="flex items-center gap-3">
+            {globalPodium
+              ?.sort((a, b) => a.total_points - b.total_points)
+              .map((rank, index) => {
+                const school = sportSchools?.find(
+                  (school) => school.school_id === rank.school_id,
+                );
+                return (
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
-                      school.rank === 1
-                        ? "bg-yellow-500"
-                        : school.rank === 2
-                          ? "bg-gray-400"
-                          : school.rank === 3
-                            ? "bg-orange-600"
-                            : "bg-gray-600"
-                    }`}
+                    key={school?.school_id}
+                    className="flex items-center justify-between p-2 rounded hover:bg-gray-50"
                   >
-                    {school.rank}
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                          index === 0
+                            ? "bg-yellow-500"
+                            : index === 1
+                              ? "bg-gray-400"
+                              : index === 2
+                                ? "bg-orange-600"
+                                : "bg-gray-600"
+                        }`}
+                      >
+                        {index + 1}
+                      </div>
+                      <span className="font-medium text-sm">
+                        {formatSchoolName(school?.school.name)}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-sm">
+                        {rank.total_points} pts
+                      </p>
+                    </div>
                   </div>
-                  <span className="font-medium text-sm">
-                    {formatSchoolName(school.school)}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-sm">{school.points} pts</p>
-                  <p className="text-xs text-muted-foreground">
-                    {school.wins} victoires
-                  </p>
-                </div>
-              </div>
-            ))}
+                );
+              })
+              .slice(0, 5)}
           </div>
         </CardContent>
       </Card>
