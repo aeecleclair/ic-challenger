@@ -54,7 +54,7 @@ export const UserDashboard = ({
   const router = useRouter();
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const { matches: allMatches } = useAllMatches();
+  const { allMatches } = useAllMatches();
   const { sports } = useSports();
   const { sportSchools, NoSchoolId } = useSportSchools();
   const { locations } = useLocations();
