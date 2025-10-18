@@ -12,6 +12,7 @@ interface TeamScoreDisplayProps {
   score: number | null | undefined;
   placeholder?: string;
   captain?: CompetitionUser;
+  isWinner?: boolean;
 }
 
 export const TeamScoreDisplay = ({
@@ -20,6 +21,7 @@ export const TeamScoreDisplay = ({
   score,
   placeholder = "-",
   captain,
+  isWinner,
 }: TeamScoreDisplayProps) => {
   const [copied, setCopied] = useState(false);
 
@@ -75,7 +77,11 @@ export const TeamScoreDisplay = ({
         </div>
       )}
       {score !== null && score !== undefined ? (
-        <div className="text-2xl font-bold text-primary">{score}</div>
+        <div
+          className={`"text-2xl font-bold ${isWinner === true ? "text-green-600" : isWinner === null ? "text-blue-600" : "text-primary"}"`}
+        >
+          {score}
+        </div>
       ) : (
         <div className="text-sm text-muted-foreground">{placeholder}</div>
       )}

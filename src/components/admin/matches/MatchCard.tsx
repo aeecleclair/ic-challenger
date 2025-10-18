@@ -99,6 +99,7 @@ const MatchCard = ({
             teamName={match.team1?.name || "Équipe 1"}
             schoolName={team1School}
             score={match.score_team1}
+            isWinner={match.winner_id === match.team1_id}
             captain={competitionUsers?.find(
               (user) => user.user_id === match.team1?.captain_id,
             )}
@@ -114,6 +115,7 @@ const MatchCard = ({
             teamName={match.team2?.name || "Équipe 2"}
             schoolName={team2School}
             score={match.score_team2}
+            isWinner={match.winner_id === match.team2_id}
             captain={competitionUsers?.find(
               (user) => user.user_id === match.team2?.captain_id,
             )}
