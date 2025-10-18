@@ -89,9 +89,8 @@ export const UserDashboard = ({
     );
 
     const todaySchedule = todaysMatches
-      .filter((match) => match.date)
+      .filter((match) => match.date && new Date(match.date) > now)
       .sort((a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
-      .slice(0, 5)
       .map((match) => ({
         time: new Date(match.date!).toLocaleTimeString("fr-FR", {
           hour: "2-digit",
@@ -184,7 +183,6 @@ export const UserDashboard = ({
     return {
       liveMatches,
       todaySchedule,
-      standings: schoolStats.slice(0, 3),
       participantUpcomingMatches,
       volunteerNextShifts,
     };
