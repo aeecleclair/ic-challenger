@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { fetchGetCompetitionPodiumsSportSportId } from "@/src/api/hyperionComponents";
+import { fetchGetCompetitionPodiumsSportsSportId } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { useUser } from "./useUser";
 
@@ -14,7 +14,7 @@ export const useSportPodiums = ({ sportIds }: useSportPodiumsProps) => {
     queries: sportIds.map((sportId) => ({
       queryKey: ["sport-podium", sportId],
       queryFn: () =>
-        fetchGetCompetitionPodiumsSportSportId({
+        fetchGetCompetitionPodiumsSportsSportId({
           headers: {
             Authorization: `Bearer ${token}`,
           },

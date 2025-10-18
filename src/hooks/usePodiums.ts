@@ -1,9 +1,9 @@
 import {
   useGetCompetitionPodiumsGlobal,
-  useGetCompetitionPodiumsSportSportId,
-  useGetCompetitionPodiumsSchoolSchoolId,
-  usePostCompetitionPodiumsSportSportId,
-  useDeleteCompetitionPodiumsSportSportId,
+  useGetCompetitionPodiumsSportsSportId,
+  useGetCompetitionPodiumsSchoolsSchoolId,
+  usePostCompetitionPodiumsSportsSportId,
+  useDeleteCompetitionPodiumsSportsSportId,
 } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -45,7 +45,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
     isLoading: isSportLoading,
     refetch: refetchSportPodium,
     error: sportError,
-  } = useGetCompetitionPodiumsSportSportId(
+  } = useGetCompetitionPodiumsSportsSportId(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -67,7 +67,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
     isLoading: isSchoolLoading,
     refetch: refetchSchoolPodium,
     error: schoolError,
-  } = useGetCompetitionPodiumsSchoolSchoolId(
+  } = useGetCompetitionPodiumsSchoolsSchoolId(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
   const {
     mutate: mutateCreateOrUpdateSportPodium,
     isPending: isUpdateLoading,
-  } = usePostCompetitionPodiumsSportSportId();
+  } = usePostCompetitionPodiumsSportsSportId();
 
   const createOrUpdateSportPodium = (
     targetSportId: string,
@@ -131,7 +131,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
   };
 
   const { mutate: mutateDeleteSportPodium, isPending: isDeleteLoading } =
-    useDeleteCompetitionPodiumsSportSportId();
+    useDeleteCompetitionPodiumsSportsSportId();
 
   const deleteSportPodium = (targetSportId: string, callback: () => void) => {
     return mutateDeleteSportPodium(
