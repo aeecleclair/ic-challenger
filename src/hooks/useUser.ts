@@ -3,7 +3,6 @@ import {
   useGetUsersMe,
   usePatchUsersMe,
 } from "@/src/api/hyperionComponents";
-import { useUserStore } from "../stores/user";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import {
@@ -17,7 +16,6 @@ const SPORT_MANAGER = "sport_manager";
 const SCHOOLS_BDS = "schools_bds";
 export const useUser = () => {
   const { token, isTokenExpired } = useAuth();
-  const { user, setUser } = useUserStore();
   const {
     data: me,
     isLoading,
@@ -45,12 +43,8 @@ export const useUser = () => {
     },
   );
 
-  if (me !== undefined && user === undefined && token !== null) {
-    setUser(me);
-  }
-
   const isAdmin = () =>
-    user?.groups?.some((group) => group.id === COMPETITION_ADMIN_GROUP_ID) ??
+    me?.groups?.some((group) => group.id === COMPETITION_ADMIN_GROUP_ID) ??
     false;
 
   const isBDS = () =>
@@ -101,7 +95,7 @@ export const useUser = () => {
   };
 
   return {
-    me: user,
+    me,
     isLoading,
     isAdmin,
     isBDS,
