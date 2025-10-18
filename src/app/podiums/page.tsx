@@ -26,7 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/src/components/ui/sidebar";
 import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 
 export default function PodiumsPage() {
@@ -53,26 +57,24 @@ export default function PodiumsPage() {
 
   if (isGlobalLoading) {
     return (
-      
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+            </div>
+          </header>
+          <div className="flex flex-col relative overflow-auto h-full m-6">
+            <div className="space-y-6">
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Gestion des podiums</h1>
+              </div>
+              <div className="text-center">Chargement...</div>
+            </div>
           </div>
-        </header>
-        <div className="flex flex-col relative overflow-auto h-full m-6">
-          <div className="space-y-6">
-            
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Gestion des podiums</h1>
-        </div>
-        <div className="text-center">Chargement...</div>
-      </div>
-          </div>
-      </SidebarInset>
-    </SidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
     );
   }
 
