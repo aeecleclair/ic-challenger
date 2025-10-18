@@ -482,7 +482,7 @@ export const UserDashboard = ({
       </Card>
 
       {/*  Action Buttons */}
-      <Card>
+      {/* <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base">Actions Rapides</CardTitle>
         </CardHeader>
@@ -541,7 +541,7 @@ export const UserDashboard = ({
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
