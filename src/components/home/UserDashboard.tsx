@@ -446,7 +446,7 @@ export const UserDashboard = ({
         <CardContent>
           <div className="space-y-3">
             {globalPodium
-              ?.sort((a, b) => a.total_points - b.total_points)
+              ?.sort((a, b) => b.total_points - a.total_points)
               .map((rank, index) => {
                 const school = sportSchools?.find(
                   (school) => school.school_id === rank.school_id,
