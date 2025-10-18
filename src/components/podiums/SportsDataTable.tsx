@@ -38,6 +38,9 @@ import {
 import { Badge } from "@/src/components/ui/badge";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { SportsDataTableToolbar } from "./SportsDataTableToolbar";
+import { TeamSportResultComplete } from "@/src/api/hyperionSchemas";
+import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 // Sport data for the table
 export interface SportData {
@@ -47,6 +50,7 @@ export interface SportData {
   firstPlace?: string | null;
   secondPlace?: string | null;
   thirdPlace?: string | null;
+  others: TeamSportResultComplete[];
 }
 
 interface SportsDataTableProps {
@@ -54,6 +58,7 @@ interface SportsDataTableProps {
 }
 
 export function SportsDataTable({ data }: SportsDataTableProps) {
+  const { sportSchools } = useSportSchools();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -143,35 +148,37 @@ export function SportsDataTable({ data }: SportsDataTableProps) {
       ),
     },
     {
-      accessorKey: "active",
+      accessorKey: "others",
       header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center justify-center w-full"
-        >
-          Statut
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex items-center justify-center">Suite</div>
       ),
-      cell: ({ row }) => (
-        <div className="text-center">
-          {row.getValue("active") ? (
-            <Badge
-              variant="secondary"
-              className="bg-green-100 text-green-800 hover:bg-green-200"
-            >
-              Actif
-            </Badge>
-          ) : (
-            <Badge variant="destructive">Inactif</Badge>
-          )}
-        </div>
-      ),
-      filterFn: (row, id, filterValue) => {
-        if (filterValue === undefined) return true;
-        const value = row.getValue<boolean>(id);
-        return filterValue === true ? value === true : !value;
+      cell: ({ row }) => {
+        const sport = row.original;
+
+        return (
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="sr-only">Ouvrir le menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {sport.others.splice(3).map((rank) => {
+                  const school = sportSchools?.find(
+                    (school) => school.school_id === rank.school_id,
+                  );
+                  return (
+                    <DropdownMenuItem key={rank.team_id}>
+                      {rank.rank} - {formatSchoolName(school?.school.name)}
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
       },
     },
   ];

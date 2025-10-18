@@ -160,6 +160,7 @@ export default function PodiumsPage() {
                           thirdPlace:
                             sortedPodium.find((p) => p.rank === 3)?.team
                               ?.name || null,
+                          others: sortedPodium,
                         };
                       }) || []
                   }

@@ -2,6 +2,7 @@ import { useQueries } from "@tanstack/react-query";
 import { fetchGetCompetitionPodiumsSportsSportId } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { useUser } from "./useUser";
+import { TeamSportResultComplete } from "../api/hyperionSchemas";
 
 interface useSportPodiumsProps {
   sportIds: string[];
@@ -36,7 +37,7 @@ export const useSportPodiums = ({ sportIds }: useSportPodiumsProps) => {
       }
       return acc;
     },
-    {} as Record<string, any>,
+    {} as Record<string, TeamSportResultComplete[]>,
   );
 
   const isLoading = queries.some((query) => query.isLoading);
