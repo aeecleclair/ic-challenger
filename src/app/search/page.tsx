@@ -119,8 +119,8 @@ export default function SearchPage() {
       allMatches
         ?.filter((match) =>
           filters.school !== "all"
-            ? match.team1_id === filters.school ||
-              match.team2_id === filters.school
+            ? match.team1.school_id === filters.school ||
+              match.team2.school_id === filters.school
             : true,
         )
         ?.filter((match) =>
@@ -161,7 +161,7 @@ export default function SearchPage() {
     }
 
     return result;
-  }, [allMatches, filters, teams, sports]);
+  }, [allMatches, filters, sports]);
 
   const currentDate = useMemo(() => new Date(), []);
 
