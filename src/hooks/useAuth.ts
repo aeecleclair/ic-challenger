@@ -9,7 +9,6 @@ import {
 } from "@/src/api/hyperionSchemas";
 import { useTokenStore } from "@/src/stores/token";
 import { usePathname, useRouter } from "next/navigation";
-import { useUserStore } from "../stores/user";
 import { useQuery } from "@tanstack/react-query";
 import { useCodeVerifierStore } from "../stores/codeVerifier";
 import { toast } from "../components/ui/use-toast";
@@ -25,7 +24,6 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { token, setToken, refreshToken, setRefreshToken, userId } =
     useTokenStore();
-  const { resetUser } = useUserStore();
   const [isTokenQueried, setIsTokenQueried] = useState(false);
   const router = useRouter();
   const { codeVerifier, setCodeVerifier, resetCodeVerifier } =
@@ -150,7 +148,6 @@ export const useAuth = () => {
     setRefreshToken(null);
     setIsTokenQueried(false);
     router.replace("/login");
-    resetUser();
   }
 
   async function getTokenFromStorage(): Promise<string | null> {
