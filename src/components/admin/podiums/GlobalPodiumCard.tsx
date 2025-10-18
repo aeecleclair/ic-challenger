@@ -82,9 +82,6 @@ export function GlobalPodiumCard({ results, title }: GlobalPodiumCardProps) {
                         {formatSchoolName(school?.school.name) ||
                           "École inconnue"}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        ID: {result.school_id}
-                      </p>
                     </div>
                   </div>
                   <div className="text-right">
