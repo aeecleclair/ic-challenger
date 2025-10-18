@@ -11,7 +11,7 @@ export function NavPodium() {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/podium");
+    router.push("/podiums");
   };
 
   return (
