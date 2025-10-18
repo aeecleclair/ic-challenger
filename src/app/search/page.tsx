@@ -32,9 +32,11 @@ import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";
 import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
-import { useSportMatches } from "../../hooks/useMatches";
+import { useSportMatches } from "../../hooks/useSportMatches";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { useAllMatches } from "@/src/hooks/useAllMatches";
+import { useAllTeams } from "@/src/hooks/useAllTeams";
 
 interface FilterState {
   sport: string;
@@ -71,16 +73,10 @@ export default function SearchPage() {
 
   const resetFilters = useCallback(() => setFilters(FILTER_DEFAULTS), []);
 
-  // Get matches using real hooks - only when specific sport is selected
-  const { sportMatches: allMatches } = useSportMatches({
-    sportId: filters.sport !== "all" ? filters.sport : undefined,
-  });
+  const { allMatches } = useAllMatches();
 
   // Get teams using real hooks - only when both sport and school are selected
-  const { teams } = useSchoolSportTeams({
-    sportId: filters.sport !== "all" ? filters.sport : undefined,
-    schoolId: filters.school !== "all" ? filters.school : undefined,
-  });
+  const { allTeams: teams } = useAllTeams();
 
   const availableTeams = useMemo(() => {
     if (filters.school === "all" || filters.sport === "all" || !teams) {

@@ -1,14 +1,14 @@
-import { useGetCompetitionMatches } from "../api/hyperionComponents";
+import { useGetCompetitionTeams } from "../api/hyperionComponents";
 import { useAuth } from "./useAuth";
 
-export const useAllMatches = () => {
+export const useAllTeams = () => {
   const { token, isTokenExpired } = useAuth();
   const {
-    data: allMatches,
-    refetch: refetchAllMatches,
+    data: allTeams,
+    refetch: refetchAllTeams,
     isLoading,
     error,
-  } = useGetCompetitionMatches(
+  } = useGetCompetitionTeams(
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -22,8 +22,8 @@ export const useAllMatches = () => {
   );
 
   return {
-    allMatches,
-    refetchAllMatches,
+    allTeams,
+    refetchAllTeams,
     isLoading,
     error,
   };

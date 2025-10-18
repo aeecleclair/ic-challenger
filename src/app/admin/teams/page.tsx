@@ -48,6 +48,8 @@ import { teamFormSchema, TeamFormValues } from "@/src/forms/team";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { toast } from "@/src/components/ui/use-toast";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { useAllMatches } from "@/src/hooks/useAllMatches";
+import { useAllTeams } from "@/src/hooks/useAllTeams";
 
 const TeamsDashboard = () => {
   const router = useRouter();
@@ -94,8 +96,10 @@ const TeamsDashboard = () => {
     updateURL(selectedSportId, schoolId);
   };
 
+  const { allTeams, refetchAllTeams } = useAllTeams();
+
   const {
-    teams,
+    // teams,
     refetchTeams,
     deleteSchoolSportTeam,
     createSchoolSportTeam,
@@ -133,16 +137,25 @@ const TeamsDashboard = () => {
   }, [filteredSportSchools, selectedSportId, selectedSchoolId, updateURL]);
 
   const filteredTeams = useMemo(() => {
-    if (!teams) return [];
+    if (!allTeams) return [];
 
-    return teams.filter((team) => {
-      const matchesSearch = team.name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+    return allTeams
+      .filter((team) => {
+        const matchesSearch = team.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
-      return matchesSearch;
-    });
-  }, [teams, searchQuery]);
+        return matchesSearch;
+      })
+      ?.filter((team) =>
+        selectedSchoolId.length !== 0
+          ? team.school_id === selectedSchoolId
+          : true,
+      )
+      ?.filter((team) =>
+        selectedSportId.length !== 0 ? team.sport_id === selectedSportId : true,
+      );
+  }, [allTeams, searchQuery, selectedSchoolId, selectedSportId]);
 
   // Form for creating/editing teams
   const form = useForm<TeamFormValues>({
@@ -165,9 +178,9 @@ const TeamsDashboard = () => {
 
   // Get team being edited
   const editingTeam = useMemo(() => {
-    if (!editTeamId || !teams) return null;
-    return teams.find((t) => t.id === editTeamId) || null;
-  }, [editTeamId, teams]);
+    if (!editTeamId || !allTeams) return null;
+    return allTeams.find((t) => t.id === editTeamId) || null;
+  }, [editTeamId, allTeams]);
 
   // Populate form when editing
   useEffect(() => {

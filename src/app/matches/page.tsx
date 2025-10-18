@@ -8,7 +8,7 @@ import {
 } from "../../components/ui/card";
 import { UpcomingMatches } from "../../components/home/matches/UpcomingMatches";
 import { PastMatches } from "../../components/home/matches/PastMatches";
-import { useSportMatches } from "../../hooks/useMatches";
+import { useSportMatches } from "../../hooks/useSportMatches";
 import { useParticipant } from "../../hooks/useParticipant";
 import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
 import { useSports } from "../../hooks/useSports";

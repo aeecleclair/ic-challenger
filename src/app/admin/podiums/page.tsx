@@ -6,7 +6,7 @@ import { Button } from "@/src/components/ui/button";
 import { Trophy, Plus, Trash2, Edit } from "lucide-react";
 import { usePodiums } from "@/src/hooks/usePodiums";
 import { useSports } from "@/src/hooks/useSports";
-import { useAllSportsPodiums } from "@/src/hooks/useAllSportsPodiums";
+import { useSportPodiums } from "@/src/hooks/useSportsPodiums";
 import { PodiumCard } from "@/src/components/admin/podiums/PodiumCard";
 import { GlobalPodiumCard } from "@/src/components/admin/podiums/GlobalPodiumCard";
 import { PodiumRankingsForm } from "@/src/components/admin/podiums/PodiumRankingsForm";
@@ -34,7 +34,7 @@ export default function PodiumsPage() {
   const selectedSchoolId = searchParams.get("school_id");
 
   const { sports } = useSports();
-  const { podiumsBySport } = useAllSportsPodiums({
+  const { podiumsBySport } = useSportPodiums({
     sportIds:
       sports?.filter((sport) => sport.active).map((sport) => sport.id) || [],
   });

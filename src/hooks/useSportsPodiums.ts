@@ -3,11 +3,11 @@ import { fetchGetCompetitionPodiumsSportSportId } from "@/src/api/hyperionCompon
 import { useAuth } from "./useAuth";
 import { useUser } from "./useUser";
 
-interface UseAllSportsPodiumsProps {
+interface useSportPodiumsProps {
   sportIds: string[];
 }
 
-export const useAllSportsPodiums = ({ sportIds }: UseAllSportsPodiumsProps) => {
+export const useSportPodiums = ({ sportIds }: useSportPodiumsProps) => {
   const { token, isTokenExpired } = useAuth();
 
   const queries = useQueries({

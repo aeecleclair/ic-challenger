@@ -10,7 +10,7 @@ import {
 } from "../../ui/sidebar";
 import { useRouter } from "next/navigation";
 import { useParticipant } from "../../../hooks/useParticipant";
-import { useSportMatches } from "../../../hooks/useMatches";
+import { useSportMatches } from "../../../hooks/useSportMatches";
 import { useMemo } from "react";
 
 export function NavMatches() {

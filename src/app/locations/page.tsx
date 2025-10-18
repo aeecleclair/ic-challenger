@@ -3,7 +3,7 @@
 import { Card, CardContent } from "../../components/ui/card";
 import { LocationsMap } from "../../components/home/locations/LocationsMap";
 import { useLocations } from "../../hooks/useLocations";
-import { useSportMatches } from "../../hooks/useMatches";
+import { useSportMatches } from "../../hooks/useSportMatches";
 import { useParticipant } from "../../hooks/useParticipant";
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";

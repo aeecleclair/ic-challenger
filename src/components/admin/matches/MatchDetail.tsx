@@ -2,7 +2,7 @@
 
 import { Match, MatchComplete } from "@/src/api/hyperionSchemas";
 import { Button } from "@/src/components/ui/button";
-import { useSportMatches } from "@/src/hooks/useMatches";
+import { useSportMatches } from "@/src/hooks/useSportMatches";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "@/src/components/ui/use-toast";

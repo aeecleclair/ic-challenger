@@ -1,7 +1,7 @@
 import { UserStatusBadges } from "./UserStatusBadges";
 import { MatchCard } from "./matches/MatchCard";
 import { useParticipant } from "../../hooks/useParticipant";
-import { useSportMatches } from "../../hooks/useMatches";
+import { useSportMatches } from "../../hooks/useSportMatches";
 import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
 import { useSports } from "../../hooks/useSports";
 import { useSchools } from "../../hooks/useSchools";

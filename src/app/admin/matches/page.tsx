@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Badge } from "@/src/components/ui/badge";
-import { useSportMatches } from "@/src/hooks/useMatches";
+import { useSportMatches } from "@/src/hooks/useSportMatches";
 import { useSports } from "@/src/hooks/useSports";
 import MatchCard from "@/src/components/admin/matches/MatchCard";
 import { WarningDialog } from "@/src/components/custom/WarningDialog";

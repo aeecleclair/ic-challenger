@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { useSportMatches } from "@/src/hooks/useMatches";
+import { useSportMatches } from "@/src/hooks/useSportMatches";
 import { MatchFormValues, matchFormSchema } from "@/src/forms/match";
 import { MatchesForm } from "@/src/components/admin/matches/MatchesForm";
 import { MatchEdit } from "@/src/api/hyperionSchemas";
