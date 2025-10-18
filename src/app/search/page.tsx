@@ -174,14 +174,12 @@ export default function SearchPage() {
   }, [filteredMatches, currentDate]);
 
   const pastMatches = useMemo(() => {
-    if (filters.team === "all") return [];
-
     return filteredMatches
       .filter((match) => match.date && new Date(match.date) <= currentDate)
       .sort(
         (a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime(),
       );
-  }, [filteredMatches, filters.team, currentDate]);
+  }, [filteredMatches, currentDate]);
 
   const computedValues = useMemo(() => {
     const allFiltersDefault = Object.values(filters).every(
