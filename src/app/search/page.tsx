@@ -118,6 +118,12 @@ export default function SearchPage() {
     let result =
       allMatches
         ?.filter((match) =>
+          filters.school !== "all"
+            ? match.team1_id === filters.school ||
+              match.team2_id === filters.school
+            : true,
+        )
+        ?.filter((match) =>
           filters.sport !== "all" ? match.sport_id === filters.sport : true,
         ) ?? [];
 
@@ -126,14 +132,6 @@ export default function SearchPage() {
       result = result.filter(
         (match) =>
           match.team1_id === filters.team || match.team2_id === filters.team,
-      );
-    } else if (filters.school !== "all" && teams) {
-      // Filter by school using teams data
-      const schoolTeamIds = teams.map((team) => team.id);
-      result = result.filter(
-        (match) =>
-          schoolTeamIds.includes(match.team1_id) ||
-          schoolTeamIds.includes(match.team2_id),
       );
     }
 
