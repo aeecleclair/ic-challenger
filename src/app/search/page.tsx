@@ -75,15 +75,18 @@ export default function SearchPage() {
 
   const { allMatches } = useAllMatches();
 
-  // Get teams using real hooks - only when both sport and school are selected
   const { allTeams: teams } = useAllTeams();
 
   const availableTeams = useMemo(() => {
-    if (filters.school === "all" || filters.sport === "all" || !teams) {
-      return [];
-    }
-    // The useSchoolSportTeams hook already filters by sport and school, so teams is already filtered
-    return teams;
+    return (
+      teams
+        ?.filter((team) =>
+          filters.school !== "all" ? team.school_id === filters.school : true,
+        )
+        ?.filter((team) =>
+          filters.sport !== "all" ? team.sport_id === filters.sport : true,
+        ) ?? []
+    );
   }, [filters.school, filters.sport, teams]);
 
   useEffect(() => {
@@ -110,10 +113,13 @@ export default function SearchPage() {
   ]);
 
   const filteredMatches = useMemo(() => {
-    // Since allMatches comes from useSportMatches, it's already filtered by sport
     if (!allMatches || !sports) return [];
 
-    let result = allMatches;
+    let result =
+      allMatches
+        ?.filter((match) =>
+          filters.sport !== "all" ? match.sport_id === filters.sport : true,
+        ) ?? [];
 
     // Filter by team if selected
     if (filters.team !== "all") {
