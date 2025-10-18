@@ -17,6 +17,7 @@ import { NavMatches } from "./NavMatches";
 import { NavVolunteerShifts } from "./NavVolunteerShifts";
 import { NavSearch } from "./NavSearch";
 import { NavLocations } from "./NavLocations";
+import { NavPodium } from "./NavPodium";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 
@@ -62,6 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {edition && meCompetition?.is_volunteer && <NavVolunteerShifts />}
         {edition && <NavSearch />}
         {edition && <NavLocations />}
+        {edition && <NavPodium />}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

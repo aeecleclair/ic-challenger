@@ -7,7 +7,7 @@ import {
 } from "../../ui/sidebar";
 import { useRouter } from "next/navigation";
 
-export function NavMatches() {
+export function NavPodium() {
   const router = useRouter();
 
   const handleClick = () => {
