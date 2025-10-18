@@ -133,6 +133,7 @@ export default function PodiumsPage() {
                   onSubmit={handleSubmitPodium}
                   isLoading={isUpdateLoading}
                   sportId={selectedSportForEdit}
+                  defaultValues={sportPodium}
                   submitText="Mettre à jour le podium"
                 />
               )}
