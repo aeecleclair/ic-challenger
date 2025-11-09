@@ -232,7 +232,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
           id="sport.license_number"
           input={(field) => <Input {...field} className="w-60" />}
         />
-        {/* <StyledFormField
+        <StyledFormField
           form={form}
           label="Certificat médical"
           id="sport.certificate"
@@ -273,7 +273,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
               </Dialog>
             </div>
           )}
-        /> */}
+        />
       </div>
     </CardTemplate>
   );
