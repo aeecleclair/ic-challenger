@@ -24,6 +24,7 @@ export function NavUser() {
   const { isMobile } = useSidebar();
   const { logout } = useAuth();
   const { me, isAdmin, isBDS, isSportManager } = useUser();
+  console.log("isAdmin:", isAdmin());
   const router = useRouter();
 
   const isOnAdminPage = pathname.startsWith("/admin");

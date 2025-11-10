@@ -8,6 +8,10 @@ import { CompetitionEditionBase } from "../api/hyperionSchemas";
 import { toast } from "../components/ui/use-toast";
 import { ErrorType, DetailedErrorType } from "../utils/errorTyping";
 
+/**
+ * Hook for managing the currently active edition
+ * For comprehensive edition management (CRUD operations), use useEditions instead
+ */
 export const useEdition = () => {
   const { token, isTokenExpired } = useAuth();
 

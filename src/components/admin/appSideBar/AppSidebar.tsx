@@ -25,6 +25,7 @@ import { NavLocations } from "./NavLocations";
 import { NavPodiums } from "./NavPodiums";
 import { NavLicense } from "./NavLicense";
 import { NavVolunteerShifts } from "./NavVolunteerShifts";
+import { NavEditions } from "./NavEditions";
 import { useUser } from "@/src/hooks/useUser";
 
 const data = {
@@ -68,6 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        {isAdmin() && <NavEditions />}
         {edition && (
           <>
             {isAdmin() && <NavSchools />}

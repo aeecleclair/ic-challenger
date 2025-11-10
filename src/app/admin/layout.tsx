@@ -46,7 +46,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     });
 
     const routeMap: { [key: string]: string } = {
-      edition: "Éditions",
+      editions: "Éditions",
       schools: "Écoles",
       sports: "Sports",
       "volunteer-shifts": "Créneaux Bénévoles",
@@ -116,7 +116,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <div className="flex flex-col relative overflow-auto h-full m-6">
-          {edition ? children : <AdminFallback />}
+          {pathname.startsWith("/admin/editions") ? children : (edition ? children : <AdminFallback />)}
         </div>
       </SidebarInset>
     </SidebarProvider>
