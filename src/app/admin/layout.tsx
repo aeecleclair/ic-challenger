@@ -116,7 +116,13 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
         </header>
         <div className="flex flex-col relative overflow-auto h-full m-6">
-          {pathname.startsWith("/admin/editions") ? children : (edition ? children : <AdminFallback />)}
+          {pathname.startsWith("/admin/editions") ? (
+            children
+          ) : edition ? (
+            children
+          ) : (
+            <AdminFallback />
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>

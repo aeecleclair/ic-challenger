@@ -61,8 +61,9 @@ export const ActivateEditionDialog = ({
                 <span className="font-medium text-orange-800">Attention</span>
               </div>
               <p className="text-sm text-orange-700">
-                L&apos;édition <strong>{activeEdition.name}</strong> est actuellement active. 
-                L&apos;activation de cette nouvelle édition la désactivera automatiquement.
+                L&apos;édition <strong>{activeEdition.name}</strong> est
+                actuellement active. L&apos;activation de cette nouvelle édition
+                la désactivera automatiquement.
               </p>
             </div>
           )}
@@ -72,30 +73,41 @@ export const ActivateEditionDialog = ({
               <h4 className="font-medium mb-2">Édition à activer :</h4>
               <div className="p-3 border rounded-lg bg-green-50 border-green-200">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-green-800">{edition.name}</span>
-                  <Badge variant="outline" className="border-green-600 text-green-700">
+                  <span className="font-medium text-green-800">
+                    {edition.name}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="border-green-600 text-green-700"
+                  >
                     Année {edition.year}
                   </Badge>
                 </div>
                 <p className="text-sm text-green-600">
-                  Du {formatDate(edition.start_date)} au {formatDate(edition.end_date)}
+                  Du {formatDate(edition.start_date)} au{" "}
+                  {formatDate(edition.end_date)}
                 </p>
               </div>
             </div>
 
             {activeEdition && (
               <div>
-                <h4 className="font-medium mb-2">Édition actuellement active :</h4>
+                <h4 className="font-medium mb-2">
+                  Édition actuellement active :
+                </h4>
                 <div className="p-3 border rounded-lg bg-gray-50 border-gray-200">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-800">{activeEdition.name}</span>
+                    <span className="font-medium text-gray-800">
+                      {activeEdition.name}
+                    </span>
                     <Badge variant="default">
                       <StopCircle className="w-3 h-3 mr-1" />
                       Sera désactivée
                     </Badge>
                   </div>
                   <p className="text-sm text-gray-600">
-                    Du {formatDate(activeEdition.start_date)} au {formatDate(activeEdition.end_date)}
+                    Du {formatDate(activeEdition.start_date)} au{" "}
+                    {formatDate(activeEdition.end_date)}
                   </p>
                 </div>
               </div>
@@ -104,11 +116,15 @@ export const ActivateEditionDialog = ({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isActivateLoading}>
+          <Button
+            variant="outline"
+            onClick={onClose}
+            disabled={isActivateLoading}
+          >
             Annuler
           </Button>
-          <LoadingButton 
-            onClick={handleActivate} 
+          <LoadingButton
+            onClick={handleActivate}
             isLoading={isActivateLoading}
             className="bg-green-600 hover:bg-green-700"
           >

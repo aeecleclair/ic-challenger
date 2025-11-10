@@ -47,7 +47,7 @@ export const CreateEditionDialog = ({
       () => {
         form.reset();
         onClose();
-      }
+      },
     );
   };
 

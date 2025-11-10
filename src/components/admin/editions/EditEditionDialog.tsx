@@ -45,7 +45,7 @@ export const EditEditionDialog = ({
         start_date: values.startDate.toISOString(),
         end_date: values.endDate.toISOString(),
       },
-      onClose
+      onClose,
     );
   };
 

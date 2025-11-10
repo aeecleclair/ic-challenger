@@ -55,7 +55,10 @@ export const useEditions = () => {
   const { mutate: mutateCreateEdition, isPending: isCreateLoading } =
     usePostCompetitionEditions();
 
-  const createEdition = (body: Schemas.CompetitionEditionBase, callback: () => void) => {
+  const createEdition = (
+    body: Schemas.CompetitionEditionBase,
+    callback: () => void,
+  ) => {
     return mutateCreateEdition(
       {
         headers: {
@@ -172,10 +175,12 @@ export const useEditions = () => {
     const now = new Date();
     const startDate = new Date(edition.start_date);
     const endDate = new Date(edition.end_date);
-    
+
     if (edition.active) {
-      if (now < startDate) return { status: "À venir", variant: "secondary" as const };
-      if (now > endDate) return { status: "Terminée", variant: "destructive" as const };
+      if (now < startDate)
+        return { status: "À venir", variant: "secondary" as const };
+      if (now > endDate)
+        return { status: "Terminée", variant: "destructive" as const };
       return { status: "En cours", variant: "default" as const };
     }
     return { status: "Inactive", variant: "outline" as const };
@@ -188,7 +193,7 @@ export const useEditions = () => {
     // Data
     editions,
     activeEdition,
-    
+
     // Loading states
     isLoading,
     editionsLoading,
@@ -196,19 +201,19 @@ export const useEditions = () => {
     isCreateLoading,
     isUpdateLoading,
     isActivateLoading,
-    
+
     // Errors
     error,
     editionsError,
     activeEditionError,
-    
+
     // Actions
     createEdition,
     updateEdition,
     activateEdition,
     refetchEditions,
     refetchActiveEdition,
-    
+
     // Helpers
     getEditionStatus,
   };

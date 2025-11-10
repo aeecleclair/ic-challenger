@@ -6,10 +6,7 @@ import {
   SidebarGroupLabel,
   SidebarMenuAction,
 } from "../../ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleTrigger,
-} from "../../ui/collapsible";
+import { Collapsible, CollapsibleTrigger } from "../../ui/collapsible";
 import { useRouter } from "next/navigation";
 import { useEditions } from "@/src/hooks/useEditions";
 
