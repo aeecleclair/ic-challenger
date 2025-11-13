@@ -3,10 +3,11 @@ import { z } from "zod";
 const schoolType = ["centrale", "from_lyon", "others"] as const;
 const publicType = [
   "pompom",
-  "fanfare",
+  "fanfare", 
   "cameraman",
   "athlete",
   "volunteer",
+  "none",
 ] as const;
 
 export const variantFormSchema = z.object({

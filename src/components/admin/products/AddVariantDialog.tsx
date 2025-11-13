@@ -48,6 +48,7 @@ export const AddVariantDialog = ({
     defaultValues: {
       enabled: true,
       unique: "multiple",
+      publicType: "none",
     },
   });
 
@@ -58,6 +59,7 @@ export const AddVariantDialog = ({
   ];
 
   const publicTypes = [
+    { value: "none", label: "Tous" },
     { value: "pompom", label: "Pompom" },
     { value: "fanfare", label: "Fanfare" },
     { value: "cameraman", label: "Cameraman" },
@@ -73,7 +75,7 @@ export const AddVariantDialog = ({
         unique: values.unique === "unique",
         enabled: values.enabled || true,
         school_type: values.schoolType,
-        public_type: values.publicType || undefined,
+        public_type: values.publicType === "none" ? null : values.publicType,
         product_id: productId,
       };
 

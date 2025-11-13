@@ -54,7 +54,7 @@ export const EditVariantDialog = ({
       unique: variant.unique ? "unique" : "multiple",
       enabled: variant.enabled,
       schoolType: variant.school_type,
-      publicType: variant.public_type || undefined,
+      publicType: variant.public_type || "none",
     },
   });
 
@@ -65,6 +65,7 @@ export const EditVariantDialog = ({
   ];
 
   const publicTypes = [
+    { value: "none", label: "Tous" },
     { value: "pompom", label: "Pompom" },
     { value: "fanfare", label: "Fanfare" },
     { value: "cameraman", label: "Cameraman" },
@@ -79,6 +80,7 @@ export const EditVariantDialog = ({
         price: Math.round(parseFloat(values.price) * 100),
         unique: values.unique === "unique",
         enabled: values.enabled || true,
+        public_type: values.publicType === "none" ? null : values.publicType,
       };
 
     updateVariant(variant.id, body, () => {
@@ -97,7 +99,7 @@ export const EditVariantDialog = ({
         unique: variant.unique ? "unique" : "multiple",
         enabled: variant.enabled,
         schoolType: variant.school_type,
-        publicType: variant.public_type || undefined,
+        publicType: variant.public_type || "none",
       });
     }
   }
