@@ -90,7 +90,7 @@ export const TeamsForm = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
-          {isEditing ? "Modifier l&apos;équipe" : "Créer une nouvelle équipe"}
+          {isEditing ? "Modifier l'équipe" : "Créer une nouvelle équipe"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -199,8 +199,8 @@ export const TeamsForm = ({
                   </Select>
                   <FormDescription>
                     {isEditing
-                      ? "L&apos;école ne peut pas être modifiée"
-                      : "Vous devez d&apos;abord sélectionner un sport"}
+                      ? "L'école ne peut pas être modifiée"
+                      : "Vous devez d'abord sélectionner un sport"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
