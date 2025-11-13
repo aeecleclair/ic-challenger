@@ -8,7 +8,17 @@ import {
   CardTitle,
 } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
-import { Users, Crown, Trophy, Edit, Trash2, Shield } from "lucide-react";
+import {
+  Users,
+  Crown,
+  Trophy,
+  Edit,
+  Trash2,
+  Shield,
+  UserCheck,
+  UserX,
+  Star,
+} from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { useSports } from "@/src/hooks/useSports";
 import { useSchools } from "@/src/hooks/useSchools";
@@ -58,7 +68,7 @@ const TeamCard = ({ team, onEdit, onDelete }: TeamCardProps) => {
 
       <CardContent className="py-3 flex-grow">
         {/* Team Info */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {/* Captain */}
           {team.captain_id && (
             <div className="flex items-center gap-2 text-sm">
@@ -73,12 +83,87 @@ const TeamCard = ({ team, onEdit, onDelete }: TeamCardProps) => {
             </div>
           )}
 
+          {/* Participants List */}
+          {team.participants && team.participants.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium">
+                <Users className="h-4 w-4" />
+                <span>Participants ({team.participants.length})</span>
+              </div>
+              <div className="space-y-1 max-h-40 overflow-y-auto">
+                {team.participants.map((participant) => (
+                  <div
+                    key={participant.user_id}
+                    className="flex items-center justify-between text-xs p-2 bg-gray-50 rounded border"
+                  >
+                    <div className="flex items-center gap-2">
+                      {/* Captain indicator */}
+                      {participant.user_id === team.captain_id && (
+                        <Crown className="h-3 w-3 text-yellow-600" />
+                      )}
+
+                      {/* Participant name */}
+                      <span className="font-medium">
+                        {participant.user?.user?.firstname}{" "}
+                        {participant.user?.user?.name}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      {/* Substitute indicator */}
+                      {participant.substitute && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs h-5 bg-orange-100 text-orange-700 border-orange-200"
+                        >
+                          Sub
+                        </Badge>
+                      )}
+
+                      {/* Validation status */}
+                      {participant.user?.validated ? (
+                        <UserCheck className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <UserX className="h-3 w-3 text-red-500" />
+                      )}
+
+                      {/* License status */}
+                      {participant.is_license_valid ? (
+                        <Shield className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <Shield className="h-3 w-3 text-red-500" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Team Statistics */}
           <div className="flex items-center gap-4 pt-2 border-t border-gray-100">
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <Users className="h-4 w-4" />
-              <span>Membres: {team.participants?.length || 0}</span>
+              <span>Total: {team.participants?.length || 0}</span>
             </div>
+            {team.participants && (
+              <>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <UserCheck className="h-4 w-4" />
+                  <span>
+                    Validés:{" "}
+                    {team.participants.filter((p) => p.user?.validated).length}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Star className="h-4 w-4" />
+                  <span>
+                    Remplaçants:{" "}
+                    {team.participants.filter((p) => p.substitute).length}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </CardContent>
