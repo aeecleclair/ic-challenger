@@ -22,25 +22,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, Edit, Trash2, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, Edit, Trash2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/ui/tooltip";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { SportsDataTableToolbar } from "./SportsDataTableToolbar";
 import { TeamSportResultComplete } from "@/src/api/hyperionSchemas";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { PodiumTeamsDialog } from "./PodiumTeamsDialog";
 
 // Sport data for the table
 export interface SportData {
@@ -65,6 +60,24 @@ export function SportsDataTable({ data }: SportsDataTableProps) {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+
+  // Helper function to get school name
+  const getSchoolName = (schoolId: string) => {
+    const school = sportSchools?.find((s) => s.school_id === schoolId);
+    return formatSchoolName(school?.school.name) || "École inconnue";
+  };
+
+  // Helper function to get team and school info from results
+  const getTeamInfo = (results: TeamSportResultComplete[], rank: number) => {
+    const result = results.find(r => r.rank === rank);
+    if (!result) return null;
+    
+    return {
+      teamName: result.team.name,
+      schoolName: getSchoolName(result.school_id),
+      points: result.points
+    };
+  };
 
   // Create a virtual column for search
   const columns: ColumnDef<SportData>[] = [
@@ -98,54 +111,78 @@ export function SportsDataTable({ data }: SportsDataTableProps) {
       header: () => (
         <div className="flex items-center justify-center">🥇 1ère place</div>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium text-center">
-          {row.getValue("firstPlace") ? (
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-yellow-500">🥇</span>
-              <span>{row.getValue("firstPlace")}</span>
-            </div>
-          ) : (
-            <span className="text-muted-foreground italic">Non définie</span>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const teamInfo = getTeamInfo(row.original.others, 1);
+        return (
+          <div className="font-medium text-center">
+            {teamInfo ? (
+              <div className="flex flex-col items-center justify-center gap-1">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-yellow-500">🥇</span>
+                  <span>{teamInfo.teamName}</span>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {teamInfo.schoolName}
+                </div>
+              </div>
+            ) : (
+              <span className="text-muted-foreground italic">Non définie</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "secondPlace",
       header: () => (
         <div className="flex items-center justify-center">🥈 2ème place</div>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium text-center">
-          {row.getValue("secondPlace") ? (
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-gray-400">🥈</span>
-              <span>{row.getValue("secondPlace")}</span>
-            </div>
-          ) : (
-            <span className="text-muted-foreground italic">Non définie</span>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const teamInfo = getTeamInfo(row.original.others, 2);
+        return (
+          <div className="font-medium text-center">
+            {teamInfo ? (
+              <div className="flex flex-col items-center justify-center gap-1">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-gray-400">🥈</span>
+                  <span>{teamInfo.teamName}</span>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {teamInfo.schoolName}
+                </div>
+              </div>
+            ) : (
+              <span className="text-muted-foreground italic">Non définie</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "thirdPlace",
       header: () => (
         <div className="flex items-center justify-center">🥉 3ème place</div>
       ),
-      cell: ({ row }) => (
-        <div className="font-medium text-center">
-          {row.getValue("thirdPlace") ? (
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-amber-600">🥉</span>
-              <span>{row.getValue("thirdPlace")}</span>
-            </div>
-          ) : (
-            <span className="text-muted-foreground italic">Non définie</span>
-          )}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const teamInfo = getTeamInfo(row.original.others, 3);
+        return (
+          <div className="font-medium text-center">
+            {teamInfo ? (
+              <div className="flex flex-col items-center justify-center gap-1">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-amber-600">🥉</span>
+                  <span>{teamInfo.teamName}</span>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {teamInfo.schoolName}
+                </div>
+              </div>
+            ) : (
+              <span className="text-muted-foreground italic">Non définie</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       accessorKey: "others",
@@ -156,27 +193,16 @@ export function SportsDataTable({ data }: SportsDataTableProps) {
         const sport = row.original;
 
         return (
-          <div className="flex justify-end">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">Ouvrir le menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {sport.others.splice(3).map((rank) => {
-                  const school = sportSchools?.find(
-                    (school) => school.school_id === rank.school_id,
-                  );
-                  return (
-                    <DropdownMenuItem key={rank.team_id}>
-                      {rank.rank} - {formatSchoolName(school?.school.name)}
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <div className="flex justify-center">
+            {sport.others.length > 3 ? (
+              <PodiumTeamsDialog
+                results={sport.others}
+                sportName={sport.name}
+                triggerText="Voir tous"
+              />
+            ) : (
+              <span className="text-sm text-muted-foreground">-</span>
+            )}
           </div>
         );
       },
