@@ -30,19 +30,21 @@ export function PodiumRankingsForm({
   const form = useForm<PodiumRankingsFormData>({
     resolver: zodResolver(podiumRankingsSchema),
     defaultValues: {
-      rankings: defaultValues?.map((result) => ({
-        school_id: result.school_id,
-        sport_id: result.sport_id,
-        team_id: result.team_id,
-        points: result.points,
-      })) || [
-        {
-          school_id: "",
-          sport_id: sportId,
-          team_id: "",
-          points: 0,
-        },
-      ],
+      rankings: defaultValues?.length
+        ? defaultValues.map((result) => ({
+            school_id: result.school_id,
+            sport_id: result.sport_id,
+            team_id: result.team_id,
+            points: result.points,
+          }))
+        : [
+            {
+              school_id: "",
+              sport_id: sportId,
+              team_id: "",
+              points: 0,
+            },
+          ],
     },
   });
 
@@ -68,30 +70,41 @@ export function PodiumRankingsForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Classements</h3>
-            <Button type="button" variant="outline" onClick={addRanking}>
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter un résultat
-            </Button>
+          <h3 className="text-lg font-semibold">Classements du Podium</h3>
+
+          <div className="space-y-3">
+            {fields.map((field, index) => (
+              <RankingRow
+                key={field.id}
+                form={form}
+                field={field}
+                index={index}
+                sportId={sportId}
+                onRemove={() => remove(index)}
+                showRemove={fields.length > 1}
+              />
+            ))}
           </div>
 
-          {fields.map((field, index) => (
-            <RankingRow
-              key={field.id}
-              form={form}
-              field={field}
-              index={index}
-              sportId={sportId}
-              onRemove={() => remove(index)}
-              showRemove={fields.length > 1}
-            />
-          ))}
+          {/* Add new ranking button */}
+          <div className="flex justify-center pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addRanking}
+              className="border-dashed border-2 w-full py-6 text-muted-foreground hover:text-foreground hover:border-solid"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter une nouvelle position au classement
+            </Button>
+          </div>
         </div>
 
-        <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? "Chargement..." : submitText}
-        </Button>
+        <div className="pt-4 border-t">
+          <Button type="submit" disabled={isLoading} className="w-full">
+            {isLoading ? "Chargement..." : submitText}
+          </Button>
+        </div>
       </form>
     </Form>
   );

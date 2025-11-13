@@ -72,7 +72,7 @@ export function RankingRow({
                   // Reset team_id when school changes
                   form.setValue(`rankings.${index}.team_id`, "");
                 }}
-                defaultValue={field.value}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -100,7 +100,7 @@ export function RankingRow({
               <FormLabel>Équipe</FormLabel>
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.value}
+                value={field.value}
                 disabled={!schoolId}
               >
                 <FormControl>
