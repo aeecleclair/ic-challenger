@@ -33,10 +33,16 @@ export const PastMatchCard = ({
   schools = [],
   teams = [], // New prop
 }: PastMatchCardProps) => {
+  const isUserMatch =
+    match.team1_id === userTeamId || match.team2_id === userTeamId;
   const isVictory = match.winner_id === userTeamId;
   const isDefeat = match.winner_id && match.winner_id !== userTeamId;
   const isDraw =
     match.score_team1 === match.score_team2 && match.score_team1 !== null;
+
+  // Determine winning team for score highlighting
+  const team1Won = match.winner_id === match.team1_id;
+  const team2Won = match.winner_id === match.team2_id;
 
   // Helper functions to get sport, school, and team names
   const getSportName = (sportId: string) => {
@@ -71,7 +77,7 @@ export const PastMatchCard = ({
         <div className="space-y-1">
           <h4 className="font-medium text-sm">{match.name}</h4>
         </div>
-        {(isVictory || isDefeat || isDraw) && (
+        {isUserMatch && (
           <Badge
             variant={
               isVictory ? "default" : isDefeat ? "destructive" : "secondary"
@@ -118,23 +124,25 @@ export const PastMatchCard = ({
           <div className="text-lg font-bold tracking-wider">
             <span
               className={cn(
-                match.team1_id === userTeamId && isVictory
-                  ? "text-green-600"
-                  : match.team1_id === userTeamId && isDefeat
-                    ? "text-red-600"
-                    : "text-foreground",
+                "transition-colors",
+                team1Won
+                  ? "text-green-600 bg-green-100 px-2 py-1 rounded font-extrabold"
+                  : isDraw
+                    ? "text-yellow-600 bg-yellow-100 px-2 py-1 rounded"
+                    : "text-muted-foreground",
               )}
             >
               {match.score_team1}
             </span>
-            <span className="text-muted-foreground mx-2">-</span>
+            <span className="text-muted-foreground mx-3">-</span>
             <span
               className={cn(
-                match.team2_id === userTeamId && isVictory
-                  ? "text-green-600"
-                  : match.team2_id === userTeamId && isDefeat
-                    ? "text-red-600"
-                    : "text-foreground",
+                "transition-colors",
+                team2Won
+                  ? "text-green-600 bg-green-100 px-2 py-1 rounded font-extrabold"
+                  : isDraw
+                    ? "text-yellow-600 bg-yellow-100 px-2 py-1 rounded"
+                    : "text-muted-foreground",
               )}
             >
               {match.score_team2}

@@ -34,6 +34,7 @@ import { useSchools } from "../../hooks/useSchools";
 import { useSchoolSportTeams } from "../../hooks/useSchoolSportTeams";
 import { useSportMatches } from "../../hooks/useSportMatches";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
+import { useLocations } from "@/src/hooks/useLocations";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { useAllMatches } from "@/src/hooks/useAllMatches";
 import { useAllTeams } from "@/src/hooks/useAllTeams";
@@ -43,6 +44,7 @@ interface FilterState {
   school: string;
   sportCategory: string;
   team: string;
+  location: string;
   search: string;
 }
 
@@ -51,6 +53,7 @@ const FILTER_DEFAULTS: FilterState = {
   school: "all",
   sportCategory: "all",
   team: "all",
+  location: "all",
   search: "",
 };
 
@@ -64,6 +67,7 @@ const SPORT_CATEGORY_LABELS = {
 export default function SearchPage() {
   const { sports } = useSports();
   const { sportSchools: schools } = useSportSchools();
+  const { locations } = useLocations();
 
   const [filters, setFilters] = useState<FilterState>(FILTER_DEFAULTS);
 
@@ -125,6 +129,11 @@ export default function SearchPage() {
         )
         ?.filter((match) =>
           filters.sport !== "all" ? match.sport_id === filters.sport : true,
+        )
+        ?.filter((match) =>
+          filters.location !== "all"
+            ? match.location?.id === filters.location
+            : true,
         ) ?? [];
 
     // Filter by team if selected
@@ -221,6 +230,12 @@ export default function SearchPage() {
       return team?.name || "Équipe inconnue";
     })();
 
+    const locationName = (() => {
+      if (filters.location === "all") return "Tous les lieux";
+      const location = locations?.find((l) => l.id === filters.location);
+      return location?.name || "Lieu inconnu";
+    })();
+
     return {
       sport: sportName,
       school: schoolName,
@@ -229,6 +244,7 @@ export default function SearchPage() {
           filters.sportCategory as keyof typeof SPORT_CATEGORY_LABELS
         ],
       team: teamName,
+      location: locationName,
     };
   }, [
     filters,
@@ -236,6 +252,7 @@ export default function SearchPage() {
     schools,
     teams,
     availableTeams,
+    locations,
     computedValues.teamSelected,
   ]);
 
@@ -260,6 +277,9 @@ export default function SearchPage() {
         computedValues.allFiltersDefault ||
         (computedValues.hasActiveFilters && filters.sportCategory === "all"),
       team: false,
+      location:
+        computedValues.allFiltersDefault ||
+        (computedValues.hasActiveFilters && filters.location === "all"),
     };
   }, [filters, computedValues]);
 
@@ -276,6 +296,8 @@ export default function SearchPage() {
       });
     if (filters.team !== "all")
       active.push({ key: "team", label: displayNames.team });
+    if (filters.location !== "all")
+      active.push({ key: "location", label: `Lieu: ${displayNames.location}` });
     if (filters.search)
       active.push({ key: "search", label: `Recherche: "${filters.search}"` });
     return active;
@@ -400,6 +422,27 @@ export default function SearchPage() {
                         <SelectItem value="masculine">Masculin</SelectItem>
                         <SelectItem value="feminine">Féminin</SelectItem>
                         <SelectItem value="mixed">Mixte</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Location Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Lieu</label>
+                    <Select
+                      value={filters.location}
+                      onValueChange={(value) => updateFilter("location", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un lieu" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Tous les lieux</SelectItem>
+                        {locations?.map((location) => (
+                          <SelectItem key={location.id} value={location.id}>
+                            {location.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
