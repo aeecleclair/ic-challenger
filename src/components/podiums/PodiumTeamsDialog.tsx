@@ -75,7 +75,7 @@ export const PodiumTeamsDialog: React.FC<PodiumTeamsDialogProps> = ({
             Classement complet - {sportName}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-2">
           {results
             .sort((a, b) => a.rank - b.rank)
@@ -100,10 +100,13 @@ export const PodiumTeamsDialog: React.FC<PodiumTeamsDialogProps> = ({
                     {result.points} pts
                   </div>
                   <div className="text-xs text-gray-500">
-                    {result.rank === 1 ? "1ère place" : 
-                     result.rank === 2 ? "2ème place" :
-                     result.rank === 3 ? "3ème place" :
-                     `${result.rank}ème place`}
+                    {result.rank === 1
+                      ? "1ère place"
+                      : result.rank === 2
+                        ? "2ème place"
+                        : result.rank === 3
+                          ? "3ème place"
+                          : `${result.rank}ème place`}
                   </div>
                 </div>
               </div>

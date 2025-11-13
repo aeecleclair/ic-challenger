@@ -69,13 +69,13 @@ export function SportsDataTable({ data }: SportsDataTableProps) {
 
   // Helper function to get team and school info from results
   const getTeamInfo = (results: TeamSportResultComplete[], rank: number) => {
-    const result = results.find(r => r.rank === rank);
+    const result = results.find((r) => r.rank === rank);
     if (!result) return null;
-    
+
     return {
       teamName: result.team.name,
       schoolName: getSchoolName(result.school_id),
-      points: result.points
+      points: result.points,
     };
   };
 
