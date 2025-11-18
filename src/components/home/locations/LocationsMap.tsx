@@ -12,6 +12,7 @@ interface LocationsMapProps {
     LocationComplete & {
       nextMatch?: MatchComplete;
       totalMatches: number;
+      upcomingMatches?: MatchComplete[];
     }
   >;
   sports?: any[];
@@ -52,6 +53,7 @@ export function LocationsMap({
           hasMatches={hasMatches}
           totalMatches={locationWithMatches?.totalMatches || 0}
           nextMatch={locationWithMatches?.nextMatch}
+          upcomingMatches={locationWithMatches?.upcomingMatches || []}
           sports={sports}
         />,
       );

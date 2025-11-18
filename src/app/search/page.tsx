@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { Search, Filter } from "lucide-react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 import {
   Card,
@@ -68,14 +69,63 @@ export default function SearchPage() {
   const { sports } = useSports();
   const { sportSchools: schools } = useSportSchools();
   const { locations } = useLocations();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const [filters, setFilters] = useState<FilterState>(FILTER_DEFAULTS);
 
-  const updateFilter = useCallback((key: keyof FilterState, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-  }, []);
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    const urlFilters: Partial<FilterState> = {};
 
-  const resetFilters = useCallback(() => setFilters(FILTER_DEFAULTS), []);
+    const sportParam = searchParams.get("sport");
+    const schoolParam = searchParams.get("school");
+    const sportCategoryParam = searchParams.get("sportCategory");
+    const teamParam = searchParams.get("team");
+    const locationParam = searchParams.get("location");
+    const searchParam = searchParams.get("search");
+
+    if (sportParam) urlFilters.sport = sportParam;
+    if (schoolParam) urlFilters.school = schoolParam;
+    if (sportCategoryParam) urlFilters.sportCategory = sportCategoryParam;
+    if (teamParam) urlFilters.team = teamParam;
+    if (locationParam) urlFilters.location = locationParam;
+    if (searchParam) urlFilters.search = searchParam;
+
+    // Only update if we have URL parameters
+    if (Object.keys(urlFilters).length > 0) {
+      setFilters((prev) => ({ ...prev, ...urlFilters }));
+    }
+  }, [searchParams]);
+
+  const updateFilter = useCallback(
+    (key: keyof FilterState, value: string) => {
+      setFilters((prev) => {
+        const newFilters = { ...prev, [key]: value };
+
+        // Update URL parameters
+        const params = new URLSearchParams();
+        Object.entries(newFilters).forEach(([filterKey, filterValue]) => {
+          if (filterValue !== "all" && filterValue !== "") {
+            params.set(filterKey, filterValue);
+          }
+        });
+
+        const queryString = params.toString();
+        const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+        router.replace(newUrl, { scroll: false });
+
+        return newFilters;
+      });
+    },
+    [router, pathname],
+  );
+
+  const resetFilters = useCallback(() => {
+    setFilters(FILTER_DEFAULTS);
+    router.replace(pathname, { scroll: false });
+  }, [router, pathname]);
 
   const { allMatches } = useAllMatches();
 
@@ -326,6 +376,7 @@ export default function SearchPage() {
                 </h1>
                 <p className="text-muted-foreground">
                   Recherchez tous les matchs par sport et école
+                  {hasActiveFilters && " • Filtres appliqués"}
                 </p>
               </div>
             </div>

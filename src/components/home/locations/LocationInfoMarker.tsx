@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSports } from "@/src/hooks/useSports";
-import { MapPin } from "lucide-react";
+import { MapPin, Calendar, Clock, Search, ChevronRight } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -13,6 +13,7 @@ import {
 } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
+import { Separator } from "@/src/components/ui/separator";
 import {
   LocationComplete,
   Match,
@@ -24,6 +25,7 @@ interface LocationInfoMarkerProps {
   hasMatches: boolean;
   totalMatches: number;
   nextMatch?: MatchComplete;
+  upcomingMatches?: MatchComplete[];
   sports?: any[];
 }
 
@@ -32,6 +34,7 @@ export function LocationInfoMarker({
   hasMatches,
   totalMatches,
   nextMatch,
+  upcomingMatches = [],
   sports,
 }: LocationInfoMarkerProps) {
   const openInMaps = () => {
@@ -42,6 +45,45 @@ export function LocationInfoMarker({
       );
     }
   };
+
+  const navigateToSearchWithLocation = () => {
+    const params = new URLSearchParams();
+    params.set("location", location.id);
+    window.location.href = `/search?${params.toString()}`;
+  };
+
+  const formatMatchDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMinutes = Math.round(
+      (date.getTime() - now.getTime()) / (1000 * 60),
+    );
+
+    let timeDisplay = "";
+    if (diffMinutes < 0) timeDisplay = "Passé";
+    else if (diffMinutes < 60) timeDisplay = `${diffMinutes}min`;
+    else {
+      const hours = Math.floor(diffMinutes / 60);
+      const minutes = diffMinutes % 60;
+      timeDisplay =
+        minutes === 0
+          ? `${hours}h`
+          : `${hours}h${minutes.toString().padStart(2, "0")}`;
+    }
+
+    return {
+      date: date.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+      }),
+      time: date.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      timeUntil: timeDisplay,
+    };
+  };
+
   const [isOpen, setIsOpen] = React.useState(false);
   const markerRef = React.useRef<HTMLDivElement>(null);
 
@@ -112,7 +154,6 @@ export function LocationInfoMarker({
               </div>
             </div>
 
-            {/* Categories: sports, matches, etc. */}
             {/* Next match pretty display */}
             {nextMatch && (
               <div className="bg-muted rounded p-2 mt-2">
@@ -120,7 +161,7 @@ export function LocationInfoMarker({
                   <div className="font-semibold text-xs">Prochain match</div>
                   {nextMatch.date && (
                     <Badge variant="default" className="text-xs font-mono">
-                      <MapPin className="h-3 w-3 mr-1" />
+                      <Clock className="h-3 w-3 mr-1" />
                       {(() => {
                         const now = new Date();
                         const matchDate = new Date(nextMatch.date);
@@ -169,7 +210,7 @@ export function LocationInfoMarker({
                 </div>
                 {nextMatch.date && (
                   <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                    <MapPin className="h-3 w-3" />
+                    <Calendar className="h-3 w-3" />
                     <span>
                       {new Date(nextMatch.date).toLocaleDateString("fr-FR", {
                         day: "2-digit",
@@ -177,7 +218,7 @@ export function LocationInfoMarker({
                         year: "numeric",
                       })}
                     </span>
-                    <MapPin className="h-3 w-3 ml-2" />
+                    <Clock className="h-3 w-3 ml-2" />
                     <span>
                       {new Date(nextMatch.date).toLocaleTimeString("fr-FR", {
                         hour: "2-digit",
@@ -186,72 +227,127 @@ export function LocationInfoMarker({
                     </span>
                   </div>
                 )}
-                {nextMatch.location && (
+              </div>
+            )}
+
+            {/* Upcoming matches list */}
+            {upcomingMatches.length > 0 && (
+              <div className="mt-3">
+                <Separator className="mb-3" />
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-semibold text-sm flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Matchs à venir ({upcomingMatches.length})
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => {
-                      const loc = nextMatch.location;
-                      const query = loc?.address
-                        ? `${loc?.name ?? ""}, ${loc?.address ?? ""}`
-                        : loc?.name ?? "";
-                      window.open(
-                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
-                        "_blank",
-                      );
-                    }}
-                    className="flex items-center gap-2 text-xs text-muted-foreground bg-slate-50 hover:bg-slate-100 p-2 rounded-lg transition-colors w-full justify-start h-auto mt-2"
+                    onClick={navigateToSearchWithLocation}
+                    className="text-xs h-6 px-2"
                   >
-                    <MapPin className="h-4 w-4" />
-                    <div className="flex flex-col items-start gap-1">
-                      <span className="font-medium text-gray-700">
-                        {nextMatch.location?.name ?? ""}
-                      </span>
-                      {nextMatch.location?.address && (
-                        <span className="text-xs text-gray-500">
-                          {nextMatch.location.address}
-                        </span>
-                      )}
-                    </div>
-                    <div className="ml-auto flex items-center gap-1">
-                      <span className="text-xs font-medium">Naviguer</span>
-                    </div>
+                    <Search className="h-3 w-3 mr-1" />
+                    Voir tous
                   </Button>
-                )}
+                </div>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {upcomingMatches.slice(0, 3).map((match) => {
+                    const matchDate = formatMatchDate(match.date!);
+                    const sport = sports?.find(
+                      (s: any) => s.id === match.sport_id,
+                    );
+
+                    return (
+                      <div
+                        key={match.id}
+                        className="bg-muted/50 rounded p-2 text-xs"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-muted-foreground">
+                              {matchDate.date}
+                            </span>
+                            <span className="text-muted-foreground">•</span>
+                            <span className="text-muted-foreground">
+                              {matchDate.time}
+                            </span>
+                          </div>
+                          <Badge
+                            variant="outline"
+                            className="text-xs px-1 py-0"
+                          >
+                            {matchDate.timeUntil}
+                          </Badge>
+                        </div>
+                        {sport && (
+                          <Badge
+                            variant="secondary"
+                            className="text-xs mb-1 px-2 py-0"
+                          >
+                            {sport.name}
+                          </Badge>
+                        )}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 text-xs">
+                            <span className="font-medium">
+                              {match.team1?.name}
+                            </span>
+                            <span className="text-muted-foreground">vs</span>
+                            <span className="font-medium">
+                              {match.team2?.name}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {upcomingMatches.length > 3 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={navigateToSearchWithLocation}
+                      className="w-full h-6 text-xs text-muted-foreground"
+                    >
+                      +{upcomingMatches.length - 3} matchs supplémentaires
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
-          </div>
-          <div className="flex gap-2 mt-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                const loc = location;
-                const query = loc?.address
-                  ? `${loc?.name ?? ""}, ${loc?.address ?? ""}`
-                  : loc?.name ?? "";
-                window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
-                  "_blank",
-                );
-              }}
-              className="flex items-center gap-2 text-xs text-muted-foreground bg-slate-50 hover:bg-slate-100 p-2 rounded-lg transition-colors w-full justify-start h-auto"
-            >
-              <MapPin className="h-4 w-4" />
-              <div className="flex flex-col items-start gap-1">
-                <span className="font-medium text-gray-700">
-                  {location?.name ?? ""}
-                </span>
-                {location?.address && (
-                  <span className="text-xs text-gray-500">
-                    {location.address}
-                  </span>
-                )}
+
+            {/* Navigation buttons */}
+            <div className="mt-3">
+              <Separator className="mb-3" />
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={navigateToSearchWithLocation}
+                  className="flex items-center gap-2 text-xs flex-1"
+                >
+                  <Search className="h-3 w-3" />
+                  Voir les matchs
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const query = location.address
+                      ? `${location.name}, ${location.address}`
+                      : location.name;
+                    window.open(
+                      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+                      "_blank",
+                    );
+                  }}
+                  className="flex items-center gap-2 text-xs flex-1"
+                >
+                  <MapPin className="h-3 w-3" />
+                  Naviguer
+                </Button>
               </div>
-              <div className="ml-auto flex items-center gap-1">
-                <span className="text-xs font-medium">Naviguer</span>
-              </div>
-            </Button>
+            </div>
           </div>
         </div>
       )}

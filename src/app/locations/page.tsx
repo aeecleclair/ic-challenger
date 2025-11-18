@@ -16,7 +16,6 @@ import {
 } from "@/src/components/ui/sidebar";
 import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 import { Match } from "../../api/hyperionSchemas";
-import { useSportSchools } from "@/src/hooks/useSportSchools";
 
 export default function LocationsPage() {
   const { locations, isLoading } = useLocations();
@@ -32,28 +31,26 @@ export default function LocationsPage() {
     const now = new Date();
 
     return locations.map((location) => {
-      const nextMatch = sportMatches
-        .filter((match: Match) => {
-          return (
-            match.location_id === location.id &&
-            match.date &&
-            new Date(match.date) > now
-          );
-        })
+      const locationMatches = sportMatches.filter(
+        (match: Match) => match.location_id === location.id,
+      );
+
+      const upcomingMatches = locationMatches
+        .filter((match: Match) => match.date && new Date(match.date) > now)
         .sort((a: Match, b: Match) => {
           const dateA = new Date(a.date!).getTime();
           const dateB = new Date(b.date!).getTime();
           return dateA - dateB;
-        })[0];
+        });
 
-      const totalMatches = sportMatches.filter(
-        (match: Match) => match.location_id === location.id,
-      ).length;
+      const nextMatch = upcomingMatches[0];
+      const totalMatches = upcomingMatches.length;
 
       return {
         ...location,
         nextMatch,
         totalMatches,
+        upcomingMatches,
       };
     });
   }, [locations, sportMatches]);
