@@ -2,7 +2,6 @@
 
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { VariantProps, cva } from "class-variance-authority";
 import {
   Locale,
   addDays,
@@ -40,36 +39,6 @@ import {
   useState,
 } from "react";
 
-const monthEventVariants = cva("size-2 rounded-full", {
-  variants: {
-    variant: {
-      default: "bg-primary",
-      blue: "bg-blue-500",
-      green: "bg-green-500",
-      pink: "bg-pink-500",
-      purple: "bg-purple-500",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-
-const dayEventVariants = cva("font-bold border-l-4 rounded p-2 text-xs", {
-  variants: {
-    variant: {
-      default: "bg-muted/30 text-muted-foreground border-muted",
-      blue: "bg-blue-500/30 text-blue-600 border-blue-500",
-      green: "bg-green-500/30 text-green-600 border-green-500",
-      pink: "bg-pink-500/30 text-pink-600 border-pink-500",
-      purple: "bg-purple-500/30 text-purple-600 border-purple-500",
-    },
-  },
-  defaultVariants: {
-    variant: "default",
-  },
-});
-
 type View = "day" | "week" | "month" | "year";
 
 type ContextType = {
@@ -95,7 +64,7 @@ export type CalendarEvent = {
   end: Date;
   title: string;
   subtitle?: string;
-  color?: VariantProps<typeof monthEventVariants>["variant"] | string;
+  color?: string;
   metadata?: {
     registeredCount?: number;
     maxVolunteers?: number;
@@ -193,40 +162,30 @@ const EventGroup = ({
 }) => {
   const { onEventClick, onEmptySlotClick } = useCalendar();
 
-  // Filter and position events that intersect with this hour
+  // Only render events that START within this hour to avoid duplicates
   const hourEvents = events
     .filter((event) => {
       const hourStart = hour;
       const hourEnd = addHours(hour, 1);
 
-      // Event intersects if it starts before hour ends AND ends after hour starts
-      return event.start < hourEnd && event.end > hourStart;
+      // Only show events that start within this hour
+      return event.start >= hourStart && event.start < hourEnd;
     })
     .map((event, index) => {
       const hourStart = hour;
-      const hourEnd = addHours(hour, 1);
 
-      // Calculate the visible portion of the event within this hour
-      const visibleStart = event.start > hourStart ? event.start : hourStart;
-      const visibleEnd = event.end < hourEnd ? event.end : hourEnd;
+      // Calculate position within the hour where the event starts
+      const startMinutesFromHour = differenceInMinutes(event.start, hourStart);
+      const totalDurationMinutes = differenceInMinutes(event.end, event.start);
 
-      // Calculate position and height based on minutes within the hour
-      const startMinutesFromHour = Math.max(
-        0,
-        differenceInMinutes(visibleStart, hourStart),
-      );
-      const durationMinutes = differenceInMinutes(visibleEnd, visibleStart);
-
-      const startPosition = (startMinutesFromHour / 60) * 100; // Percentage from top
-      const height = Math.max((durationMinutes / 60) * 100, 8); // Minimum 8% height
+      const startPosition = (startMinutesFromHour / 60) * 100; // Percentage from top of hour
+      const height = Math.max((totalDurationMinutes / 60) * 100, 8); // Height based on full duration
 
       return {
         ...event,
         startPosition,
         height,
         index,
-        isStartingHere: isSameHour(event.start, hour),
-        isEndingHere: isSameHour(event.end, hour),
       };
     });
 
@@ -241,7 +200,7 @@ const EventGroup = ({
     }
   };
 
-  // If no events, render empty hour slot
+  // If no events start in this hour, render empty hour slot
   if (hourEvents.length === 0) {
     return (
       <div
@@ -265,34 +224,13 @@ const EventGroup = ({
           hourEvents.length > 1
             ? `${(idx * 95) / hourEvents.length + 2}%`
             : "2%";
-        const showStartTime = event.isStartingHere;
-        const showEndTime = event.isEndingHere && event.height > 25;
-
-        // Check if color is a custom color string or a variant
-        const isCustomColor =
-          event.color &&
-          !["default", "blue", "green", "pink", "purple"].includes(event.color);
-        const customStyle =
-          isCustomColor && event.color
-            ? {
-                backgroundColor: `${event.color}30`, // 30 for 30% opacity
-                borderLeftColor: event.color,
-                color: event.color,
-              }
-            : {};
 
         return (
           <div
             key={event.id}
             className={cn(
               "absolute cursor-pointer z-10 transition-all duration-200 hover:z-20 hover:shadow-lg overflow-hidden",
-              isCustomColor
-                ? "font-bold border-l-4 rounded p-2 text-xs"
-                : dayEventVariants({
-                    variant: event.color as VariantProps<
-                      typeof dayEventVariants
-                    >["variant"],
-                  }),
+              "font-bold border-l-4 rounded p-2 text-xs bg-card",
             )}
             style={{
               top: `${event.startPosition}%`,
@@ -300,7 +238,9 @@ const EventGroup = ({
               left: leftPosition,
               width: eventWidth,
               minHeight: "16px",
-              ...customStyle,
+              backgroundColor: event.color ? `${event.color}30` : "#f1f5f930", // 30 for 30% opacity
+              borderLeftColor: event.color || "#64748b",
+              color: event.color || "#475569",
             }}
             onClick={(e) => {
               e.stopPropagation();
@@ -310,7 +250,7 @@ const EventGroup = ({
           >
             <div className="p-1 h-full flex flex-col justify-between">
               <div className="flex-1 min-h-0">
-                <div className="truncate text-[10px] font-medium leading-tight">
+                <div className="truncate text-[12px] font-bold leading-tight">
                   {event.title}
                 </div>
                 {event.subtitle && (
@@ -322,8 +262,8 @@ const EventGroup = ({
 
               {/* Time display */}
               <div className="flex justify-between text-[8px] text-muted-foreground/70 leading-none">
-                {showStartTime && <span>{format(event.start, "HH:mm")}</span>}
-                {showEndTime && <span>{format(event.end, "HH:mm")}</span>}
+                <span>{format(event.start, "HH:mm")}</span>
+                {event.height > 25 && <span>{format(event.end, "HH:mm")}</span>}
               </div>
             </div>
           </div>
@@ -495,35 +435,10 @@ const CalendarMonthView = () => {
                     onClick={() => onEventClick && onEventClick(event)}
                   >
                     <div
-                      className={cn(
-                        "shrink-0",
-                        event.color &&
-                          ![
-                            "default",
-                            "blue",
-                            "green",
-                            "pink",
-                            "purple",
-                          ].includes(event.color)
-                          ? "size-2 rounded-full"
-                          : monthEventVariants({
-                              variant: event.color as VariantProps<
-                                typeof monthEventVariants
-                              >["variant"],
-                            }),
-                      )}
-                      style={
-                        event.color &&
-                        ![
-                          "default",
-                          "blue",
-                          "green",
-                          "pink",
-                          "purple",
-                        ].includes(event.color)
-                          ? { backgroundColor: event.color }
-                          : {}
-                      }
+                      className="shrink-0 size-2 rounded-full"
+                      style={{
+                        backgroundColor: event.color || "#64748b",
+                      }}
                     ></div>
                     <span className="flex-1 truncate">{event.title}</span>
                     <time className="tabular-nums text-muted-foreground/50 text-xs">
