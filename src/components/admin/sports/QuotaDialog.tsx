@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, AlertTriangle } from "lucide-react";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { useEffect } from "react";
 
@@ -39,10 +39,12 @@ interface QuotaDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: SportQuotaFormValues) => void;
+  onSubmitAll?: (values: SportQuotaFormValues) => void;
   schools?: SchoolExtension[];
   selectedSchool: string | null;
   setSelectedSchool: (schoolId: string | null) => void;
   existingQuota?: SchoolSportQuota;
+  existingQuotas?: SchoolSportQuota[];
   title: string;
   description: string;
   submitLabel: string;
@@ -53,10 +55,12 @@ export function QuotaDialog({
   isOpen,
   onOpenChange,
   onSubmit,
+  onSubmitAll,
   schools,
   selectedSchool,
   setSelectedSchool,
   existingQuota,
+  existingQuotas = [],
   title,
   description,
   submitLabel,
@@ -85,6 +89,18 @@ export function QuotaDialog({
     setSelectedSchool(null);
   };
 
+  // Calculate schools without quotas for "All Schools" option
+  const schoolsWithoutQuotas =
+    schools?.filter(
+      (school) =>
+        !existingQuotas.some((quota) => quota.school_id === school.school_id),
+    ) || [];
+
+  const schoolsWithQuotas =
+    schools?.filter((school) =>
+      existingQuotas.some((quota) => quota.school_id === school.school_id),
+    ) || [];
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -100,7 +116,13 @@ export function QuotaDialog({
 
         <Form {...SportquotaForm}>
           <form
-            onSubmit={SportquotaForm.handleSubmit(onSubmit)}
+            onSubmit={SportquotaForm.handleSubmit((values) => {
+              if (selectedSchool === "all_schools" && onSubmitAll) {
+                onSubmitAll(values);
+              } else {
+                onSubmit(values);
+              }
+            })}
             className="space-y-4 py-4"
           >
             <FormItem className="w-full">
@@ -113,6 +135,7 @@ export function QuotaDialog({
                   <SelectValue placeholder="Sélectionnez une école" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all_schools">Toutes les écoles</SelectItem>
                   {schools?.map((school) => {
                     const hasQuota = !!existingQuota;
                     if (!hasQuota) {
@@ -130,6 +153,38 @@ export function QuotaDialog({
                 </SelectContent>
               </Select>
             </FormItem>
+
+            {selectedSchool === "all_schools" &&
+              schoolsWithQuotas.length > 0 && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5" />
+                    <div className="text-sm text-amber-800">
+                      <p className="font-medium mb-1">Attention :</p>
+                      <p>
+                        {schoolsWithQuotas.length} école(s) ont déjà des quotas
+                        pour ce sport et ne seront pas modifiées. Seules{" "}
+                        {schoolsWithoutQuotas.length} école(s) sans quotas
+                        recevront les nouveaux quotas.
+                      </p>
+                      {schoolsWithQuotas.length > 0 && (
+                        <details className="mt-2">
+                          <summary className="cursor-pointer font-medium">
+                            Écoles avec quotas existants :
+                          </summary>
+                          <ul className="mt-1 ml-4 list-disc">
+                            {schoolsWithQuotas.map((school) => (
+                              <li key={school.school_id}>
+                                {formatSchoolName(school.school.name)}
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
 
             <StyledFormField
               form={SportquotaForm}
@@ -164,7 +219,9 @@ export function QuotaDialog({
                 Annuler
               </Button>
               <LoadingButton type="submit" isLoading={isLoading}>
-                {submitLabel}
+                {selectedSchool === "all_schools"
+                  ? `Appliquer aux ${schoolsWithoutQuotas.length} écoles sans quotas`
+                  : submitLabel}
               </LoadingButton>
             </DialogFooter>
           </form>

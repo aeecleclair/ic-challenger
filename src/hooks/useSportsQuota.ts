@@ -80,6 +80,69 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
     );
   };
 
+  // New function to create quotas for all schools
+  const createQuotaForAllSchools = (
+    schoolIds: string[],
+    body: SportQuotaInfo,
+    callback: () => void,
+  ) => {
+    const promises = schoolIds.map(
+      (schoolId) =>
+        new Promise((resolve, reject) => {
+          mutateCreateQuota(
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              pathParams: {
+                sportId: sportId!,
+                schoolId,
+              },
+              body: body,
+            },
+            {
+              onSettled: (data, error) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(data);
+                }
+              },
+            },
+          );
+        }),
+    );
+
+    Promise.allSettled(promises).then((results) => {
+      const failures = results.filter((result) => result.status === "rejected");
+      const successes = results.filter(
+        (result) => result.status === "fulfilled",
+      );
+
+      refetchSportsQuota();
+      callback();
+
+      if (failures.length === 0) {
+        toast({
+          title: "Quotas ajoutés",
+          description: `Les quotas ont été ajoutés avec succès pour ${successes.length} école(s).`,
+        });
+      } else if (successes.length === 0) {
+        toast({
+          title: "Erreur lors de l'ajout des quotas",
+          description: `Impossible d'ajouter les quotas pour toutes les écoles.`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Quotas partiellement ajoutés",
+          description: `Les quotas ont été ajoutés pour ${successes.length} école(s). ${failures.length} ont échoué.`,
+          variant: "destructive",
+        });
+      }
+    });
+  };
+
   const { mutate: mutateUpdateQuota, isPending: isUpdateLoading } =
     usePatchCompetitionSchoolsSchoolIdSportsSportIdQuotas();
 
@@ -167,6 +230,7 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
     refetchSportsQuota,
     isCreateLoading,
     createQuota,
+    createQuotaForAllSchools,
     isUpdateLoading,
     updateQuota,
     isDeleteLoading,

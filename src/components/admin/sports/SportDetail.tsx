@@ -44,6 +44,7 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
     sportsQuota,
     isCreateLoading,
     createQuota,
+    createQuotaForAllSchools,
     isUpdateLoading,
     updateQuota,
     isDeleteLoading,
@@ -107,6 +108,33 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
         setSelectedSchool(null);
       });
     }
+  };
+
+  const handleQuotaSubmitAll = (values: SportQuotaFormValues) => {
+    if (!sportSchools) return;
+
+    const quotaInfo: SportQuotaInfo = {
+      participant_quota: values.participant_quota,
+      team_quota: values.team_quota,
+    };
+
+    // Only target schools that don't already have quotas
+    const schoolIdsWithoutQuotas = sportSchools
+      .filter(
+        (school) =>
+          !sportsQuota?.some((quota) => quota.school_id === school.school_id),
+      )
+      .map((school) => school.school_id);
+
+    if (schoolIdsWithoutQuotas.length === 0) {
+      // All schools already have quotas
+      return;
+    }
+
+    createQuotaForAllSchools(schoolIdsWithoutQuotas, quotaInfo, () => {
+      setIsAddDialogOpen(false);
+      setSelectedSchool(null);
+    });
   };
 
   const handleDeleteQuota = () => {
@@ -247,10 +275,12 @@ const SportDetail = ({ sport, onEdit, onDelete }: SportDetailProps) => {
               isOpen={isAddDialogOpen}
               onOpenChange={setIsAddDialogOpen}
               onSubmit={handleQuotaSubmit}
+              onSubmitAll={handleQuotaSubmitAll}
               schools={sportSchools}
               selectedSchool={selectedSchool}
               setSelectedSchool={setSelectedSchool}
               existingQuota={existingQuota}
+              existingQuotas={sportsQuota}
               title={
                 selectedSchool &&
                 sportsQuota?.find((q) => q.school_id === selectedSchool)
