@@ -204,9 +204,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
-                    <Label htmlFor="sport.substitute">
-                      Je suis remplaçant
-                    </Label>
+                    <Label htmlFor="sport.substitute">Je suis remplaçant</Label>
                   </div>
                 )}
               />
