@@ -36,12 +36,11 @@ export default function VolunteerShiftCalendar({
     return shifts.map((shift) => ({
       id: shift.id?.toString() || "",
       title: shift.name || "Créneau",
-      subtitle: `${shift.registrations?.length || 0} bénévole${(shift.registrations?.length || 0) !== 1 ? "s" : ""}`,
+      subtitle: `Max ${shift.max_volunteers} bénévole${shift.max_volunteers !== 1 ? "s" : ""}`,
       start: new Date(shift.start_time),
       end: new Date(shift.end_time),
       color: generateLocationColor(shift.location),
       metadata: {
-        registeredCount: shift.registrations?.length || 0,
         maxVolunteers: shift.max_volunteers || 0,
         location: shift.location,
       },
@@ -90,11 +89,8 @@ export default function VolunteerShiftCalendar({
             {shifts.length > 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
-                  {shifts.reduce(
-                    (sum, shift) => sum + (shift.registrations?.length || 0),
-                    0,
-                  )}{" "}
-                  bénévoles inscrits au total
+                  {shifts.reduce((sum, shift) => sum + shift.max_volunteers, 0)}{" "}
+                  places disponibles au total
                 </span>
               </div>
             )}

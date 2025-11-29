@@ -14,6 +14,7 @@ import { LoadingButton } from "../../custom/LoadingButton";
 import { DateTimePicker } from "../../custom/DateTimePicker";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
 import { useLocations } from "../../../hooks/useLocations";
+import { useAuth } from "../../../hooks/useAuth";
 import {
   VolunteerShiftComplete,
   VolunteerShiftBase,
@@ -61,6 +62,9 @@ export default function VolunteerShiftForm({
     isUpdateLoading,
   } = useVolunteerShifts();
 
+  const { locations } = useLocations();
+  const { userId } = useAuth();
+
   const isEditing = !!shiftId;
   const shift = isEditing
     ? volunteerShifts?.find((s: VolunteerShiftComplete) => s.id === shiftId)
@@ -86,6 +90,7 @@ export default function VolunteerShiftForm({
   const onSubmit = (data: VolunteerShiftFormSchema) => {
     const shiftData: VolunteerShiftBase = {
       name: data.name,
+      manager_id: userId || "", // Current user as manager
       description: data.description || null,
       value: data.value,
       start_time: data.start_time.toISOString(),

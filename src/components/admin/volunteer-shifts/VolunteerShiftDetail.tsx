@@ -78,10 +78,10 @@ export default function VolunteerShiftDetail({
   );
 
   // Calculate registration statistics
-  const registeredCount = shift.registrations?.length || 0;
-  const validatedCount =
-    shift.registrations?.filter((r) => r.validated).length || 0;
-  const fillPercentage = (registeredCount / shift.max_volunteers) * 100;
+  // Note: Registration data not available in current schema
+  const registeredCount = 0; // Placeholder - registration functionality disabled
+  const validatedCount = 0; // Placeholder - validation functionality disabled
+  const fillPercentage = 0; // (registeredCount / shift.max_volunteers) * 100;
 
   // Calculate time until/since shift
   const timeDiff = Math.abs(startDate.getTime() - now.getTime());
@@ -120,13 +120,19 @@ export default function VolunteerShiftDetail({
   };
 
   const getFillStatus = () => {
-    if (registeredCount === 0)
-      return { color: "destructive", text: "Aucune inscription" } as const;
-    if (registeredCount < shift.max_volunteers * 0.5)
-      return { color: "destructive", text: "Peu d'inscrits" } as const;
-    if (registeredCount < shift.max_volunteers)
-      return { color: "default", text: "Partiellement rempli" } as const;
-    return { color: "default", text: "Complet" } as const;
+    // Registration functionality currently disabled
+    return {
+      color: "secondary",
+      text: "Inscriptions non disponibles",
+    } as const;
+    // Original logic (disabled):
+    // if (registeredCount === 0)
+    //   return { color: "destructive", text: "Aucune inscription" } as const;
+    // if (registeredCount < shift.max_volunteers * 0.5)
+    //   return { color: "destructive", text: "Peu d'inscrits" } as const;
+    // if (registeredCount < shift.max_volunteers)
+    //   return { color: "default", text: "Partiellement rempli" } as const;
+    // return { color: "default", text: "Complet" } as const;
   };
 
   const handleDelete = () => {
@@ -246,67 +252,16 @@ export default function VolunteerShiftDetail({
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {shift.registrations && shift.registrations.length > 0 ? (
-                  <div className="space-y-3">
-                    {shift.registrations.map((registration) => (
-                      <div
-                        key={registration.user_id}
-                        className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-medium text-primary">
-                              {registration.user.user.firstname.charAt(0)}
-                              {registration.user.user.name.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-medium">
-                              {registration.user.user.firstname}{" "}
-                              {registration.user.user.name}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              {registration.user.user.email}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Inscrit le{" "}
-                              {format(
-                                new Date(registration.registered_at),
-                                "dd/MM/yyyy à HH:mm",
-                                { locale: fr },
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Badge
-                            variant={
-                              registration.validated ? "default" : "secondary"
-                            }
-                            className="flex items-center gap-1"
-                          >
-                            {registration.validated ? (
-                              <CheckCircle className="h-3 w-3" />
-                            ) : (
-                              <AlertCircle className="h-3 w-3" />
-                            )}
-                            {registration.validated ? "Validé" : "En attente"}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Users className="h-16 w-16 mx-auto mb-4 opacity-30" />
-                    <p className="text-lg font-medium mb-2">
-                      Aucun bénévole inscrit
-                    </p>
-                    <p className="text-sm">
-                      Ce créneau n&apos;a pas encore de bénévoles inscrits
-                    </p>
-                  </div>
-                )}
+                <div className="text-center py-8 text-muted-foreground">
+                  <Users className="h-12 w-12 mx-auto mb-4" />
+                  <p className="text-lg font-semibold mb-2">
+                    Fonctionnalité non disponible
+                  </p>
+                  <p>
+                    Les inscriptions aux créneaux ne sont pas encore disponibles
+                    dans cette interface d'administration.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
