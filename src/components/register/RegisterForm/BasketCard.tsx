@@ -6,10 +6,7 @@ import { RegisteringFormValues } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import { Checkbox } from "../../ui/checkbox";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
-import {
-  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
-  ProductVariant,
-} from "@/src/api/hyperionSchemas";
+import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
 import { EditProductValues } from "@/src/forms/editProducts";
 import { Input } from "../../ui/input";
 

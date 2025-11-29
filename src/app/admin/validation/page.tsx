@@ -102,7 +102,12 @@ const Dashboard = () => {
             if (user.is_fanfare) types.push("Fanfare");
             if (user.is_cameraman) types.push("Cameraman");
             // Handle volunteer - either explicit or no other roles
-            if (!user.is_athlete && !user.is_pompom && !user.is_fanfare && !user.is_cameraman) {
+            if (
+              !user.is_athlete &&
+              !user.is_pompom &&
+              !user.is_fanfare &&
+              !user.is_cameraman
+            ) {
               types.push("Bénévole");
             }
             return types.join(", ");

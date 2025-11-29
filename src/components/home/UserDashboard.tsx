@@ -41,6 +41,7 @@ import { useVolunteerShifts } from "@/src/hooks/useVolunteerShifts";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { usePodiums } from "@/src/hooks/usePodiums";
+import { useVolunteer } from "@/src/hooks/useVolunteer";
 
 interface UserDashboardProps {
   edition: CompetitionEdition;
@@ -61,6 +62,8 @@ export const UserDashboard = ({
   const { meParticipant } = useParticipant();
   const { volunteerShifts } = useVolunteerShifts();
   const { globalPodium } = usePodiums();
+  const { volunteer } = useVolunteer();
+  const isVolunteer = volunteer && volunteer.length > 0;
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -162,7 +165,7 @@ export const UserDashboard = ({
 
     // Volunteer next shifts
     let volunteerNextShifts: any[] = [];
-    if (meCompetition?.is_volunteer && volunteerShifts) {
+    if (volunteerShifts) {
       volunteerNextShifts = volunteerShifts
         .filter((shift) => shift.start_time && new Date(shift.start_time) > now)
         .sort(
@@ -194,7 +197,6 @@ export const UserDashboard = ({
     meParticipant,
     NoSchoolId,
     volunteerShifts,
-    meCompetition,
   ]);
 
   const getTimeUntilEvent = (eventDate: string) => {
@@ -241,7 +243,7 @@ export const UserDashboard = ({
       </div>
 
       <div
-        className={`grid gap-4 md:grid-cols-${meCompetition?.is_athlete ? 1 : 0 + (meCompetition?.is_volunteer ? 1 : 0)}`}
+        className={`grid gap-4 md:grid-cols-${meCompetition?.is_athlete ? 1 : 0 + (isVolunteer ? 1 : 0)}`}
       >
         <div className="space-y-4">
           {/* Participant Upcoming Matches */}
@@ -291,46 +293,45 @@ export const UserDashboard = ({
         </div>
         <div className="space-y-4">
           {/* Volunteer Next Shifts */}
-          {meCompetition?.is_volunteer &&
-            processedData.volunteerNextShifts.length > 0 && (
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-pink-500" />
-                    Vos Prochains Créneaux (
-                    {processedData.volunteerNextShifts.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {processedData.volunteerNextShifts.map((shift) => (
-                      <div
-                        key={shift.id}
-                        className="bg-pink-50 p-3 rounded-lg border-l-4 border-pink-500"
-                      >
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-semibold text-sm">
-                            {shift.name}
-                          </span>
-                          <span className="font-bold text-pink-600 text-lg">
-                            {getTimeUntilEvent(shift.start)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center text-xs text-muted-foreground">
-                          <span>
-                            {new Date(shift.start).toLocaleTimeString("fr-FR", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                          <span>{shift.location}</span>
-                        </div>
+          {isVolunteer && processedData.volunteerNextShifts.length > 0 && (
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-pink-500" />
+                  Vos Prochains Créneaux (
+                  {processedData.volunteerNextShifts.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {processedData.volunteerNextShifts.map((shift) => (
+                    <div
+                      key={shift.id}
+                      className="bg-pink-50 p-3 rounded-lg border-l-4 border-pink-500"
+                    >
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-semibold text-sm">
+                          {shift.name}
+                        </span>
+                        <span className="font-bold text-pink-600 text-lg">
+                          {getTimeUntilEvent(shift.start)}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                      <div className="flex justify-between items-center text-xs text-muted-foreground">
+                        <span>
+                          {new Date(shift.start).toLocaleTimeString("fr-FR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                        <span>{shift.location}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 
@@ -514,7 +515,7 @@ export const UserDashboard = ({
               <span className="text-sm font-medium">Lieux</span>
             </Button>
 
-            {meCompetition?.is_volunteer ? (
+            {isVolunteer ? (
               <Button
                 variant="outline"
                 size="lg"

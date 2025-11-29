@@ -33,7 +33,6 @@ interface FullyRegisteredDashboardProps {
   };
   meCompetition: {
     is_athlete?: boolean;
-    is_volunteer?: boolean;
     is_pompom?: boolean;
     is_fanfare?: boolean;
     is_cameraman?: boolean;

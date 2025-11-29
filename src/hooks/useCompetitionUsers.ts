@@ -2,6 +2,7 @@ import {
   usePatchCompetitionUsersUserIdInvalidate,
   usePatchCompetitionUsersUserIdValidate,
   useGetCompetitionUsers,
+  useDeleteCompetitionUsersUserId,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
@@ -104,10 +105,53 @@ export const useCompetitionUsers = () => {
     );
   };
 
+  const { mutate: mutateDeleteCompetitionUser, isPending: isDeleteLoading } =
+    useDeleteCompetitionUsersUserId();
+
+  const deleteCompetitionUser = (userId: string, callback: () => void) => {
+    return mutateDeleteCompetitionUser(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression",
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchCompetitionUsers();
+            callback();
+            toast({
+              title: "Participant supprimé",
+              description: "Le participant a été supprimé avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   const volunteers = useMemo(
     () =>
       competitionUsers
-        ? competitionUsers.filter((user) => user.is_volunteer)
+        ? competitionUsers.filter(
+            (user) =>
+              !user.is_athlete &&
+              !user.is_pompom &&
+              !user.is_fanfare &&
+              !user.is_cameraman,
+          )
         : [],
     [competitionUsers],
   );
@@ -121,5 +165,7 @@ export const useCompetitionUsers = () => {
     isValidateLoading,
     isInvalidateLoading,
     invalidateCompetitionUser,
+    deleteCompetitionUser,
+    isDeleteLoading,
   };
 };

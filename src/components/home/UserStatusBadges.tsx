@@ -1,7 +1,8 @@
+import { useVolunteer } from "@/src/hooks/useVolunteer";
+
 interface UserStatusBadgesProps {
   meCompetition: {
     is_athlete?: boolean;
-    is_volunteer?: boolean;
     is_pompom?: boolean;
     is_fanfare?: boolean;
     is_cameraman?: boolean;
@@ -9,6 +10,9 @@ interface UserStatusBadgesProps {
 }
 
 export const UserStatusBadges = ({ meCompetition }: UserStatusBadgesProps) => {
+  const { volunteer } = useVolunteer();
+  const isVolunteer = volunteer && volunteer.length > 0;
+
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-lg font-semibold">Statut(s)</h2>
@@ -18,7 +22,7 @@ export const UserStatusBadges = ({ meCompetition }: UserStatusBadgesProps) => {
             Athlète
           </span>
         )}
-        {meCompetition.is_volunteer && (
+        {isVolunteer && (
           <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
             Bénévole
           </span>
@@ -39,7 +43,7 @@ export const UserStatusBadges = ({ meCompetition }: UserStatusBadgesProps) => {
           </span>
         )}
         {!meCompetition.is_athlete &&
-          !meCompetition.is_volunteer &&
+          !isVolunteer &&
           !meCompetition.is_pompom &&
           !meCompetition.is_fanfare &&
           !meCompetition.is_cameraman && (
