@@ -5,6 +5,7 @@ import {
   Clock,
   MapPin,
   Users,
+  User,
   Edit,
   Trash2,
   ExternalLink,
@@ -119,10 +120,16 @@ export default function VolunteerShiftCard({
           )}
 
           <div className="flex items-center gap-2 text-sm">
+            <User className="h-4 w-4 text-muted-foreground" />
+            <span>
+              Responsable: {shift.manager.firstname} {shift.manager.name}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm">
             <Users className="h-4 w-4 text-muted-foreground" />
             <span>
-              {shift.registrations?.length || 0}/{shift.max_volunteers}{" "}
-              bénévoles
+              Max {shift.max_volunteers} bénévole{shift.max_volunteers !== 1 ? 's' : ''}
             </span>
           </div>
         </div>
