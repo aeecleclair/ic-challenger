@@ -47,40 +47,45 @@ const ProductDetail = ({
   const isProductActive =
     product.required || (hasVariants && activeVariants > 0);
 
-  const getSchoolTypeLabel = (schoolType: string) => {
+  const getSchoolTypeLabel = (schoolType: string | null | undefined) => {
+    if (!schoolType) return "Toutes les écoles";
     switch (schoolType) {
-      case "lyon":
-        return "École Lyonnaise";
-      case "external":
-        return "École Externe";
-      case "all":
-        return "Toutes les écoles";
+      case "centrale":
+        return "Centrale";
+      case "from_lyon":
+        return "De Lyon";
+      case "others":
+        return "Autres";
       default:
         return schoolType;
     }
   };
 
-  const getPublicTypeLabel = (publicType?: string) => {
+  const getPublicTypeLabel = (publicType: string | null | undefined) => {
+    if (!publicType) return "Général";
     switch (publicType) {
-      case "student":
-        return "Étudiants";
-      case "staff":
-        return "Personnel";
-      case "all":
-        return "Tous";
+      case "pompom":
+        return "Pompom";
+      case "fanfare":
+        return "Fanfare";
+      case "cameraman":
+        return "Cameraman";
+      case "athlete":
+        return "Athlète";
       default:
-        return publicType || "Non défini";
+        return publicType;
     }
   };
 
-  const getSchoolTypeColor = (schoolType: string) => {
+  const getSchoolTypeColor = (schoolType: string | null | undefined) => {
+    if (!schoolType) return "bg-green-100 text-green-800 border-green-200";
     switch (schoolType) {
-      case "lyon":
+      case "centrale":
         return "bg-blue-100 text-blue-800 border-blue-200";
-      case "external":
+      case "from_lyon":
         return "bg-purple-100 text-purple-800 border-purple-200";
-      case "all":
-        return "bg-green-100 text-green-800 border-green-200";
+      case "others":
+        return "bg-orange-100 text-orange-800 border-orange-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -141,7 +146,7 @@ const ProductDetail = ({
       </div>
 
       {/* Product Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
@@ -184,8 +189,40 @@ const ProductDetail = ({
                 </p>
                 <p className="text-2xl font-bold text-purple-600">
                   {product.variants && product.variants.length > 0
-                    ? `${Math.min(...product.variants.map((v) => v.price))}€`
+                    ? `${(Math.min(...product.variants.map((v) => v.price)) / 100).toFixed(2)}€`
                     : "N/A"}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total réservés
+                </p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {product.variants?.reduce((sum, v) => sum + (v.booked || 0), 0) || 0}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total payés
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {product.variants?.reduce((sum, v) => sum + (v.paid || 0), 0) || 0}
                 </p>
               </div>
             </div>
@@ -298,25 +335,35 @@ const ProductDetail = ({
                             {getSchoolTypeLabel(variant.school_type)}
                           </Badge>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
                           <div>
                             <p className="text-muted-foreground">Prix</p>
-                            <p className="font-medium">{variant.price}€</p>
+                            <p className="font-medium">{(variant.price / 100).toFixed(2)}€</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">
                               Public cible
                             </p>
                             <p className="font-medium">
-                              {getPublicTypeLabel(
-                                variant.public_type || undefined,
-                              )}
+                              {getPublicTypeLabel(variant.public_type)}
                             </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Unique</p>
                             <p className="font-medium">
                               {variant.unique ? "Oui" : "Non"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground text-blue-600">Réservés</p>
+                            <p className="font-medium text-blue-600">
+                              {variant.booked || 0}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground text-green-600">Payés</p>
+                            <p className="font-medium text-green-600">
+                              {variant.paid || 0}
                             </p>
                           </div>
                         </div>
