@@ -66,6 +66,8 @@ const Dashboard = () => {
     isValidateLoading,
     invalidateCompetitionUser,
     isInvalidateLoading,
+    deleteCompetitionUser,
+    isDeleteLoading,
   } = useCompetitionUsers();
 
   const { sportsQuota, refetchSportsQuota } = useSportsQuota({
@@ -78,6 +80,10 @@ const Dashboard = () => {
 
   const onInvalidate = (userId: string) => {
     invalidateCompetitionUser(userId, () => {});
+  };
+
+  const onDelete = (userId: string) => {
+    deleteCompetitionUser(userId, () => {});
   };
 
   const participantTableData: ParticipantData[] = useMemo(() => {
@@ -95,7 +101,10 @@ const Dashboard = () => {
             if (user.is_pompom) types.push("Pompom");
             if (user.is_fanfare) types.push("Fanfare");
             if (user.is_cameraman) types.push("Cameraman");
-            if (user.is_volunteer) types.push("Bénévole");
+            // Handle volunteer - either explicit or no other roles
+            if (!user.is_athlete && !user.is_pompom && !user.is_fanfare && !user.is_cameraman) {
+              types.push("Bénévole");
+            }
             return types.join(", ");
           };
 
@@ -136,6 +145,7 @@ const Dashboard = () => {
               participantType: getParticipantType(user),
               hasPaid: hasPaid,
               partialPaid: partialPaid,
+              allowPictures: user.allow_pictures || false,
             };
           }
           return {
@@ -153,6 +163,7 @@ const Dashboard = () => {
             participantType: getParticipantType(user),
             hasPaid: hasPaid,
             partialPaid: partialPaid,
+            allowPictures: user.allow_pictures || false,
           };
         }) || []
     );
@@ -331,8 +342,10 @@ const Dashboard = () => {
                 participantTableData={participantTableData}
                 onValidate={onValidate}
                 onInvalidate={onInvalidate}
+                onDelete={onDelete}
                 isValidateLoading={isValidateLoading}
                 isInvalidateLoading={isInvalidateLoading}
+                isDeleteLoading={isDeleteLoading}
                 school={school}
                 totalParticipants={totalParticipants}
                 totalValidated={totalValidated}
@@ -351,8 +364,10 @@ const Dashboard = () => {
           participantTableData={participantTableData}
           onValidate={onValidate}
           onInvalidate={onInvalidate}
+          onDelete={onDelete}
           isValidateLoading={isValidateLoading}
           isInvalidateLoading={isInvalidateLoading}
+          isDeleteLoading={isDeleteLoading}
           school={school}
           totalParticipants={totalParticipants}
           totalValidated={totalValidated}

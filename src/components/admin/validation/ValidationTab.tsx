@@ -29,8 +29,10 @@ export interface ValidationTabProps {
   totalValidated: number;
   isValidateLoading: boolean;
   isInvalidateLoading: boolean;
+  isDeleteLoading: boolean;
   onValidate: (userId: string) => void;
   onInvalidate: (userId: string) => void;
+  onDelete: (userId: string) => void;
 }
 
 export function ValidationTab({
@@ -46,8 +48,10 @@ export function ValidationTab({
   products,
   isValidateLoading,
   isInvalidateLoading,
+  isDeleteLoading,
   onInvalidate,
   onValidate,
+  onDelete,
 }: ValidationTabProps) {
   return (
     <>
@@ -181,7 +185,10 @@ export function ValidationTab({
                 schoolName={formatSchoolName(school.school.name) || "École"}
                 onValidateParticipant={onValidate}
                 onInvalidateParticipant={onInvalidate}
-                isLoading={isValidateLoading || isInvalidateLoading}
+                onDeleteParticipant={onDelete}
+                isLoading={
+                  isValidateLoading || isInvalidateLoading || isDeleteLoading
+                }
               />
             </div>
           ) : (

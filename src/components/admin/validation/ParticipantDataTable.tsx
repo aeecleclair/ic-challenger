@@ -29,6 +29,7 @@ import {
   UserPlus,
   Users,
   XCircle,
+  Trash2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -62,6 +63,7 @@ export interface ParticipantData {
   participantType: string;
   hasPaid?: boolean;
   partialPaid?: boolean;
+  allowPictures: boolean;
 }
 
 interface ParticipantDataTableProps {
@@ -69,6 +71,7 @@ interface ParticipantDataTableProps {
   schoolName: string;
   onValidateParticipant: (userId: string) => void;
   onInvalidateParticipant: (userId: string) => void;
+  onDeleteParticipant: (userId: string) => void;
   isLoading: boolean;
 }
 
@@ -76,6 +79,7 @@ export function ParticipantDataTable({
   data,
   onValidateParticipant,
   onInvalidateParticipant,
+  onDeleteParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -424,6 +428,52 @@ export function ParticipantDataTable({
       },
     },
     {
+      accessorKey: "allowPictures",
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center"
+        >
+          Autorisation photos
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex justify-center">
+            {row.getValue("allowPictures") ? (
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-800 hover:bg-green-200"
+              >
+                ✓ Autorisée
+              </Badge>
+            ) : (
+              <Badge
+                variant="outline"
+                className="bg-red-100 text-red-800 hover:bg-red-200"
+              >
+                ✗ Refusée
+              </Badge>
+            )}
+          </div>
+        );
+      },
+      filterFn: (row, id, filterValue) => {
+        if (filterValue === undefined) return true;
+        const value = row.getValue<boolean>(id);
+        return filterValue === true ? value === true : true;
+      },
+      sortingFn: (rowA, rowB) => {
+        const a = rowA.original;
+        const b = rowB.original;
+        if (a.allowPictures === b.allowPictures) return 0;
+        if (a.allowPictures) return -1;
+        return 1;
+      },
+    },
+    {
       id: "actions",
       header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => {
@@ -450,7 +500,7 @@ export function ParticipantDataTable({
                         toast({
                           title: "Erreur",
                           description:
-                            "Vous ne pouvez pas dévailder un utilisateur ayant payé",
+                            "Vous ne pouvez pas dévalider un utilisateur ayant payé",
                           variant: "destructive",
                         });
                       } else {
@@ -473,6 +523,25 @@ export function ParticipantDataTable({
                       Valider
                     </>
                   )}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (participant?.hasPaid) {
+                      toast({
+                        title: "Erreur",
+                        description:
+                          "Vous ne pouvez pas supprimer un utilisateur ayant payé",
+                        variant: "destructive",
+                      });
+                    } else {
+                      onDeleteParticipant(participant.userId);
+                    }
+                  }}
+                  disabled={isLoading}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Supprimer
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
