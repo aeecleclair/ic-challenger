@@ -19,7 +19,7 @@ import {
   Users,
   ShoppingCart,
 } from "lucide-react";
-import { ProductVariantGrid } from "./ProductVariantGrid";
+import { ProductVariantStatsGrid } from "./ProductVariantStatsGrid";
 import { AddProductDialog } from "./AddProductDialog";
 import { ProductOptionsMenu } from "./ProductOptionsMenu";
 import {
@@ -61,8 +61,11 @@ export const ProductList = ({ products }: ProductListProps) => {
     const totalVariants = product.variants?.length || 0;
     const enabledVariants =
       product.variants?.filter((v) => v.enabled).length || 0;
+    
+    const totalBooked = product.variants?.reduce((sum, v) => sum + (v.booked || 0), 0) || 0;
+    const totalPaid = product.variants?.reduce((sum, v) => sum + (v.paid || 0), 0) || 0;
 
-    return { totalVariants, enabledVariants };
+    return { totalVariants, enabledVariants, totalBooked, totalPaid };
   };
 
   return (
@@ -89,7 +92,7 @@ export const ProductList = ({ products }: ProductListProps) => {
         {filteredProducts
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((product) => {
-            const { totalVariants, enabledVariants } = getProductStats(product);
+            const { totalVariants, enabledVariants, totalBooked, totalPaid } = getProductStats(product);
             const isExpanded = expandedProducts.has(product.id);
 
             return (
@@ -139,6 +142,22 @@ export const ProductList = ({ products }: ProductListProps) => {
                                 {totalVariants !== 1 ? "s" : ""}
                               </span>
                             </div>
+                            {totalBooked > 0 && (
+                              <div className="flex items-center space-x-1">
+                                <ShoppingCart className="h-4 w-4 text-blue-600" />
+                                <span className="text-blue-600 font-medium">
+                                  {totalBooked} réservé{totalBooked !== 1 ? "s" : ""}
+                                </span>
+                              </div>
+                            )}
+                            {totalPaid > 0 && (
+                              <div className="flex items-center space-x-1">
+                                <Users className="h-4 w-4 text-green-600" />
+                                <span className="text-green-600 font-medium">
+                                  {totalPaid} payé{totalPaid !== 1 ? "s" : ""}
+                                </span>
+                              </div>
+                            )}
                           </div>
 
                           {/* Actions */}
@@ -166,7 +185,7 @@ export const ProductList = ({ products }: ProductListProps) => {
                             </Badge>
                           )}
                         </div>
-                        <ProductVariantGrid
+                        <ProductVariantStatsGrid
                           product={product}
                           variants={product.variants || []}
                         />
