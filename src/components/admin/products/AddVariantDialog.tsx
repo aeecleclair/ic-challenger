@@ -53,6 +53,7 @@ export const AddVariantDialog = ({
   });
 
   const schoolTypes = [
+    { value: "none", label: "Toutes écoles" },
     { value: "centrale", label: "Centrale" },
     { value: "from_lyon", label: "De Lyon" },
     { value: "others", label: "Autres" },
@@ -74,7 +75,7 @@ export const AddVariantDialog = ({
         price: Math.round(parseFloat(values.price) * 100),
         unique: values.unique === "unique",
         enabled: values.enabled || true,
-        school_type: values.schoolType,
+        school_type: values.schoolType === "none" ? null : values.schoolType,
         public_type: values.publicType === "none" ? null : values.publicType,
         product_id: productId,
       };

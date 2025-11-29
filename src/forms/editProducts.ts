@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { ProductVariant } from "@/src/api/hyperionSchemas";
+import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
 export const editProductSchema = z.object({
   products: z.array(
     z.object({
-      product: z.custom<ProductVariant>(),
+      product:
+        z.custom<AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete>(),
       quantity: z.number().min(1),
     }),
   ),

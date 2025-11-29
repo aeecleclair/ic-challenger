@@ -4,7 +4,7 @@ import { variantFormSchema, VariantFormValues } from "@/src/forms/variant";
 import { useProducts } from "@/src/hooks/useProducts";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantEdit,
-  ProductVariant,
+  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
 } from "@/src/api/hyperionSchemas";
 import {
   Dialog,
@@ -32,7 +32,7 @@ import { StyledFormField } from "@/src/components/custom/StyledFormField";
 import { CurrencyInput } from "@/src/components/custom/CurrencyInput";
 
 interface EditVariantDialogProps {
-  variant: ProductVariant;
+  variant: AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -53,12 +53,13 @@ export const EditVariantDialog = ({
       price: (variant.price / 100).toString(),
       unique: variant.unique ? "unique" : "multiple",
       enabled: variant.enabled,
-      schoolType: variant.school_type,
+      schoolType: variant.school_type || "none",
       publicType: variant.public_type || "none",
     },
   });
 
   const schoolTypes = [
+    { value: "none", label: "Toutes écoles" },
     { value: "centrale", label: "Centrale" },
     { value: "from_lyon", label: "De Lyon" },
     { value: "others", label: "Autres" },
@@ -80,6 +81,7 @@ export const EditVariantDialog = ({
         price: Math.round(parseFloat(values.price) * 100),
         unique: values.unique === "unique",
         enabled: values.enabled || true,
+        school_type: values.schoolType === "none" ? null : values.schoolType,
         public_type: values.publicType === "none" ? null : values.publicType,
       };
 
@@ -98,7 +100,7 @@ export const EditVariantDialog = ({
         price: (variant.price / 100).toString(),
         unique: variant.unique ? "unique" : "multiple",
         enabled: variant.enabled,
-        schoolType: variant.school_type,
+        schoolType: variant.school_type || "none",
         publicType: variant.public_type || "none",
       });
     }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
-  ProductVariant,
+  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
 } from "@/src/api/hyperionSchemas";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
@@ -12,7 +12,7 @@ import { VariantOptionsMenu } from "./VariantOptionsMenu";
 
 interface ProductVariantGridProps {
   product: AppModulesSportCompetitionSchemasSportCompetitionProductComplete;
-  variants: ProductVariant[];
+  variants: AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete[];
 }
 
 export const ProductVariantGrid = ({
@@ -21,7 +21,8 @@ export const ProductVariantGrid = ({
 }: ProductVariantGridProps) => {
   const [isAddVariantDialogOpen, setIsAddVariantDialogOpen] = useState(false);
 
-  const getSchoolTypeLabel = (schoolType: string) => {
+  const getSchoolTypeLabel = (schoolType: string | null | undefined) => {
+    if (!schoolType) return "Toutes écoles";
     const types: { [key: string]: string } = {
       centrale: "Centrale",
       from_lyon: "De Lyon",
@@ -30,13 +31,13 @@ export const ProductVariantGrid = ({
     return types[schoolType] || schoolType;
   };
 
-  const getPublicTypeLabel = (publicType: string) => {
+  const getPublicTypeLabel = (publicType: string | null | undefined) => {
+    if (!publicType) return "Général";
     const types: { [key: string]: string } = {
       pompom: "Pompom",
       fanfare: "Fanfare",
       cameraman: "Cameraman",
       athlete: "Athlète",
-      volunteer: "Bénévole",
     };
     return types[publicType] || publicType;
   };
