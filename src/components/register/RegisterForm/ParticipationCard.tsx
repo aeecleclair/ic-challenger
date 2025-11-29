@@ -73,27 +73,6 @@ export const ParticipationCard = ({ form }: ParticipationCardProps) => {
             </div>
           )}
         />
-
-        <div>
-          <StyledFormField
-            form={form}
-            id="is_volunteer"
-            input={(field) => (
-              <div className="flex items-center space-x-2 ">
-                <Checkbox
-                  id="is_volunteer"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-                <Label htmlFor="is_volunteer">Bénévole</Label>
-              </div>
-            )}
-          />
-          <p className="text-md text-muted-foreground ml-6 mt-2">
-            Ta place à la soirée du samedi te sera remboursé si tu remplis ton
-            quota d&apos;heures de bénévolat
-          </p>
-        </div>
       </div>
     </CardTemplate>
   );

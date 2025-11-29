@@ -3,7 +3,7 @@ import {
   isValidPhoneNumber,
   parsePhoneNumberWithError,
 } from "libphonenumber-js";
-import { ProductVariant } from "@/src/api/hyperionSchemas";
+import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
 
 const sexEnum = ["masculine", "feminine"] as const;
 
@@ -21,7 +21,7 @@ export const registeringFormSchema = z
     is_cameraman: z.boolean(),
     is_fanfare: z.boolean(),
     is_pompom: z.boolean(),
-    is_volunteer: z.boolean(),
+    allow_pictures: z.boolean().default(true),
     sex: z.enum(sexEnum, {
       required_error: "Veuillez sélectionner une option",
     }),
@@ -39,7 +39,8 @@ export const registeringFormSchema = z
       .optional(),
     products: z.array(
       z.object({
-        product: z.custom<ProductVariant>(),
+        product:
+          z.custom<AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete>(),
         quantity: z.number().min(1),
       }),
     ),
@@ -49,8 +50,7 @@ export const registeringFormSchema = z
       !data.is_athlete &&
       !data.is_cameraman &&
       !data.is_fanfare &&
-      !data.is_pompom &&
-      !data.is_volunteer
+      !data.is_pompom
     ) {
       ctx.addIssue({
         path: ["is_athlete"],

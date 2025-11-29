@@ -8,6 +8,7 @@ import { CardTemplate } from "./CardTemplate";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 import { PhoneCustomInput } from "../../custom/PhoneCustomInput";
+import { Checkbox } from "../../ui/checkbox";
 
 interface InformationCardProps {
   form: UseFormReturn<RegisteringFormValues>;
@@ -53,6 +54,31 @@ export const InformationCard = ({ form }: InformationCardProps) => {
             </RadioGroup>
           )}
         />
+
+        <div>
+          <StyledFormField
+            form={form}
+            id="allow_pictures"
+            input={(field) => (
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="allow_pictures"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <Label htmlFor="allow_pictures">
+                  J&apos;autorise la prise et la diffusion de photos/vidéos me
+                  concernant
+                </Label>
+              </div>
+            )}
+          />
+          <p className="text-sm text-muted-foreground ml-6 mt-2">
+            Cette autorisation permet aux organisateurs de prendre et diffuser
+            des photos et vidéos lors de l&apos;événement. Vous pourrez modifier
+            cette préférence ultérieurement.
+          </p>
+        </div>
       </div>
 
       <div className="text-md text-muted-foreground">

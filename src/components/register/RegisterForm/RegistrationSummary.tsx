@@ -217,13 +217,6 @@ export const RegistrationSummary = ({
                   <p className="text-sm">Pompom</p>
                 </div>
               )}
-
-              {meCompetition?.is_volunteer && (
-                <div className="flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  <p className="text-sm">Bénévole</p>
-                </div>
-              )}
             </div>
           </div>
 

@@ -52,6 +52,21 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
               <p className="text-sm text-muted-foreground">Téléphone</p>
               <p>{formValues.phone || "-"}</p>
             </div>
+            <div className="col-span-2">
+              <p className="text-sm text-muted-foreground">
+                Autorisation photo/vidéo
+              </p>
+              <div className="flex items-center gap-1">
+                {formValues.allow_pictures ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <p className="text-sm">Autorisée</p>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Non autorisée</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -113,13 +128,6 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
                   <div className="flex items-center gap-1">
                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                     <p className="text-sm">Pompom</p>
-                  </div>
-                )}
-
-                {formValues.is_volunteer && (
-                  <div className="flex items-center gap-1">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    <p className="text-sm">Bénévole</p>
                   </div>
                 )}
               </div>

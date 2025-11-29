@@ -46,7 +46,7 @@ export const RegisterForm = ({
     form.setValue("is_cameraman", meCompetition?.is_cameraman || false);
     form.setValue("is_fanfare", meCompetition?.is_fanfare || false);
     form.setValue("is_pompom", meCompetition?.is_pompom || false);
-    form.setValue("is_volunteer", meCompetition?.is_volunteer || false);
+    form.setValue("allow_pictures", meCompetition?.allow_pictures ?? true);
   }, [form, me, meCompetition]);
 
   async function onSubmit(values: RegisteringFormValues) {

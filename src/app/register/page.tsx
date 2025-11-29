@@ -76,7 +76,7 @@ const Register = () => {
       is_cameraman: false,
       is_fanfare: false,
       is_pompom: false,
-      is_volunteer: false,
+      allow_pictures: true,
       sport: {
         team_leader: false,
       },
@@ -108,7 +108,7 @@ const Register = () => {
       "Récapitulatif",
     ],
     pageFields: {
-      Informations: ["phone", "sex"],
+      Informations: ["phone", "sex", "allow_pictures"],
       Participation: [],
       Sport: ["sport.id", "sport.team_id"],
       Panier: [],
@@ -153,7 +153,7 @@ const Register = () => {
                 is_cameraman: values.is_cameraman,
                 is_fanfare: values.is_fanfare,
                 is_pompom: values.is_pompom,
-                is_volunteer: values.is_volunteer,
+                allow_pictures: values.allow_pictures,
               },
               callback,
             );
@@ -165,7 +165,7 @@ const Register = () => {
             is_cameraman: values.is_cameraman,
             is_fanfare: values.is_fanfare,
             is_pompom: values.is_pompom,
-            is_volunteer: values.is_volunteer,
+            allow_pictures: values.allow_pictures,
           };
           createCompetitionUser(body, callback);
         },
