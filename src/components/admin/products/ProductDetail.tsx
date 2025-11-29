@@ -206,7 +206,10 @@ const ProductDetail = ({
                   Total réservés
                 </p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {product.variants?.reduce((sum, v) => sum + (v.booked || 0), 0) || 0}
+                  {product.variants?.reduce(
+                    (sum, v) => sum + (v.booked || 0),
+                    0,
+                  ) || 0}
                 </p>
               </div>
             </div>
@@ -222,7 +225,10 @@ const ProductDetail = ({
                   Total payés
                 </p>
                 <p className="text-2xl font-bold text-green-600">
-                  {product.variants?.reduce((sum, v) => sum + (v.paid || 0), 0) || 0}
+                  {product.variants?.reduce(
+                    (sum, v) => sum + (v.paid || 0),
+                    0,
+                  ) || 0}
                 </p>
               </div>
             </div>
@@ -338,7 +344,9 @@ const ProductDetail = ({
                         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
                           <div>
                             <p className="text-muted-foreground">Prix</p>
-                            <p className="font-medium">{(variant.price / 100).toFixed(2)}€</p>
+                            <p className="font-medium">
+                              {(variant.price / 100).toFixed(2)}€
+                            </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">
@@ -355,13 +363,17 @@ const ProductDetail = ({
                             </p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground text-blue-600">Réservés</p>
+                            <p className="text-muted-foreground text-blue-600">
+                              Réservés
+                            </p>
                             <p className="font-medium text-blue-600">
                               {variant.booked || 0}
                             </p>
                           </div>
                           <div>
-                            <p className="text-muted-foreground text-green-600">Payés</p>
+                            <p className="text-muted-foreground text-green-600">
+                              Payés
+                            </p>
                             <p className="font-medium text-green-600">
                               {variant.paid || 0}
                             </p>
