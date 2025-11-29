@@ -13,6 +13,7 @@ import {
   MapPin,
   Calendar,
   Users,
+  User,
   Award,
   ExternalLink,
 } from "lucide-react";
@@ -76,22 +77,11 @@ export const AvailableVolunteerShiftCard = ({
   };
 
   const getVolunteerTooltip = () => {
-    const registeredCount = shift.registrations?.length || 0;
-    if (registeredCount === 0) {
-      return "Aucun bénévole inscrit";
-    }
-    const volunteerNames =
-      shift.registrations
-        ?.slice(0, 3)
-        .map(
-          (reg) =>
-            `${reg.user.user.firstname} ${reg.user.user.name.charAt(0)}.`,
-        )
-        .join(", ") || "";
-    const remaining = registeredCount - 3;
-    return remaining > 0
-      ? `${volunteerNames} et ${remaining} autre${remaining > 1 ? "s" : ""}`
-      : volunteerNames;
+    const managerInfo = `Responsable: ${shift.manager.firstname} ${shift.manager.name}`;
+    const capacityInfo = `Capacité: ${shift.max_volunteers} bénévole${shift.max_volunteers > 1 ? "s" : ""}`;
+    const pointsInfo = `Valeur: ${shift.value} point${shift.value > 1 ? "s" : ""}`;
+
+    return `${managerInfo}\n${capacityInfo}\n${pointsInfo}`;
   };
 
   return (
@@ -166,15 +156,23 @@ export const AvailableVolunteerShiftCard = ({
                 <TooltipTrigger asChild>
                   <div className="flex items-center gap-1 cursor-help">
                     <Users className="h-3 w-3" />
-                    <span>
-                      {shift.registrations?.length || 0}/{shift.max_volunteers}
-                    </span>
+                    <span>0/{shift.max_volunteers}</span>
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>{getVolunteerTooltip()}</p>
                 </TooltipContent>
               </Tooltip>
+
+              <div className="flex items-center gap-1">
+                <User className="h-3 w-3" />
+                <span
+                  className="truncate max-w-20"
+                  title={`${shift.manager.firstname} ${shift.manager.name}`}
+                >
+                  {shift.manager.firstname} {shift.manager.name.charAt(0)}.
+                </span>
+              </div>
 
               <div className="flex items-center gap-1">
                 <Award className="h-3 w-3" />

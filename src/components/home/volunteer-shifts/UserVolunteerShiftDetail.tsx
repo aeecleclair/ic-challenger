@@ -3,6 +3,7 @@ import {
   Clock,
   MapPin,
   Users,
+  User,
   Award,
   UserPlus,
   ExternalLink,
@@ -105,22 +106,12 @@ export default function UserVolunteerShiftDetail({
   };
 
   const getVolunteerTooltip = () => {
-    const registeredCount = shift.registrations?.length || 0;
-    if (registeredCount === 0) {
-      return "Aucun bénévole inscrit";
-    }
-    const volunteerNames =
-      shift.registrations
-        ?.slice(0, 5)
-        .map(
-          (reg) =>
-            `${reg.user.user.firstname} ${reg.user.user.name.charAt(0)}.`,
-        )
-        .join(", ") || "";
-    const remaining = registeredCount - 5;
-    return remaining > 0
-      ? `${volunteerNames} et ${remaining} autre${remaining > 1 ? "s" : ""}`
-      : volunteerNames;
+    const managerInfo = `Responsable: ${shift.manager.firstname} ${shift.manager.name}`;
+    const capacityInfo = `Capacité maximale: ${shift.max_volunteers} bénévole${shift.max_volunteers > 1 ? "s" : ""}`;
+    const durationInfo = `Durée: ${durationHours}h`;
+    const pointsInfo = `Récompense: ${shift.value} point${shift.value > 1 ? "s" : ""}`;
+
+    return `${managerInfo}\n${capacityInfo}\n${durationInfo}\n${pointsInfo}`;
   };
 
   return (
@@ -221,12 +212,17 @@ export default function UserVolunteerShiftDetail({
                     <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <div>
                       <p className="font-medium text-xs text-muted-foreground">
+                        Responsable
+                      </p>
+                      <p className="truncate text-sm">
+                        {shift.manager.firstname} {shift.manager.name}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-xs text-muted-foreground">
                         Bénévoles
                       </p>
-                      <p className="truncate">
-                        {shift.registrations?.length || 0}/
-                        {shift.max_volunteers}
-                      </p>
+                      <p className="truncate">0/{shift.max_volunteers}</p>
                     </div>
                   </div>
                 </TooltipTrigger>
