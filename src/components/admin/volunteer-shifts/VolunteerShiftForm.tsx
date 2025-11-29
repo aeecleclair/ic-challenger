@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -15,6 +16,7 @@ import { DateTimePicker } from "../../custom/DateTimePicker";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
 import { useLocations } from "../../../hooks/useLocations";
 import { useAuth } from "../../../hooks/useAuth";
+import { useUserSearch } from "../../../hooks/useUsersSearch";
 import {
   VolunteerShiftComplete,
   VolunteerShiftBase,
@@ -40,6 +42,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../../ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { Check, ChevronsUpDown, User } from "lucide-react";
 
 interface VolunteerShiftFormProps {
   shiftId?: string | null;
@@ -64,6 +76,10 @@ export default function VolunteerShiftForm({
 
   const { locations } = useLocations();
   const { userId } = useAuth();
+
+  const [managerQuery, setManagerQuery] = useState("");
+  const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
+  const { userSearch } = useUserSearch({ query: managerQuery });
 
   const isEditing = !!shiftId;
   const shift = isEditing
@@ -90,7 +106,7 @@ export default function VolunteerShiftForm({
   const onSubmit = (data: VolunteerShiftFormSchema) => {
     const shiftData: VolunteerShiftBase = {
       name: data.name,
-      manager_id: userId || "", // Current user as manager
+      manager_id: data.manager_id,
       description: data.description || null,
       value: data.value,
       start_time: data.start_time.toISOString(),
@@ -132,6 +148,94 @@ export default function VolunteerShiftForm({
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="manager_id"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Responsable du créneau *</FormLabel>
+                    <Popover
+                      open={isManagerPopoverOpen}
+                      onOpenChange={setIsManagerPopoverOpen}
+                    >
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            className={`w-full justify-between ${!field.value ? "text-muted-foreground" : ""}`}
+                            aria-expanded={isManagerPopoverOpen}
+                          >
+                            {field.value ? (
+                              <>
+                                <User className="mr-2 h-4 w-4" />
+                                {userSearch?.find(
+                                  (user) => user.id === field.value,
+                                )
+                                  ? `${userSearch.find((user) => user.id === field.value)?.firstname} ${userSearch.find((user) => user.id === field.value)?.name}`
+                                  : shift?.manager
+                                    ? `${shift.manager.firstname} ${shift.manager.name}`
+                                    : "Responsable sélectionné"}
+                              </>
+                            ) : (
+                              <>
+                                <User className="mr-2 h-4 w-4" />
+                                Sélectionner un responsable
+                              </>
+                            )}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0">
+                        <Command>
+                          <CommandInput
+                            placeholder="Rechercher un utilisateur..."
+                            value={managerQuery}
+                            onValueChange={setManagerQuery}
+                          />
+                          <CommandList>
+                            <CommandEmpty>
+                              Aucun utilisateur trouvé.
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {userSearch?.map((user) => (
+                                <CommandItem
+                                  key={user.id}
+                                  value={user.id}
+                                  onSelect={() => {
+                                    field.onChange(user.id);
+                                    setIsManagerPopoverOpen(false);
+                                    setManagerQuery("");
+                                  }}
+                                >
+                                  <Check
+                                    className={`mr-2 h-4 w-4 ${
+                                      field.value === user.id
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    }`}
+                                  />
+                                  <div className="flex items-center">
+                                    <User className="mr-2 h-4 w-4" />
+                                    <div>
+                                      <div className="font-medium">
+                                        {user.firstname} {user.name}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}

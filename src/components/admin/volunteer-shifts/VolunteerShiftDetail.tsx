@@ -7,6 +7,7 @@ import {
   Clock,
   MapPin,
   Users,
+  User,
   Award,
   Info,
   CheckCircle,
@@ -207,6 +208,17 @@ export default function VolunteerShiftDetail({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">
+                      Responsable
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <User className="h-3 w-3" />
+                      <span className="font-medium text-sm">
+                        {shift.manager.firstname} {shift.manager.name}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
                       Points
                     </span>
                     <span className="font-medium">{shift.value} pts</span>
@@ -243,6 +255,39 @@ export default function VolunteerShiftDetail({
 
           {/* Right Column - Detailed Information */}
           <div className="lg:col-span-2 space-y-4">
+            {/* Manager Information Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Responsable du créneau
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg border">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-lg font-medium text-primary">
+                      {shift.manager.firstname.charAt(0)}
+                      {shift.manager.name.charAt(0)}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-lg">
+                      {shift.manager.firstname} {shift.manager.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      {shift.manager.nickname && (
+                        <>
+                          <span>•</span>
+                          <span>&quot;{shift.manager.nickname}&quot;</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Registered Volunteers Section */}
             <Card>
               <CardHeader>
@@ -259,7 +304,7 @@ export default function VolunteerShiftDetail({
                   </p>
                   <p>
                     Les inscriptions aux créneaux ne sont pas encore disponibles
-                    dans cette interface d'administration.
+                    dans cette interface d&apos;administration.
                   </p>
                 </div>
               </CardContent>
