@@ -79,7 +79,10 @@ export default function VolunteerShiftForm({
 
   const [managerQuery, setManagerQuery] = useState("");
   const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
-  const { userSearch } = useUserSearch({ query: managerQuery });
+  const { userSearch } = useUserSearch({
+    query:
+      managerQuery.length > 0 ? managerQuery : isManagerPopoverOpen ? " " : "",
+  });
 
   const isEditing = !!shiftId;
   const shift = isEditing
@@ -161,7 +164,14 @@ export default function VolunteerShiftForm({
                     <FormLabel>Responsable du créneau *</FormLabel>
                     <Popover
                       open={isManagerPopoverOpen}
-                      onOpenChange={setIsManagerPopoverOpen}
+                      onOpenChange={(open) => {
+                        setIsManagerPopoverOpen(open);
+                        if (open && managerQuery === "") {
+                          // Trigger initial load when opening
+                          setManagerQuery(" ");
+                          setTimeout(() => setManagerQuery(""), 100);
+                        }
+                      }}
                     >
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -192,12 +202,14 @@ export default function VolunteerShiftForm({
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-full p-0">
+                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
                         <Command>
                           <CommandInput
                             placeholder="Rechercher un utilisateur..."
-                            value={managerQuery}
-                            onValueChange={setManagerQuery}
+                            value={managerQuery.trim()}
+                            onValueChange={(value) => {
+                              setManagerQuery(value);
+                            }}
                           />
                           <CommandList>
                             <CommandEmpty>

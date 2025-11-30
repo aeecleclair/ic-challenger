@@ -24,7 +24,8 @@ export const useUserSearch = ({ query }: UseUserSearchProps) => {
       },
     },
     {
-      enabled: isAdmin() && !isTokenExpired() && query.length > 0,
+      enabled:
+        isAdmin() && !isTokenExpired() && (query.length > 0 || query === " "),
       retry: 0,
       queryHash: "getUserSearch",
     },
