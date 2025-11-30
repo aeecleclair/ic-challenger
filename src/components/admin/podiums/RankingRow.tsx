@@ -63,11 +63,7 @@ export function RankingRow({
         )}
       </div>
 
-      <div
-        className={
-          isPompoms ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"
-        }
-      >
+      <div className={isPompoms ? "space-y-4" : "grid grid-cols-2 gap-4"}>
         <FormField
           control={form.control}
           name={`rankings.${index}.school_id`}
@@ -105,40 +101,43 @@ export function RankingRow({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name={`rankings.${index}.team_id`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Équipe</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-                disabled={!schoolId}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        schoolId
-                          ? "Sélectionnez une équipe"
-                          : "Sélectionnez d'abord une école"
-                      }
-                    />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {teams?.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Only show team selection for non-pompoms sports */}
+        {!isPompoms && (
+          <FormField
+            control={form.control}
+            name={`rankings.${index}.team_id`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Équipe</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={!schoolId}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={
+                          schoolId
+                            ? "Sélectionnez une équipe"
+                            : "Sélectionnez d'abord une école"
+                        }
+                      />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {teams?.map((team) => (
+                      <SelectItem key={team.id} value={team.id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
       </div>
 
       <FormField
