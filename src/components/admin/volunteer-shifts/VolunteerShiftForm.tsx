@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -79,10 +79,14 @@ export default function VolunteerShiftForm({
 
   const [managerQuery, setManagerQuery] = useState("");
   const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
-  const { userSearch } = useUserSearch({
-    query:
-      managerQuery.length > 0 ? managerQuery : isManagerPopoverOpen ? " " : "",
-  });
+  const { userSearch } = useUserSearch({ query: managerQuery });
+
+  // Trigger initial search when popover opens
+  useEffect(() => {
+    if (isManagerPopoverOpen && managerQuery === "") {
+      setManagerQuery("*"); // Use * as wildcard for initial load
+    }
+  }, [isManagerPopoverOpen, managerQuery]);
 
   const isEditing = !!shiftId;
   const shift = isEditing
@@ -164,14 +168,7 @@ export default function VolunteerShiftForm({
                     <FormLabel>Responsable du créneau *</FormLabel>
                     <Popover
                       open={isManagerPopoverOpen}
-                      onOpenChange={(open) => {
-                        setIsManagerPopoverOpen(open);
-                        if (open && managerQuery === "") {
-                          // Trigger initial load when opening
-                          setManagerQuery(" ");
-                          setTimeout(() => setManagerQuery(""), 100);
-                        }
-                      }}
+                      onOpenChange={setIsManagerPopoverOpen}
                     >
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -206,9 +203,9 @@ export default function VolunteerShiftForm({
                         <Command>
                           <CommandInput
                             placeholder="Rechercher un utilisateur..."
-                            value={managerQuery.trim()}
+                            value={managerQuery === "*" ? "" : managerQuery}
                             onValueChange={(value) => {
-                              setManagerQuery(value);
+                              setManagerQuery(value || "*");
                             }}
                           />
                           <CommandList>
