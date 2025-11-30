@@ -9,42 +9,65 @@ import {
   PodiumRankingsFormData,
 } from "@/src/forms/podium";
 import { Plus } from "lucide-react";
-import { TeamSportResultComplete } from "@/src/api/hyperionSchemas";
+import {
+  TeamSportResultComplete,
+  SchoolResult,
+} from "@/src/api/hyperionSchemas";
 import { RankingRow } from "./RankingRow";
+import { PompomsPodiumForm } from "./PompomsPodiumForm";
+import { usePodiums } from "@/src/hooks/usePodiums";
+import { usePompomsPodiums } from "@/src/hooks/usePompomsPodiums";
 
 interface PodiumRankingsFormProps {
-  onSubmit: (data: PodiumRankingsFormData) => void;
-  isLoading?: boolean;
-  defaultValues?: TeamSportResultComplete[];
   sportId: string;
-  submitText?: string;
+  isLoading?: boolean;
+  onClose: () => void;
 }
 
 export function PodiumRankingsForm({
-  onSubmit,
-  isLoading = false,
-  defaultValues,
   sportId,
-  submitText = "Mettre à jour le podium",
+  isLoading = false,
+  onClose,
 }: PodiumRankingsFormProps) {
+  const isPompoms = sportId === "pompoms";
+
+  // Hooks for regular sports
+  const {
+    sportPodium,
+    createOrUpdateSportPodium,
+    deleteSportPodium,
+    isUpdateLoading: isRegularUpdateLoading,
+    isDeleteLoading: isRegularDeleteLoading,
+  } = usePodiums({ sportId: isPompoms ? undefined : sportId });
+
+  // Hooks for pompoms
+  const {
+    pompomsResults,
+    createOrUpdatePompomsPodium,
+    deletePompomsPodium,
+    isUpdateLoading: isPompomsUpdateLoading,
+    isDeleteLoading: isPompomsDeleteLoading,
+  } = usePompomsPodiums();
+
   const form = useForm<PodiumRankingsFormData>({
     resolver: zodResolver(podiumRankingsSchema),
     defaultValues: {
-      rankings: defaultValues?.length
-        ? defaultValues.map((result) => ({
-            school_id: result.school_id,
-            sport_id: result.sport_id,
-            team_id: result.team_id,
-            points: result.points,
-          }))
-        : [
-            {
-              school_id: "",
-              sport_id: sportId,
-              team_id: "",
-              points: 0,
-            },
-          ],
+      rankings:
+        !isPompoms && sportPodium?.length
+          ? sportPodium.map((result) => ({
+              school_id: result.school_id,
+              sport_id: result.sport_id,
+              team_id: result.team_id,
+              points: result.points,
+            }))
+          : [
+              {
+                school_id: "",
+                sport_id: sportId,
+                team_id: "",
+                points: 0,
+              },
+            ],
     },
   });
 
@@ -53,8 +76,28 @@ export function PodiumRankingsForm({
     name: "rankings",
   });
 
-  const handleSubmit = (data: PodiumRankingsFormData) => {
-    onSubmit(data);
+  const handleRegularSportSubmit = (data: PodiumRankingsFormData) => {
+    createOrUpdateSportPodium(sportId, data, () => {
+      onClose();
+    });
+  };
+
+  const handlePompomsSubmit = (rankings: SchoolResult[]) => {
+    createOrUpdatePompomsPodium(rankings, () => {
+      onClose();
+    });
+  };
+
+  const handleDelete = () => {
+    if (isPompoms) {
+      deletePompomsPodium(() => {
+        onClose();
+      });
+    } else {
+      deleteSportPodium(sportId, () => {
+        onClose();
+      });
+    }
   };
 
   const addRanking = () => {
@@ -66,46 +109,111 @@ export function PodiumRankingsForm({
     });
   };
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Classements du Podium</h3>
+  const currentIsLoading = isPompoms
+    ? isPompomsUpdateLoading
+    : isRegularUpdateLoading;
+  const currentIsDeleteLoading = isPompoms
+    ? isPompomsDeleteLoading
+    : isRegularDeleteLoading;
 
-          <div className="space-y-3">
-            {fields.map((field, index) => (
-              <RankingRow
-                key={field.id}
-                form={form}
-                field={field}
-                index={index}
-                sportId={sportId}
-                onRemove={() => remove(index)}
-                showRemove={fields.length > 1}
-              />
-            ))}
-          </div>
-
-          {/* Add new ranking button */}
-          <div className="flex justify-center pt-2">
+  // For pompoms, use the dedicated form
+  if (isPompoms) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Gestion du podium Pompoms</h2>
+          <div className="flex gap-2">
             <Button
-              type="button"
-              variant="outline"
-              onClick={addRanking}
-              className="border-dashed border-2 w-full py-6 text-muted-foreground hover:text-foreground hover:border-solid"
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={currentIsDeleteLoading}
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Ajouter une nouvelle position au classement
+              {currentIsDeleteLoading
+                ? "Suppression..."
+                : "Supprimer le podium"}
+            </Button>
+            <Button variant="outline" onClick={onClose}>
+              Annuler
             </Button>
           </div>
         </div>
 
-        <div className="pt-4 border-t">
-          <Button type="submit" disabled={isLoading} className="w-full">
-            {isLoading ? "Chargement..." : submitText}
+        <PompomsPodiumForm
+          onSubmit={handlePompomsSubmit}
+          isLoading={currentIsLoading}
+          defaultValues={pompomsResults}
+          submitText="Mettre à jour le podium"
+        />
+      </div>
+    );
+  }
+
+  // For regular sports, use the team-based form
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Gestion du podium</h2>
+        <div className="flex gap-2">
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={currentIsDeleteLoading}
+          >
+            {currentIsDeleteLoading ? "Suppression..." : "Supprimer le podium"}
+          </Button>
+          <Button variant="outline" onClick={onClose}>
+            Annuler
           </Button>
         </div>
-      </form>
-    </Form>
+      </div>
+
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleRegularSportSubmit)}
+          className="space-y-6"
+        >
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Classements du Podium</h3>
+
+            <div className="space-y-3">
+              {fields.map((field, index) => (
+                <RankingRow
+                  key={field.id}
+                  form={form}
+                  field={field}
+                  index={index}
+                  sportId={sportId}
+                  onRemove={() => remove(index)}
+                  showRemove={fields.length > 1}
+                />
+              ))}
+            </div>
+
+            {/* Add new ranking button */}
+            <div className="flex justify-center pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addRanking}
+                className="border-dashed border-2 w-full py-6 text-muted-foreground hover:text-foreground hover:border-solid"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Ajouter une nouvelle position au classement
+              </Button>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t">
+            <Button
+              type="submit"
+              disabled={currentIsLoading}
+              className="w-full"
+            >
+              {currentIsLoading ? "Chargement..." : "Mettre à jour le podium"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 }
