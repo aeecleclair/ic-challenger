@@ -215,7 +215,7 @@ export default function VolunteerShiftForm({
                         </FormControl>
                       </PopoverTrigger>
                       <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                        <Command>
+                        <Command shouldFilter={false}>
                           <CommandInput
                             placeholder="Rechercher un utilisateur..."
                             value={managerQuery}
