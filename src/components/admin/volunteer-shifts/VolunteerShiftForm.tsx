@@ -78,7 +78,7 @@ export default function VolunteerShiftForm({
   const { userId } = useAuth();
 
   const [managerQuery, setManagerQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("*"); // Initialize with "*" to load users immediately
   const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
   const { userSearch, isLoading: isSearchLoading } = useUserSearch({
     query: debouncedQuery,
@@ -86,6 +86,9 @@ export default function VolunteerShiftForm({
 
   // Debounce the search query
   useEffect(() => {
+    if (managerQuery === "") {
+      return; // Don't debounce empty queries, keep "*" for initial load
+    }
     const timer = setTimeout(() => {
       setDebouncedQuery(managerQuery);
     }, 300); // 300ms debounce
@@ -93,10 +96,10 @@ export default function VolunteerShiftForm({
     return () => clearTimeout(timer);
   }, [managerQuery]);
 
-  // Trigger initial search when popover opens
+  // Reset to show all users when popover reopens
   useEffect(() => {
     if (isManagerPopoverOpen && managerQuery === "") {
-      setManagerQuery("*"); // Use * as wildcard for initial load
+      setDebouncedQuery("*");
     }
   }, [isManagerPopoverOpen, managerQuery]);
 
@@ -215,9 +218,9 @@ export default function VolunteerShiftForm({
                         <Command>
                           <CommandInput
                             placeholder="Rechercher un utilisateur..."
-                            value={managerQuery === "*" ? "" : managerQuery}
+                            value={managerQuery}
                             onValueChange={(value) => {
-                              setManagerQuery(value || "*");
+                              setManagerQuery(value);
                             }}
                           />
                           <CommandList>
@@ -237,7 +240,7 @@ export default function VolunteerShiftForm({
                                       field.onChange(user.id);
                                       setIsManagerPopoverOpen(false);
                                       setManagerQuery("");
-                                      setDebouncedQuery("");
+                                      setDebouncedQuery("*"); // Reset for next time
                                     }}
                                   >
                                     <Check
