@@ -78,8 +78,18 @@ export default function VolunteerShiftForm({
   const { userId } = useAuth();
 
   const [managerQuery, setManagerQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
-  const { userSearch } = useUserSearch({ query: managerQuery });
+  const { userSearch } = useUserSearch({ query: debouncedQuery });
+
+  // Debounce the search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(managerQuery);
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
+  }, [managerQuery]);
 
   // Trigger initial search when popover opens
   useEffect(() => {
@@ -209,38 +219,44 @@ export default function VolunteerShiftForm({
                             }}
                           />
                           <CommandList>
-                            <CommandEmpty>
-                              Aucun utilisateur trouvé.
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {userSearch?.map((user) => (
-                                <CommandItem
-                                  key={user.id}
-                                  value={user.id}
-                                  onSelect={() => {
-                                    field.onChange(user.id);
-                                    setIsManagerPopoverOpen(false);
-                                    setManagerQuery("");
-                                  }}
-                                >
-                                  <Check
-                                    className={`mr-2 h-4 w-4 ${
-                                      field.value === user.id
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    }`}
-                                  />
-                                  <div className="flex items-center">
-                                    <User className="mr-2 h-4 w-4" />
-                                    <div>
-                                      <div className="font-medium">
-                                        {user.firstname} {user.name}
+                            {isSearchLoading ? (
+                              <CommandEmpty>Recherche en cours...</CommandEmpty>
+                            ) : !userSearch || userSearch.length === 0 ? (
+                              <CommandEmpty>
+                                Aucun utilisateur trouvé.
+                              </CommandEmpty>
+                            ) : (
+                              <CommandGroup>
+                                {userSearch.map((user) => (
+                                  <CommandItem
+                                    key={user.id}
+                                    value={user.id}
+                                    onSelect={() => {
+                                      field.onChange(user.id);
+                                      setIsManagerPopoverOpen(false);
+                                      setManagerQuery("");
+                                      setDebouncedQuery("");
+                                    }}
+                                  >
+                                    <Check
+                                      className={`mr-2 h-4 w-4 ${
+                                        field.value === user.id
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      }`}
+                                    />
+                                    <div className="flex items-center">
+                                      <User className="mr-2 h-4 w-4" />
+                                      <div>
+                                        <div className="font-medium">
+                                          {user.firstname} {user.name}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            )}
                           </CommandList>
                         </Command>
                       </PopoverContent>
