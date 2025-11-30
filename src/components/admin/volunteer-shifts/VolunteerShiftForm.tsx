@@ -80,7 +80,9 @@ export default function VolunteerShiftForm({
   const [managerQuery, setManagerQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
-  const { userSearch } = useUserSearch({ query: debouncedQuery });
+  const { userSearch, isLoading: isSearchLoading } = useUserSearch({
+    query: debouncedQuery,
+  });
 
   // Debounce the search query
   useEffect(() => {

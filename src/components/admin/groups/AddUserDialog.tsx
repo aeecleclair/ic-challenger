@@ -36,25 +36,14 @@ export function AddUserDialog({
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedUserData, setSelectedUserData] =
     useState<CoreUserSimple | null>(null);
-  const [isSearchLoading, setIsSearchLoading] = useState(false);
 
-  const { userSearch, refetchSchools: refetchUsers } = useUserSearch({
+  const {
+    userSearch,
+    refetchUsers,
+    isLoading: isApiLoading,
+  } = useUserSearch({
     query: searchQuery,
   });
-
-  // Effect to handle search loading state
-  useEffect(() => {
-    if (searchQuery.length > 1) {
-      setIsSearchLoading(true);
-      const timer = setTimeout(() => {
-        refetchUsers()
-          .then(() => setIsSearchLoading(false))
-          .catch(() => setIsSearchLoading(false));
-      }, 300); // Debounce
-      return () => clearTimeout(timer);
-    }
-    setIsSearchLoading(false);
-  }, [searchQuery, refetchUsers]);
 
   // Update selected user data when userId changes
   useEffect(() => {
@@ -121,7 +110,7 @@ export function AddUserDialog({
                 </div>
 
                 <div className="border rounded-md max-h-80 overflow-y-auto">
-                  {isSearchLoading ? (
+                  {isApiLoading ? (
                     <div className="p-4 text-center">
                       <Loader2 className="h-4 w-4 animate-spin mx-auto mb-2" />
                       <p className="text-sm text-muted-foreground">
