@@ -150,7 +150,15 @@ export default function PodiumsPage() {
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Gestion des podiums</h1>
-        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <Dialog
+          open={editDialogOpen}
+          onOpenChange={(open) => {
+            setEditDialogOpen(open);
+            if (!open) {
+              setSelectedSportForEdit("");
+            }
+          }}
+        >
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />

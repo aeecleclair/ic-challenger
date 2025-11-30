@@ -40,7 +40,11 @@ export function RankingRow({
   showRemove,
 }: RankingRowProps) {
   const schoolId = form.watch(`rankings.${index}.school_id`);
-  const { teams } = useSchoolSportTeams({ sportId, schoolId });
+  const isPompoms = sportId === "pompoms";
+  const { teams } = useSchoolSportTeams({
+    sportId: isPompoms ? "" : sportId,
+    schoolId: isPompoms ? "" : schoolId,
+  });
   const { sportSchools } = useSportSchools();
 
   return (
@@ -59,7 +63,11 @@ export function RankingRow({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div
+        className={
+          isPompoms ? "grid grid-cols-1 gap-4" : "grid grid-cols-2 gap-4"
+        }
+      >
         <FormField
           control={form.control}
           name={`rankings.${index}.school_id`}
@@ -69,8 +77,13 @@ export function RankingRow({
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
-                  // Reset team_id when school changes
-                  form.setValue(`rankings.${index}.team_id`, "");
+                  if (isPompoms) {
+                    // For pompoms, set team_id to school_id
+                    form.setValue(`rankings.${index}.team_id`, value);
+                  } else {
+                    // Reset team_id when school changes for regular sports
+                    form.setValue(`rankings.${index}.team_id`, "");
+                  }
                 }}
                 value={field.value}
               >
