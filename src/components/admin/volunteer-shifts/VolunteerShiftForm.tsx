@@ -80,6 +80,7 @@ export default function VolunteerShiftForm({
   const [managerQuery, setManagerQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("*"); // Initialize with "*" to load users immediately
   const [isManagerPopoverOpen, setIsManagerPopoverOpen] = useState(false);
+  const [selectedManager, setSelectedManager] = useState<any>(null);
   const { userSearch, isLoading: isSearchLoading } = useUserSearch({
     query: debouncedQuery,
   });
@@ -104,6 +105,13 @@ export default function VolunteerShiftForm({
   const shift = isEditing
     ? volunteerShifts?.find((s: VolunteerShiftComplete) => s.id === shiftId)
     : null;
+
+  // Initialize selected manager for editing
+  useEffect(() => {
+    if (isEditing && shift?.manager && !selectedManager) {
+      setSelectedManager(shift.manager);
+    }
+  }, [isEditing, shift, selectedManager]);
 
   const form = useForm<VolunteerShiftFormSchema>({
     resolver: zodResolver(volunteerShiftFormSchema),
@@ -193,10 +201,8 @@ export default function VolunteerShiftForm({
                             {field.value ? (
                               <>
                                 <User className="mr-2 h-4 w-4" />
-                                {userSearch?.find(
-                                  (user) => user.id === field.value,
-                                )
-                                  ? `${userSearch.find((user) => user.id === field.value)?.firstname} ${userSearch.find((user) => user.id === field.value)?.name}`
+                                {selectedManager
+                                  ? `${selectedManager.firstname} ${selectedManager.name}${selectedManager.nickname ? ` (${selectedManager.nickname})` : ""}`
                                   : shift?.manager
                                     ? `${shift.manager.firstname} ${shift.manager.name}`
                                     : "Responsable sélectionné"}
@@ -235,6 +241,7 @@ export default function VolunteerShiftForm({
                                     value={user.id}
                                     onSelect={() => {
                                       field.onChange(user.id);
+                                      setSelectedManager(user);
                                       setIsManagerPopoverOpen(false);
                                       setManagerQuery("");
                                       setDebouncedQuery("*"); // Reset for next time
