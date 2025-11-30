@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { useGetUsersSearch } from "@/src/api/hyperionComponents";
 import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
@@ -10,12 +9,6 @@ interface UseUserSearchProps {
 export const useUserSearch = ({ query }: UseUserSearchProps) => {
   const { token, isTokenExpired } = useAuth();
   const { isAdmin } = useUser();
-  const [searchKey, setSearchKey] = useState(0);
-
-  // Force refetch when query changes
-  useEffect(() => {
-    setSearchKey((prev) => prev + 1);
-  }, [query]);
 
   const {
     data: userSearch,
@@ -34,7 +27,6 @@ export const useUserSearch = ({ query }: UseUserSearchProps) => {
     {
       enabled: isAdmin() && !isTokenExpired() && query.trim().length >= 0,
       retry: 0,
-      queryHash: `getUserSearch-${query}-${searchKey}`,
       refetchOnWindowFocus: false,
     },
   );

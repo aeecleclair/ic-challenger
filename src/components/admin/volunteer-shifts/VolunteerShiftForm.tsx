@@ -228,10 +228,15 @@ export default function VolunteerShiftForm({
                               <CommandEmpty>Recherche en cours...</CommandEmpty>
                             ) : !userSearch || userSearch.length === 0 ? (
                               <CommandEmpty>
-                                Aucun utilisateur trouvé.
+                                Aucun utilisateur trouvé. (Query:{" "}
+                                {debouncedQuery})
                               </CommandEmpty>
                             ) : (
                               <CommandGroup>
+                                <div className="p-2 text-xs text-muted-foreground">
+                                  {userSearch.length} utilisateur(s) trouvé(s)
+                                  pour: &ldquo;{debouncedQuery}&rdquo;
+                                </div>
                                 {userSearch.map((user) => (
                                   <CommandItem
                                     key={user.id}
