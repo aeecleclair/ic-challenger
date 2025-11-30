@@ -86,11 +86,8 @@ export default function VolunteerShiftForm({
 
   // Debounce the search query
   useEffect(() => {
-    if (managerQuery === "") {
-      return; // Don't debounce empty queries, keep "*" for initial load
-    }
     const timer = setTimeout(() => {
-      setDebouncedQuery(managerQuery);
+      setDebouncedQuery(managerQuery || "*");
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timer);
@@ -228,15 +225,10 @@ export default function VolunteerShiftForm({
                               <CommandEmpty>Recherche en cours...</CommandEmpty>
                             ) : !userSearch || userSearch.length === 0 ? (
                               <CommandEmpty>
-                                Aucun utilisateur trouvé. (Query:{" "}
-                                {debouncedQuery})
+                                Aucun utilisateur trouvé.
                               </CommandEmpty>
                             ) : (
                               <CommandGroup>
-                                <div className="p-2 text-xs text-muted-foreground">
-                                  {userSearch.length} utilisateur(s) trouvé(s)
-                                  pour: &ldquo;{debouncedQuery}&rdquo;
-                                </div>
                                 {userSearch.map((user) => (
                                   <CommandItem
                                     key={user.id}
@@ -260,6 +252,11 @@ export default function VolunteerShiftForm({
                                       <div>
                                         <div className="font-medium">
                                           {user.firstname} {user.name}
+                                          {user.nickname && (
+                                            <span className="text-muted-foreground ml-1">
+                                              ({user.nickname})
+                                            </span>
+                                          )}
                                         </div>
                                       </div>
                                     </div>
