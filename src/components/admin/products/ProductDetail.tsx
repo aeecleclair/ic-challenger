@@ -243,95 +243,7 @@ const ProductDetail = ({
       </div>
 
       {/* Product Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Nom du produit
-                </p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {product.name}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Variants
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {activeVariants}/{totalVariants}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <Euro className="h-5 w-5 text-purple-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Prix minimum
-                </p>
-                <p className="text-2xl font-bold text-purple-600">
-                  {product.variants && product.variants.length > 0
-                    ? `${(Math.min(...product.variants.map((v) => v.price)) / 100).toFixed(2)}€`
-                    : "N/A"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total réservés
-                </p>
-                <p className="text-2xl font-bold text-blue-600">
-                  {product.variants?.reduce(
-                    (sum, v) => sum + (v.booked || 0),
-                    0,
-                  ) || 0}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total payés
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {product.variants?.reduce(
-                    (sum, v) => sum + (v.paid || 0),
-                    0,
-                  ) || 0}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
@@ -386,19 +298,47 @@ const ProductDetail = ({
             </div>
 
             <div>
-              <h3 className="font-semibold mb-3">Identifiants</h3>
+              <h3 className="font-semibold mb-3">Statistiques</h3>
               <div className="space-y-3">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    ID Produit
+                    Variants
                   </p>
-                  <p className="text-sm font-mono">{product.id}</p>
+                  <p className="text-sm">
+                    {activeVariants}/{totalVariants}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    ID Édition
+                    Prix minimum
                   </p>
-                  <p className="text-sm font-mono">{product.edition_id}</p>
+                  <p className="text-sm">
+                    {product.variants && product.variants.length > 0
+                      ? `${(Math.min(...product.variants.map((v) => v.price)) / 100).toFixed(2)}€`
+                      : "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Total réservés
+                  </p>
+                  <p className="text-sm">
+                    {product.variants?.reduce(
+                      (sum, v) => sum + (v.booked || 0),
+                      0,
+                    ) || 0}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Total payés
+                  </p>
+                  <p className="text-sm">
+                    {product.variants?.reduce(
+                      (sum, v) => sum + (v.paid || 0),
+                      0,
+                    ) || 0}
+                  </p>
                 </div>
               </div>
             </div>
