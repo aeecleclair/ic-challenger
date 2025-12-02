@@ -19,8 +19,17 @@ import {
   Plus,
   ShoppingCart,
   Info,
+  Target,
 } from "lucide-react";
 import { AppModulesSportCompetitionSchemasSportCompetitionProductComplete } from "@/src/api/hyperionSchemas";
+import { ProductsQuotaDialog } from "./ProductsQuotaDialog";
+import { ProductQuotaDataTable } from "./ProductQuotaDataTable";
+import { DeleteConfirmationDialog } from "../sports/DeleteConfirmationDialog";
+import { useProductsQuota } from "@/src/hooks/useProductsQuota";
+import { useSchools } from "@/src/hooks/useSchools";
+import { ProductQuotaFormValues } from "@/src/forms/productQuota";
+import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { useState } from "react";
 
 interface ProductDetailProps {
   product: AppModulesSportCompetitionSchemasSportCompetitionProductComplete;
@@ -39,6 +48,28 @@ const ProductDetail = ({
   onEditVariant,
   onDeleteVariant,
 }: ProductDetailProps) => {
+  const {
+    productsQuota,
+    isCreateLoading,
+    createQuota,
+    createQuotaForAllSchools,
+    isUpdateLoading,
+    updateQuota,
+    isDeleteLoading,
+    deleteQuota,
+  } = useProductsQuota({
+    productId: product.id,
+  });
+
+  const { schools } = useSchools();
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
+  const [selectedSchoolForDelete, setSelectedSchoolForDelete] = useState<
+    string | null
+  >(null);
+
   const hasVariants = product.variants && product.variants.length > 0;
   const activeVariants =
     product.variants?.filter((variant) => variant.enabled !== false).length ||
@@ -89,6 +120,72 @@ const ProductDetail = ({
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
+  };
+
+  const handleEditQuota = (schoolId: string) => {
+    const currentQuota = productsQuota?.find((q) => q.school_id === schoolId);
+    if (currentQuota) {
+      setSelectedSchool(schoolId);
+      setIsAddDialogOpen(true);
+    }
+  };
+
+  const existingQuota = productsQuota?.find(
+    (q) => q.school_id === selectedSchool,
+  );
+
+  const handleQuotaSubmit = (values: ProductQuotaFormValues) => {
+    if (!selectedSchool) return;
+
+    if (existingQuota) {
+      updateQuota(selectedSchool, values.quota || 0, () => {
+        setIsAddDialogOpen(false);
+        setSelectedSchool(null);
+      });
+    } else {
+      createQuota(selectedSchool, values.quota || 0, () => {
+        setIsAddDialogOpen(false);
+        setSelectedSchool(null);
+      });
+    }
+  };
+
+  const handleQuotaSubmitAll = (values: ProductQuotaFormValues) => {
+    if (!schools) return;
+
+    // Only target schools that don't already have quotas
+    const schoolIdsWithoutQuotas = schools
+      .filter(
+        (school) =>
+          !productsQuota?.some((quota) => quota.school_id === school.id),
+      )
+      .map((school) => school.id);
+
+    if (schoolIdsWithoutQuotas.length === 0) {
+      // All schools already have quotas
+      return;
+    }
+
+    createQuotaForAllSchools(schoolIdsWithoutQuotas, values.quota || 0, () => {
+      setIsAddDialogOpen(false);
+      setSelectedSchool(null);
+    });
+  };
+
+  const handleDeleteQuota = () => {
+    if (selectedSchoolForDelete) {
+      deleteQuota(selectedSchoolForDelete, () => {
+        setSelectedSchoolForDelete(null);
+        setIsDeleteDialogOpen(false);
+      });
+    }
+  };
+
+  const getSchoolName = (schoolId: string) => {
+    return (
+      formatSchoolName(schools?.find((s) => s.id === schoolId)?.name) ||
+      schoolId
+    );
   };
 
   return (
@@ -146,7 +243,7 @@ const ProductDetail = ({
       </div>
 
       {/* Product Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-2">
@@ -234,6 +331,22 @@ const ProductDetail = ({
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Quotas définis
+                </p>
+                <p className="text-2xl font-bold">
+                  {productsQuota?.length || 0}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Product Information */}
@@ -290,6 +403,85 @@ const ProductDetail = ({
               </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Quotas Management Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Quotas pour le produit {product.name}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                Gérez les quotas de ce produit pour chaque école
+              </p>
+            </div>
+            <ProductsQuotaDialog
+              isOpen={isAddDialogOpen}
+              onOpenChange={setIsAddDialogOpen}
+              onSubmit={handleQuotaSubmit}
+              onSubmitAll={handleQuotaSubmitAll}
+              schools={schools}
+              selectedSchool={selectedSchool}
+              setSelectedSchool={setSelectedSchool}
+              existingQuota={existingQuota}
+              existingQuotas={productsQuota}
+              title={
+                selectedSchool &&
+                productsQuota?.find((q) => q.school_id === selectedSchool)
+                  ? "Modifier le quota de l'école"
+                  : "Ajouter un quota pour une école"
+              }
+              description={`Définissez le quota pour cette école pour le produit ${product.name}.`}
+              submitLabel={
+                selectedSchool &&
+                productsQuota?.find((q) => q.school_id === selectedSchool)
+                  ? "Modifier"
+                  : "Ajouter"
+              }
+              isLoading={isCreateLoading || isUpdateLoading}
+            />
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          {productsQuota && productsQuota.length > 0 ? (
+            <ProductQuotaDataTable
+              data={productsQuota.map((quota) => ({
+                school_id: quota.school_id,
+                schoolName: getSchoolName(quota.school_id),
+                quota: quota.quota || 0,
+                product_id: quota.product_id,
+              }))}
+              productName={product.name || ""}
+              onEditQuota={handleEditQuota}
+              onDeleteQuota={(schoolId) => {
+                setSelectedSchoolForDelete(schoolId);
+                setIsDeleteDialogOpen(true);
+              }}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-muted rounded-lg">
+              <Target className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                Aucun quota configuré pour {product.name}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                Commencez par ajouter des quotas pour les écoles qui peuvent
+                acheter ce produit
+              </p>
+              <Button
+                onClick={() => setIsAddDialogOpen(true)}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Ajouter le premier quota
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -434,6 +626,19 @@ const ProductDetail = ({
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Supprimer le quota de l'école"
+        description={`Êtes-vous sûr de vouloir supprimer le quota pour ${
+          selectedSchoolForDelete ? getSchoolName(selectedSchoolForDelete) : ""
+        } pour le produit ${product.name} ? Cette action est irréversible et supprimera toutes les restrictions d'achat pour cette école.`}
+        onConfirm={handleDeleteQuota}
+        onCancel={() => setSelectedSchoolForDelete(null)}
+        isLoading={isDeleteLoading}
+      />
     </div>
   );
 };

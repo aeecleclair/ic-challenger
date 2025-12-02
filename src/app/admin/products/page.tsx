@@ -78,7 +78,12 @@ const ProductsPage = () => {
             Gérez vos produits et leurs variantes
           </p>
         </div>
-        <ProductList products={products} />
+        <ProductList
+          products={products}
+          onProductClick={(productId) => {
+            router.push(`/admin/products?product_id=${productId}`);
+          }}
+        />
       </div>
     </div>
   );

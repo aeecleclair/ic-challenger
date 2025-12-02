@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Users,
   ShoppingCart,
+  Eye,
 } from "lucide-react";
 import { ProductVariantStatsGrid } from "./ProductVariantStatsGrid";
 import { AddProductDialog } from "./AddProductDialog";
@@ -30,9 +31,10 @@ import {
 
 interface ProductListProps {
   products: AppModulesSportCompetitionSchemasSportCompetitionProductComplete[];
+  onProductClick?: (productId: string) => void;
 }
 
-export const ProductList = ({ products }: ProductListProps) => {
+export const ProductList = ({ products, onProductClick }: ProductListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedProducts, setExpandedProducts] = useState<Set<string>>(
     new Set(),
@@ -134,7 +136,6 @@ export const ProductList = ({ products }: ProductListProps) => {
                             )}
                           </div>
                         </div>
-
                         <div className="flex items-center space-x-4">
                           {/* Product stats */}
                           <div className="flex items-center space-x-4 text-sm text-muted-foreground">
@@ -166,7 +167,10 @@ export const ProductList = ({ products }: ProductListProps) => {
 
                           {/* Actions */}
                           <div className="flex items-center space-x-2">
-                            <ProductOptionsMenu product={product} />
+                            <ProductOptionsMenu
+                              product={product}
+                              onViewDetails={() => onProductClick?.(product.id)}
+                            />
                             <ChevronRight
                               className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-90" : ""}`}
                             />

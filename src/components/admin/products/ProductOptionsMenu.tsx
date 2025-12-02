@@ -17,15 +17,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/src/components/ui/dialog";
-import { MoreVertical, Edit, Trash2 } from "lucide-react";
+import { MoreVertical, Edit, Trash2, Eye } from "lucide-react";
 import { LoadingButton } from "@/src/components/custom/LoadingButton";
 import { EditProductDialog } from "./EditProductDialog";
 
 interface ProductOptionsMenuProps {
   product: AppModulesSportCompetitionSchemasSportCompetitionProductComplete;
+  onViewDetails?: () => void;
 }
 
-export const ProductOptionsMenu = ({ product }: ProductOptionsMenuProps) => {
+export const ProductOptionsMenu = ({
+  product,
+  onViewDetails,
+}: ProductOptionsMenuProps) => {
   const { deleteProduct, isDeleteLoading } = useProducts();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -45,6 +49,11 @@ export const ProductOptionsMenu = ({ product }: ProductOptionsMenuProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem onClick={onViewDetails}>
+            <Eye className="h-4 w-4 mr-2" />
+            Voir détails
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
             <Edit className="h-4 w-4 mr-2" />
             Modifier
