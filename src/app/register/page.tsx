@@ -43,7 +43,7 @@ import { useEdition } from "@/src/hooks/useEdition";
 const Register = () => {
   const { edition } = useEdition();
   const { sportSchools } = useSportSchools();
-  const { availableProducts } = useAvailableProducts();
+  const { availableProducts, refetchAvailableProducts } = useAvailableProducts();
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
   const { meCompetition, createCompetitionUser, updateCompetitionUser } =
@@ -133,20 +133,20 @@ const Register = () => {
     setState({
       ...state,
       onValidateCardActions: {
-        Informations: (values, callback) => {
+        Informations: async (values, callback) => {
           if (values.phone !== me!.phone) {
-            updateUser({ phone: "+" + values.phone }, callback);
+            await updateUser({ phone: "+" + values.phone }, callback);
           } else {
             callback();
           }
         },
-        Participation: (values, callback) => {
+        Participation: async (values, callback) => {
           if (meCompetition !== undefined) {
             if (!values.is_athlete && meParticipant !== undefined) {
               withdrawParticipant(meParticipant.sport_id, () => {});
               return;
             }
-            updateCompetitionUser(
+            await updateCompetitionUser(
               {
                 sport_category: values.sex,
                 is_athlete: values.is_athlete,
@@ -167,7 +167,8 @@ const Register = () => {
             is_pompom: values.is_pompom,
             allow_pictures: values.allow_pictures,
           };
-          createCompetitionUser(body, callback);
+          await createCompetitionUser(body, callback);
+          await refetchAvailableProducts();
         },
         Sport: (values, callback) => {
           if (meParticipant !== undefined) {
