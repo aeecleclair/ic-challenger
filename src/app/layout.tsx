@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <title>InterCentrales</title>
+        <title>Challenger</title>
         <link rel="shortcut icon" href="/favicon.ico" />
       </head>
 
