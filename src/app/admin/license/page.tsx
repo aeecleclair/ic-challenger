@@ -100,7 +100,7 @@ const Dashboard = () => {
 
       {sportSchools && sportSchools.length > 0 ? (
         <Tabs defaultValue={sportSchools[0].school_id} className="w-full">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-6">
+          <TabsList className="flex w-full overflow-x-auto justify-start mb-6 h-auto gap-2">
             {sportSchools.map((school) => {
               const participants = schoolParticipants?.filter(
                 (p) => p.school_id === school.school_id,
