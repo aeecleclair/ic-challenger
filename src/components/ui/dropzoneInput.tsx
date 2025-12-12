@@ -18,7 +18,6 @@ export const DropzoneInput = ({
   maxSize = 10485760,
   accept = {
     "image/*": [".jpg", ".jpeg", ".png"],
-    "application/pdf": [".pdf"],
   },
 }: DropzoneInputProps) => {
   const [isDropRejected, setIsDropRejected] = useState(false);

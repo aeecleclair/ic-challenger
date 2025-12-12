@@ -4,7 +4,7 @@ import { useDocument } from "@/src/hooks/useDocument";
 import { useDocumentsStore } from "@/src/stores/documents";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
-import { PdfViewer } from "./PdfViewer";
+// import { PdfViewer } from "./PdfViewer";
 import { useState } from "react";
 import { ScrollArea } from "../ui/scroll-area";
 
@@ -31,7 +31,7 @@ export const DocumentView = ({
       {data?.size ? (
         data.type === "application/pdf" ? (
           <ScrollArea className="h-[calc(100vh-180px)] flex mx-auto">
-            <PdfViewer file={data} width={width} />
+            {/* <PdfViewer file={data} width={width} /> */}
           </ScrollArea>
         ) : (
           <Image
