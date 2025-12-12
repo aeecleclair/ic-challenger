@@ -13,6 +13,19 @@ import { Suspense } from "react";
 import { ThemeProvider } from "../components/ui/theme";
 import Script from "next/script";
 
+if (typeof Promise.withResolvers === "undefined") {
+  if (window)
+    // @ts-expect-error This does not exist outside of polyfill which this is doing
+    window.Promise.withResolvers = function () {
+      let resolve, reject;
+      const promise = new Promise((res, rej) => {
+        resolve = res;
+        reject = rej;
+      });
+      return { promise, resolve, reject };
+    };
+}
+
 const inter = Outfit({ subsets: ["latin-ext"] });
 
 const queryClient = new QueryClient({
