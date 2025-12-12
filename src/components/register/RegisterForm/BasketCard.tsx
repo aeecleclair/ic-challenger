@@ -69,7 +69,7 @@ export const BasketCard = ({ form }: PackageCardProps) => {
 
   return (
     <TooltipProvider>
-      <div className="space-y-4">
+      <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold">Ta formule :</h2>
           {requiredProducts.length > 0 && (
