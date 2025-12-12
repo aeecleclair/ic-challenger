@@ -78,7 +78,6 @@ const Register = () => {
       is_pompom: false,
       allow_pictures: true,
       sport: {
-        team_leader: false,
       },
       products:
         userMePurchases

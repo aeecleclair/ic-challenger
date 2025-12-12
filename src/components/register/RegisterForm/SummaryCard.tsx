@@ -20,10 +20,12 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
   });
   const { sports } = useSports();
   const formValues = form.getValues();
-
+  
   const selectedSport = formValues.sport?.id
-    ? sports?.find((sport) => sport.id === formValues.sport?.id)
-    : undefined;
+  ? sports?.find((sport) => sport.id === formValues.sport?.id)
+  : undefined;
+
+  const myTeam = teams?.find((team) => team.id === formValues.sport?.team_id);
 
   return (
     <CardTemplate>
@@ -99,10 +101,8 @@ export const SummaryCard = ({ form }: SummaryCardProps) => {
                             Équipe
                           </p>
                           <p>
-                            {teams?.find(
-                              (team) => team.id === formValues.sport?.team_id,
-                            )?.name || "-"}{" "}
-                            {formValues.sport?.team_leader ? "(capitaine)" : ""}
+                            {myTeam?.name || "-"}{" "}
+                            {myTeam?.captain_id === me?.id ? "(capitaine)" : ""}
                           </p>
                         </div>
                       )}

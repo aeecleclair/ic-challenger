@@ -117,100 +117,80 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
       />
 
       {(selectedSport?.team_size ?? 0) > 1 && (
-        <>
-          <StyledFormField
-            form={form}
-            label="Capitaine d'équipe"
-            id="sport.team_leader"
-            input={(field) => (
-              <div className="flex items-center space-x-2 pt-2 ">
-                <Checkbox
-                  id="sport.team_leader"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-                <Label htmlFor="sport.team_leader">
-                  Je suis capitaine d&apos;équipe
-                </Label>
-              </div>
-            )}
-          />
-
-          <div className="flex flex-col gap-4 lg:flex-row w-2/3">
-            <div className="flex gap-2 items-end">
-              <StyledFormField
-                form={form}
-                label="Équipe"
-                id="sport.team_id"
-                input={(field) => (
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-60">
-                      <SelectValue placeholder="Sélectionnez une équipe" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teams?.map((team) => (
-                        <SelectItem key={team.id} value={team.id}>
-                          {team.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="mb-2">
-                    Créer équipe
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Créer une nouvelle équipe</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="team-name">Nom de l&apos;équipe</Label>
-                      <Input
-                        id="team-name"
-                        placeholder="Nom de l'équipe"
-                        value={teamName}
-                        onChange={(e) => setTeamName(e.target.value)}
-                      />
-                    </div>
-                    <LoadingButton
-                      onClick={() => {
-                        createTeam(teamName);
-                        setTeamName("");
-                      }}
-                      disabled={teamName.length === 0}
-                      isLoading={isCreateLoading}
-                      className="w-full"
-                    >
-                      Créer l&apos;équipe
-                    </LoadingButton>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-            {form.watch("sport.team_id") && (
-              <StyledFormField
-                form={form}
-                label="Remplaçant d'équipe"
-                id="sport.substitute"
-                input={(field) => (
-                  <div className="flex items-center space-x-2 pt-2 ">
-                    <Checkbox
-                      id="sport.substitute"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
+        <div className="flex flex-col gap-4 lg:flex-row w-2/3">
+          <div className="flex gap-2">
+            <StyledFormField
+              form={form}
+              label="Équipe"
+              id="sport.team_id"
+              input={(field) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-60">
+                    <SelectValue placeholder="Sélectionnez une équipe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {teams?.map((team) => (
+                      <SelectItem key={team.id} value={team.id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="mt-8">
+                  Créer équipe
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Créer une nouvelle équipe</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="team-name">Nom de l&apos;équipe</Label>
+                    <Input
+                      id="team-name"
+                      placeholder="Nom de l'équipe"
+                      value={teamName}
+                      onChange={(e) => setTeamName(e.target.value)}
                     />
-                    <Label htmlFor="sport.substitute">Je suis remplaçant</Label>
                   </div>
-                )}
-              />
-            )}
+                  <LoadingButton
+                    onClick={() => {
+                      createTeam(teamName);
+                      setTeamName("");
+                    }}
+                    disabled={teamName.length === 0}
+                    isLoading={isCreateLoading}
+                    className="w-full"
+                  >
+                    Créer l&apos;équipe
+                  </LoadingButton>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
-        </>
+          {form.watch("sport.team_id") && (
+            <StyledFormField
+              form={form}
+              label="Remplaçant d'équipe"
+              id="sport.substitute"
+              input={(field) => (
+                <div className="flex items-center space-x-2 pt-2 ">
+                  <Checkbox
+                    id="sport.substitute"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                  <Label htmlFor="sport.substitute">Je suis remplaçant</Label>
+                </div>
+              )}
+            />
+          )}
+        </div>
       )}
 
       <div className="flex flex-col gap-4 lg:flex-row w-2/3">
