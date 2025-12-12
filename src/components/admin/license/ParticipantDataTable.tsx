@@ -22,7 +22,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, CheckCircle, Eye, MoreHorizontal, Users } from "lucide-react";
+import {
+  ArrowUpDown,
+  CheckCircle,
+  Eye,
+  MoreHorizontal,
+  Users,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,7 +44,13 @@ import {
 } from "@/src/components/ui/tooltip";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
 import { DocumentView } from "../../custom/DocumentView";
 
 export interface ParticipantData {
@@ -152,11 +164,11 @@ export function ParticipantDataTable({
       cell: ({ row }) => {
         const license = row.getValue("license") as string | undefined;
         const participant = row.original;
-        
+
         if (license) {
           return <div className="text-center">{license}</div>;
         }
-        
+
         return (
           <div className="flex justify-center">
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -168,15 +180,12 @@ export function ParticipantDataTable({
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh]">
                 <DialogHeader>
-                  <DialogTitle>Certificat médical - {
-                    participant.fullName
-                    }</DialogTitle>
+                  <DialogTitle>
+                    Certificat médical - {participant.fullName}
+                  </DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
-                  <DocumentView
-                    documentKey="certificate"
-                    width={800}
-                  />
+                  <DocumentView documentKey="certificate" width={800} />
                 </div>
               </DialogContent>
             </Dialog>
