@@ -185,7 +185,7 @@ export function ParticipantDataTable({
                   </DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
-                  <DocumentView documentKey="certificate" width={800} />
+                  <DocumentView documentKey="certificate" />
                 </div>
               </DialogContent>
             </Dialog>

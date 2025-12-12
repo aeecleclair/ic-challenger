@@ -4,19 +4,14 @@ import { useDocument } from "@/src/hooks/useDocument";
 import { useDocumentsStore } from "@/src/stores/documents";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
-// import { PdfViewer } from "./PdfViewer";
+import { Button } from "../ui/button";
 import { useState } from "react";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface DocumentViewProps {
   documentKey: string;
-  width?: number;
 }
 
-export const DocumentView = ({
-  documentKey,
-  width,
-}: DocumentViewProps) => {
+export const DocumentView = ({ documentKey }: DocumentViewProps) => {
   const { data } = useDocument();
   const { setDocument } = useDocumentsStore();
   const [isLoading, setIsLoading] = useState(data?.size === undefined);
@@ -30,9 +25,22 @@ export const DocumentView = ({
     <>
       {data?.size ? (
         data.type === "application/pdf" ? (
-          <ScrollArea className="h-[calc(100vh-180px)] flex mx-auto">
-            {/* <PdfViewer file={data} width={width} /> */}
-          </ScrollArea>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => {
+              const url = URL.createObjectURL(data);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = data.name || "document.pdf";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+          >
+            Télécharger le PDF
+          </Button>
         ) : (
           <Image
             src={URL.createObjectURL(data)}

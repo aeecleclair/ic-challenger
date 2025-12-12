@@ -7,11 +7,7 @@ import {
 import { Button } from "../ui/button";
 import { DropzoneInput } from "../ui/dropzoneInput";
 import Image from "next/image";
-// import { useDocumentsStore } from "@/src/stores/documents";
 import { useState } from "react";
-import { Skeleton } from "../ui/skeleton";
-// import { PdfViewer } from "./PdfViewer";
-import { ScrollArea } from "../ui/scroll-area";
 import { useDocument } from "@/src/hooks/useDocument";
 import { RegisteringFormValues } from "@/src/forms/registering";
 
@@ -31,7 +27,6 @@ export const DocumentDialog = ({
   form,
 }: DocumentDialogProps) => {
   const { uploadDocument, data } = useDocument();
-  // const { setDocument } = useDocumentStore();
   const [image, setImage] = useState<File | undefined>(data);
 
   return (
@@ -39,9 +34,22 @@ export const DocumentDialog = ({
       {image?.size !== undefined ? (
         <div className="flex flex-col items-center gap-4">
           {image?.type === "application/pdf" ? (
-            <ScrollArea className="h-[400px]">
-              {/* <PdfViewer file={image} width={550} /> */}
-            </ScrollArea>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                const url = URL.createObjectURL(image);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = image.name || "document.pdf";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }}
+            >
+              Télécharger le PDF
+            </Button>
           ) : (
             <Image
               src={URL.createObjectURL(image)}
