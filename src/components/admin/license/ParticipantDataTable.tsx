@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/src/components/ui/table";
-import { ArrowUpDown, CheckCircle, MoreHorizontal, Users } from "lucide-react";
+import { ArrowUpDown, CheckCircle, Eye, MoreHorizontal, Users } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +38,8 @@ import {
 } from "@/src/components/ui/tooltip";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../../ui/dialog";
+import { DocumentView } from "../../custom/DocumentView";
 
 export interface ParticipantData {
   userId: string;
@@ -60,6 +62,7 @@ export function ParticipantDataTable({
   onValidateParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
+  const [isOpen, setIsOpen] = React.useState(false);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -146,11 +149,40 @@ export function ParticipantDataTable({
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => (
-        <div className="text-center">
-          {row.getValue("license") || "Non renseignée"}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const license = row.getValue("license") as string | undefined;
+        const participant = row.original;
+        
+        if (license) {
+          return <div className="text-center">{license}</div>;
+        }
+        
+        return (
+          <div className="flex justify-center">
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Eye className="h-4 w-4" />
+                  Voir le document
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh]">
+                <DialogHeader>
+                  <DialogTitle>Certificat médical - {
+                    participant.fullName
+                    }</DialogTitle>
+                </DialogHeader>
+                <div className="mt-4">
+                  <DocumentView
+                    documentKey="certificate"
+                    width={800}
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        );
+      },
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
         const value = row.getValue<string>(id);
