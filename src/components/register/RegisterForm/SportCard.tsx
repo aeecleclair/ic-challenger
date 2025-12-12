@@ -84,7 +84,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
   return (
     <CardTemplate>
       <h2 className="text-xl font-semibold">
-        Ta participation aux InterCentrales :
+        Ta participation aux Challenge :
       </h2>
       <StyledFormField
         form={form}
