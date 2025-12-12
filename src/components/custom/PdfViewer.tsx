@@ -1,25 +1,21 @@
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
-import { Document, Page, pdfjs } from "react-pdf";
+import { Document, Page } from "react-pdf";
 import { DocumentCallback } from "react-pdf/dist/esm/shared/types.js";
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import 'react-pdf/dist/esm/Page/TextLayer.css'
+import type * as reactPdfType from "react-pdf";
+// Workaround for https://github.com/wojtekmaj/react-pdf/issues/1811
+let reactPdf: typeof reactPdfType | undefined;
+if (typeof window !== "undefined") {
+  reactPdf = require("react-pdf");
+}
 
-// pdfjs-dist : From Local _OR_ pdfjs-dist : From CDN pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs`
-/* pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  //"npm:pdfjs-dist/build/pdf.worker.min.mjs",
- //"pdfjs-dist/legacy/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();  */
-
-//pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs`
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
-
-/* const options = {
-  cMapUrl: '/cmaps/',
-  standardFontDataUrl: '/standard_fonts/',
-}  */
+// URL for the worker file (if you're using the CDN)
+// We need to use the CDN link to try and work around
+// this issue: https://github.com/vercel/next.js/discussions/61549
+if (reactPdf?.pdfjs && typeof window !== "undefined") {
+  const workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${reactPdf.pdfjs.version}/pdf.worker.min.mjs`;
+  reactPdf.pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+}
 
 interface PdfViewerProps {
   file: File;
