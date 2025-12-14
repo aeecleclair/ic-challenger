@@ -120,7 +120,11 @@ export const useCompetitionUsers = () => {
       },
       {
         onSettled: (data, error) => {
-          if ((error as any).stack.body || (error as any).stack.detail) {
+          if (
+            (error as any).status >= 300 ||
+            (error as any).stack.body ||
+            (error as any).stack.detail
+          ) {
             console.log(error);
             toast({
               title: "Erreur lors de la suppression",
