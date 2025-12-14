@@ -121,7 +121,9 @@ export const useCompetitionUsers = () => {
       {
         onSettled: (data, error) => {
           if (
-            (error as any).status >= 300 ||
+            // Exact match for network error message 500
+            (error as any).message ===
+              "Network error (NetworkError when attempting to fetch resource.)" || 
             (error as any).stack.body ||
             (error as any).stack.detail
           ) {
@@ -129,6 +131,7 @@ export const useCompetitionUsers = () => {
             toast({
               title: "Erreur lors de la suppression",
               description:
+                (error as any).message ||
                 (error as unknown as ErrorType).stack.body ||
                 (error as unknown as DetailedErrorType).stack.detail,
               variant: "destructive",
