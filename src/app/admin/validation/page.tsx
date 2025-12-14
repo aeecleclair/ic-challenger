@@ -23,6 +23,7 @@ import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { CompetitionUser } from "@/src/api/hyperionSchemas";
 import { ValidationTab } from "@/src/components/admin/validation/ValidationTab";
 import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
+import { useParticipant } from "@/src/hooks/useParticipant";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -70,6 +71,8 @@ const Dashboard = () => {
     isDeleteLoading,
   } = useCompetitionUsers();
 
+  const { deleteParticipant } = useParticipant();
+
   const { sportsQuota, refetchSportsQuota } = useSportsQuota({
     sportId: undefined,
   });
@@ -82,8 +85,12 @@ const Dashboard = () => {
     invalidateCompetitionUser(userId, () => {});
   };
 
-  const onDelete = (userId: string) => {
-    deleteCompetitionUser(userId, () => {});
+  const onDelete = (userId: string, sportId: string, isAthlete: boolean) => {
+    if (isAthlete)
+      deleteParticipant(sportId, userId, () => {
+        deleteCompetitionUser(userId, () => {});
+      });
+    else deleteCompetitionUser(userId, () => {});
   };
 
   const participantTableData: ParticipantData[] = useMemo(() => {

@@ -1,4 +1,6 @@
 import {
+  useDeleteCompetitionParticipantsSportsSportIdCertificate,
+  useDeleteCompetitionParticipantsUserIdSportsSportId,
   useDeleteCompetitionSportsSportIdWithdraw,
   useGetCompetitionParticipantsMe,
   usePostCompetitionSportsSportIdParticipate,
@@ -107,6 +109,47 @@ export const useParticipant = () => {
     );
   };
 
+  const { mutate: mutateDeleteParticipant, isPending: isDeletionLoading } =
+    useDeleteCompetitionParticipantsUserIdSportsSportId();
+
+  const deleteParticipant = async (
+    sportId: string,
+    userId: string,
+    callback: () => void,
+  ) => {
+    return mutateDeleteParticipant(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          sportId: sportId,
+          userId: userId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack.body || (error as any).stack.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la désinscription",
+              description:
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            callback();
+            toast({
+              title: "Désinscription enregistrée",
+              description: "La désinscription a été effectuée avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   return {
     meParticipant,
     refetchMeParticipant,
@@ -115,5 +158,7 @@ export const useParticipant = () => {
     isCreateLoading,
     withdrawParticipant,
     isWithdrawalLoading,
+    deleteParticipant,
+    isDeletionLoading,
   };
 };

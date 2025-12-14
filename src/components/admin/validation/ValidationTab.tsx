@@ -32,7 +32,7 @@ export interface ValidationTabProps {
   isDeleteLoading: boolean;
   onValidate: (userId: string) => void;
   onInvalidate: (userId: string) => void;
-  onDelete: (userId: string) => void;
+  onDelete: (userId: string, sportId: string, isAthlete: boolean) => void;
 }
 
 export function ValidationTab({

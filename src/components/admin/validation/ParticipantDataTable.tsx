@@ -71,7 +71,11 @@ interface ParticipantDataTableProps {
   schoolName: string;
   onValidateParticipant: (userId: string) => void;
   onInvalidateParticipant: (userId: string) => void;
-  onDeleteParticipant: (userId: string) => void;
+  onDeleteParticipant: (
+    userId: string,
+    sportId: string,
+    isAthlete: boolean,
+  ) => void;
   isLoading: boolean;
 }
 
@@ -534,7 +538,11 @@ export function ParticipantDataTable({
                         variant: "destructive",
                       });
                     } else {
-                      onDeleteParticipant(participant.userId);
+                      onDeleteParticipant(
+                        participant.userId,
+                        participant.sportId || "",
+                        participant.participantType.includes("Athlète"),
+                      );
                     }
                   }}
                   disabled={isLoading}
