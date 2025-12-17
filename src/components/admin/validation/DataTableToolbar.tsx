@@ -26,12 +26,17 @@ interface DataTableToolbarProps<TData> {
     label: string;
     value: string;
   }[];
+  products: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export function DataTableToolbar<TData>({
   table,
   typeOptions,
   sports,
+  products,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -62,6 +67,14 @@ export function DataTableToolbar<TData>({
             column={table.getColumn("participantType")}
             title="Type"
             options={typeOptions}
+          />
+        )}
+
+        {table.getColumn("productNames") && products.length > 0 && (
+          <DataTableFacetedFilter
+            column={table.getColumn("productNames")}
+            title="Produits obligatoires"
+            options={products}
           />
         )}
 

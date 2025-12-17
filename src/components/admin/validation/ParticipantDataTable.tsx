@@ -47,6 +47,8 @@ import {
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 import { toast } from "../../ui/use-toast";
+import { UserProductsCell } from "./UserProductsCell";
+import { useProducts } from "@/src/hooks/useProducts";
 
 export interface ParticipantData {
   userId: string;
@@ -64,6 +66,7 @@ export interface ParticipantData {
   hasPaid?: boolean;
   partialPaid?: boolean;
   allowPictures: boolean;
+  requiredProductNames?: string[]; // Array of required product names for filtering
 }
 
 interface ParticipantDataTableProps {
@@ -95,7 +98,10 @@ export function ParticipantDataTable({
       isCaptain: false,
       isSubstitute: false,
       searchField: false,
+      productNames: false,
     });
+
+  const { products } = useProducts();
 
   const sports = React.useMemo(() => {
     const sportSet = new Set<string>();
@@ -139,6 +145,23 @@ export function ParticipantDataTable({
         const fullName = row.getValue<string>("fullName").toLowerCase();
         const email = row.getValue<string>("email").toLowerCase();
         return fullName.includes(searchTerm) || email.includes(searchTerm);
+      },
+    },
+    {
+      id: "productNames",
+      header: "Produits",
+      enableHiding: true,
+      cell: () => null,
+      accessorFn: (row) => {
+        // Return the product names array as a joined string for filtering
+        return row.requiredProductNames?.join(", ") || "";
+      },
+      filterFn: (row, id, filterValue) => {
+        if (!filterValue || filterValue.length === 0) return true;
+        const productNames = row.original.requiredProductNames || [];
+        return filterValue.some((product: string) =>
+          productNames.includes(product),
+        );
       },
     },
     {
@@ -478,6 +501,21 @@ export function ParticipantDataTable({
       },
     },
     {
+      id: "requiredProducts",
+      header: () => <div className="text-center">Produits obligatoires</div>,
+      cell: ({ row }) => {
+        const participant = row.original;
+        return (
+          <div className="flex justify-center">
+            <UserProductsCell
+              userId={participant.userId}
+              fullName={participant.fullName}
+            />
+          </div>
+        );
+      },
+    },
+    {
       id: "actions",
       header: () => <div className="text-center">Actions</div>,
       cell: ({ row }) => {
@@ -596,12 +634,23 @@ export function ParticipantDataTable({
     }));
   }, [data]);
 
+  const requiredProductOptions = React.useMemo(() => {
+    if (!products) return [];
+    return products
+      .filter((product) => product.required)
+      .map((product) => ({
+        label: product.name,
+        value: product.name,
+      }));
+  }, [products]);
+
   return (
     <div>
       <DataTableToolbar
         table={table}
         typeOptions={participantTypes}
         sports={sports}
+        products={requiredProductOptions}
       />
       <div className="rounded-md border">
         <Table>
