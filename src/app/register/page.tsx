@@ -24,7 +24,6 @@ import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
   AppModulesSportCompetitionSchemasSportCompetitionPurchaseBase,
   CompetitionUserBase,
-  CompetitionUserEdit,
   ParticipantInfo,
 } from "@/src/api/hyperionSchemas";
 import { useParticipant } from "@/src/hooks/useParticipant";
@@ -39,11 +38,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useEdition } from "@/src/hooks/useEdition";
+import { useDocument } from "@/src/hooks/useDocument";
 
 const Register = () => {
   const { edition } = useEdition();
   const { sportSchools } = useSportSchools();
-  const { availableProducts, refetchAvailableProducts } = useAvailableProducts();
+  const { availableProducts, refetchAvailableProducts } =
+    useAvailableProducts();
   const { isTokenQueried, token } = useAuth();
   const { me, updateUser } = useUser();
   const { meCompetition, createCompetitionUser, updateCompetitionUser } =
@@ -53,6 +54,7 @@ const Register = () => {
   const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
+  const { document, uploadDocument } = useDocument();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -77,8 +79,7 @@ const Register = () => {
       is_fanfare: false,
       is_pompom: false,
       allow_pictures: true,
-      sport: {
-      },
+      sport: {},
       products:
         userMePurchases
           ?.map((purchase) => {
@@ -169,10 +170,10 @@ const Register = () => {
           await createCompetitionUser(body, callback);
           await refetchAvailableProducts();
         },
-        Sport: (values, callback) => {
+        Sport: async (values, callback) => {
           if (meParticipant !== undefined) {
-            withdrawParticipant(meParticipant.sport_id, () =>
-              createParticipant(
+            await withdrawParticipant(meParticipant.sport_id, async () => {
+              await createParticipant(
                 {
                   license: values.sport!.license_number!,
                   team_id: values.sport!.team_id!,
@@ -180,8 +181,11 @@ const Register = () => {
                 },
                 values.sport!.id,
                 callback,
-              ),
-            );
+              );
+              if (values.sport?.certificate && document) {
+                uploadDocument(document, values.sport!.id, callback);
+              }
+            });
             return;
           }
           const body: ParticipantInfo = {
@@ -189,7 +193,11 @@ const Register = () => {
             team_id: values.sport!.team_id!,
             substitute: values.sport!.substitute,
           };
-          createParticipant(body, values.sport!.id, callback);
+          await createParticipant(body, values.sport!.id, async () => {
+            if (values.sport?.certificate && document) {
+              uploadDocument(document, values.sport!.id, callback);
+            }
+          });
         },
         Panier: (values, callback) => {
           const newPurchases = values.products;

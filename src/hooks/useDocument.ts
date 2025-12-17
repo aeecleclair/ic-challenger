@@ -1,22 +1,16 @@
-import { useQueryClient } from "@tanstack/react-query";
 import {
   useGetCompetitionParticipantsUsersUserIdCertificate,
-  useGetRaidDocumentDocumentId,
-  usePostRaidDocumentDocumentIdValidate,
 } from "../api/hyperionComponents";
-import { DocumentValidation } from "../api/hyperionSchemas";
 import axios from "axios";
-// import { useDocumentsStore } from "../stores/documents";
-import { use, useState } from "react";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
+import { useDocumentsStore } from "../stores/documents";
 
 export const useDocument = () => {
   const backUrl: string =
     process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
-  const queryClient = useQueryClient();
   const { token, userId } = useAuth();
-  // const { document, setDocument } = useDocumentsStore();
+  const { document, setDocument, reset } = useDocumentsStore();
 
   const uploadDocument = (
     file: File,
@@ -106,6 +100,9 @@ export const useDocument = () => {
   return {
     uploadDocument,
     // getDocument,
+    document,
+    setDocument,
+    resetDocument: reset,
     data,
     refetch,
     isLoading: isPending,

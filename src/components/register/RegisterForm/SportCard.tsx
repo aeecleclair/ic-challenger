@@ -1,10 +1,7 @@
 import { StyledFormField } from "../../custom/StyledFormField";
 import { Label } from "../../ui/label";
-import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
-import z from "zod";
 import {
-  registeringFormSchema,
   RegisteringFormValues,
 } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
@@ -24,10 +21,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../ui/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
+import { FormMessage } from "../../ui/form";
 import { Button } from "../../ui/button";
 import { LoadingButton } from "../../custom/LoadingButton";
-import { HiDownload } from "react-icons/hi";
 import { Sport, TeamInfo } from "@/src/api/hyperionSchemas";
 import { useSchoolSportTeams } from "@/src/hooks/useSchoolSportTeams";
 import { useUser } from "@/src/hooks/useUser";
@@ -44,7 +40,6 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
   const { me } = useUser();
 
   const [teamName, setTeamName] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
   const [open, setIsOpen] = useState(false);
 
   const { data } = useDocument();
@@ -212,7 +207,6 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                   <Button
                     variant="outline"
                     className={"col-span-3"}
-                    disabled={isUploading}
                   >
                     <div className="flex flex-row items-start w-full">
                       <>
@@ -232,7 +226,6 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                   </DialogHeader>
                   <DocumentDialog
                     setIsOpen={setIsOpen}
-                    setIsUploading={setIsUploading}
                     field={field}
                     form={form}
                     sportId={form.watch("sport.id")}

@@ -4,6 +4,7 @@ import { devtools, persist } from "zustand/middleware";
 interface DocumentsStore {
   document?: File;
   setDocument: (newDoc: File) => void;
+  reset: () => void;
 }
 
 export const useDocumentsStore = create<DocumentsStore>()(
@@ -16,6 +17,7 @@ export const useDocumentsStore = create<DocumentsStore>()(
             document: newDoc,
           }));
         },
+        reset: () => set(() => ({ document: undefined })),
       }),
       {
         name: "challenger-documents-storage",

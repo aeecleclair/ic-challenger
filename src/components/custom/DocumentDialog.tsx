@@ -7,41 +7,38 @@ import {
 import { Button } from "../ui/button";
 import { DropzoneInput } from "../ui/dropzoneInput";
 import Image from "next/image";
-import { useState } from "react";
 import { useDocument } from "@/src/hooks/useDocument";
 import { RegisteringFormValues } from "@/src/forms/registering";
+import { se } from "date-fns/locale";
 
 interface DocumentDialogProps {
   setIsOpen: (value: boolean) => void;
-  setIsUploading: (value: boolean) => void;
   field: ControllerRenderProps<FieldValues, string>;
   sportId?: string;
   form: UseFormReturn<RegisteringFormValues>;
 }
 
 export const DocumentDialog = ({
-  setIsUploading,
   setIsOpen,
   field,
   sportId,
   form,
 }: DocumentDialogProps) => {
-  const { uploadDocument, data } = useDocument();
-  const [image, setImage] = useState<File | undefined>(data);
+  const { setDocument, resetDocument, data } = useDocument();
 
   return (
     <>
-      {image?.size !== undefined ? (
+      {data?.size !== undefined ? (
         <div className="flex flex-col items-center gap-4">
-          {image?.type === "application/pdf" ? (
+          {data?.type === "application/pdf" ? (
             <Button
               variant="outline"
               className="w-full"
               onClick={() => {
-                const url = URL.createObjectURL(image);
+                const url = URL.createObjectURL(data);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = image.name || "document.pdf";
+                a.download = data.name || "document.pdf";
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -52,7 +49,7 @@ export const DocumentDialog = ({
             </Button>
           ) : (
             <Image
-              src={URL.createObjectURL(image)}
+              src={URL.createObjectURL(data)}
               alt={field.name}
               width={300}
               height={200}
@@ -64,7 +61,7 @@ export const DocumentDialog = ({
             onClick={() => {
               field.onChange(null);
               form.setValue("sport.certificate", "Choisir un fichier");
-              setImage(undefined);
+              resetDocument();
             }}
           >
             Modifier
@@ -77,13 +74,9 @@ export const DocumentDialog = ({
               setIsOpen={setIsOpen}
               onDropAccepted={(files, _) => {
                 const file = files[0];
-                setIsUploading(true);
-                uploadDocument(file, sportId, () => {
-                  // setDocument(file);
-                  setImage(file);
-                  form.setValue("sport.certificate", file.name);
-                  setIsUploading(false);
-                });
+                form.setValue("sport.certificate", file.name);
+                setDocument(file);
+                console.log("Selected file:", form.watch("sport.certificate"));
               }}
             />
           ) : (
