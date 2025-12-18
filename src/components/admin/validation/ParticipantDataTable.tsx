@@ -541,7 +541,7 @@ export function ParticipantDataTable({
                       onDeleteParticipant(
                         participant.userId,
                         participant.sportId || "",
-                        participant.participantType.includes("Athlète"),
+                        !!participant.sportId,
                       );
                     }
                   }}
