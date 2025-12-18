@@ -130,7 +130,8 @@ const Register = () => {
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
     }
-    setState({
+    console.log("SETTING VALIDATE ACTIONS");
+    setState((state) => ({
       ...state,
       onValidateCardActions: {
         Informations: async (values, callback) => {
@@ -266,7 +267,7 @@ const Register = () => {
         },
         Récapitulatif: (values, callback) => {},
       } as const,
-    });
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me, meCompetition, meParticipant, userMePurchases, availableProducts]);
 
