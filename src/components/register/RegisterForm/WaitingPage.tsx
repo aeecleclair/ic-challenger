@@ -227,7 +227,7 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
             <Form {...productForm}>
               <form
                 onSubmit={productForm.handleSubmit(onProductFormSubmit)}
-                className="space-y-4"
+                className="space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]"
               >
                 <BasketCard form={productForm} />
                 <LoadingButton type="submit" isLoading={isLoading}>
