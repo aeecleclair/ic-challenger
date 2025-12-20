@@ -50,6 +50,8 @@ import { toast } from "@/src/components/ui/use-toast";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useAllMatches } from "@/src/hooks/useAllMatches";
 import { useAllTeams } from "@/src/hooks/useAllTeams";
+import { useSportTeams } from "@/src/hooks/useSportTeams";
+import { useSchoolTeams } from "@/src/hooks/useSchoolTeams";
 
 const TeamsDashboard = () => {
   const router = useRouter();
@@ -60,10 +62,10 @@ const TeamsDashboard = () => {
   const [deleteTeamId, setDeleteTeamId] = useState<string | null>(null);
   const [editTeamId, setEditTeamId] = useState<string | null>(null);
   const [selectedSportId, setSelectedSportId] = useState<string>(
-    searchParams.get("sport_id") || "",
+    searchParams.get("sport_id") || "all",
   );
   const [selectedSchoolId, setSelectedSchoolId] = useState<string>(
-    searchParams.get("school_id") || "",
+    searchParams.get("school_id") || "all",
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -98,6 +100,22 @@ const TeamsDashboard = () => {
 
   const { allTeams, refetchAllTeams } = useAllTeams();
 
+  // Fetch sport-specific teams when only sport is selected
+  const { sportTeams } = useSportTeams({
+    sportId:
+      selectedSportId !== "all" && selectedSchoolId === "all"
+        ? selectedSportId
+        : undefined,
+  });
+
+  // Fetch school-specific teams when only school is selected
+  const { schoolTeams } = useSchoolTeams({
+    schoolId:
+      selectedSchoolId !== "all" && selectedSportId === "all"
+        ? selectedSchoolId
+        : undefined,
+  });
+
   const {
     // teams,
     refetchTeams,
@@ -113,49 +131,49 @@ const TeamsDashboard = () => {
     schoolId: selectedSchoolId || undefined,
   });
 
-  // Auto-select first sport when sports are loaded and no sport is selected
-  useEffect(() => {
-    if (sports && sports.length > 0 && !selectedSportId) {
-      const firstSportId = sports[0].id;
-      setSelectedSportId(firstSportId);
-      updateURL(firstSportId, selectedSchoolId);
-    }
-  }, [sports, selectedSportId, selectedSchoolId, updateURL]);
-
-  // Auto-select first school when schools are loaded and sport is selected but no school
-  useEffect(() => {
-    if (
-      filteredSportSchools &&
-      filteredSportSchools.length > 0 &&
-      selectedSportId &&
-      !selectedSchoolId
-    ) {
-      const firstSchoolId = filteredSportSchools[0].school_id;
-      setSelectedSchoolId(firstSchoolId);
-      updateURL(selectedSportId, firstSchoolId);
-    }
-  }, [filteredSportSchools, selectedSportId, selectedSchoolId, updateURL]);
-
   const filteredTeams = useMemo(() => {
-    if (!allTeams) return [];
+    // Determine which teams source to use
+    let teamsSource = allTeams;
 
-    return allTeams
-      .filter((team) => {
-        const matchesSearch = team.name
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
+    // If only sport is selected, use sportTeams
+    if (selectedSportId !== "all" && selectedSchoolId === "all") {
+      teamsSource = sportTeams || [];
+    }
+    // If only school is selected, use schoolTeams
+    else if (selectedSchoolId !== "all" && selectedSportId === "all") {
+      teamsSource = schoolTeams || [];
+    }
+    // If both are selected or neither, use allTeams with filters
+    else if (allTeams) {
+      teamsSource = allTeams
+        .filter((team) =>
+          selectedSchoolId !== "all"
+            ? team.school_id === selectedSchoolId
+            : true,
+        )
+        .filter((team) =>
+          selectedSportId !== "all" ? team.sport_id === selectedSportId : true,
+        );
+    }
 
-        return matchesSearch;
-      })
-      ?.filter((team) =>
-        selectedSchoolId.length !== 0
-          ? team.school_id === selectedSchoolId
-          : true,
-      )
-      ?.filter((team) =>
-        selectedSportId.length !== 0 ? team.sport_id === selectedSportId : true,
-      );
-  }, [allTeams, searchQuery, selectedSchoolId, selectedSportId]);
+    if (!teamsSource) return [];
+
+    // Apply search filter
+    return teamsSource.filter((team) => {
+      const matchesSearch = team.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+
+      return matchesSearch;
+    });
+  }, [
+    allTeams,
+    sportTeams,
+    schoolTeams,
+    searchQuery,
+    selectedSchoolId,
+    selectedSportId,
+  ]);
 
   // Form for creating/editing teams
   const form = useForm<TeamFormValues>({
@@ -252,7 +270,7 @@ const TeamsDashboard = () => {
     form.reset();
   };
 
-  if (!selectedSportId || !selectedSchoolId) {
+  if (selectedSportId === "all" && selectedSchoolId === "all") {
     return (
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
@@ -279,6 +297,7 @@ const TeamsDashboard = () => {
                   <SelectValue placeholder="Sélectionnez un sport" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Tous les sports</SelectItem>
                   {sports?.map((sport) => (
                     <SelectItem key={sport.id} value={sport.id}>
                       {sport.name}
@@ -290,12 +309,12 @@ const TeamsDashboard = () => {
               <Select
                 value={selectedSchoolId}
                 onValueChange={handleSchoolChange}
-                disabled={!selectedSportId}
               >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Sélectionnez une école" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Toutes les écoles</SelectItem>
                   {filteredSportSchools?.map((school) => (
                     <SelectItem key={school.school_id} value={school.school_id}>
                       {school.school.name
@@ -315,7 +334,7 @@ const TeamsDashboard = () => {
             Sélection requise
           </p>
           <p className="text-blue-600">
-            Veuillez sélectionner un sport et une école pour voir les équipes
+            Veuillez sélectionner un sport ou une école pour voir les équipes
             correspondantes.
           </p>
         </div>
@@ -336,7 +355,7 @@ const TeamsDashboard = () => {
           <Button
             onClick={() => setShowCreateForm(true)}
             className="flex items-center gap-2"
-            disabled={!selectedSportId || !selectedSchoolId}
+            disabled={selectedSportId === "all" || selectedSchoolId === "all"}
           >
             <Plus className="h-4 w-4" />
             Nouvelle équipe
@@ -363,6 +382,7 @@ const TeamsDashboard = () => {
                 <SelectValue placeholder="Sélectionnez un sport" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">Tous les sports</SelectItem>
                 {sports?.map((sport) => (
                   <SelectItem key={sport.id} value={sport.id}>
                     {sport.name}
@@ -371,15 +391,12 @@ const TeamsDashboard = () => {
               </SelectContent>
             </Select>
 
-            <Select
-              value={selectedSchoolId}
-              onValueChange={handleSchoolChange}
-              disabled={!selectedSportId}
-            >
+            <Select value={selectedSchoolId} onValueChange={handleSchoolChange}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Sélectionnez une école" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="all">Toutes les écoles</SelectItem>
                 {filteredSportSchools?.map((school) => (
                   <SelectItem key={school.school_id} value={school.school_id}>
                     {school.school.name

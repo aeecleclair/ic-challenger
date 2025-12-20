@@ -39,6 +39,8 @@ import { useLocations } from "@/src/hooks/useLocations";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { useAllMatches } from "@/src/hooks/useAllMatches";
 import { useAllTeams } from "@/src/hooks/useAllTeams";
+import { useSportTeams } from "@/src/hooks/useSportTeams";
+import { useSchoolTeams } from "@/src/hooks/useSchoolTeams";
 
 interface FilterState {
   sport: string;
@@ -131,17 +133,46 @@ export default function SearchPage() {
 
   const { allTeams: teams } = useAllTeams();
 
+  // Fetch sport-specific teams when only sport is selected
+  const { sportTeams } = useSportTeams({
+    sportId:
+      filters.sport !== "all" && filters.school === "all"
+        ? filters.sport
+        : undefined,
+  });
+
+  // Fetch school-specific teams when only school is selected
+  const { schoolTeams } = useSchoolTeams({
+    schoolId:
+      filters.school !== "all" && filters.sport === "all"
+        ? filters.school
+        : undefined,
+  });
+
+  // Determine which teams to use based on filters
   const availableTeams = useMemo(() => {
-    return (
-      teams
-        ?.filter((team) =>
-          filters.school !== "all" ? team.school_id === filters.school : true,
-        )
-        ?.filter((team) =>
-          filters.sport !== "all" ? team.sport_id === filters.sport : true,
-        ) ?? []
-    );
-  }, [filters.school, filters.sport, teams]);
+    // If both sport and school are selected, use filtered allTeams
+    if (filters.sport !== "all" && filters.school !== "all") {
+      return (
+        teams
+          ?.filter((team) => team.school_id === filters.school)
+          ?.filter((team) => team.sport_id === filters.sport) ?? []
+      );
+    }
+
+    // If only sport is selected, use sportTeams
+    if (filters.sport !== "all" && filters.school === "all") {
+      return sportTeams ?? [];
+    }
+
+    // If only school is selected, use schoolTeams
+    if (filters.school !== "all" && filters.sport === "all") {
+      return schoolTeams ?? [];
+    }
+
+    // Neither selected, return empty array
+    return [];
+  }, [filters.school, filters.sport, teams, sportTeams, schoolTeams]);
 
   useEffect(() => {
     if (filters.team !== "all" && availableTeams.length === 0) {
@@ -151,8 +182,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (
-      filters.school !== "all" &&
-      filters.sport !== "all" &&
+      (filters.school !== "all" || filters.sport !== "all") &&
       filters.team === "all" &&
       availableTeams.length === 1
     ) {
@@ -248,8 +278,7 @@ export default function SearchPage() {
     const teamSelected = filters.team !== "all";
     const showTeamFilter =
       availableTeams.length > 1 &&
-      filters.school !== "all" &&
-      filters.sport !== "all";
+      (filters.school !== "all" || filters.sport !== "all");
 
     return {
       allFiltersDefault,
