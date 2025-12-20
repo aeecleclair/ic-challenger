@@ -259,6 +259,47 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
             </Form>
           </DialogContent>
         </Dialog>
+        <Dialog
+          open={substituteDialogOpen}
+          onOpenChange={setSubstituteDialogOpen}
+        >
+          <DialogContent>
+            <Form {...substituteForm}>
+              <form
+                onSubmit={substituteForm.handleSubmit(onSubstituteFormSubmit)}
+              >
+                <div className="flex flex-col items-center gap-8">
+                  <StyledFormField
+                    form={substituteForm}
+                    label="Remplaçant"
+                    id="substitute"
+                    input={(field) => (
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="substitute"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                        <label
+                          htmlFor="substitute"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          Je suis remplaçant
+                        </label>
+                      </div>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={!substituteForm.formState.isValid}
+                  >
+                    Enregistrer
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
