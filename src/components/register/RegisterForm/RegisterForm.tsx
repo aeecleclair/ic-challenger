@@ -2,7 +2,7 @@ import {
   registeringFormSchema,
   RegisteringFormValues,
 } from "@/src/forms/registering";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { RegisterFormField } from "./RegisterFormField";
 import { Form } from "../../ui/form";
 import { RegisterState } from "@/src/infra/registerState";
@@ -16,13 +16,23 @@ import { useRouter } from "next/navigation";
 import { CarouselApi } from "../../ui/carousel";
 import { useUserPurchases } from "@/src/hooks/useUserPurchases";
 import { UseFormReturn } from "react-hook-form";
-import { Purchase } from "@/src/api/hyperionSchemas";
+import {
+  CompetitionUser,
+  CoreUser,
+  ParticipantComplete,
+  Purchase,
+  Sport,
+} from "@/src/api/hyperionSchemas";
 
 interface RegisterFormProps {
-  setState: (state: RegisterState) => void;
+  setState: (value: SetStateAction<RegisterState>) => void;
   state: RegisterState;
   form: UseFormReturn<RegisteringFormValues>;
   userMePurchases?: Purchase[];
+  sports?: Sport[];
+  me?: CoreUser;
+  meCompetition?: CompetitionUser;
+  meParticipant?: ParticipantComplete;
 }
 
 export const RegisterForm = ({
@@ -30,14 +40,14 @@ export const RegisterForm = ({
   state,
   form,
   userMePurchases,
+  sports,
+  me,
+  meCompetition,
+  meParticipant,
 }: RegisterFormProps) => {
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { sports } = useSports();
-  const { me } = useUser();
-  const { meCompetition } = useCompetitionUser();
-  const { meParticipant } = useParticipant();
   const router = useRouter();
   useEffect(() => {
     form.setValue("phone", me?.phone || meCompetition?.user.phone || "");
@@ -47,7 +57,9 @@ export const RegisterForm = ({
     form.setValue("is_fanfare", meCompetition?.is_fanfare || false);
     form.setValue("is_pompom", meCompetition?.is_pompom || false);
     form.setValue("allow_pictures", meCompetition?.allow_pictures ?? true);
-  }, [form, me, meCompetition]);
+    form.setValue("sport.id", meParticipant?.sport_id || "");
+    form.setValue("sport.team_id", meParticipant?.team_id || "");
+  }, [form, me, meCompetition, meParticipant]);
 
   async function onSubmit(values: RegisteringFormValues) {
     setIsLoading(true);
@@ -55,63 +67,78 @@ export const RegisterForm = ({
   }
 
   useEffect(() => {
-    const newSubtitles = [...state.allHeaderSubtitles];
-    if (meCompetition?.is_athlete && state.allHeaderSubtitles[2] !== "Sport") {
-      newSubtitles.splice(2, 0, "Sport");
-    } else if (state.allHeaderSubtitles[2] === "Sport") {
-      newSubtitles.splice(2, 1);
-    }
-    if (
-      meCompetition?.is_athlete &&
-      meParticipant === undefined &&
-      state.allHeaderSubtitles[2] !== "Sport"
-    ) {
-      setState({
-        ...state,
-        currentStep: 3,
-        stepDone: 2,
-        headerSubtitle: "Sport",
-        allHeaderSubtitles: newSubtitles,
-      });
-      api?.scrollTo(2);
-      return;
-    }
-    if (userMePurchases === undefined || userMePurchases.length === 0) {
-      setState({
-        ...state,
-        currentStep: !!meParticipant ? 4 : 3,
-        stepDone: !!meParticipant ? 3 : 2,
-        headerSubtitle: "Panier",
-        allHeaderSubtitles: newSubtitles,
-      });
-      return;
-    }
-    if (meCompetition && !meCompetition.validated) {
-      setState({
-        ...state,
-        currentStep: !!meParticipant ? 5 : 4,
-        stepDone: !!meParticipant ? 5 : 4,
-        headerTitle: "Confirmation de l'inscription",
-        headerSubtitle: "Récapitulatif",
-        allHeaderSubtitles: newSubtitles,
-      });
-      return;
-    }
-    if (meCompetition && meCompetition.validated) {
-      setState({
-        ...state,
-        currentStep: !!meParticipant ? 6 : 5,
-        stepDone: !!meParticipant ? 6 : 5,
-        headerTitle: "Paiement",
-        headerSubtitle: "Récapitulatif",
-        allHeaderSubtitles: newSubtitles,
-      });
-    } else {
-      setState({
-        ...state,
-        allHeaderSubtitles: newSubtitles,
-      });
-    }
+    // const newSubtitles = [...state.allHeaderSubtitles];
+    // const isAthlete = meCompetition?.is_athlete;
+    // console.log("isAthlete", isAthlete);
+    // console.log("meParticipant", meParticipant === undefined);
+    // console.log(
+    //   "meParticipant?.sport_id",
+    //   meParticipant?.sport_id === undefined,
+    // );
+    // if (isAthlete && state.allHeaderSubtitles[2] !== "Sport") {
+    //   newSubtitles.splice(2, 0, "Sport");
+    // } else if (state.allHeaderSubtitles[2] === "Sport") {
+    //   newSubtitles.splice(2, 1);
+    // }
+    // if (
+    //   isAthlete &&
+    //   (meParticipant === undefined || meParticipant?.sport_id === undefined)
+    // ) {
+    //   console.log("SETTING SPORT ACTIONS");
+    //   setState((state) => ({
+    //     ...state,
+    //     currentStep: 3,
+    //     stepDone: 2,
+    //     headerSubtitle: "Sport",
+    //     allHeaderSubtitles: newSubtitles,
+    //   }));
+    //   console.log("SCROLL TO 2");
+    //   api?.scrollTo(2);
+    //   return;
+    // }
+    // if (userMePurchases === undefined || userMePurchases.length === 0) {
+    //   console.log("SETTING BASKET ACTIONS");
+    //   setState((state) => ({
+    //     ...state,
+    //     currentStep: isAthlete ? 4 : 3,
+    //     stepDone: isAthlete ? 3 : 2,
+    //     headerSubtitle: "Panier",
+    //     allHeaderSubtitles: newSubtitles,
+    //   }));
+    //   console.log(newSubtitles);
+    //   return;
+    // }
+    // if (meCompetition && !meCompetition.validated) {
+    //   console.log("SETTING SUMMARY ACTIONS");
+    //   setState((state) => ({
+    //     ...state,
+    //     currentStep: isAthlete ? 5 : 4,
+    //     stepDone: isAthlete ? 5 : 4,
+    //     headerTitle: "Confirmation de l'inscription",
+    //     headerSubtitle: "Récapitulatif",
+    //     allHeaderSubtitles: newSubtitles,
+    //   }));
+    //   api?.scrollTo(isAthlete ? 5 : 4);
+    //   return;
+    // }
+    // if (meCompetition && meCompetition.validated) {
+    //   console.log("SETTING PAYMENT ACTIONS");
+    //   setState((state) => ({
+    //     ...state,
+    //     currentStep: isAthlete ? 6 : 5,
+    //     stepDone: isAthlete ? 6 : 5,
+    //     headerTitle: "Paiement",
+    //     headerSubtitle: "Récapitulatif",
+    //     allHeaderSubtitles: newSubtitles,
+    //   }));
+    //   api?.scrollTo(isAthlete ? 6 : 5);
+    //   return;
+    // } else {
+      // setState({
+      //   ...state,
+      //   allHeaderSubtitles: newSubtitles,
+      // });
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meCompetition, meParticipant]);
 

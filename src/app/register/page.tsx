@@ -18,7 +18,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/src/components/ui/sidebar";
-import { RegisterState } from "@/src/infra/registerState";
+import { HeaderSubtitle, RegisterState } from "@/src/infra/registerState";
 import { useEffect, useState } from "react";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import {
@@ -39,9 +39,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useEdition } from "@/src/hooks/useEdition";
 import { useDocument } from "@/src/hooks/useDocument";
+import { useSports } from "@/src/hooks/useSports";
 
 const Register = () => {
   const { edition } = useEdition();
+  const { sports } = useSports();
   const { sportSchools } = useSportSchools();
   const { availableProducts, refetchAvailableProducts } =
     useAvailableProducts();
@@ -95,18 +97,22 @@ const Register = () => {
           .filter((item) => item !== undefined) || [],
     },
   });
+  const newSubtitles: HeaderSubtitle[] = [
+    "Informations",
+    "Participation",
+    "Panier",
+    "Récapitulatif",
+  ];
+  if (meCompetition?.is_athlete) {
+    newSubtitles.splice(2, 0, "Sport");
+  }
 
   const [state, setState] = useState<RegisterState>({
     currentStep: 0,
     stepDone: 0,
     headerTitle: "Inscription",
     headerSubtitle: "Informations",
-    allHeaderSubtitles: [
-      "Informations",
-      "Participation",
-      "Panier",
-      "Récapitulatif",
-    ],
+    allHeaderSubtitles: newSubtitles,
     pageFields: {
       Informations: ["phone", "sex", "allow_pictures"],
       Participation: [],
@@ -130,7 +136,6 @@ const Register = () => {
     } else if (state.allHeaderSubtitles[2] === "Sport") {
       newSubtitles.splice(2, 1);
     }
-    console.log("SETTING VALIDATE ACTIONS");
     setState((state) => ({
       ...state,
       onValidateCardActions: {
@@ -300,6 +305,10 @@ const Register = () => {
           state={state}
           form={form}
           userMePurchases={userMePurchases}
+          sports={sports}
+          me={me}
+          meCompetition={meCompetition}
+          meParticipant={meParticipant}
         />
       </SidebarInset>
     </SidebarProvider>

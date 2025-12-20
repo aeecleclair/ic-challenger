@@ -6,7 +6,7 @@ import { InformationCard } from "./InformationCard";
 import { ParticipationCard } from "./ParticipationCard";
 import { SportCard } from "./SportCard";
 import { BasketCard } from "./BasketCard";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { Button } from "../../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { RegisterState } from "@/src/infra/registerState";
@@ -20,7 +20,7 @@ interface RegisterFormFieldProps {
   isLoading: boolean;
   onSubmit: (values: RegisteringFormValues) => void;
   sports?: Sport[];
-  setState: (state: RegisterState) => void;
+  setState: (state: SetStateAction<RegisterState>) => void;
   state: RegisterState;
   api?: CarouselApi | undefined;
   setApi?: (api: CarouselApi) => void;
@@ -48,11 +48,11 @@ export const RegisterFormField = ({
       newSubtitles.splice(2, 1);
     }
 
-    setState({
+    setState((state) => ({
       ...state,
       allHeaderSubtitles: newSubtitles,
       stepDone: Math.min(state.stepDone, 2),
-    });
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSportFields]);
 
@@ -77,12 +77,12 @@ export const RegisterFormField = ({
           size="icon"
           onClick={() => {
             api?.scrollPrev();
-            setState({
+            setState((state) => ({
               ...state,
               currentStep: Math.max(0, state.currentStep - 1),
               headerSubtitle:
                 state.allHeaderSubtitles[Math.max(0, state.currentStep - 1)],
-            });
+            }));
           }}
           disabled={!api?.canScrollPrev()}
         >
@@ -106,13 +106,13 @@ export const RegisterFormField = ({
                   form.getValues(),
                   () => {
                     api?.scrollNext();
-                    setState({
+                    setState((state) => ({
                       ...state,
                       stepDone: Math.max(state.stepDone, state.currentStep + 1),
                       currentStep: Math.min(3, state.currentStep + 1),
                       headerSubtitle:
                         state.allHeaderSubtitles[state.currentStep + 1],
-                    });
+                    }));
                   },
                 );
               });
