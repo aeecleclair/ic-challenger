@@ -177,9 +177,11 @@ const Register = () => {
           await refetchAvailableProducts();
         },
         Sport: async (values, callback) => {
+          const sport = sports?.find((s) => s.id === values.sport!.id);
+          if (!sport) return;
           const body: ParticipantInfo = {
             license: values.sport!.license_number!,
-            team_id: values.sport!.team_id || null,
+            team_id: sport.team_size == 1 ? null : values.sport!.team_id!,
             substitute: values.sport!.substitute,
           };
           if (meParticipant !== undefined) {
