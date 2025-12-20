@@ -182,7 +182,7 @@ const Register = () => {
               await createParticipant(
                 {
                   license: values.sport!.license_number!,
-                  team_id: values.sport!.team_id!,
+                  team_id: values.sport!.team_id || null,
                   substitute: values.sport!.substitute,
                 },
                 values.sport!.id,
