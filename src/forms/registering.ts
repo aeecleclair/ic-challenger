@@ -34,6 +34,18 @@ export const registeringFormSchema = z
         license_number: z.string().optional(),
         certificate: z.string().optional(),
         substitute: z.boolean().optional(),
+        certificateFile: z
+          .any()
+          .refine((file) => {
+            if (!file) return true;
+            const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+            return file.size <= maxSizeInBytes;
+          }, "Le fichier doit faire moins de 10MB")
+          .refine((file) => {
+            if (!file) return true;
+            const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+            return allowedTypes.includes(file.type);
+          }, "Le fichier doit être au format PDF, JPEG ou PNG"),
       })
       .optional(),
     products: z.array(

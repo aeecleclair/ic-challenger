@@ -56,7 +56,7 @@ const Register = () => {
   const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
-  const { document, uploadDocument } = useDocument();
+  const { uploadDocument } = useDocument();
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
@@ -187,15 +187,23 @@ const Register = () => {
           if (meParticipant !== undefined) {
             await withdrawParticipant(meParticipant.sport_id, async () => {
               await createParticipant(body, values.sport!.id, callback);
-              if (values.sport?.certificate && document) {
-                uploadDocument(document, values.sport!.id, callback);
+              if (values.sport?.certificate && values.sport?.certificateFile) {
+                uploadDocument(
+                  values.sport.certificateFile,
+                  values.sport!.id,
+                  callback,
+                );
               }
             });
             return;
           }
           await createParticipant(body, values.sport!.id, async () => {
-            if (values.sport?.certificate && document) {
-              uploadDocument(document, values.sport!.id, callback);
+            if (values.sport?.certificate && values.sport?.certificateFile) {
+              uploadDocument(
+                values.sport.certificateFile,
+                values.sport!.id,
+                callback,
+              );
             }
           });
         },

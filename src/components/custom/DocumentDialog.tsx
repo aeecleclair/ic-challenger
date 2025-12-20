@@ -24,7 +24,7 @@ export const DocumentDialog = ({
   sportId,
   form,
 }: DocumentDialogProps) => {
-  const { setDocument, resetDocument, data } = useDocument();
+  const { data } = useDocument();
 
   return (
     <>
@@ -61,7 +61,7 @@ export const DocumentDialog = ({
             onClick={() => {
               field.onChange(null);
               form.setValue("sport.certificate", "Choisir un fichier");
-              resetDocument();
+              form.setValue("sport.certificateFile", null);
             }}
           >
             Modifier
@@ -75,8 +75,7 @@ export const DocumentDialog = ({
               onDropAccepted={(files, _) => {
                 const file = files[0];
                 form.setValue("sport.certificate", file.name);
-                setDocument(file);
-                console.log("Selected file:", form.watch("sport.certificate"));
+                form.setValue("sport.certificateFile", file);
               }}
             />
           ) : (

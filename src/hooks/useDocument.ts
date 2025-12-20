@@ -1,19 +1,15 @@
-import {
-  useGetCompetitionParticipantsUsersUserIdCertificate,
-} from "../api/hyperionComponents";
+import { useGetCompetitionParticipantsUsersUserIdCertificate } from "../api/hyperionComponents";
 import axios from "axios";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
-import { useDocumentsStore } from "../stores/documents";
 
 export const useDocument = () => {
   const backUrl: string =
     process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
   const { token, userId } = useAuth();
-  const { document, setDocument, reset } = useDocumentsStore();
 
   const uploadDocument = (
-    file: File,
+    file: Blob,
     sportId: string,
     callback: () => void,
   ) => {
@@ -43,7 +39,16 @@ export const useDocument = () => {
         }
         refetch();
         callback();
-        // setDocument(file);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          title: "Erreur lors de l'ajout du document",
+          description:
+            error.response?.data?.detail ||
+            "Une erreur est survenue, veuillez réessayer plus tard",
+          variant: "destructive",
+        });
       });
   };
 
@@ -63,52 +68,10 @@ export const useDocument = () => {
       },
     );
 
-  //   const { mutate: mutateValidateDocument, isPending: isValidationLoading } =
-  //     usePostRaidDocumentDocumentIdValidate();
-
-  //   const setDocumentValidation = (
-  //     documentId: string,
-  //     validation: DocumentValidation,
-  //     callback: () => void,
-  //   ) => {
-  //     mutateValidateDocument(
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         pathParams: {
-  //           documentId: documentId,
-  //         },
-  //         queryParams: {
-  //           validation: validation,
-  //         },
-  //       },
-  //       {
-  //         onSettled: () => {
-  //           callback();
-  //         },
-  //       },
-  //     );
-  //   };
-
-  //   const getDocument = (userId: string, key: string) => {
-  //     if (key === "" || key === undefined) return undefined;
-  //     if (documents[userId!] === undefined) return undefined;
-  //     return documents[userId!][key]?.file;
-  //   };
-
   return {
     uploadDocument,
-    // getDocument,
-    document,
-    setDocument,
-    resetDocument: reset,
     data,
     refetch,
     isLoading: isPending,
-    // setDocumentId,
-    // documentId,
-    // setDocumentValidation,
-    // isValidationLoading,
   };
 };
