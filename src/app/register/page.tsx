@@ -272,7 +272,9 @@ const Register = () => {
           });
           callback();
         },
-        Récapitulatif: (values, callback) => {},
+        Récapitulatif: (values, callback) => {
+          router.push("/");
+        },
       } as const,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
