@@ -177,28 +177,20 @@ const Register = () => {
           await refetchAvailableProducts();
         },
         Sport: async (values, callback) => {
+          const body: ParticipantInfo = {
+            license: values.sport!.license_number!,
+            team_id: values.sport!.team_id || null,
+            substitute: values.sport!.substitute,
+          };
           if (meParticipant !== undefined) {
             await withdrawParticipant(meParticipant.sport_id, async () => {
-              await createParticipant(
-                {
-                  license: values.sport!.license_number!,
-                  team_id: values.sport!.team_id || null,
-                  substitute: values.sport!.substitute,
-                },
-                values.sport!.id,
-                callback,
-              );
+              await createParticipant(body, values.sport!.id, callback);
               if (values.sport?.certificate && document) {
                 uploadDocument(document, values.sport!.id, callback);
               }
             });
             return;
           }
-          const body: ParticipantInfo = {
-            license: values.sport!.license_number!,
-            team_id: values.sport!.team_id!,
-            substitute: values.sport!.substitute,
-          };
           await createParticipant(body, values.sport!.id, async () => {
             if (values.sport?.certificate && document) {
               uploadDocument(document, values.sport!.id, callback);
