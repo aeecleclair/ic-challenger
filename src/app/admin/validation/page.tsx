@@ -20,10 +20,16 @@ import { useSchoolsGeneralQuota } from "@/src/hooks/useSchoolsGeneralQuota";
 import { useSchoolsProductQuota } from "@/src/hooks/useSchoolsProductQuota";
 import { useProducts } from "@/src/hooks/useProducts";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
-import { CompetitionUser } from "@/src/api/hyperionSchemas";
+import {
+  AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
+  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
+  CompetitionUser,
+} from "@/src/api/hyperionSchemas";
 import { ValidationTab } from "@/src/components/admin/validation/ValidationTab";
 import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
 import { useParticipant } from "@/src/hooks/useParticipant";
+import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
+import { RequiredPurchase } from "@/src/components/admin/validation/UserProductsCell";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -47,6 +53,7 @@ const Dashboard = () => {
     });
 
   const { products } = useProducts();
+  const { availableProducts } = useAvailableProducts();
 
   const userSchoolId = currentUser?.school_id;
   const canAccessSchool = isAdmin() || schoolId === userSchoolId;
@@ -138,6 +145,37 @@ const Dashboard = () => {
             (purchase) => !purchase.validated,
           );
 
+          console.log("userPurchases", userPurchases);
+
+          var requiredPurchases: RequiredPurchase = [];
+
+          userPurchases.forEach((purchase) => {
+            const product = products?.find((p) =>
+              (p?.variants ?? []).find(
+                (v) => v.id === purchase.product_variant_id,
+              ),
+            );
+
+            const variant = (product?.variants ?? []).find(
+              (v) => v.id === purchase.product_variant_id,
+            );
+
+            if (variant && product && product.required)
+              requiredPurchases.push({
+                product_variant_id: purchase.product_variant_id,
+                quantity: purchase.quantity,
+                validated: purchase.validated,
+                variant: variant,
+                product: product,
+              });
+          });
+
+          console.log("requiredPurchases", requiredPurchases);
+
+          const requiredProductNames = requiredPurchases
+            .map((p) => p.product?.name)
+            .filter(Boolean) as string[];
+
           if (user.is_athlete) {
             const participant = schoolParticipants?.find(
               (p) => p.user_id === user.user_id,
@@ -158,6 +196,8 @@ const Dashboard = () => {
               hasPaid: hasPaid,
               partialPaid: partialPaid,
               allowPictures: user.allow_pictures || false,
+              requiredPurchases: requiredPurchases,
+              requiredProductNames: requiredProductNames,
             };
           }
           return {
@@ -176,6 +216,8 @@ const Dashboard = () => {
             hasPaid: hasPaid,
             partialPaid: partialPaid,
             allowPictures: user.allow_pictures || false,
+            requiredPurchases: requiredPurchases,
+            requiredProductNames: requiredProductNames,
           };
         }) || []
     );

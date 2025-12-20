@@ -47,8 +47,12 @@ import {
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
 import { toast } from "../../ui/use-toast";
-import { UserProductsCell } from "./UserProductsCell";
+import { RequiredPurchase, UserProductsCell } from "./UserProductsCell";
 import { useProducts } from "@/src/hooks/useProducts";
+import {
+  AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
+  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
+} from "@/src/api/hyperionSchemas";
 
 export interface ParticipantData {
   userId: string;
@@ -67,6 +71,7 @@ export interface ParticipantData {
   partialPaid?: boolean;
   allowPictures: boolean;
   requiredProductNames?: string[]; // Array of required product names for filtering
+  requiredPurchases?: RequiredPurchase;
 }
 
 interface ParticipantDataTableProps {
@@ -376,7 +381,7 @@ export function ParticipantDataTable({
                 Validée
               </Badge>
             ) : (
-              <Badge variant="destructive">En attente de validation</Badge>
+              <Badge variant="destructive">En attente</Badge>
             )}
           </div>
         );
@@ -508,8 +513,7 @@ export function ParticipantDataTable({
         return (
           <div className="flex justify-center">
             <UserProductsCell
-              userId={participant.userId}
-              fullName={participant.fullName}
+              requiredPurchases={participant.requiredPurchases}
             />
           </div>
         );
