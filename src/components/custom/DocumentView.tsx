@@ -1,7 +1,6 @@
 "use client";
 
 import { useDocument } from "@/src/hooks/useDocument";
-import { useDocumentsStore } from "@/src/stores/documents";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
@@ -13,11 +12,9 @@ interface DocumentViewProps {
 
 export const DocumentView = ({ documentKey }: DocumentViewProps) => {
   const { data } = useDocument();
-  const { setDocument } = useDocumentsStore();
   const [isLoading, setIsLoading] = useState(data?.size === undefined);
 
   if (data?.size !== undefined && isLoading) {
-    setDocument(data);
     setIsLoading(false);
   }
 
