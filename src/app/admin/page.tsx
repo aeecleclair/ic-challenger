@@ -11,8 +11,6 @@ import { usePodiums } from "@/src/hooks/usePodiums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMemo, useState } from "react";
-import { Badge } from "@/src/components/ui/badge";
-import { CalendarDays } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
@@ -174,7 +172,7 @@ const AdminPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <>
       <CustomDialog
         isOpened={isOpened}
         setIsOpened={setIsOpened}
@@ -271,25 +269,33 @@ const AdminPage = () => {
 
       {isAdmin() && edition && (
         <div className="space-y-6">
-          {/* Edition Header */}
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">
-              {edition.name}
-            </h1>
-            <div className="flex items-center gap-4 text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CalendarDays className="h-4 w-4" />
-                <span>
-                  {format(new Date(edition.start_date), "dd MMMM yyyy", {
-                    locale: fr,
-                  })}{" "}
-                  -{" "}
-                  {format(new Date(edition.end_date), "dd MMMM yyyy", {
-                    locale: fr,
-                  })}
-                </span>
+          {/* Header with title and action */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">
+                {edition.name}
+              </h1>
+              <div className="flex items-center gap-4 text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <span>
+                    {format(new Date(edition.start_date), "dd MMMM yyyy", {
+                      locale: fr,
+                    })}{" "}
+                    -{" "}
+                    {format(new Date(edition.end_date), "dd MMMM yyyy", {
+                      locale: fr,
+                    })}
+                  </span>
+                </div>
               </div>
             </div>
+            <Button
+              size="lg"
+              className="gap-2"
+              onClick={() => setIsOpened(true)}
+            >
+              Exporter
+            </Button>
           </div>
 
           {stats && (
@@ -324,8 +330,7 @@ const AdminPage = () => {
           )}
         </div>
       )}
-      <Button onClick={() => setIsOpened(true)}>Exporter</Button>
-    </div>
+    </>
   );
 };
 
