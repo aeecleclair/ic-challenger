@@ -1,9 +1,7 @@
 import { StyledFormField } from "../../custom/StyledFormField";
 import { Label } from "../../ui/label";
 import { UseFormReturn } from "react-hook-form";
-import {
-  RegisteringFormValues,
-} from "@/src/forms/registering";
+import { RegisteringFormValues } from "@/src/forms/registering";
 import { CardTemplate } from "./CardTemplate";
 import {
   Select,
@@ -204,10 +202,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
               <Dialog open={open} onOpenChange={setIsOpen}>
                 <FormMessage />
                 <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={"col-span-3"}
-                  >
+                  <Button variant="outline" className={"col-span-3"}>
                     <div className="flex flex-row items-start w-full">
                       <>
                         <span className="text-gray-500 overflow-hidden">
@@ -227,8 +222,15 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
                   <DocumentDialog
                     setIsOpen={setIsOpen}
                     field={field}
-                    form={form}
                     sportId={form.watch("sport.id")}
+                    onFileRemove={() => {
+                      form.setValue("sport.certificate", "Choisir un fichier");
+                      form.setValue("sport.certificateFile", null);
+                    }}
+                    onFileSet={(file) => {
+                      form.setValue("sport.certificate", file.name);
+                      form.setValue("sport.certificateFile", file);
+                    }}
                   />
                 </DialogContent>
               </Dialog>

@@ -1,6 +1,12 @@
 import { Card, CardDescription, CardTitle } from "../../ui/card";
-import { Dialog, DialogContent } from "../../ui/dialog";
-import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
+import { useState, useEffect } from "react";
 import { BasketCard } from "./BasketCard";
 import { RegistrationSummary } from "./RegistrationSummary";
 import { editProductSchema, EditProductValues } from "@/src/forms/editProducts";
@@ -26,6 +32,8 @@ import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { Checkbox } from "../../ui/checkbox";
 import { toast } from "../../ui/use-toast";
+import { DocumentDialog } from "../../custom/DocumentDialog";
+import { useDocument } from "@/src/hooks/useDocument";
 
 interface WaitingPageProps {
   userMePurchases?: Purchase[];
@@ -38,17 +46,20 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [licenseDialogOpen, setLicenseDialogOpen] = useState(false);
   const [substituteDialogOpen, setSubstituteDialogOpen] = useState(false);
+  const [certificateDialogOpen, setCertificateDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { me } = useUser();
   const { createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
+  const { data: certificateData, uploadDocument } = useDocument();
 
   const licenseForm = useForm<LicenseFormValues>({
     resolver: zodResolver(licenseFormSchema),
     mode: "onChange",
     defaultValues: {
       license_number: meParticipant?.license || "",
+      certificate: certificateData ? "Certificat chargé" : undefined,
     },
   });
 
@@ -59,6 +70,12 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
       substitute: meParticipant?.substitute || false,
     },
   });
+
+  useEffect(() => {
+    if (certificateData) {
+      licenseForm.setValue("certificate", "Certificat chargé");
+    }
+  }, [certificateData, licenseForm]);
 
   const onLicenseFormSubmit = (values: LicenseFormValues) => {
     if (!meParticipant?.sport_id) {
@@ -80,6 +97,19 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
         meParticipant.sport_id,
         () => {
           setLicenseDialogOpen(false);
+          if (values?.certificate) {
+            uploadDocument(values.certificate, meParticipant.sport_id!, () => {
+              toast({
+                title: "Certificat mis à jour",
+                description: `Ton certificat médical ont été mis à jour.`,
+              });
+            });
+          } else {
+            toast({
+              title: "Licence mise à jour",
+              description: `Ton numéro de licence a été mis à jour.`,
+            });
+          }
         },
       ),
     );
@@ -238,16 +268,59 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
           </DialogContent>
         </Dialog>
         <Dialog open={licenseDialogOpen} onOpenChange={setLicenseDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Modifier la licence et le certificat</DialogTitle>
+            </DialogHeader>
             <Form {...licenseForm}>
               <form onSubmit={licenseForm.handleSubmit(onLicenseFormSubmit)}>
                 <div className="flex flex-col items-center gap-8">
-                  <StyledFormField
-                    form={licenseForm}
-                    label="Numéro de licence"
-                    id="license_number"
-                    input={(field) => <Input {...field} className="" />}
-                  />
+                  <div className="flex flex-row items-center gap-8">
+                    <StyledFormField
+                      form={licenseForm}
+                      label="Numéro de licence"
+                      id="license_number"
+                      input={(field) => <Input {...field} className="w-60" />}
+                    />
+                    <StyledFormField
+                      form={licenseForm}
+                      label="Certificat médical"
+                      id="certificate"
+                      input={(field) => (
+                        <Dialog
+                          open={certificateDialogOpen}
+                          onOpenChange={setCertificateDialogOpen}
+                        >
+                          <DialogTrigger asChild>
+                            <Button variant="outline" className="w-60">
+                              <span className="text-gray-500 overflow-hidden truncate">
+                                {licenseForm.watch("certificate") ??
+                                  "Aucun fichier sélectionné"}
+                              </span>
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="md:max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="text-red sm:text-lg">
+                                Ajouter un certificat médical
+                              </DialogTitle>
+                            </DialogHeader>
+                            <DocumentDialog
+                              setIsOpen={setCertificateDialogOpen}
+                              field={field}
+                              onFileRemove={() => {
+                                licenseForm.setValue("certificate", null);
+                              }}
+                              onFileSet={(file) => {
+                                licenseForm.setValue("certificate", file);
+                              }}
+                              sportId={meParticipant?.sport_id}
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      )}
+                    />
+                  </div>
                   <Button
                     type="submit"
                     disabled={!licenseForm.formState.isValid}

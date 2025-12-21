@@ -10,19 +10,22 @@ import Image from "next/image";
 import { useDocument } from "@/src/hooks/useDocument";
 import { RegisteringFormValues } from "@/src/forms/registering";
 import { se } from "date-fns/locale";
+import { on } from "events";
 
 interface DocumentDialogProps {
   setIsOpen: (value: boolean) => void;
   field: ControllerRenderProps<FieldValues, string>;
   sportId?: string;
-  form: UseFormReturn<RegisteringFormValues>;
+  onFileSet?: (file: File) => void;
+  onFileRemove?: () => void;
 }
 
 export const DocumentDialog = ({
   setIsOpen,
   field,
   sportId,
-  form,
+  onFileRemove,
+  onFileSet,
 }: DocumentDialogProps) => {
   const { data } = useDocument();
 
@@ -60,8 +63,7 @@ export const DocumentDialog = ({
             className="w-full"
             onClick={() => {
               field.onChange(null);
-              form.setValue("sport.certificate", "Choisir un fichier");
-              form.setValue("sport.certificateFile", null);
+              onFileRemove?.();
             }}
           >
             Modifier
@@ -74,8 +76,7 @@ export const DocumentDialog = ({
               setIsOpen={setIsOpen}
               onDropAccepted={(files, _) => {
                 const file = files[0];
-                form.setValue("sport.certificate", file.name);
-                form.setValue("sport.certificateFile", file);
+                onFileSet?.(file);
               }}
             />
           ) : (
