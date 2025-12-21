@@ -21,6 +21,7 @@ import { NavPodium } from "./NavPodium";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 import { useVolunteer } from "@/src/hooks/useVolunteer";
+import { Logo } from "../../custom/Logo";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
@@ -41,9 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <button onClick={handleLogoClick} className="w-full">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
+                <Logo />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Challenger</span>
                   {edition ? (
