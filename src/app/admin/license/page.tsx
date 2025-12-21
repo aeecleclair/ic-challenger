@@ -93,9 +93,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex w-full flex-col p-6">
-      <div className="flex items-center justify-between mb-6">
-        <span className="text-2xl font-bold">Validation des licences</span>
+    <div className="space-y-6">
+      {/* Header with title and action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">License</h1>
+          <p className="text-muted-foreground">
+            Gestion des licenses
+          </p>
+        </div>
       </div>
 
       {sportSchools && sportSchools.length > 0 ? (

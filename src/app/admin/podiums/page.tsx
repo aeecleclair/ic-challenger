@@ -147,9 +147,13 @@ export default function PodiumsPage() {
   ];
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Gestion des podiums</h1>
+    <div className="space-y-6">
+      {/* Header with title and action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Podiums</h1>
+          <p className="text-muted-foreground">Gestion des podiums</p>
+        </div>
         <Dialog
           open={editDialogOpen}
           onOpenChange={(open) => {

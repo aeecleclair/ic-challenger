@@ -272,19 +272,12 @@ const TeamsDashboard = () => {
 
   if (selectedSportId === "all" && selectedSchoolId === "all") {
     return (
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                <Shield className="h-8 w-8 text-primary" />
-                Gestion des Équipes
-              </h1>
-              <p className="text-muted-foreground">
-                Gérez les équipes de votre compétition
-              </p>
-            </div>
+      <div className="space-y-6">
+        {/* Header with title and action */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Équipes</h1>
+            <p className="text-muted-foreground">Gestion des équipes</p>
           </div>
         </div>
 

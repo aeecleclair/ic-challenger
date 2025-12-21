@@ -344,12 +344,16 @@ const Dashboard = () => {
   ).size;
 
   return (
-    <div className="flex w-full flex-col p-6">
-      <div className="flex items-center justify-between mb-6">
-        <span className="text-2xl font-bold">
-          Validation des participants{" "}
-          {school ? `- ${formatSchoolName(school.school.name)}` : ""}
-        </span>
+    <div className="space-y-6">
+      {/* Header with title and action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Validation</h1>
+          <p className="text-muted-foreground">
+            Gestion des participants de{" "}
+            {school ? formatSchoolName(school.school.name) : "l'école"}
+          </p>
+        </div>
       </div>
 
       {isAdmin() ? (

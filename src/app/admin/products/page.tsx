@@ -70,21 +70,22 @@ const ProductsPage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="space-y-6">
+    <div className="space-y-6">
+      {/* Header with title and action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Gestion des produits</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Produits</h1>
           <p className="text-muted-foreground">
-            Gérez vos produits et leurs variantes
+            Gestion des produits et leurs variantes
           </p>
         </div>
-        <ProductList
-          products={products}
-          onProductClick={(productId) => {
-            router.push(`/admin/products?product_id=${productId}`);
-          }}
-        />
       </div>
+      <ProductList
+        products={products}
+        onProductClick={(productId) => {
+          router.push(`/admin/products?product_id=${productId}`);
+        }}
+      />
     </div>
   );
 };
