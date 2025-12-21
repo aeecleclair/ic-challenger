@@ -1,6 +1,7 @@
 "use client";
+import Image from "next/image";
 import * as React from "react";
-import { Command } from "lucide-react";
+import { Command, LogIn } from "lucide-react";
 import { Timeline, TimelineItemLabel } from "@/src/components/custom/Timeline";
 import {
   Sidebar,
@@ -14,6 +15,7 @@ import {
 import { NavUser } from "../../custom/NavUser";
 import { TimelineStep } from "./TimelineStep";
 import { RegisterState } from "@/src/infra/registerState";
+import { Logo } from "../../custom/Logo";
 
 export function AppSidebar({
   state,
@@ -29,9 +31,7 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
+                <Logo />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Challenger</span>
                   <span className="truncate text-xs">Inscription</span>

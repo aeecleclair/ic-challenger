@@ -27,21 +27,8 @@ import { NavLicense } from "./NavLicense";
 import { NavVolunteerShifts } from "./NavVolunteerShifts";
 import { NavEditions } from "./NavEditions";
 import { useUser } from "@/src/hooks/useUser";
+import { Logo } from "../../custom/Logo";
 
-const data = {
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-};
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
   const router = useRouter();
@@ -57,9 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" onClick={handleLogoClick}>
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <Command className="size-4" />
-              </div>
+              <Logo />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">Challenger</span>
                 <span className="truncate text-xs">Administration</span>
