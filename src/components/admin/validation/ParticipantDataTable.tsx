@@ -50,9 +50,16 @@ import { toast } from "../../ui/use-toast";
 import { RequiredPurchase, UserProductsCell } from "./UserProductsCell";
 import { useProducts } from "@/src/hooks/useProducts";
 import {
+  AppModulesSportCompetitionSchemasSportCompetitionPaymentBase,
   AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
 } from "@/src/api/hyperionSchemas";
+import { AddPaymentDialog } from "./AddPaymentDialog";
+import { usePostCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
+import { useAuth } from "@/src/hooks/useAuth";
+import { CreditCard } from "lucide-react";
+import { useUser } from "@/src/hooks/useUser";
+import { useUserPayments } from "@/src/hooks/useUserPayments";
 
 export interface ParticipantData {
   userId: string;
@@ -94,6 +101,7 @@ export function ParticipantDataTable({
   onDeleteParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
+  const { isAdmin } = useUser();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -105,8 +113,20 @@ export function ParticipantDataTable({
       searchField: false,
       productNames: false,
     });
+  const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false);
+  const [selectedParticipant, setSelectedParticipant] =
+    React.useState<ParticipantData | null>(null);
 
   const { products } = useProducts();
+  const { makePayment, isPostingPayment } = useUserPayments();
+
+  const handleAddPayment = async (amount: number) => {
+    if (!selectedParticipant) return;
+    const body: AppModulesSportCompetitionSchemasSportCompetitionPaymentBase = {
+      total: amount,
+    };
+    await makePayment(selectedParticipant.userId, body);
+  };
 
   const sports = React.useMemo(() => {
     const sportSet = new Set<string>();
@@ -570,6 +590,17 @@ export function ParticipantDataTable({
                     </>
                   )}
                 </DropdownMenuItem>
+                {isAdmin() && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setSelectedParticipant(participant);
+                      setPaymentDialogOpen(true);
+                    }}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Enregistrer un paiement
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={() => {
                     if (participant?.hasPaid) {
@@ -729,6 +760,13 @@ export function ParticipantDataTable({
           showSelectedCount={false}
         />
       </div>
+      <AddPaymentDialog
+        open={paymentDialogOpen}
+        onOpenChange={setPaymentDialogOpen}
+        onConfirm={handleAddPayment}
+        participantName={selectedParticipant?.fullName || ""}
+        isLoading={isPostingPayment}
+      />
     </div>
   );
 }
