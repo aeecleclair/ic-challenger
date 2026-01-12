@@ -11,6 +11,7 @@ import { useDocument } from "@/src/hooks/useDocument";
 import { RegisteringFormValues } from "@/src/forms/registering";
 import { se } from "date-fns/locale";
 import { on } from "events";
+import { useAuth } from "@/src/hooks/useAuth";
 
 interface DocumentDialogProps {
   setIsOpen: (value: boolean) => void;
@@ -27,7 +28,8 @@ export const DocumentDialog = ({
   onFileRemove,
   onFileSet,
 }: DocumentDialogProps) => {
-  const { data } = useDocument();
+  const { userId } = useAuth();
+  const { data } = useDocument(userId);
 
   return (
     <>

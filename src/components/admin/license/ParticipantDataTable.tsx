@@ -194,7 +194,10 @@ export function ParticipantDataTable({
                   </DialogTitle>
                 </DialogHeader>
                 <div className="mt-4">
-                  <DocumentView documentKey="certificate" />
+                  <DocumentView
+                    documentKey="certificate"
+                    userId={participant.userId}
+                  />
                 </div>
               </DialogContent>
             </Dialog>

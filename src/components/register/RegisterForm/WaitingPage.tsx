@@ -52,7 +52,7 @@ export const WaitingPage = ({ userMePurchases }: WaitingPageProps) => {
   const { createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
-  const { data: certificateData, uploadDocument } = useDocument();
+  const { data: certificateData, uploadDocument } = useDocument(me?.id ?? null);
 
   const licenseForm = useForm<LicenseFormValues>({
     resolver: zodResolver(licenseFormSchema),

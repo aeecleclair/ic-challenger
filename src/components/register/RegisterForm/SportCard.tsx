@@ -40,7 +40,7 @@ export const SportCard = ({ form, sports }: SportCardProps) => {
   const [teamName, setTeamName] = useState("");
   const [open, setIsOpen] = useState(false);
 
-  const { data } = useDocument();
+  const { data } = useDocument(me?.id ?? null);
 
   useEffect(() => {
     if (data) {

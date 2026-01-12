@@ -8,10 +8,11 @@ import { useState } from "react";
 
 interface DocumentViewProps {
   documentKey: string;
+  userId: string;
 }
 
-export const DocumentView = ({ documentKey }: DocumentViewProps) => {
-  const { data } = useDocument();
+export const DocumentView = ({ documentKey, userId }: DocumentViewProps) => {
+  const { data } = useDocument(userId);
   const [isLoading, setIsLoading] = useState(data?.size === undefined);
 
   if (data?.size !== undefined && isLoading) {

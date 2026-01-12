@@ -3,10 +3,10 @@ import axios from "axios";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 
-export const useDocument = () => {
+export const useDocument = (userId: string | null) => {
   const backUrl: string =
     process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
-  const { token, userId } = useAuth();
+  const { token } = useAuth();
 
   const uploadDocument = (
     file: Blob,

@@ -56,7 +56,7 @@ const Register = () => {
   const { userMePurchases, createPurchase, deletePurchase } = useUserPurchases({
     userId: me?.id,
   });
-  const { uploadDocument } = useDocument();
+  const { uploadDocument } = useDocument(me?.id ?? null);
   const router = useRouter();
 
   if (isTokenQueried && token === null) {
