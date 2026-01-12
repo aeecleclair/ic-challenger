@@ -60,6 +60,7 @@ export interface ParticipantData {
   fullName: string;
   email: string;
   license?: string;
+  certificateFileId?: string;
   isValidated: boolean;
 }
 
@@ -162,8 +163,12 @@ export function ParticipantDataTable({
         </Button>
       ),
       cell: ({ row }) => {
-        const license = row.getValue("license") as string | undefined;
+        const license = row.original.license;
+        const certificateFileId = row.original.certificateFileId;
         const participant = row.original;
+        if (!certificateFileId && !license) {
+          return <div className="text-center">Aucune license</div>;
+        }
 
         if (license) {
           return <div className="text-center">{license}</div>;
