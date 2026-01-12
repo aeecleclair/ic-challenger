@@ -66,7 +66,11 @@ export interface ParticipantData {
 
 interface ParticipantDataTableProps {
   data: ParticipantData[];
-  onValidateParticipant: (userId: string, sportId: string) => void;
+  onValidateParticipant: (
+    userId: string,
+    sportId: string,
+    isValid: boolean,
+  ) => void;
   isLoading: boolean;
 }
 
@@ -267,12 +271,13 @@ export function ParticipantDataTable({
                     onValidateParticipant(
                       participant.userId,
                       participant.sportId,
+                      !participant.isValidated,
                     )
                   }
                   disabled={isLoading}
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
-                  Valider
+                  {participant.isValidated ? "Invalider" : "Valider"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

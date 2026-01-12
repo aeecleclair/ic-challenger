@@ -87,8 +87,8 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schoolParticipants]);
 
-  const onValidate = (userId: string, sportId: string) => {
-    updateLicense(sportId, userId, true, () => {
+  const onValidate = (userId: string, sportId: string, isValid: boolean) => {
+    updateLicense(sportId, userId, isValid, () => {
       refetchParticipantSchools();
     });
   };
