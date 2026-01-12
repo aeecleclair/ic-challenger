@@ -68,7 +68,7 @@ export const useDocument = (userId: string | null) => {
       },
       {
         enabled: !!userId,
-        queryHash: "getDocument",
+        queryHash: "getDocument " + userId,
       },
     );
 
