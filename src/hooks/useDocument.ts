@@ -2,12 +2,16 @@ import { useGetCompetitionParticipantsUsersUserIdCertificate } from "../api/hype
 import axios from "axios";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
+import { useUser } from "./useUser";
 
 export const useDocument = (userId: string | null) => {
   const backUrl: string =
     process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
-  const { token } = useAuth();
-
+  const { token, userId: userMeId } = useAuth();
+  const { isAdmin } = useUser();
+  if (!isAdmin()) {
+    userId = userMeId;
+  }
   const uploadDocument = (
     file: Blob,
     sportId: string,
