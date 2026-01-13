@@ -9,9 +9,14 @@ import { useState } from "react";
 interface DocumentViewProps {
   documentKey: string;
   userId: string;
+  username?: string;
 }
 
-export const DocumentView = ({ documentKey, userId }: DocumentViewProps) => {
+export const DocumentView = ({
+  documentKey,
+  userId,
+  username,
+}: DocumentViewProps) => {
   const { data } = useDocument(userId);
   const [isLoading, setIsLoading] = useState(data?.size === undefined);
 
@@ -30,7 +35,7 @@ export const DocumentView = ({ documentKey, userId }: DocumentViewProps) => {
               const url = URL.createObjectURL(data);
               const a = document.createElement("a");
               a.href = url;
-              a.download = data.name || "document.pdf";
+              a.download = `${username || "document"}.pdf`;
               document.body.appendChild(a);
               a.click();
               document.body.removeChild(a);

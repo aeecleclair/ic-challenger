@@ -7,11 +7,9 @@ import { useUser } from "./useUser";
 export const useDocument = (userId: string | null) => {
   const backUrl: string =
     process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
-  const { token, userId: userMeId } = useAuth();
+  const { token } = useAuth();
   const { isAdmin } = useUser();
-  if (!isAdmin()) {
-    userId = userMeId;
-  }
+
   const uploadDocument = (
     file: Blob,
     sportId: string,
@@ -67,7 +65,7 @@ export const useDocument = (userId: string | null) => {
         },
       },
       {
-        enabled: !!userId,
+        enabled: !!userId && isAdmin,
         queryHash: "getDocument " + userId,
       },
     );

@@ -25,9 +25,7 @@ import {
 import {
   ArrowUpDown,
   CheckCircle,
-  Eye,
   MoreHorizontal,
-  Users,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -36,33 +34,9 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/src/components/ui/tooltip";
 import { DataTablePagination } from "@/src/components/ui/data-table-pagination";
 import { DataTableToolbar } from "./DataTableToolbar";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../../ui/dialog";
-import { DocumentView } from "../../custom/DocumentView";
-
-export interface ParticipantData {
-  userId: string;
-  sportId: string;
-  sportName: string;
-  fullName: string;
-  email: string;
-  license?: string;
-  certificateFileId?: string;
-  isValidated: boolean;
-}
+import { CertificateLicense, ParticipantData } from "./CertificateLicense";
 
 interface ParticipantDataTableProps {
   data: ParticipantData[];
@@ -79,7 +53,7 @@ export function ParticipantDataTable({
   onValidateParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  console.log("ParticipantDataTable data", data);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -169,6 +143,7 @@ export function ParticipantDataTable({
       cell: ({ row }) => {
         const license = row.original.license;
         const certificateFileId = row.original.certificateFileId;
+        console.log("license", row.original);
         const participant = row.original;
         if (!certificateFileId && !license) {
           return <div className="text-center">Aucune license</div>;
@@ -178,31 +153,7 @@ export function ParticipantDataTable({
           return <div className="text-center">{license}</div>;
         }
 
-        return (
-          <div className="flex justify-center">
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Eye className="h-4 w-4" />
-                  Voir le document
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh]">
-                <DialogHeader>
-                  <DialogTitle>
-                    Certificat médical - {participant.fullName}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="mt-4">
-                  <DocumentView
-                    documentKey="certificate"
-                    userId={participant.userId}
-                  />
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-        );
+        return <CertificateLicense participant={participant} />;
       },
       filterFn: (row, id, filterValue) => {
         if (filterValue === undefined) return true;
