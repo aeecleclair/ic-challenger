@@ -23,6 +23,7 @@ import { Skeleton } from "@/src/components/ui/skeleton";
 import {
   CompetitionGroupType,
   UserGroupMembership,
+  UserGroupMembershipComplete,
 } from "@/src/api/hyperionSchemas";
 import { AVAILABLE_GROUPS } from "@/src/infra/groups";
 import {
@@ -73,13 +74,14 @@ export default function GroupsPage() {
 
     if (!searchQuery) return groupUsers;
 
-    return groupUsers.filter((user: ExtendedUserGroupMembership) => {
+    return groupUsers.filter((user: UserGroupMembershipComplete) => {
       const searchTerm = searchQuery.toLowerCase();
+
       return (
-        user.first_name?.toLowerCase().includes(searchTerm) ||
-        user.last_name?.toLowerCase().includes(searchTerm) ||
-        user.email?.toLowerCase().includes(searchTerm) ||
-        user.school?.toLowerCase().includes(searchTerm)
+        user.user.firstname?.toLowerCase().includes(searchTerm) ||
+        user.user.name?.toLowerCase().includes(searchTerm) ||
+        user.user.email?.toLowerCase().includes(searchTerm) ||
+        user.user.school?.name?.toLowerCase().includes(searchTerm)
       );
     });
   }, [groupUsers, searchQuery]);
