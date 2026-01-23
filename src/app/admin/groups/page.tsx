@@ -33,13 +33,6 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 
-interface ExtendedUserGroupMembership extends UserGroupMembership {
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  school?: string;
-}
-
 export default function GroupsPage() {
   const router = useRouter();
   const searchParam = useSearchParams();
