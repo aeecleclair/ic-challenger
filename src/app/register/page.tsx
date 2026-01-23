@@ -147,6 +147,10 @@ const Register = () => {
           }
         },
         Participation: async (values, callback) => {
+          const extendedCallback = () => {
+            refetchAvailableProducts();
+            callback();
+          };
           if (meCompetition !== undefined) {
             if (!values.is_athlete && meParticipant !== undefined) {
               withdrawParticipant(meParticipant.sport_id, () => {});
@@ -161,7 +165,7 @@ const Register = () => {
                 is_pompom: values.is_pompom,
                 allow_pictures: values.allow_pictures,
               },
-              callback,
+              extendedCallback,
             );
             return;
           }
@@ -173,8 +177,7 @@ const Register = () => {
             is_pompom: values.is_pompom,
             allow_pictures: values.allow_pictures,
           };
-          await createCompetitionUser(body, callback);
-          await refetchAvailableProducts();
+          await createCompetitionUser(body, extendedCallback);
         },
         Sport: async (values, callback) => {
           const sport = sports?.find((s) => s.id === values.sport!.id);

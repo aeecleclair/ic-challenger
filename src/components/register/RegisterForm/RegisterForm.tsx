@@ -134,10 +134,10 @@ export const RegisterForm = ({
     //   api?.scrollTo(isAthlete ? 6 : 5);
     //   return;
     // } else {
-      // setState({
-      //   ...state,
-      //   allHeaderSubtitles: newSubtitles,
-      // });
+    // setState({
+    //   ...state,
+    //   allHeaderSubtitles: newSubtitles,
+    // });
     // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meCompetition, meParticipant]);

@@ -220,7 +220,7 @@ export const RegistrationSummary = ({
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-4 text-black">
             <div className="flex items-center gap-2 mb-3">
               <h3 className="font-semibold text-gray-900">
                 Produits sélectionnés
@@ -264,7 +264,9 @@ export const RegistrationSummary = ({
 
                 <div className="flex items-center gap-2 mt-2">
                   <p className="text-sm text-muted-foreground">Total:</p>
-                  <Badge variant="outline">{total?.toFixed(2)}€</Badge>
+                  <Badge variant="outline" className="text-black">
+                    {total?.toFixed(2)}€
+                  </Badge>
                 </div>
               </div>
             ) : (

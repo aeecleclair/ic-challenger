@@ -13,6 +13,7 @@ interface StyledFormFieldProps {
   id: string;
   form: any;
   input: (field: ControllerRenderProps<FieldValues, string>) => React.ReactNode;
+  className?: string;
 }
 
 export const StyledFormField = ({
@@ -20,6 +21,7 @@ export const StyledFormField = ({
   label,
   id,
   input,
+  className = "",
 }: StyledFormFieldProps) => {
   return (
     <FormField
@@ -27,10 +29,12 @@ export const StyledFormField = ({
       name={id}
       render={({ field }) => (
         <FormItem className="w-full">
-          <div className="grid gap-2">
-            {label ?? <FormLabel>{label}</FormLabel>}
-            <FormControl>{input(field)}</FormControl>
-            <FormMessage />
+          <div className={className}>
+            <div className="grid gap-2">
+              {label ?? <FormLabel>{label}</FormLabel>}
+              <FormControl>{input(field)}</FormControl>
+              <FormMessage />
+            </div>
           </div>
         </FormItem>
       )}

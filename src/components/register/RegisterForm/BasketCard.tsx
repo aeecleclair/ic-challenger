@@ -67,7 +67,11 @@ export const BasketCard = ({ form }: PackageCardProps) => {
     }
   }, [hasRequiredProductSelected, requiredProducts.length, form]);
 
-  return (
+  return (availableProducts?.length || 0) === 0 ? (
+    <div className="text-xl font-semibold align-center justify-center">
+      Chargement...
+    </div>
+  ) : (
     <div className="space-y-4 overflow-y-auto pr-2">
       <div className="flex items-center gap-2">
         <h2 className="text-xl font-semibold">Ta formule :</h2>
@@ -95,6 +99,7 @@ export const BasketCard = ({ form }: PackageCardProps) => {
               </div>
             )}
             <StyledFormField
+              className={product.product.required ? "text-black" : ""}
               form={form}
               label={`${product.product.name}${product.product.required ? " *" : ""}`}
               id={`products[${productId}]`}
@@ -127,6 +132,9 @@ export const BasketCard = ({ form }: PackageCardProps) => {
                             key={variant.id}
                           >
                             <RadioGroupItem
+                              className={
+                                product.product.required ? "border-black" : ""
+                              }
                               value={variant.id}
                               id={`product-${variant.id}`}
                               onClick={(e) => {
@@ -182,6 +190,9 @@ export const BasketCard = ({ form }: PackageCardProps) => {
                   ) : (
                     <div className="flex items-center space-x-2 pt-2">
                       <Checkbox
+                        className={
+                          product.product.required ? "border-black" : ""
+                        }
                         id={`products[${productId}]`}
                         value={product.id}
                         checked={ids.includes(product.id)}
