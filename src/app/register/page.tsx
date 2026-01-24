@@ -188,19 +188,9 @@ const Register = () => {
             substitute: values.sport!.substitute,
           };
           if (meParticipant !== undefined) {
-            await withdrawParticipant(meParticipant.sport_id, async () => {
-              await createParticipant(body, values.sport!.id, callback);
-              if (values.sport?.certificate && values.sport?.certificateFile) {
-                uploadDocument(
-                  values.sport.certificateFile,
-                  values.sport!.id,
-                  callback,
-                );
-              }
-            });
-            return;
+            await withdrawParticipant(meParticipant.sport_id, () => {});
           }
-          await createParticipant(body, values.sport!.id, async () => {
+          await createParticipant(body, values.sport!.id, () => {
             if (values.sport?.certificate && values.sport?.certificateFile) {
               uploadDocument(
                 values.sport.certificateFile,
