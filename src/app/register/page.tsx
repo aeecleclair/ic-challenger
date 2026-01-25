@@ -189,15 +189,17 @@ const Register = () => {
           };
           if (meParticipant !== undefined) {
             await withdrawParticipant(meParticipant.sport_id, () => {});
+            await new Promise((resolve) => setTimeout(resolve, 1000));
           }
           await createParticipant(body, values.sport!.id, () => {
             if (values.sport?.certificate && values.sport?.certificateFile) {
               uploadDocument(
                 values.sport.certificateFile,
                 values.sport!.id,
-                callback,
+                () => {},
               );
             }
+            callback();
           });
         },
         Panier: (values, callback) => {
