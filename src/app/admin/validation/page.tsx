@@ -285,6 +285,34 @@ const Dashboard = () => {
     return counts;
   }, [participantTableData]);
 
+  const schoolsGeneralQuotaUsed: Record<string, number> = useMemo(() => {
+    const used: Record<string, number> = {};
+    competitionUsers
+      ?.filter((user) => user.user.school_id === effectiveSchoolId)
+      .map((user) => {
+        const userPurchases = schoolsPurchases
+          ? schoolsPurchases[user.user_id]
+            ? schoolsPurchases[user.user_id]
+            : []
+          : [];
+        userPurchases.forEach((purchase) => {
+          const product = products?.find((p) =>
+            (p?.variants ?? []).find(
+              (v) => v.id === purchase.product_variant_id,
+            ),
+          );
+
+          const variant = (product?.variants ?? []).find(
+            (v) => v.id === purchase.product_variant_id,
+          );
+
+          if (variant && product && product.required)
+            used[product.id] = (used[product.id] || 0) + 1;
+        });
+      });
+    return used;
+  }, [competitionUsers, effectiveSchoolId, products, schoolsPurchases]);
+
   useEffect(() => {
     if (effectiveSchoolId) {
       refetchParticipantSchools();
@@ -411,6 +439,7 @@ const Dashboard = () => {
                 sportsQuota={sportsQuota || []}
                 schoolsProductQuota={schoolsProductQuota}
                 schoolsGeneralQuota={schoolsGeneralQuota}
+                schoolsProductQuotaUsed={schoolsGeneralQuotaUsed}
                 products={products}
                 validatedCounts={validatedCounts}
               />
@@ -433,6 +462,7 @@ const Dashboard = () => {
           sportsQuota={sportsQuota || []}
           schoolsProductQuota={schoolsProductQuota}
           schoolsGeneralQuota={schoolsGeneralQuota}
+          schoolsProductQuotaUsed={schoolsGeneralQuotaUsed}
           products={products}
           validatedCounts={validatedCounts}
         />

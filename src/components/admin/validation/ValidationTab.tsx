@@ -20,6 +20,7 @@ export interface ValidationTabProps {
   schoolsProductQuota:
     | GetCompetitionSchoolsSchoolIdProductQuotasResponse
     | undefined;
+  schoolsProductQuotaUsed: Record<string, number>;
   sportsQuota: GetCompetitionSportsSportIdQuotasResponse;
   validatedCounts: Record<string, number>;
   participantTableData: ParticipantData[];
@@ -39,6 +40,7 @@ export function ValidationTab({
   school,
   schoolsGeneralQuota,
   schoolsProductQuota,
+  schoolsProductQuotaUsed,
   sportsQuota,
   validatedCounts,
   participantTableData,
@@ -53,6 +55,10 @@ export function ValidationTab({
   onValidate,
   onDelete,
 }: ValidationTabProps) {
+  const hasExceeded = schoolsProductQuota
+    ?.map((value) => schoolsProductQuotaUsed[value.product_id] > value.quota)
+    .some((b) => b);
+
   return (
     <>
       {school && (
@@ -138,9 +144,14 @@ export function ValidationTab({
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10"
+                    className="px-2 py-1 text-xs border-primary text-primary hover:bg-primary/10 relative"
                   >
-                    Quota de produit
+                    <span>
+                      Quota de produit
+                      {hasExceeded && (
+                        <div className="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full border-2 border-white" />
+                      )}
+                    </span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
@@ -160,7 +171,11 @@ export function ValidationTab({
                           <span className="font-medium text-xs text-muted-foreground">
                             {product?.name}
                           </span>
-                          <span className="text-xs font-bold text-primary">
+                          <span
+                            className={`text-xs font-bold ${schoolsProductQuotaUsed[value.product_id] > value.quota ? "text-red-600" : "text-primary"}`}
+                          >
+                            Utilisé:{" "}
+                            {schoolsProductQuotaUsed[value.product_id] || 0} /{" "}
                             {value.quota}
                           </span>
                         </div>
