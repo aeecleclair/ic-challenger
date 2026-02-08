@@ -31,7 +31,7 @@ export const CaptainsExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_data_${edition?.name}.xlsx`;
+      link.download = `export_captain_${edition?.name}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

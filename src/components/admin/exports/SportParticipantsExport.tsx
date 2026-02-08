@@ -29,6 +29,7 @@ export const SportParticipantsExport = () => {
       });
       return;
     }
+    const sport = sports?.find((s) => s.id === sportId);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr"}/competition/data-export/sports/${sportId}/participants`,
@@ -51,7 +52,7 @@ export const SportParticipantsExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_data_${edition?.name}.xlsx`;
+      link.download = `export_sport_${sport?.name ?? sportId}_participants_${edition?.name}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

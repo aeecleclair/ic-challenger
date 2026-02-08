@@ -43,6 +43,12 @@ export const SchoolUsersExport = () => {
       });
       return;
     }
+    const school = sportSchools?.find(
+      (s) => s.school_id === exportParams.schoolId,
+    );
+    const schoolName = school?.school.name
+      ? formatSchoolName(school.school.name)
+      : exportParams.schoolId;
     let params = "";
     if (exportParams.excludeNonValidated) {
       params += `exclude_non_validated=true&`;
@@ -81,7 +87,7 @@ export const SchoolUsersExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_data_${edition?.name}.xlsx`;
+      link.download = `export_school_${schoolName}_users_${edition?.name}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

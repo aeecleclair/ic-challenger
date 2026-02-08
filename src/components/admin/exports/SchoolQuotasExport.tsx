@@ -31,6 +31,10 @@ export const SchoolQuotasExport = () => {
       });
       return;
     }
+    const school = sportSchools?.find((s) => s.school_id === schoolId);
+    const schoolName = school?.school.name
+      ? formatSchoolName(school.school.name)
+      : schoolId;
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr"}/competition/data-export/schools/${schoolId}/quotas`,
@@ -53,7 +57,7 @@ export const SchoolQuotasExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_data_${edition?.name}.xlsx`;
+      link.download = `export_school_${schoolName}_quotas_${edition?.name}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
