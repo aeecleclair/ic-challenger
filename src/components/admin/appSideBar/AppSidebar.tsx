@@ -12,7 +12,6 @@ import {
   SidebarMenuItem,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
-import { NavSecondary } from "./NavSecondary";
 import { useEdition } from "@/src/hooks/useEdition";
 import { NavValidation } from "./NavValidation";
 import { NavSchools } from "./NavSchools";
@@ -28,6 +27,7 @@ import { NavVolunteerShifts } from "./NavVolunteerShifts";
 import { NavEditions } from "./NavEditions";
 import { useUser } from "@/src/hooks/useUser";
 import { Logo } from "../../custom/Logo";
+import { NavExport } from "./NavExport";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
@@ -68,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {isAdmin() && <NavGroups />}
             {isAdmin() && <NavProducts />}
             {isAdmin() && <NavVolunteerShifts />}
-            {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+            {isAdmin() && <NavExport />}
           </>
         )}
       </SidebarContent>

@@ -46,19 +46,6 @@ const AdminPage = () => {
   const { products } = useProducts();
   const { globalPodium } = usePodiums();
 
-  const [isOpened, setIsOpened] = useState(false);
-  const [exportParams, setExportParams] = useState<{
-    excludeNonValidated: boolean;
-    participants: boolean;
-    purchases: boolean;
-    payments: boolean;
-  }>({
-    excludeNonValidated: false,
-    participants: true,
-    purchases: true,
-    payments: true,
-  });
-
   const form = useForm<EditionFormSchema>({
     resolver: zodResolver(editionFormSchema),
     defaultValues: {},
@@ -116,148 +103,8 @@ const AdminPage = () => {
     );
   }
 
-  const exportResult = async () => {
-    let params = "";
-    if (exportParams.excludeNonValidated) {
-      params += `exclude_non_validated=true&`;
-    }
-    if (exportParams.participants) {
-      params += `included_fields=participants&`;
-    }
-    if (exportParams.purchases) {
-      params += `included_fields=purchases&`;
-    }
-    if (exportParams.payments) {
-      params += `included_fields=payments&`;
-    }
-    if (params.endsWith("&")) {
-      params = params.slice(0, -1);
-    }
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr"}/competition/users/data-export${params ? "?" + params : ""}`,
-        {
-          method: "GET",
-          headers: {
-            Accept:
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Error while downloading");
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `export_data_${edition?.name}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      toast({
-        description: (error as { detail: String }).detail,
-        variant: "destructive",
-      });
-      setIsOpened(false);
-      return;
-    }
-    setIsOpened(false);
-  };
-
   return (
     <>
-      <CustomDialog
-        isOpened={isOpened}
-        setIsOpened={setIsOpened}
-        title={"Exporter les données"}
-        description={
-          <div className="grid gap-6 mt-4">
-            <div className="grid gap-2 text-justify">
-              Vous êtes sur le point d&apos;exporter les données de
-              l&apos;édition
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center space-x-2  ">
-                <Checkbox
-                  id="exclude_non_validated"
-                  checked={exportParams.excludeNonValidated}
-                  onCheckedChange={(value) =>
-                    setExportParams({
-                      ...exportParams,
-                      excludeNonValidated: value as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="exclude_non_validated">
-                  Exclure les inscrits non validés
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2  ">
-                <Checkbox
-                  id="participants"
-                  checked={exportParams.participants}
-                  onCheckedChange={(value) =>
-                    setExportParams({
-                      ...exportParams,
-                      participants: value as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="participants">Inscriptions</Label>
-              </div>
-              <div className="flex items-center space-x-2  ">
-                <Checkbox
-                  id="purchases"
-                  checked={exportParams.purchases}
-                  onCheckedChange={(value) =>
-                    setExportParams({
-                      ...exportParams,
-                      purchases: value as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="purchases">Achats</Label>
-              </div>
-              <div className="flex items-center space-x-2  ">
-                <Checkbox
-                  id="payments"
-                  checked={exportParams.payments}
-                  onCheckedChange={(value) =>
-                    setExportParams({
-                      ...exportParams,
-                      payments: value as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="payments">Paiements</Label>
-              </div>
-            </div>
-            <div className="flex justify-end mt-2 space-x-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsOpened(false)}
-                className="w-[100px]"
-              >
-                Annuler
-              </Button>
-              <Button
-                className="w-[100px]"
-                type="button"
-                onClick={exportResult}
-              >
-                Exporter
-              </Button>
-            </div>
-          </div>
-        }
-      />
       {isAdmin() && edition === null && (
         <EditionForm
           form={form}
@@ -289,13 +136,6 @@ const AdminPage = () => {
                 </div>
               </div>
             </div>
-            <Button
-              size="lg"
-              className="gap-2"
-              onClick={() => setIsOpened(true)}
-            >
-              Exporter
-            </Button>
           </div>
 
           {stats && (
