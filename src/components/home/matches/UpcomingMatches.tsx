@@ -73,10 +73,19 @@ export const UpcomingMatches = ({
     if (diffMinutes < 0) return "Passé";
     if (diffMinutes < 60) return `${diffMinutes}min`;
 
-    const hours = Math.floor(diffMinutes / 60);
     const minutes = diffMinutes % 60;
-    if (minutes === 0) return `${hours}h`;
-    return `${hours}h${minutes.toString().padStart(2, "0")}`;
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) {
+      if (minutes === 0) return `${diffHours}h`;
+      return `${diffHours}h${minutes.toString().padStart(2, "0")}`;
+    }
+    const hours = diffHours % 24;
+    const diffDays = Math.floor(diffHours / 24);
+    if (minutes === 0) {
+      if hours === 0 return `${diffDays}j`;
+      return `${diffDays}j ${diffHours}h`;
+    }
+    return `${diffDays}j ${diffHours.toString().padStart(2, "0")}h${minutes.toString().padStart(2, "0")}`;
   };
 
   return (
