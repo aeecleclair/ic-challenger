@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import { Command, LifeBuoy, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Sidebar,
@@ -19,17 +18,15 @@ import { NavSearch } from "./NavSearch";
 import { NavLocations } from "./NavLocations";
 import { NavPodium } from "./NavPodium";
 import { useParticipant } from "@/src/hooks/useParticipant";
-import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
-import { useVolunteer } from "@/src/hooks/useVolunteer";
 import { Logo } from "../../custom/Logo";
+import { useUser } from "@/src/hooks/useUser";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
   const router = useRouter();
   const { meParticipant } = useParticipant();
-  const { meCompetition } = useCompetitionUser();
-  const { volunteer } = useVolunteer();
-  const isVolunteer = volunteer && volunteer.length > 0;
+  const { me } = useUser();
+  const isVolunteer = me?.school_id == "d9772da7-1142-4002-8b86-b694b431dfed";
 
   const handleLogoClick = () => {
     router.push("/");
