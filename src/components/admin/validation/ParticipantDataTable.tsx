@@ -124,7 +124,7 @@ export function ParticipantDataTable({
   const handleAddPayment = async (amount: number) => {
     if (!selectedParticipant) return;
     const body: AppModulesSportCompetitionSchemasSportCompetitionPaymentBase = {
-      total: amount,
+      total: amount * 100, // Convert to cents
     };
     await makePayment(selectedParticipant.userId, body);
   };
@@ -210,7 +210,7 @@ export function ParticipantDataTable({
         return (
           <Link
             href={`/admin/validation/detail?user_id=${row.original.userId}`}
-            className="font-medium text-center flex items-center justify-center gap-2"
+            className="font-medium text-center flex items-center justify-center gap-2 underline hover:no-underline"
           >
             <div className="font-medium text-center flex items-center justify-center gap-2">
               {isCaptain && (

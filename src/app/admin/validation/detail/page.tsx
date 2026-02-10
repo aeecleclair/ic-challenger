@@ -4,6 +4,7 @@ import { UserCompetition } from "@/src/components/admin/userDetails/UserCompetit
 import { UserInfo } from "@/src/components/admin/userDetails/UserInfo";
 import { UserPayments } from "@/src/components/admin/userDetails/UserPayments";
 import { UserPurchases } from "@/src/components/admin/userDetails/UserPurchases";
+import { Button } from "@/src/components/ui/button";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useProducts } from "@/src/hooks/useProducts";
@@ -11,6 +12,7 @@ import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
 import { useSchoolsPayments } from "@/src/hooks/useSchoolsPayments";
 import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
 import { useUser } from "@/src/hooks/useUser";
+import { ArrowLeft, Users } from "lucide-react";
 import { useParams, useSearchParams } from "next/navigation";
 
 const UserDetailsPage = () => {
@@ -69,9 +71,9 @@ const UserDetailsPage = () => {
     invalidateCompetitionUser(userId, () => {});
   };
 
-  const onDelete = (userId: string, sportId: string, isAthlete: boolean) => {
-    if (isAthlete)
-      deleteParticipant(sportId, userId, () => {
+  const onDelete = (userId: string) => {
+    if (userParticipant)
+      deleteParticipant(userParticipant.sport_id, userId, () => {
         deleteCompetitionUser(userId, () => {});
       });
     else deleteCompetitionUser(userId, () => {});
@@ -79,16 +81,58 @@ const UserDetailsPage = () => {
   if (!canAccessSchool) {
     return <div className="p-6">Vous n&apos;avez pas accès à cette page</div>;
   }
+  const userName =
+    userCompetition?.user.firstname || userCompetition?.user.name
+      ? `${userCompetition.user.firstname || ""} ${userCompetition.user.name || ""}`.trim()
+      : "Utilisateur";
   return (
-    <div className="p-6 flex-col">
+    <div className="flex w-full flex-col space-y-6">
       <div>Détails de l&apos;utilisateur</div>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Users className="h-8 w-8 text-primary" />
+            {userName}
+          </h1>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => window.history.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Retour
+          </Button>
+          {userCompetition && (
+            <Button
+              variant="outline"
+              onClick={() =>
+                userCompetition?.validated
+                  ? onInvalidate(userCompetition.user_id)
+                  : onValidate(userCompetition.user_id)
+              }
+              className="gap-2"
+            >
+              {userCompetition?.validated ? "Invalider" : "Valider"}
+            </Button>
+          )}
+          <Button
+            variant="destructive"
+            onClick={() => onDelete(userId as string)}
+            className="gap-2"
+          >
+            Supprimer
+          </Button>
+        </div>
+      </div>
 
       {userCompetition ? (
         <UserInfo user={userCompetition} />
       ) : (
         <div>Utilisateur non trouvé</div>
       )}
-      {userCompetition && userParticipant && (
+      {userCompetition && (
         <UserCompetition
           user={userCompetition}
           userParticipant={userParticipant}
@@ -97,7 +141,11 @@ const UserDetailsPage = () => {
       {userPurchases && products && (
         <UserPurchases userPurchases={userPurchases} products={products} />
       )}
-      {userPayments && <UserPayments userPayments={userPayments} />}
+      {userPayments && userCompetition && (
+        <UserPayments user={userCompetition} userPayments={userPayments} />
+      )}
     </div>
   );
 };
+
+export default UserDetailsPage;

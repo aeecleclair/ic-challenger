@@ -1,10 +1,13 @@
 import {
+  useDeleteCompetitionUsersUserIdPaymentsPaymentId,
   useGetCompetitionUsersUserIdPayments,
   usePostCompetitionUsersUserIdPayments,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { useUser } from "./useUser";
 import { AppModulesSportCompetitionSchemasSportCompetitionPaymentBase } from "../api/hyperionSchemas";
+import { toast } from "../components/ui/use-toast";
+import { DetailedErrorType, ErrorType } from "../utils/errorTyping";
 
 export const useUserPayments = () => {
   const { token, isTokenExpired, userId } = useAuth();
@@ -51,6 +54,54 @@ export const useUserPayments = () => {
     await refetchPayments();
   };
 
+  const { mutate: mutateDeleteUserPayment, isPending: isDeleteLoading } =
+    useDeleteCompetitionUsersUserIdPaymentsPaymentId();
+
+  const deleteUserPayment = (
+    userId: string,
+    paymentId: string,
+    callback: () => void,
+  ) => {
+    return mutateDeleteUserPayment(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+          paymentId: paymentId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if (
+            // Exact match for network error message 500
+            (error as any).message ===
+              "Network error (NetworkError when attempting to fetch resource.)" ||
+            (error as any).stack.body ||
+            (error as any).stack.detail
+          ) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la suppression",
+              description:
+                (error as any).message ||
+                (error as unknown as ErrorType).stack.body ||
+                (error as unknown as DetailedErrorType).stack.detail,
+              variant: "destructive",
+            });
+          } else {
+            callback();
+            toast({
+              title: "Paiement supprimé",
+              description: "Le paiement a été supprimé avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   return {
     payments,
     hasPaid,
@@ -58,6 +109,7 @@ export const useUserPayments = () => {
     error,
     refetchPayments,
     makePayment,
+    deleteUserPayment,
     isPostingPayment,
   };
 };
