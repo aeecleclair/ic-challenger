@@ -53,7 +53,6 @@ const Dashboard = () => {
     });
 
   const { products } = useProducts();
-  const { availableProducts } = useAvailableProducts();
 
   const userSchoolId = currentUser?.school_id;
   const canAccessSchool = isAdmin() || schoolId === userSchoolId;

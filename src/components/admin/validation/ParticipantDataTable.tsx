@@ -60,6 +60,7 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { CreditCard } from "lucide-react";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPayments } from "@/src/hooks/useUserPayments";
+import Link from "next/link";
 
 export interface ParticipantData {
   userId: string;
@@ -207,37 +208,42 @@ export function ParticipantDataTable({
         const isSubstitute = row.original.isSubstitute;
 
         return (
-          <div className="font-medium text-center flex items-center justify-center gap-2">
-            {isCaptain && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <Users className="h-4 w-4" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Capitaine d&apos;équipe</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            {isSubstitute && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <UserPlus className="h-4 w-4" />
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Remplaçant</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-            {fullName}
-          </div>
+          <Link
+            href={`/admin/validation/detail?user_id=${row.original.userId}`}
+            className="font-medium text-center flex items-center justify-center gap-2"
+          >
+            <div className="font-medium text-center flex items-center justify-center gap-2">
+              {isCaptain && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Users className="h-4 w-4" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Capitaine d&apos;équipe</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {isSubstitute && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <UserPlus className="h-4 w-4" />
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Remplaçant</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              {fullName}
+            </div>
+          </Link>
         );
       },
     },
