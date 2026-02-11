@@ -226,7 +226,7 @@ export const ValidatedPage = ({ userMePurchases }: ValidatedPageProps) => {
             onPurchaseEdit={() => setPurchaseDialogOpen(true)}
             userMePurchases={userMePurchases}
           />
-          <DialogContent>
+          <DialogContent className="space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
             <Form {...productForm}>
               <form
                 onSubmit={productForm.handleSubmit(onProductFormSubmit)}
