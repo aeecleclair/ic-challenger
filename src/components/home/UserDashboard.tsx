@@ -269,9 +269,11 @@ export const UserDashboard = ({
                           <span className="font-semibold text-sm">
                             {match.team1.name} vs {match.team2.name}
                           </span>
-                          <span className="font-bold text-green-600 text-lg">
-                            {getTimeUntilEvent(match.date)}
-                          </span>
+                          {match.date && (
+                            <span className="font-bold text-green-600 text-lg">
+                              {getTimeUntilEvent(match.date)}
+                            </span>
+                          )}
                         </div>
                         <div className="flex justify-between items-center text-xs text-muted-foreground">
                           <span>
