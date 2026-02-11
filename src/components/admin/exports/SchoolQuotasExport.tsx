@@ -1,13 +1,16 @@
-import { Card } from "../../ui/card";
-import { Checkbox } from "../../ui/checkbox";
-import { Label } from "../../ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../ui/card";
 import { Button } from "../../ui/button";
 import { useState } from "react";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useEdition } from "@/src/hooks/useEdition";
 import { toast } from "../../ui/use-toast";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
-import { DropdownMenu } from "../../ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -16,12 +19,14 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
+import { Download, School, Loader2 } from "lucide-react";
 
 export const SchoolQuotasExport = () => {
   const { edition } = useEdition();
   const { token } = useAuth();
   const { sportSchools } = useSportSchools();
   const [schoolId, setSchoolId] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
 
   const exportResult = async () => {
     if (!schoolId) {
@@ -31,6 +36,7 @@ export const SchoolQuotasExport = () => {
       });
       return;
     }
+    setIsExporting(true);
     const school = sportSchools?.find((s) => s.school_id === schoolId);
     const schoolName = school?.school.name
       ? formatSchoolName(school.school.name)
@@ -49,7 +55,7 @@ export const SchoolQuotasExport = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Error while downloading");
+        throw new Error("Erreur lors du téléchargement");
       }
 
       const blob = await response.blob();
@@ -57,25 +63,39 @@ export const SchoolQuotasExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_school_${schoolName}_quotas_${edition?.name}.xlsx`;
+      link.download = `export_ecole_${schoolName}_quotas_${edition?.name || "competition"}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      toast({
+        description: "Export des quotas de l'école réussi",
+        variant: "default",
+      });
     } catch (error) {
       toast({
-        description: (error as { detail: String }).detail,
+        description: (error as Error).message || "Erreur lors de l'export",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsExporting(false);
     }
   };
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Export des quotas par école</h2>
-      <div className="grid gap-6 mt-4">
+    <Card className="hover:shadow-md transition-shadow">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <School className="h-5 w-5 text-primary" />
+          Quotas par école
+        </CardTitle>
+        <CardDescription>
+          Exporte les quotas d&apos;une école spécifique
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <Select value={schoolId} onValueChange={(value) => setSchoolId(value)}>
-          <SelectTrigger className="w-48">
+          <SelectTrigger>
             <SelectValue placeholder="Sélectionnez une école" />
           </SelectTrigger>
           <SelectContent>
@@ -89,10 +109,25 @@ export const SchoolQuotasExport = () => {
           </SelectContent>
         </Select>
 
-        <Button className="w-[100px]" type="button" onClick={exportResult}>
-          Exporter
+        <Button
+          className="w-full gap-2"
+          type="button"
+          onClick={exportResult}
+          disabled={isExporting || !schoolId}
+        >
+          {isExporting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Export en cours...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Exporter
+            </>
+          )}
         </Button>
-      </div>
+      </CardContent>
     </Card>
   );
 };

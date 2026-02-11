@@ -1,4 +1,10 @@
-import { Card } from "../../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../ui/card";
 import { Button } from "../../ui/button";
 import { useState } from "react";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -12,12 +18,14 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { useSports } from "@/src/hooks/useSports";
+import { Download, Trophy, Loader2 } from "lucide-react";
 
 export const SportParticipantsExport = () => {
   const { edition } = useEdition();
   const { token } = useAuth();
   const { sports } = useSports();
   const [sportId, setSportId] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
 
   const activeSports = sports?.filter((sport) => sport.active);
 
@@ -29,6 +37,7 @@ export const SportParticipantsExport = () => {
       });
       return;
     }
+    setIsExporting(true);
     const sport = sports?.find((s) => s.id === sportId);
     try {
       const response = await fetch(
@@ -44,7 +53,7 @@ export const SportParticipantsExport = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Error while downloading");
+        throw new Error("Erreur lors du téléchargement");
       }
 
       const blob = await response.blob();
@@ -52,28 +61,40 @@ export const SportParticipantsExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_sport_${sport?.name ?? sportId}_participants_${edition?.name}.xlsx`;
+      link.download = `export_sport_${sport?.name ?? sportId}_participants_${edition?.name || "competition"}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      toast({
+        description: "Export des participants du sport réussi",
+        variant: "default",
+      });
     } catch (error) {
       toast({
-        description: (error as { detail: String }).detail,
+        description: (error as Error).message || "Erreur lors de l'export",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsExporting(false);
     }
   };
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-4">
-        Export des participants par sport
-      </h2>
-      <div className="grid gap-6 mt-4">
+    <Card className="hover:shadow-md transition-shadow">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Trophy className="h-5 w-5 text-primary" />
+          Participants par sport
+        </CardTitle>
+        <CardDescription>
+          Exporte la liste des participants d&apos;un sport spécifique
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
         <Select value={sportId} onValueChange={(value) => setSportId(value)}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Sélectionnez une école" />
+          <SelectTrigger>
+            <SelectValue placeholder="Sélectionnez un sport" />
           </SelectTrigger>
           <SelectContent>
             {activeSports?.map((sport) => (
@@ -84,10 +105,25 @@ export const SportParticipantsExport = () => {
           </SelectContent>
         </Select>
 
-        <Button className="w-[100px]" type="button" onClick={exportResult}>
-          Exporter
+        <Button
+          className="w-full gap-2"
+          type="button"
+          onClick={exportResult}
+          disabled={isExporting || !sportId}
+        >
+          {isExporting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Export en cours...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Exporter
+            </>
+          )}
         </Button>
-      </div>
+      </CardContent>
     </Card>
   );
 };

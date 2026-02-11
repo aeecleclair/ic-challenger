@@ -1,4 +1,10 @@
-import { Card } from "../../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../ui/card";
 import { Checkbox } from "../../ui/checkbox";
 import { Label } from "../../ui/label";
 import { Button } from "../../ui/button";
@@ -6,10 +12,13 @@ import { useState } from "react";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useEdition } from "@/src/hooks/useEdition";
 import { toast } from "../../ui/use-toast";
+import { Download, Database, Loader2 } from "lucide-react";
+import { Separator } from "../../ui/separator";
 
 export const GlobalExport = () => {
   const { edition } = useEdition();
   const { token } = useAuth();
+  const [isExporting, setIsExporting] = useState(false);
   const [exportParams, setExportParams] = useState<{
     excludeNonValidated: boolean;
     participants: boolean;
@@ -23,6 +32,7 @@ export const GlobalExport = () => {
   });
 
   const exportResult = async () => {
+    setIsExporting(true);
     let params = "";
     if (exportParams.excludeNonValidated) {
       params += `exclude_non_validated=true&`;
@@ -53,7 +63,7 @@ export const GlobalExport = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Error while downloading");
+        throw new Error("Erreur lors du téléchargement");
       }
 
       const blob = await response.blob();
@@ -61,25 +71,41 @@ export const GlobalExport = () => {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `export_data_${edition?.name}.xlsx`;
+      link.download = `export_complet_${edition?.name || "competition"}.xlsx`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+
+      toast({
+        description: "Export complet réussi",
+        variant: "default",
+      });
     } catch (error) {
       toast({
-        description: (error as { detail: String }).detail,
+        description: (error as Error).message || "Erreur lors de l'export",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsExporting(false);
     }
   };
+
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Export complet</h2>
-      <div className="grid gap-6 mt-4">
-        <div className="grid gap-4">
-          <div className="flex items-center space-x-2  ">
+    <Card className="hover:shadow-md transition-shadow">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Database className="h-5 w-5 text-primary" />
+          Export complet
+        </CardTitle>
+        <CardDescription>
+          Exporte toutes les données des utilisateurs avec options
+          personnalisées
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
             <Checkbox
               id="exclude_non_validated"
               checked={exportParams.excludeNonValidated}
@@ -90,54 +116,96 @@ export const GlobalExport = () => {
                 })
               }
             />
-            <Label htmlFor="exclude_non_validated">
+            <Label
+              htmlFor="exclude_non_validated"
+              className="cursor-pointer text-sm font-normal"
+            >
               Exclure les inscrits non validés
             </Label>
           </div>
-          <div className="flex items-center space-x-2  ">
-            <Checkbox
-              id="participants"
-              checked={exportParams.participants}
-              onCheckedChange={(value) =>
-                setExportParams({
-                  ...exportParams,
-                  participants: value as boolean,
-                })
-              }
-            />
-            <Label htmlFor="participants">Inscriptions</Label>
-          </div>
-          <div className="flex items-center space-x-2  ">
-            <Checkbox
-              id="purchases"
-              checked={exportParams.purchases}
-              onCheckedChange={(value) =>
-                setExportParams({
-                  ...exportParams,
-                  purchases: value as boolean,
-                })
-              }
-            />
-            <Label htmlFor="purchases">Achats</Label>
-          </div>
-          <div className="flex items-center space-x-2  ">
-            <Checkbox
-              id="payments"
-              checked={exportParams.payments}
-              onCheckedChange={(value) =>
-                setExportParams({
-                  ...exportParams,
-                  payments: value as boolean,
-                })
-              }
-            />
-            <Label htmlFor="payments">Paiements</Label>
+
+          <Separator />
+
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-muted-foreground">
+              Données à inclure
+            </p>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="participants"
+                checked={exportParams.participants}
+                onCheckedChange={(value) =>
+                  setExportParams({
+                    ...exportParams,
+                    participants: value as boolean,
+                  })
+                }
+              />
+              <Label
+                htmlFor="participants"
+                className="cursor-pointer text-sm font-normal"
+              >
+                Inscriptions
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="purchases"
+                checked={exportParams.purchases}
+                onCheckedChange={(value) =>
+                  setExportParams({
+                    ...exportParams,
+                    purchases: value as boolean,
+                  })
+                }
+              />
+              <Label
+                htmlFor="purchases"
+                className="cursor-pointer text-sm font-normal"
+              >
+                Achats
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="payments"
+                checked={exportParams.payments}
+                onCheckedChange={(value) =>
+                  setExportParams({
+                    ...exportParams,
+                    payments: value as boolean,
+                  })
+                }
+              />
+              <Label
+                htmlFor="payments"
+                className="cursor-pointer text-sm font-normal"
+              >
+                Paiements
+              </Label>
+            </div>
           </div>
         </div>
-        <Button className="w-[100px]" type="button" onClick={exportResult}>
-          Exporter
+
+        <Button
+          className="w-full gap-2"
+          type="button"
+          onClick={exportResult}
+          disabled={isExporting}
+        >
+          {isExporting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Export en cours...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Exporter
+            </>
+          )}
         </Button>
-      </div>
+      </CardContent>
     </Card>
   );
 };

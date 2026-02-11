@@ -7,13 +7,15 @@ import { SportQuotasExport } from "./SportQuotasExport";
 
 export const ExportsPage = () => {
   return (
-    <div className="grid gap-6 grid-cols-3">
-      <GlobalExport />
-      <SchoolUsersExport />
-      <SchoolQuotasExport />
-      <SportQuotasExport />
-      <SportParticipantsExport />
-      <CaptainsExport />
+    <div className="space-y-6">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <GlobalExport />
+        <SchoolUsersExport />
+        <SchoolQuotasExport />
+        <SportQuotasExport />
+        <SportParticipantsExport />
+        <CaptainsExport />
+      </div>
     </div>
   );
 };
