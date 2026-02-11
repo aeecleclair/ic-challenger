@@ -13,7 +13,7 @@ import { useSchoolsPayments } from "@/src/hooks/useSchoolsPayments";
 import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
 import { useUser } from "@/src/hooks/useUser";
 import { ArrowLeft, Users } from "lucide-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const UserDetailsPage = () => {
   const searchParam = useSearchParams();
@@ -36,13 +36,9 @@ const UserDetailsPage = () => {
 
   const { products } = useProducts();
 
-  const userSchoolId = currentUser?.school_id;
-  const canAccessSchool = isAdmin() || schoolId === userSchoolId;
-
-  const { schoolParticipants, refetchParticipantSchools } =
-    useSchoolParticipants({
-      schoolId: schoolId || "",
-    });
+  const { schoolParticipants } = useSchoolParticipants({
+    schoolId: schoolId || "",
+  });
   const userParticipant = schoolParticipants
     ? schoolParticipants.find((sp) => sp.user_id === userId)
     : undefined;
@@ -78,7 +74,7 @@ const UserDetailsPage = () => {
       });
     else deleteCompetitionUser(userId, () => {});
   };
-  if (!canAccessSchool) {
+  if (!isAdmin()) {
     return <div className="p-6">Vous n&apos;avez pas accès à cette page</div>;
   }
   const userName =

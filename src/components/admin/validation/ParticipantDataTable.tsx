@@ -207,43 +207,49 @@ export function ParticipantDataTable({
         const isCaptain = row.original.isCaptain;
         const isSubstitute = row.original.isSubstitute;
 
-        return (
+        const userName = (
+          <div className="font-medium text-center flex items-center justify-center gap-2">
+            {isCaptain && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Users className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Capitaine d&apos;équipe</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            {isSubstitute && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <UserPlus className="h-4 w-4" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Remplaçant</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+            {fullName}
+          </div>
+        );
+
+        return isAdmin() ? (
           <Link
             href={`/admin/validation/detail?user_id=${row.original.userId}`}
             className="font-medium text-center flex items-center justify-center gap-2 underline hover:no-underline"
           >
-            <div className="font-medium text-center flex items-center justify-center gap-2">
-              {isCaptain && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span>
-                        <Users className="h-4 w-4" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Capitaine d&apos;équipe</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              {isSubstitute && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span>
-                        <UserPlus className="h-4 w-4" />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Remplaçant</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              {fullName}
-            </div>
+            {userName}
           </Link>
+        ) : (
+          <div>{userName}</div>
         );
       },
     },
