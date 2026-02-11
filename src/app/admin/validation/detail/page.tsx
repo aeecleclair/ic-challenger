@@ -94,7 +94,14 @@ const UserDetailsPage = () => {
         <div className="flex gap-2">
           <Button
             variant="outline"
-            onClick={() => window.history.back()}
+            onClick={() => {
+              const schoolIdParam = searchParam.get("school_id");
+              if (schoolIdParam) {
+                window.location.href = `/admin/validation?school_id=${schoolIdParam}`;
+              } else {
+                window.history.back();
+              }
+            }}
             className="gap-2"
           >
             <ArrowLeft className="h-4 w-4" />

@@ -386,7 +386,13 @@ const Dashboard = () => {
       {isAdmin() ? (
         sportSchools &&
         sportSchools.length > 0 && (
-          <Tabs defaultValue={sportSchools[0].school_id} className="w-full">
+          <Tabs
+            value={effectiveSchoolId}
+            onValueChange={(value) => {
+              router.push(`/admin/validation?school_id=${value}`);
+            }}
+            className="w-full"
+          >
             <TabsList className="flex w-full overflow-x-auto justify-start mb-6 h-auto gap-2">
               {sportSchools.map((school) => {
                 const participants = schoolParticipants?.filter(
@@ -398,11 +404,6 @@ const Dashboard = () => {
                     key={school.school_id}
                     value={school.school_id}
                     className="relative"
-                    onClick={() => {
-                      router.push(
-                        `/admin/validation?school_id=${school.school_id}`,
-                      );
-                    }}
                   >
                     <div className="flex items-center gap-2">
                       {formatSchoolName(school.school.name)}

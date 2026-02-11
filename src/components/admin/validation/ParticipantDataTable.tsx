@@ -85,6 +85,7 @@ export interface ParticipantData {
 interface ParticipantDataTableProps {
   data: ParticipantData[];
   schoolName: string;
+  schoolId: string;
   onValidateParticipant: (userId: string) => void;
   onInvalidateParticipant: (userId: string) => void;
   onDeleteParticipant: (
@@ -97,6 +98,7 @@ interface ParticipantDataTableProps {
 
 export function ParticipantDataTable({
   data,
+  schoolId,
   onValidateParticipant,
   onInvalidateParticipant,
   onDeleteParticipant,
@@ -243,7 +245,7 @@ export function ParticipantDataTable({
 
         return isAdmin() ? (
           <Link
-            href={`/admin/validation/detail?user_id=${row.original.userId}`}
+            href={`/admin/validation/detail?user_id=${row.original.userId}&school_id=${schoolId}`}
             className="font-medium text-center flex items-center justify-center gap-2 underline hover:no-underline"
           >
             {userName}

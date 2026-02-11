@@ -198,6 +198,7 @@ export function ValidationTab({
               <ParticipantDataTable
                 data={participantTableData}
                 schoolName={formatSchoolName(school.school.name) || "École"}
+                schoolId={school.school_id}
                 onValidateParticipant={onValidate}
                 onInvalidateParticipant={onInvalidate}
                 onDeleteParticipant={onDelete}
