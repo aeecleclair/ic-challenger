@@ -14,10 +14,8 @@ import {
 export const useAdminPurchases = () => {
   const { token } = useAuth();
 
-  const {
-    mutate: mutateCreatePurchase,
-    isPending: isCreatePurchaseLoading,
-  } = usePostCompetitionPurchasesUsersUserId();
+  const { mutate: mutateCreatePurchase, isPending: isCreatePurchaseLoading } =
+    usePostCompetitionPurchasesUsersUserId();
 
   const createPurchase = (
     userId: string,
@@ -57,10 +55,8 @@ export const useAdminPurchases = () => {
     );
   };
 
-  const {
-    mutate: mutateEditPurchase,
-    isPending: isEditPurchaseLoading,
-  } = usePatchCompetitionPurchasesUsersUserIdVariantsVariantId();
+  const { mutate: mutateEditPurchase, isPending: isEditPurchaseLoading } =
+    usePatchCompetitionPurchasesUsersUserIdVariantsVariantId();
 
   const editPurchase = (
     userId: string,
@@ -102,10 +98,8 @@ export const useAdminPurchases = () => {
     );
   };
 
-  const {
-    mutate: mutateDeletePurchase,
-    isPending: isDeletePurchaseLoading,
-  } = useDeleteCompetitionUsersUserIdPurchasesProductVariantId();
+  const { mutate: mutateDeletePurchase, isPending: isDeletePurchaseLoading } =
+    useDeleteCompetitionUsersUserIdPurchasesProductVariantId();
 
   const deletePurchase = (
     userId: string,
