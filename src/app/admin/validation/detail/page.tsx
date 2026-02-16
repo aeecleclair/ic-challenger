@@ -169,24 +169,15 @@ const UserDetailsPage = () => {
           }}
           isCreateLoading={isCreatePurchaseLoading}
           onEditPurchase={(variantId, quantity) => {
-            editPurchase(
-              userId as string,
-              variantId,
-              { quantity },
-              () => {
-                refetchSchoolsPurchases();
-              },
-            );
+            editPurchase(userId as string, variantId, { quantity }, () => {
+              refetchSchoolsPurchases();
+            });
           }}
           isEditLoading={isEditPurchaseLoading}
           onDeletePurchase={(productVariantId) => {
-            deletePurchase(
-              userId as string,
-              productVariantId,
-              () => {
-                refetchSchoolsPurchases();
-              },
-            );
+            deletePurchase(userId as string, productVariantId, () => {
+              refetchSchoolsPurchases();
+            });
           }}
           isDeleteLoading={isDeletePurchaseLoading}
         />

@@ -132,7 +132,9 @@ export const UserPurchases = ({
                       <TableHead className="text-right">Total</TableHead>
                       <TableHead className="text-center">Type</TableHead>
                       <TableHead className="text-center">Statut</TableHead>
-                      {isAdmin && <TableHead className="text-center">Actions</TableHead>}
+                      {isAdmin && (
+                        <TableHead className="text-center">Actions</TableHead>
+                      )}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -208,9 +210,7 @@ export const UserPurchases = ({
                                     variant="ghost"
                                     size="icon"
                                     className="h-8 w-8"
-                                    onClick={() =>
-                                      setEditingPurchase(purchase)
-                                    }
+                                    onClick={() => setEditingPurchase(purchase)}
                                   >
                                     <Pencil className="h-4 w-4" />
                                   </Button>
