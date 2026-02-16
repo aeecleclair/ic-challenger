@@ -5,6 +5,7 @@ import { UserInfo } from "@/src/components/admin/userDetails/UserInfo";
 import { UserPayments } from "@/src/components/admin/userDetails/UserPayments";
 import { UserPurchases } from "@/src/components/admin/userDetails/UserPurchases";
 import { Button } from "@/src/components/ui/button";
+import { useAdminPurchases } from "@/src/hooks/useAdminPurchases";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { useProducts } from "@/src/hooks/useProducts";
@@ -58,6 +59,15 @@ const UserDetailsPage = () => {
     : undefined;
 
   const { deleteParticipant } = useParticipant();
+
+  const {
+    createPurchase,
+    isCreatePurchaseLoading,
+    editPurchase,
+    isEditPurchaseLoading,
+    deletePurchase,
+    isDeletePurchaseLoading,
+  } = useAdminPurchases();
 
   const onValidate = (userId: string) => {
     validateCompetitionUser(userId, () => {});
@@ -142,7 +152,44 @@ const UserDetailsPage = () => {
         />
       )}
       {userPurchases && products && (
-        <UserPurchases userPurchases={userPurchases} products={products} />
+        <UserPurchases
+          userPurchases={userPurchases}
+          products={products}
+          isAdmin={isAdmin()}
+          isUserValidated={userCompetition?.validated ?? false}
+          userId={userId as string}
+          onCreatePurchase={(productVariantId, quantity) => {
+            createPurchase(
+              userId as string,
+              { product_variant_id: productVariantId, quantity },
+              () => {
+                refetchSchoolsPurchases();
+              },
+            );
+          }}
+          isCreateLoading={isCreatePurchaseLoading}
+          onEditPurchase={(variantId, quantity) => {
+            editPurchase(
+              userId as string,
+              variantId,
+              { quantity },
+              () => {
+                refetchSchoolsPurchases();
+              },
+            );
+          }}
+          isEditLoading={isEditPurchaseLoading}
+          onDeletePurchase={(productVariantId) => {
+            deletePurchase(
+              userId as string,
+              productVariantId,
+              () => {
+                refetchSchoolsPurchases();
+              },
+            );
+          }}
+          isDeleteLoading={isDeletePurchaseLoading}
+        />
       )}
       {userPayments && userCompetition && (
         <UserPayments user={userCompetition} userPayments={userPayments} />
