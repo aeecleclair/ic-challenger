@@ -30,6 +30,9 @@ import {
   Users,
   XCircle,
   Trash2,
+  Ban,
+  Shuffle,
+  Users2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -55,6 +58,10 @@ import {
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
 } from "@/src/api/hyperionSchemas";
 import { AddPaymentDialog } from "./AddPaymentDialog";
+import { ConfirmActionDialog } from "../../admin/users/ConfirmActionDialog";
+import { CancelCompetitionUserDialog } from "../../admin/users/CancelCompetitionUserDialog";
+import { ChangeUserSportDialog } from "../../admin/users/ChangeUserSportDialog";
+import { ChangeUserTeamDialog } from "../../admin/users/ChangeUserTeamDialog";
 import { usePostCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
 import { useAuth } from "@/src/hooks/useAuth";
 import { CreditCard } from "lucide-react";
@@ -93,6 +100,7 @@ interface ParticipantDataTableProps {
     sportId: string,
     isAthlete: boolean,
   ) => void;
+  onCancelParticipant?: (userId: string) => void;
   isLoading: boolean;
 }
 
@@ -102,6 +110,7 @@ export function ParticipantDataTable({
   onValidateParticipant,
   onInvalidateParticipant,
   onDeleteParticipant,
+  onCancelParticipant,
   isLoading,
 }: ParticipantDataTableProps) {
   const { isAdmin } = useUser();
@@ -118,6 +127,22 @@ export function ParticipantDataTable({
     });
   const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false);
   const [selectedParticipant, setSelectedParticipant] =
+    React.useState<ParticipantData | null>(null);
+  const [validateDialogOpen, setValidateDialogOpen] = React.useState(false);
+  const [validateTarget, setValidateTarget] =
+    React.useState<ParticipantData | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [deleteTarget, setDeleteTarget] =
+    React.useState<ParticipantData | null>(null);
+  const [cancelDialogOpen, setCancelDialogOpen] = React.useState(false);
+  const [cancelTarget, setCancelTarget] =
+    React.useState<ParticipantData | null>(null);
+  const [isCancelLoading, setIsCancelLoading] = React.useState(false);
+  const [changeSportOpen, setChangeSportOpen] = React.useState(false);
+  const [changeSportTarget, setChangeSportTarget] =
+    React.useState<ParticipantData | null>(null);
+  const [changeTeamOpen, setChangeTeamOpen] = React.useState(false);
+  const [changeTeamTarget, setChangeTeamTarget] =
     React.useState<ParticipantData | null>(null);
 
   const { products } = useProducts();
@@ -575,19 +600,16 @@ export function ParticipantDataTable({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
                   onClick={() => {
-                    if (participant?.isValidated) {
-                      if (participant?.hasPaid) {
-                        toast({
-                          title: "Erreur",
-                          description:
-                            "Vous ne pouvez pas dévalider un utilisateur ayant payé",
-                          variant: "destructive",
-                        });
-                      } else {
-                        onInvalidateParticipant(participant.userId);
-                      }
+                    if (participant?.isValidated && participant?.hasPaid) {
+                      toast({
+                        title: "Erreur",
+                        description:
+                          "Vous ne pouvez pas dévalider un utilisateur ayant payé",
+                        variant: "destructive",
+                      });
                     } else {
-                      onValidateParticipant(participant.userId);
+                      setValidateTarget(participant);
+                      setValidateDialogOpen(true);
                     }
                   }}
                   disabled={isLoading}
@@ -625,11 +647,8 @@ export function ParticipantDataTable({
                         variant: "destructive",
                       });
                     } else {
-                      onDeleteParticipant(
-                        participant.userId,
-                        participant.sportId || "",
-                        !!participant.sportId,
-                      );
+                      setDeleteTarget(participant);
+                      setDeleteDialogOpen(true);
                     }
                   }}
                   disabled={isLoading}
@@ -638,6 +657,43 @@ export function ParticipantDataTable({
                   <Trash2 className="mr-2 h-4 w-4" />
                   Supprimer
                 </DropdownMenuItem>
+                {onCancelParticipant && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setCancelTarget(participant);
+                      setCancelDialogOpen(true);
+                    }}
+                    disabled={isLoading}
+                    className="text-orange-600 focus:text-orange-600 focus:bg-orange-50"
+                  >
+                    <Ban className="mr-2 h-4 w-4" />
+                    Désinscrire
+                  </DropdownMenuItem>
+                )}
+                {participant.sportId && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setChangeSportTarget(participant);
+                      setChangeSportOpen(true);
+                    }}
+                    disabled={isLoading}
+                  >
+                    <Shuffle className="mr-2 h-4 w-4" />
+                    Changer de sport
+                  </DropdownMenuItem>
+                )}
+                {participant.teamId && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setChangeTeamTarget(participant);
+                      setChangeTeamOpen(true);
+                    }}
+                    disabled={isLoading}
+                  >
+                    <Users2 className="mr-2 h-4 w-4" />
+                    Changer d&apos;équipe
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -774,6 +830,80 @@ export function ParticipantDataTable({
           showSelectedCount={false}
         />
       </div>
+      <ConfirmActionDialog
+        open={validateDialogOpen}
+        onClose={() => {
+          setValidateDialogOpen(false);
+          setValidateTarget(null);
+        }}
+        onConfirm={() => {
+          if (!validateTarget) return;
+          if (validateTarget.isValidated)
+            onInvalidateParticipant(validateTarget.userId);
+          else onValidateParticipant(validateTarget.userId);
+          setValidateDialogOpen(false);
+          setValidateTarget(null);
+        }}
+        isLoading={isLoading}
+        title={
+          validateTarget?.isValidated
+            ? "Invalider le participant"
+            : "Valider le participant"
+        }
+        description={
+          validateTarget?.isValidated ? (
+            <span>
+              Voulez-vous invalider l&apos;inscription de{" "}
+              <strong>{validateTarget?.fullName}</strong>&nbsp;?
+            </span>
+          ) : (
+            <span>
+              Voulez-vous valider l&apos;inscription de{" "}
+              <strong>{validateTarget?.fullName}</strong>&nbsp;?
+            </span>
+          )
+        }
+        confirmLabel={validateTarget?.isValidated ? "Invalider" : "Valider"}
+        variant={validateTarget?.isValidated ? "destructive" : "default"}
+      />
+      <ConfirmActionDialog
+        open={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+          setDeleteTarget(null);
+        }}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          onDeleteParticipant(
+            deleteTarget.userId,
+            deleteTarget.sportId || "",
+            !!deleteTarget.sportId,
+          );
+          setDeleteDialogOpen(false);
+          setDeleteTarget(null);
+        }}
+        isLoading={isLoading}
+        title="Supprimer le participant"
+        description={
+          <span>
+            Voulez-vous supprimer définitivement l&apos;inscription de{" "}
+            <strong>{deleteTarget?.fullName}</strong>&nbsp;?
+          </span>
+        }
+        confirmLabel="Supprimer"
+        variant="destructive"
+        warning={
+          <>
+            <p className="font-semibold mb-1">
+              ⚠️ Cette action est irréversible
+            </p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>L&apos;inscription sera définitivement supprimée</li>
+              <li>Les données associées seront perdues</li>
+            </ul>
+          </>
+        }
+      />
       <AddPaymentDialog
         open={paymentDialogOpen}
         onOpenChange={setPaymentDialogOpen}
@@ -781,6 +911,56 @@ export function ParticipantDataTable({
         participantName={selectedParticipant?.fullName || ""}
         isLoading={isPostingPayment}
       />
+      <CancelCompetitionUserDialog
+        open={cancelDialogOpen}
+        onClose={() => {
+          setCancelDialogOpen(false);
+          setCancelTarget(null);
+        }}
+        onConfirm={() => {
+          if (cancelTarget && onCancelParticipant) {
+            setIsCancelLoading(true);
+            onCancelParticipant(cancelTarget.userId);
+            setCancelDialogOpen(false);
+            setCancelTarget(null);
+            setIsCancelLoading(false);
+          }
+        }}
+        isLoading={isCancelLoading}
+        userName={cancelTarget?.fullName ?? ""}
+      />
+      {changeSportTarget?.sportId && (
+        <ChangeUserSportDialog
+          open={changeSportOpen}
+          onClose={() => {
+            setChangeSportOpen(false);
+            setChangeSportTarget(null);
+          }}
+          onSuccess={() => {
+            setChangeSportOpen(false);
+            setChangeSportTarget(null);
+          }}
+          userId={changeSportTarget.userId}
+          currentSportId={changeSportTarget.sportId}
+          schoolId={schoolId}
+        />
+      )}
+      {changeTeamTarget?.sportId && (
+        <ChangeUserTeamDialog
+          open={changeTeamOpen}
+          onClose={() => {
+            setChangeTeamOpen(false);
+            setChangeTeamTarget(null);
+          }}
+          onSuccess={() => {
+            setChangeTeamOpen(false);
+            setChangeTeamTarget(null);
+          }}
+          userId={changeTeamTarget.userId}
+          sportId={changeTeamTarget.sportId}
+          schoolId={schoolId}
+        />
+      )}
     </div>
   );
 }

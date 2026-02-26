@@ -20,15 +20,10 @@ import { useSchoolsGeneralQuota } from "@/src/hooks/useSchoolsGeneralQuota";
 import { useSchoolsProductQuota } from "@/src/hooks/useSchoolsProductQuota";
 import { useProducts } from "@/src/hooks/useProducts";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
-import {
-  AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
-  AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
-  CompetitionUser,
-} from "@/src/api/hyperionSchemas";
+import { CompetitionUser } from "@/src/api/hyperionSchemas";
 import { ValidationTab } from "@/src/components/admin/validation/ValidationTab";
 import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
 import { useParticipant } from "@/src/hooks/useParticipant";
-import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { RequiredPurchase } from "@/src/components/admin/validation/UserProductsCell";
 
 const Dashboard = () => {
@@ -75,6 +70,7 @@ const Dashboard = () => {
     isInvalidateLoading,
     deleteCompetitionUser,
     isDeleteLoading,
+    cancelCompetitionUser,
   } = useCompetitionUsers();
 
   const { deleteParticipant } = useParticipant();
@@ -97,6 +93,10 @@ const Dashboard = () => {
         deleteCompetitionUser(userId, () => {});
       });
     else deleteCompetitionUser(userId, () => {});
+  };
+
+  const onCancel = (userId: string) => {
+    cancelCompetitionUser(userId, () => {});
   };
 
   const participantTableData: ParticipantData[] = useMemo(() => {
@@ -429,6 +429,7 @@ const Dashboard = () => {
                 onValidate={onValidate}
                 onInvalidate={onInvalidate}
                 onDelete={onDelete}
+                onCancel={onCancel}
                 isValidateLoading={isValidateLoading}
                 isInvalidateLoading={isInvalidateLoading}
                 isDeleteLoading={isDeleteLoading}
@@ -452,6 +453,7 @@ const Dashboard = () => {
           onValidate={onValidate}
           onInvalidate={onInvalidate}
           onDelete={onDelete}
+          onCancel={onCancel}
           isValidateLoading={isValidateLoading}
           isInvalidateLoading={isInvalidateLoading}
           isDeleteLoading={isDeleteLoading}

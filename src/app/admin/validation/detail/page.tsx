@@ -5,6 +5,18 @@ import { UserInfo } from "@/src/components/admin/userDetails/UserInfo";
 import { UserPayments } from "@/src/components/admin/userDetails/UserPayments";
 import { UserPurchases } from "@/src/components/admin/userDetails/UserPurchases";
 import { Button } from "@/src/components/ui/button";
+import { AddPaymentDialog } from "@/src/components/admin/validation/AddPaymentDialog";
+import { ConfirmActionDialog } from "@/src/components/admin/users/ConfirmActionDialog";
+import { CancelCompetitionUserDialog } from "@/src/components/admin/users/CancelCompetitionUserDialog";
+import { ChangeUserSportDialog } from "@/src/components/admin/users/ChangeUserSportDialog";
+import { ChangeUserTeamDialog } from "@/src/components/admin/users/ChangeUserTeamDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu";
 import { useAdminPurchases } from "@/src/hooks/useAdminPurchases";
 import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { useParticipant } from "@/src/hooks/useParticipant";
@@ -12,9 +24,23 @@ import { useProducts } from "@/src/hooks/useProducts";
 import { useSchoolParticipants } from "@/src/hooks/useSchoolParticipants";
 import { useSchoolsPayments } from "@/src/hooks/useSchoolsPayments";
 import { useSchoolsPurchases } from "@/src/hooks/useSchoolsPurchases";
+import { useUserPayments } from "@/src/hooks/useUserPayments";
 import { useUser } from "@/src/hooks/useUser";
-import { ArrowLeft, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  Users,
+  MoreHorizontal,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Ban,
+  Shuffle,
+  Users2,
+  CreditCard,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import React from "react";
+import { AppModulesSportCompetitionSchemasSportCompetitionPaymentBase } from "@/src/api/hyperionSchemas";
 
 const UserDetailsPage = () => {
   const searchParam = useSearchParams();
@@ -29,6 +55,8 @@ const UserDetailsPage = () => {
     isInvalidateLoading,
     deleteCompetitionUser,
     isDeleteLoading,
+    cancelCompetitionUser,
+    isCancelLoading,
   } = useCompetitionUsers();
   const userCompetition = competitionUsers
     ? competitionUsers.find((cu) => cu.user_id === userId)
@@ -59,6 +87,15 @@ const UserDetailsPage = () => {
     : undefined;
 
   const { deleteParticipant } = useParticipant();
+  const { makePayment, isPostingPayment } = useUserPayments();
+
+  // Dialog state
+  const [validateDialogOpen, setValidateDialogOpen] = React.useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = React.useState(false);
+  const [changeSportOpen, setChangeSportOpen] = React.useState(false);
+  const [changeTeamOpen, setChangeTeamOpen] = React.useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false);
 
   const {
     createPurchase,
@@ -69,20 +106,27 @@ const UserDetailsPage = () => {
     isDeletePurchaseLoading,
   } = useAdminPurchases();
 
-  const onValidate = (userId: string) => {
-    validateCompetitionUser(userId, () => {});
+  const onValidate = () => {
+    validateCompetitionUser(userId!, () => {});
   };
-
-  const onInvalidate = (userId: string) => {
-    invalidateCompetitionUser(userId, () => {});
+  const onInvalidate = () => {
+    invalidateCompetitionUser(userId!, () => {});
   };
-
-  const onDelete = (userId: string) => {
+  const onDelete = () => {
     if (userParticipant)
-      deleteParticipant(userParticipant.sport_id, userId, () => {
-        deleteCompetitionUser(userId, () => {});
+      deleteParticipant(userParticipant.sport_id, userId!, () => {
+        deleteCompetitionUser(userId!, () => {});
       });
-    else deleteCompetitionUser(userId, () => {});
+    else deleteCompetitionUser(userId!, () => {});
+  };
+  const onCancel = () => {
+    cancelCompetitionUser(userId!, () => {});
+  };
+  const handleAddPayment = async (amount: number) => {
+    const body: AppModulesSportCompetitionSchemasSportCompetitionPaymentBase = {
+      total: amount * 100,
+    };
+    await makePayment(userId!, body);
   };
   if (!isAdmin()) {
     return <div className="p-6">Vous n&apos;avez pas accès à cette page</div>;
@@ -118,25 +162,66 @@ const UserDetailsPage = () => {
             Retour
           </Button>
           {userCompetition && (
-            <Button
-              variant="outline"
-              onClick={() =>
-                userCompetition?.validated
-                  ? onInvalidate(userCompetition.user_id)
-                  : onValidate(userCompetition.user_id)
-              }
-              className="gap-2"
-            >
-              {userCompetition?.validated ? "Invalider" : "Valider"}
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <MoreHorizontal className="h-4 w-4" />
+                  Actions
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => setValidateDialogOpen(true)}
+                  disabled={isValidateLoading || isInvalidateLoading}
+                >
+                  {userCompetition.validated ? (
+                    <>
+                      <XCircle className="mr-2 h-4 w-4" />
+                      Invalider
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Valider
+                    </>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setPaymentDialogOpen(true)}>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Enregistrer un paiement
+                </DropdownMenuItem>
+                {userParticipant && (
+                  <DropdownMenuItem onClick={() => setChangeSportOpen(true)}>
+                    <Shuffle className="mr-2 h-4 w-4" />
+                    Changer de sport
+                  </DropdownMenuItem>
+                )}
+                {userParticipant?.team && (
+                  <DropdownMenuItem onClick={() => setChangeTeamOpen(true)}>
+                    <Users2 className="mr-2 h-4 w-4" />
+                    Changer d&apos;équipe
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-orange-600 focus:text-orange-600 focus:bg-orange-50"
+                  onClick={() => setCancelDialogOpen(true)}
+                  disabled={isCancelLoading}
+                >
+                  <Ban className="mr-2 h-4 w-4" />
+                  Désinscrire
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  onClick={() => setDeleteDialogOpen(true)}
+                  disabled={isDeleteLoading}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Supprimer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
-          <Button
-            variant="destructive"
-            onClick={() => onDelete(userId as string)}
-            className="gap-2"
-          >
-            Supprimer
-          </Button>
         </div>
       </div>
 
@@ -185,6 +270,103 @@ const UserDetailsPage = () => {
       {userPayments && userCompetition && (
         <UserPayments user={userCompetition} userPayments={userPayments} />
       )}
+
+      {/* Dialogs */}
+      <ConfirmActionDialog
+        open={validateDialogOpen}
+        onClose={() => setValidateDialogOpen(false)}
+        onConfirm={() => {
+          userCompetition?.validated ? onInvalidate() : onValidate();
+          setValidateDialogOpen(false);
+        }}
+        isLoading={isValidateLoading || isInvalidateLoading}
+        title={
+          userCompetition?.validated
+            ? "Invalider le participant"
+            : "Valider le participant"
+        }
+        description={
+          userCompetition?.validated ? (
+            <span>
+              Voulez-vous invalider l&apos;inscription de{" "}
+              <strong>{userName}</strong>&nbsp;?
+            </span>
+          ) : (
+            <span>
+              Voulez-vous valider l&apos;inscription de{" "}
+              <strong>{userName}</strong>&nbsp;?
+            </span>
+          )
+        }
+        confirmLabel={userCompetition?.validated ? "Invalider" : "Valider"}
+        variant={userCompetition?.validated ? "destructive" : "default"}
+      />
+      <ConfirmActionDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={() => {
+          onDelete();
+          setDeleteDialogOpen(false);
+        }}
+        isLoading={isDeleteLoading}
+        title="Supprimer le participant"
+        description={
+          <span>
+            Voulez-vous supprimer définitivement l&apos;inscription de{" "}
+            <strong>{userName}</strong>&nbsp;?
+          </span>
+        }
+        confirmLabel="Supprimer"
+        variant="destructive"
+        warning={
+          <>
+            <p className="font-semibold mb-1">
+              ⚠️ Cette action est irréversible
+            </p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>L&apos;inscription sera définitivement supprimée</li>
+              <li>Les données associées seront perdues</li>
+            </ul>
+          </>
+        }
+      />
+      <CancelCompetitionUserDialog
+        open={cancelDialogOpen}
+        onClose={() => setCancelDialogOpen(false)}
+        onConfirm={() => {
+          onCancel();
+          setCancelDialogOpen(false);
+        }}
+        isLoading={isCancelLoading}
+        userName={userName}
+      />
+      {userParticipant && (
+        <ChangeUserSportDialog
+          open={changeSportOpen}
+          onClose={() => setChangeSportOpen(false)}
+          onSuccess={() => setChangeSportOpen(false)}
+          userId={userId!}
+          currentSportId={userParticipant.sport_id}
+          schoolId={schoolId || ""}
+        />
+      )}
+      {userParticipant?.team && (
+        <ChangeUserTeamDialog
+          open={changeTeamOpen}
+          onClose={() => setChangeTeamOpen(false)}
+          onSuccess={() => setChangeTeamOpen(false)}
+          userId={userId!}
+          sportId={userParticipant.sport_id}
+          schoolId={schoolId || ""}
+        />
+      )}
+      <AddPaymentDialog
+        open={paymentDialogOpen}
+        onOpenChange={setPaymentDialogOpen}
+        onConfirm={handleAddPayment}
+        participantName={userName}
+        isLoading={isPostingPayment}
+      />
     </div>
   );
 };

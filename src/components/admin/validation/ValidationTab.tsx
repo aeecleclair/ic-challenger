@@ -34,6 +34,7 @@ export interface ValidationTabProps {
   onValidate: (userId: string) => void;
   onInvalidate: (userId: string) => void;
   onDelete: (userId: string, sportId: string, isAthlete: boolean) => void;
+  onCancel?: (userId: string) => void;
 }
 
 export function ValidationTab({
@@ -54,6 +55,7 @@ export function ValidationTab({
   onInvalidate,
   onValidate,
   onDelete,
+  onCancel,
 }: ValidationTabProps) {
   const hasExceeded = schoolsProductQuota
     ?.map((value) => schoolsProductQuotaUsed[value.product_id] > value.quota)
@@ -202,6 +204,7 @@ export function ValidationTab({
                 onValidateParticipant={onValidate}
                 onInvalidateParticipant={onInvalidate}
                 onDeleteParticipant={onDelete}
+                onCancelParticipant={onCancel}
                 isLoading={
                   isValidateLoading || isInvalidateLoading || isDeleteLoading
                 }

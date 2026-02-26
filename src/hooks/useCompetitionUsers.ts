@@ -3,6 +3,7 @@ import {
   usePatchCompetitionUsersUserIdValidate,
   useGetCompetitionUsers,
   useDeleteCompetitionUsersUserId,
+  usePatchCompetitionUsersUserIdCancel,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
@@ -108,6 +109,9 @@ export const useCompetitionUsers = () => {
   const { mutate: mutateDeleteCompetitionUser, isPending: isDeleteLoading } =
     useDeleteCompetitionUsersUserId();
 
+  const { mutate: mutateCancelCompetitionUser, isPending: isCancelLoading } =
+    usePatchCompetitionUsersUserIdCancel();
+
   const deleteCompetitionUser = (userId: string, callback: () => void) => {
     return mutateDeleteCompetitionUser(
       {
@@ -149,6 +153,43 @@ export const useCompetitionUsers = () => {
     );
   };
 
+  const cancelCompetitionUser = (userId: string, callback: () => void) => {
+    return mutateCancelCompetitionUser(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+        },
+      },
+      {
+        onSettled: (data, error) => {
+          if (
+            (error as any).stack?.body ||
+            (error as any).stack?.detail
+          ) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la désinscription",
+              description:
+                (error as any).stack?.body ||
+                (error as unknown as DetailedErrorType).stack?.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchCompetitionUsers();
+            callback();
+            toast({
+              title: "Participant désinscrit",
+              description: "Le participant a été désinscrit avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   const volunteers = useMemo(
     () =>
       competitionUsers
@@ -174,5 +215,7 @@ export const useCompetitionUsers = () => {
     invalidateCompetitionUser,
     deleteCompetitionUser,
     isDeleteLoading,
+    cancelCompetitionUser,
+    isCancelLoading,
   };
 };
