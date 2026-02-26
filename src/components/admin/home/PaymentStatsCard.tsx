@@ -68,7 +68,9 @@ export const PaymentStatsCard = ({ stats }: PaymentStatsCardProps) => {
               <div className="flex justify-center mb-1">
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="text-2xl font-bold">{sports_stats.total_participants}</p>
+              <p className="text-2xl font-bold">
+                {sports_stats.total_participants}
+              </p>
               <p className="text-xs text-muted-foreground mt-1">Participants</p>
             </div>
             <div className="rounded-lg border p-3 text-center">
