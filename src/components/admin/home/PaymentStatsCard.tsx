@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { CompetitionEditionStats } from "@/src/api/hyperionSchemas";
-import { Users, CreditCard, TrendingUp, Wallet } from "lucide-react";
+import { Users, CreditCard, Wallet, Trophy, Swords, Flag } from "lucide-react";
 
 interface PaymentStatsCardProps {
   stats: CompetitionEditionStats;
@@ -18,7 +18,7 @@ const METHOD_LABELS: Record<string, string> = {
 };
 
 export const PaymentStatsCard = ({ stats }: PaymentStatsCardProps) => {
-  const { users_stats, revenues_stats } = stats;
+  const { users_stats, sports_stats, revenues_stats } = stats;
 
   const totalRevenue = revenues_stats.reduce((acc, r) => acc + r.total, 0);
   const totalTransactions = revenues_stats.reduce((acc, r) => acc + r.count, 0);
@@ -55,6 +55,36 @@ export const PaymentStatsCard = ({ stats }: PaymentStatsCardProps) => {
           <div className="rounded-lg border p-3 text-center">
             <p className="text-2xl font-bold">{users_stats.total_volunteers}</p>
             <p className="text-xs text-muted-foreground mt-1">Bénévoles</p>
+          </div>
+        </div>
+
+        <div className="border-t pt-4 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Trophy className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Sport</span>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="rounded-lg border p-3 text-center">
+              <div className="flex justify-center mb-1">
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <p className="text-2xl font-bold">{sports_stats.total_participants}</p>
+              <p className="text-xs text-muted-foreground mt-1">Participants</p>
+            </div>
+            <div className="rounded-lg border p-3 text-center">
+              <div className="flex justify-center mb-1">
+                <Flag className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <p className="text-2xl font-bold">{sports_stats.total_teams}</p>
+              <p className="text-xs text-muted-foreground mt-1">Équipes</p>
+            </div>
+            <div className="rounded-lg border p-3 text-center">
+              <div className="flex justify-center mb-1">
+                <Swords className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <p className="text-2xl font-bold">{sports_stats.total_matches}</p>
+              <p className="text-xs text-muted-foreground mt-1">Matchs</p>
+            </div>
           </div>
         </div>
 
