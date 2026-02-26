@@ -57,6 +57,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       podiums: "Podiums",
       groups: "Groupes",
       validation: "Validation",
+      "school-assign": "Assignation école",
       create: "Ajouter",
       edit: "Modifier",
     };

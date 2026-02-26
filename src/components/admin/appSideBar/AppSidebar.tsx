@@ -28,6 +28,7 @@ import { NavEditions } from "./NavEditions";
 import { useUser } from "@/src/hooks/useUser";
 import { Logo } from "../../custom/Logo";
 import { NavExport } from "./NavExport";
+import { NavSchoolAssign } from "./NavSchoolAssign";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
@@ -68,6 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {isAdmin() && <NavGroups />}
             {isAdmin() && <NavProducts />}
             {isAdmin() && <NavVolunteerShifts />}
+            {isAdmin() && <NavSchoolAssign />}
             {isAdmin() && <NavExport />}
           </>
         )}
