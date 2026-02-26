@@ -33,6 +33,8 @@ export const BasketCard = ({ form }: PackageCardProps) => {
   > = {};
   availableProducts?.forEach((product) => {
     if (product.enabled !== true) return;
+    // Exclude volunteer-only products from the registration basket
+    if (product.public_type === "volunteer") return;
     if (!groupedByProductId[product.product_id]) {
       groupedByProductId[product.product_id] = [];
     }
