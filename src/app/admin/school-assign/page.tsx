@@ -2,7 +2,12 @@
 
 import React, { useState, useMemo } from "react";
 import { Search, School, UserCheck } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
 import { Badge } from "@/src/components/ui/badge";
 import {
@@ -34,7 +39,9 @@ export default function SchoolAssignPage() {
   const { assignSchool, isAssignLoading } = useAssignSchool();
 
   const [query, setQuery] = useState("");
-  const [selectedSchool, setSelectedSchool] = useState<Record<string, string>>({});
+  const [selectedSchool, setSelectedSchool] = useState<Record<string, string>>(
+    {},
+  );
   const [assigningUserId, setAssigningUserId] = useState<string | null>(null);
 
   const {
@@ -79,7 +86,8 @@ export default function SchoolAssignPage() {
           Assignation d&apos;école
         </h1>
         <p className="text-muted-foreground">
-          Recherchez les utilisateurs sans école (compte externe) et assignez-leur un établissement.
+          Recherchez les utilisateurs sans école (compte externe) et
+          assignez-leur un établissement.
         </p>
       </div>
 
@@ -110,14 +118,17 @@ export default function SchoolAssignPage() {
               Résultats
               {searchResults && (
                 <Badge variant="secondary" className="ml-2">
-                  {searchResults.length} utilisateur{searchResults.length !== 1 ? "s" : ""}
+                  {searchResults.length} utilisateur
+                  {searchResults.length !== 1 ? "s" : ""}
                 </Badge>
               )}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {isSearching ? (
-              <p className="text-muted-foreground text-center py-8">Recherche en cours…</p>
+              <p className="text-muted-foreground text-center py-8">
+                Recherche en cours…
+              </p>
             ) : !searchResults || searchResults.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">
                 Aucun utilisateur externe trouvé pour &quot;{query}&quot;
@@ -137,7 +148,9 @@ export default function SchoolAssignPage() {
                   <TableBody>
                     {searchResults.map((user) => (
                       <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {user.name}
+                        </TableCell>
                         <TableCell>{user.firstname}</TableCell>
                         <TableCell>
                           <Badge variant="outline">{user.account_type}</Badge>
@@ -169,7 +182,9 @@ export default function SchoolAssignPage() {
                             size="sm"
                             onClick={() => handleAssign(user)}
                             disabled={!selectedSchool[user.id]}
-                            isLoading={isAssignLoading && assigningUserId === user.id}
+                            isLoading={
+                              isAssignLoading && assigningUserId === user.id
+                            }
                           >
                             <UserCheck className="h-4 w-4 mr-1" />
                             Assigner
