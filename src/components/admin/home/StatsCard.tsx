@@ -53,19 +53,19 @@ export const StatsCard = () => {
               <p>Nombre de matchs : {stats.sports_stats.total_matches}</p>
             </div>
             <div className="text-sm flex flex-col gap-2">
-              <h2 className="text-lg font-semibold mb-2">Revenues</h2>
+              <h2 className="text-lg font-semibold mb-2">Revenus</h2>
               <p>
                 Total :{" "}
                 {stats.revenues_stats.reduce(
                   (sum, revenue) => sum + revenue.total,
                   0,
-                )}{" "}
+                ) / 100}{" "}
                 €
               </p>
               {stats.revenues_stats.map((revenue) => (
                 <p key={revenue.method}>
-                  Revenus {methodToLabel[revenue.method]} : {revenue.total} € (
-                  {revenue.count} transactions)
+                  Revenus {methodToLabel[revenue.method]} :{" "}
+                  {revenue.total / 100} € ({revenue.count} transactions)
                 </p>
               ))}
             </div>
