@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-} from "../../components/ui/card";
+import { Card, CardContent } from "../../components/ui/card";
 import {
   UpcomingVolunteerShifts,
   PastVolunteerShifts,
@@ -132,9 +129,7 @@ export default function VolunteerShiftsPage() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                  Bénévolat
-                </h1>
+                <h1 className="text-3xl font-bold tracking-tight">Bénévolat</h1>
                 <p className="text-muted-foreground">
                   Gérez vos créneaux, votre boutique et consultez le calendrier
                 </p>
