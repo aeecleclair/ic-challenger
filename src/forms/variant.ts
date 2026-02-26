@@ -6,6 +6,7 @@ const publicType = [
   "fanfare",
   "cameraman",
   "athlete",
+  "volunteer",
   "none",
 ] as const;
 
