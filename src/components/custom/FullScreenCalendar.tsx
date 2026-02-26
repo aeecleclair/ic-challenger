@@ -69,6 +69,11 @@ export type CalendarEvent = {
     registeredCount?: number;
     maxVolunteers?: number;
     location?: string | null;
+    type?: string;
+    shiftId?: string;
+    team1?: string;
+    team2?: string;
+    sportName?: string;
   };
 };
 
