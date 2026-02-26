@@ -10,7 +10,7 @@ import { useProducts } from "@/src/hooks/useProducts";
 import { usePodiums } from "@/src/hooks/usePodiums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
@@ -19,15 +19,10 @@ import {
   ProductsCard,
   SportsCard,
   SchoolsCard,
+  PaymentStatsCard,
 } from "@/src/components/admin/home";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
-import { CustomDialog } from "@/src/components/custom/CustomDialog";
-import { Button } from "@/src/components/ui/button";
-import { useAuth } from "@/src/hooks/useAuth";
-import { toast } from "@/src/components/ui/use-toast";
-import { Checkbox } from "@/src/components/ui/checkbox";
-import { Label } from "@/src/components/ui/label";
-import { StatsCard } from "@/src/components/admin/home/StatsCard";
+import { useEditionStats } from "@/src/hooks/useEditionStats";
 
 const AdminPage = () => {
   const {
@@ -40,12 +35,14 @@ const AdminPage = () => {
     isCloseInscriptionLoading,
   } = useEdition();
   const { isAdmin } = useUser();
-  const { token } = useAuth();
   const { sportSchools: schools } = useSportSchools();
   const { sports } = useSports();
   const { locations } = useLocations();
   const { products } = useProducts();
   const { globalPodium } = usePodiums();
+  const { stats: editionStats } = useEditionStats({
+    editionId: edition?.id,
+  });
 
   const form = useForm<EditionFormSchema>({
     resolver: zodResolver(editionFormSchema),
@@ -141,6 +138,9 @@ const AdminPage = () => {
 
           {stats && (
             <>
+              {/* Payment & User stats */}
+              {editionStats && <PaymentStatsCard stats={editionStats} />}
+
               {/* Details sections */}
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <ConfigurationStatusCard
@@ -167,7 +167,6 @@ const AdminPage = () => {
 
                 <SchoolsCard schools={schools || []} />
               </div>
-              <StatsCard />
             </>
           )}
         </div>
