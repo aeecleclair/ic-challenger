@@ -127,7 +127,7 @@ export const useCompetitionUsers = () => {
           if (
             // Exact match for network error message 500
             (error as any).message ===
-              "Network error (NetworkError when attempting to fetch resource.)" || 
+              "Network error (NetworkError when attempting to fetch resource.)" ||
             (error as any).stack.body ||
             (error as any).stack.detail
           ) {
@@ -165,10 +165,7 @@ export const useCompetitionUsers = () => {
       },
       {
         onSettled: (data, error) => {
-          if (
-            (error as any).stack?.body ||
-            (error as any).stack?.detail
-          ) {
+          if ((error as any).stack?.body || (error as any).stack?.detail) {
             console.log(error);
             toast({
               title: "Erreur lors de la désinscription",
