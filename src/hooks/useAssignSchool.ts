@@ -1,4 +1,4 @@
-import { usePatchUsersUserId } from "@/src/api/hyperionComponents";
+import { usePatchCompetitionUsersUserIdSchools } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { DetailedErrorType, ErrorType } from "../utils/errorTyping";
@@ -7,7 +7,7 @@ export const useAssignSchool = () => {
   const { token } = useAuth();
 
   const { mutate: mutateAssignSchool, isPending: isAssignLoading } =
-    usePatchUsersUserId();
+    usePatchCompetitionUsersUserIdSchools();
 
   const assignSchool = (
     userId: string,
@@ -18,7 +18,7 @@ export const useAssignSchool = () => {
       {
         headers: { Authorization: `Bearer ${token}` },
         pathParams: { userId },
-        body: { school_id: schoolId },
+        body: schoolId,
       },
       {
         onSettled: (data, error) => {
