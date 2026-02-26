@@ -16,6 +16,7 @@ import {
   Award,
   ExternalLink,
   CheckCircle,
+  UserMinus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -31,11 +32,15 @@ import {
 interface VolunteerShiftCardProps {
   registration: VolunteerRegistrationComplete;
   isUpcoming: boolean;
+  onUnregister?: () => void;
+  isUnregisterLoading?: boolean;
 }
 
 export const VolunteerShiftCard = ({
   registration,
   isUpcoming,
+  onUnregister,
+  isUnregisterLoading,
 }: VolunteerShiftCardProps) => {
   const { shift, validated } = registration;
   const { locations } = useLocations();
@@ -177,10 +182,33 @@ export const VolunteerShiftCard = ({
               </div>
             </div>
 
-            {/* Right side - Status */}
-            <Badge variant={getUrgencyColor()} className="text-xs">
-              {getTimeDescription()}
-            </Badge>
+            {/* Right side - Status & actions */}
+            <div className="flex items-center gap-2">
+              <Badge variant={getUrgencyColor()} className="text-xs">
+                {getTimeDescription()}
+              </Badge>
+              {isUpcoming && onUnregister && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUnregister();
+                      }}
+                      disabled={isUnregisterLoading}
+                    >
+                      <UserMinus className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Se désinscrire</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

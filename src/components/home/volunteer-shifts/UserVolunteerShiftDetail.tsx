@@ -6,6 +6,7 @@ import {
   User,
   Award,
   UserPlus,
+  UserMinus,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "../../ui/button";
@@ -48,6 +49,8 @@ export default function UserVolunteerShiftDetail({
     volunteer,
     registerVolunteerShift,
     isRegisterLoading,
+    unregisterVolunteerShift,
+    isUnregisterLoading,
     refetchVolunteer,
   } = useVolunteer();
   const { volunteerShifts } = useVolunteerShifts();
@@ -93,6 +96,13 @@ export default function UserVolunteerShiftDetail({
 
   const handleRegister = () => {
     registerVolunteerShift(shift.id, () => {
+      refetchVolunteer();
+      onClose();
+    });
+  };
+
+  const handleUnregister = () => {
+    unregisterVolunteerShift(shift.id, () => {
       refetchVolunteer();
       onClose();
     });
@@ -246,9 +256,23 @@ export default function UserVolunteerShiftDetail({
             {/* Registration Action */}
             <div className="flex justify-end pt-4 border-t">
               {isRegistered ? (
-                <Badge variant="default" className="px-4 py-2">
-                  ✅ Inscrit
-                </Badge>
+                <>
+                  {isUpcoming ? (
+                    <LoadingButton
+                      onClick={handleUnregister}
+                      isLoading={isUnregisterLoading}
+                      variant="destructive"
+                      size="sm"
+                    >
+                      <UserMinus className="mr-2 h-4 w-4" />
+                      Se désinscrire
+                    </LoadingButton>
+                  ) : (
+                    <Badge variant="default" className="px-4 py-2">
+                      ✅ Inscrit
+                    </Badge>
+                  )}
+                </>
               ) : (
                 <>
                   {isPast ? (

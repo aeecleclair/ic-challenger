@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { VolunteerShiftCard } from ".";
+import { useVolunteer } from "../../../hooks/useVolunteer";
 
 interface UpcomingVolunteerShiftsProps {
   shifts: (VolunteerRegistrationComplete & { _shiftStartTime: number })[];
@@ -12,6 +13,8 @@ export const UpcomingVolunteerShifts = ({
   shifts,
 }: UpcomingVolunteerShiftsProps) => {
   const [showAllShifts, setShowAllShifts] = useState(false);
+  const { unregisterVolunteerShift, isUnregisterLoading, refetchVolunteer } =
+    useVolunteer();
 
   if (shifts.length === 0) {
     return (
@@ -44,7 +47,16 @@ export const UpcomingVolunteerShifts = ({
       <CardContent className="space-y-4">
         {displayedShifts.map((registration, index) => (
           <div key={registration.shift_id}>
-            <VolunteerShiftCard registration={registration} isUpcoming={true} />
+            <VolunteerShiftCard
+              registration={registration}
+              isUpcoming={true}
+              onUnregister={() =>
+                unregisterVolunteerShift(registration.shift_id, () => {
+                  refetchVolunteer();
+                })
+              }
+              isUnregisterLoading={isUnregisterLoading}
+            />
             {index < displayedShifts.length - 1 && (
               <div className="my-4">
                 <hr className="border-muted" />

@@ -26,8 +26,9 @@ export function NavVolunteerShifts() {
     <SidebarGroup>
       <SidebarGroupLabel>
         <div onClick={handleClick} className="cursor-pointer hover:underline">
-          Mes Créneaux Bénévoles{" "}
-          {volunteerShiftsCount > 0 && `(${volunteerShiftsCount})`}
+          Bénévolat{" "}
+          {volunteerShiftsCount > 0 &&
+            `(${volunteerShiftsCount} créneau${volunteerShiftsCount > 1 ? "x" : ""})`}
         </div>
         <SidebarMenuAction className="data-[state=open]:rotate-90 mr-2">
           <ChevronRight />
