@@ -3,19 +3,11 @@ import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { Label } from "../../ui/label";
 import { UseFormReturn } from "react-hook-form";
 import { RegisteringFormValues } from "@/src/forms/registering";
-import { CardTemplate } from "./CardTemplate";
 import { Checkbox } from "../../ui/checkbox";
 import { useAvailableProducts } from "@/src/hooks/useAvailableProducts";
 import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
 import { EditProductValues } from "@/src/forms/editProducts";
 import { Input } from "../../ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../../ui/tooltip";
-import { InfoIcon } from "lucide-react";
 import { useEffect } from "react";
 
 interface PackageCardProps {
