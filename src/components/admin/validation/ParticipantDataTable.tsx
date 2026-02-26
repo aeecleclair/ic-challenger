@@ -637,27 +637,29 @@ export function ParticipantDataTable({
                     Enregistrer un paiement
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem
-                  onClick={() => {
-                    if (participant?.hasPaid) {
-                      toast({
-                        title: "Erreur",
-                        description:
-                          "Vous ne pouvez pas supprimer un utilisateur ayant payé",
-                        variant: "destructive",
-                      });
-                    } else {
-                      setDeleteTarget(participant);
-                      setDeleteDialogOpen(true);
-                    }
-                  }}
-                  disabled={isLoading}
-                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Supprimer
-                </DropdownMenuItem>
-                {onCancelParticipant && (
+                {isAdmin() && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (participant?.hasPaid) {
+                        toast({
+                          title: "Erreur",
+                          description:
+                            "Vous ne pouvez pas supprimer un utilisateur ayant payé",
+                          variant: "destructive",
+                        });
+                      } else {
+                        setDeleteTarget(participant);
+                        setDeleteDialogOpen(true);
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Supprimer
+                  </DropdownMenuItem>
+                )}
+                {isAdmin() && onCancelParticipant && (
                   <DropdownMenuItem
                     onClick={() => {
                       setCancelTarget(participant);
@@ -670,7 +672,7 @@ export function ParticipantDataTable({
                     Désinscrire
                   </DropdownMenuItem>
                 )}
-                {participant.sportId && (
+                {isAdmin() && participant.sportId && (
                   <DropdownMenuItem
                     onClick={() => {
                       setChangeSportTarget(participant);
@@ -682,7 +684,7 @@ export function ParticipantDataTable({
                     Changer de sport
                   </DropdownMenuItem>
                 )}
-                {participant.teamId && (
+                {isAdmin() && participant.teamId && (
                   <DropdownMenuItem
                     onClick={() => {
                       setChangeTeamTarget(participant);
