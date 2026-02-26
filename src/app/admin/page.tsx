@@ -27,6 +27,7 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { toast } from "@/src/components/ui/use-toast";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { Label } from "@/src/components/ui/label";
+import { StatsCard } from "@/src/components/admin/home/StatsCard";
 
 const AdminPage = () => {
   const {
@@ -166,6 +167,7 @@ const AdminPage = () => {
 
                 <SchoolsCard schools={schools || []} />
               </div>
+              <StatsCard />
             </>
           )}
         </div>
