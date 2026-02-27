@@ -71,6 +71,7 @@ export type CalendarEvent = {
     location?: string | null;
     type?: string;
     shiftId?: string;
+    isRegistered?: boolean;
     team1?: string;
     team2?: string;
     sportName?: string;

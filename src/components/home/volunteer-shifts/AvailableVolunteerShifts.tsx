@@ -1,9 +1,11 @@
 import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Calendar, Users, ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AvailableVolunteerShiftCard } from "./AvailableVolunteerShiftCard";
 import { useVolunteer } from "../../../hooks/useVolunteer";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface AvailableVolunteerShiftsProps {
   shifts: VolunteerShiftComplete[];
@@ -31,6 +33,17 @@ export const AvailableVolunteerShifts = ({
     return shiftStart > now && !registeredShiftIds.includes(shift.id);
   });
 
+  // Group by day
+  const groupedByDay = useMemo(() => {
+    const groups: Record<string, VolunteerShiftComplete[]> = {};
+    availableShifts.forEach((shift) => {
+      const key = format(new Date(shift.start_time), "yyyy-MM-dd");
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(shift);
+    });
+    return Object.entries(groups).sort(([a], [b]) => a.localeCompare(b));
+  }, [availableShifts]);
+
   if (availableShifts.length === 0) {
     return (
       <Card>
@@ -53,6 +66,9 @@ export const AvailableVolunteerShifts = ({
     ? availableShifts
     : availableShifts.slice(0, 5);
 
+  // Build a set of displayed shift ids for filtering groups
+  const displayedIds = new Set(displayedShifts.map((s) => s.id));
+
   return (
     <Card>
       <CardHeader>
@@ -62,19 +78,27 @@ export const AvailableVolunteerShifts = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {displayedShifts.map((shift, index) => (
-          <div key={shift.id}>
-            <AvailableVolunteerShiftCard
-              shift={shift}
-              onClick={() => handleRegister(shift.id)}
-            />
-            {index < displayedShifts.length - 1 && (
-              <div className="my-4">
-                <hr className="border-muted" />
+        {groupedByDay.map(([dateKey, dayShifts]) => {
+          const visibleShifts = dayShifts.filter((s) => displayedIds.has(s.id));
+          if (visibleShifts.length === 0) return null;
+          const dayDate = new Date(dayShifts[0].start_time);
+          return (
+            <div key={dateKey}>
+              <h4 className="text-sm font-semibold text-muted-foreground mb-2 capitalize">
+                {format(dayDate, "EEEE d MMMM", { locale: fr })}
+              </h4>
+              <div className="space-y-2">
+                {visibleShifts.map((shift) => (
+                  <AvailableVolunteerShiftCard
+                    key={shift.id}
+                    shift={shift}
+                    onClick={() => handleRegister(shift.id)}
+                  />
+                ))}
               </div>
-            )}
-          </div>
-        ))}
+            </div>
+          );
+        })}
 
         {availableShifts.length > 5 && (
           <div className="flex justify-center pt-4">

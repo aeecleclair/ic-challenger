@@ -4,13 +4,14 @@ import { useMemo, useState } from "react";
 import {
   Calendar,
   CalendarCurrentDate,
-  CalendarWeekView,
+  CalendarDayView,
   CalendarNextTrigger,
   CalendarPrevTrigger,
   CalendarTodayTrigger,
   CalendarEvent,
 } from "../../custom/FullScreenCalendar";
 import { fr } from "date-fns/locale";
+import { isSameDay, startOfDay, endOfDay } from "date-fns";
 import {
   ChevronLeft,
   ChevronRight,
@@ -18,21 +19,51 @@ import {
 } from "lucide-react";
 import { useVolunteerShifts } from "@/src/hooks/useVolunteerShifts";
 import { useVolunteer } from "@/src/hooks/useVolunteer";
-import { useAllMatches } from "@/src/hooks/useAllMatches";
-import { useLocations } from "@/src/hooks/useLocations";
-import {
-  generateLocationColor,
-  getLocationName,
-} from "@/src/utils/locationColors";
+import { generateLocationColor } from "@/src/utils/locationColors";
 import { VolunteerCalendarEventDetail } from "./VolunteerCalendarEventDetail";
 
-const MATCH_COLOR = "#3b82f6";
+/**
+ * Split a shift that spans across multiple days into per-day fragments.
+ * E.g. a shift from 28/06 13:00 to 29/06 01:00 becomes two events:
+ *   - 28/06 13:00 → 28/06 23:59
+ *   - 29/06 00:00 → 29/06 01:00
+ */
+function splitMultiDayEvent(event: CalendarEvent): CalendarEvent[] {
+  const { start, end } = event;
+  if (isSameDay(start, end)) return [event];
+
+  const fragments: CalendarEvent[] = [];
+  let current = start;
+  let index = 0;
+
+  while (!isSameDay(current, end)) {
+    const dayEnd = endOfDay(current);
+    fragments.push({
+      ...event,
+      id: `${event.id}-d${index}`,
+      title: index === 0 ? event.title : `${event.title} (suite)`,
+      start: current,
+      end: dayEnd,
+    });
+    current = startOfDay(new Date(dayEnd.getTime() + 1)); // next day 00:00
+    index++;
+  }
+
+  // Last day fragment
+  fragments.push({
+    ...event,
+    id: `${event.id}-d${index}`,
+    title: `${event.title} (suite)`,
+    start: startOfDay(end),
+    end,
+  });
+
+  return fragments;
+}
 
 export const VolunteerCalendar = () => {
   const { volunteerShifts } = useVolunteerShifts();
   const { volunteer } = useVolunteer();
-  const { allMatches } = useAllMatches();
-  const { locations } = useLocations();
 
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
     null,
@@ -43,11 +74,11 @@ export const VolunteerCalendar = () => {
     [volunteer],
   );
 
-  const shiftEvents: CalendarEvent[] = useMemo(() => {
+  const events: CalendarEvent[] = useMemo(() => {
     if (!volunteerShifts) return [];
-    return volunteerShifts.map((shift) => {
+    return volunteerShifts.flatMap((shift) => {
       const isRegistered = registeredShiftIds.has(shift.id);
-      return {
+      const baseEvent: CalendarEvent = {
         id: `shift-${shift.id}`,
         title: isRegistered ? `✓ ${shift.name}` : shift.name,
         subtitle: `Max ${shift.max_volunteers} bénévole${shift.max_volunteers !== 1 ? "s" : ""}`,
@@ -61,39 +92,9 @@ export const VolunteerCalendar = () => {
           location: shift.location,
         },
       };
+      return splitMultiDayEvent(baseEvent);
     });
   }, [volunteerShifts, registeredShiftIds]);
-
-  const matchEvents: CalendarEvent[] = useMemo(() => {
-    if (!allMatches) return [];
-    return allMatches
-      .filter((m) => !!m.date)
-      .map((match) => {
-        const start = new Date(match.date!);
-        const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2h default
-        const locationName = getLocationName(match.location_id, locations);
-        return {
-          id: `match-${match.id}`,
-          title: match.name,
-          subtitle: `${match.team1.name} vs ${match.team2.name}`,
-          start,
-          end,
-          color: MATCH_COLOR,
-          metadata: {
-            type: "match",
-            matchId: match.id,
-            team1: match.team1.name,
-            team2: match.team2.name,
-            location: locationName,
-          },
-        };
-      });
-  }, [allMatches, locations]);
-
-  const events = useMemo(
-    () => [...shiftEvents, ...matchEvents],
-    [shiftEvents, matchEvents],
-  );
 
   const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
@@ -105,7 +106,7 @@ export const VolunteerCalendar = () => {
         events={events}
         onEventClick={handleEventClick}
         locale={fr}
-        view="week"
+        view="day"
       >
         <div className="flex flex-col space-y-4">
           {/* Header */}
@@ -137,13 +138,6 @@ export const VolunteerCalendar = () => {
                 Créneaux
               </div>
               <div className="flex items-center gap-1.5">
-                <span
-                  className="w-3 h-3 rounded-sm inline-block"
-                  style={{ backgroundColor: MATCH_COLOR }}
-                />
-                Matchs
-              </div>
-              <div className="flex items-center gap-1.5">
                 <span className="font-medium">✓</span>
                 Inscrit
               </div>
@@ -151,7 +145,7 @@ export const VolunteerCalendar = () => {
           </div>
 
           {/* Calendar */}
-          <CalendarWeekView />
+          <CalendarDayView />
         </div>
       </Calendar>
 
