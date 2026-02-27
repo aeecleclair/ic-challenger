@@ -20,7 +20,7 @@ import {
 import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 
 export default function VolunteerShiftsPage() {
-  const { volunteerShifts, isLoading } = useVolunteerShifts();
+  const { splitVolunteerShifts,volunteerShifts, isLoading } = useVolunteerShifts();
 
   const [selectedShift, setSelectedShift] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function VolunteerShiftsPage() {
       </div>
 
       {/* Content */}
-      {!volunteerShifts || volunteerShifts.length === 0 ? (
+      {!splitVolunteerShifts || splitVolunteerShifts.length === 0 || !volunteerShifts || volunteerShifts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center bg-muted/30 rounded-lg border-2 border-dashed">
           <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-lg font-semibold mb-2">
@@ -124,7 +124,8 @@ export default function VolunteerShiftsPage() {
       ) : (
         <div>
           <VolunteerShiftCalendar
-            key={`shifts-${volunteerShifts?.length || 0}-${volunteerShifts?.map((s) => s.id).join("-") || "empty"}`}
+            key={`shifts-${splitVolunteerShifts?.length || 0}-${splitVolunteerShifts?.map((s) => s.id).join("-") || "empty"}`}
+            displayShifts={splitVolunteerShifts}
             shifts={volunteerShifts}
             onEventClick={(shift: VolunteerShiftComplete) =>
               setSelectedShift(shift.id)

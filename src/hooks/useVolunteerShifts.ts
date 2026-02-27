@@ -8,7 +8,63 @@ import {
   usePostCompetitionVolunteersShifts,
   usePostCompetitionVolunteersShiftsShiftIdRegister,
 } from "../api/hyperionComponents";
-import { VolunteerShiftBase } from "../api/hyperionSchemas";
+import { VolunteerShiftBase, VolunteerShiftComplete } from "../api/hyperionSchemas";
+import { useMemo } from "react";
+import { isSameDay, endOfDay, startOfDay } from "date-fns";
+
+/**
+ * Split a VolunteerShiftComplete that spans across multiple days into per-day fragments.
+ * E.g. a shift from 28/06 13:00 to 29/06 01:00 becomes two shifts:
+ *   - 28/06 13:00 → 28/06 23:59:59
+ *   - 29/06 00:00 → 29/06 01:00 (named "... (suite)")
+ */
+function splitMultiDayShift(shift: VolunteerShiftComplete): VolunteerShiftComplete[] {
+  const start = new Date(shift.start_time);
+  const end = new Date(shift.end_time);
+
+  // If technically different days but end time is EXACTLY midnight, it's virtually the same day
+  if (!isSameDay(start, end) && end.getHours() === 0 && end.getMinutes() === 0 && end.getSeconds() === 0 && end.getTime() > start.getTime()) {
+    const prevDayEnd = new Date(end.getTime() - 1);
+    if (isSameDay(start, prevDayEnd)) {
+      return [shift]; // No split needed
+    }
+  } else if (isSameDay(start, end)) {
+    return [shift];
+  }
+
+  const fragments: VolunteerShiftComplete[] = [];
+  let current = start;
+  let index = 0;
+
+  while (current.getTime() < end.getTime()) {
+    let segmentEnd = endOfDay(current);
+    let isLastSegment = false;
+    
+    if (end.getTime() <= segmentEnd.getTime()) {
+      segmentEnd = end;
+      isLastSegment = true;
+    }
+
+    if (current.getTime() < segmentEnd.getTime()) {
+      fragments.push({
+        ...shift,
+        id: `${shift.id}-d${index}`,
+        name: index === 0 ? shift.name : `${shift.name} (suite)`,
+        start_time: current.toISOString(),
+        end_time: segmentEnd.toISOString(),
+      });
+    }
+
+    if (isLastSegment) {
+      break;
+    }
+
+    current = new Date(segmentEnd.getTime() + 1);
+    index++;
+  }
+
+  return fragments.length > 0 ? fragments : [shift];
+}
 
 export const useVolunteerShifts = () => {
   const { token, isTokenExpired } = useAuth();
@@ -27,6 +83,12 @@ export const useVolunteerShifts = () => {
       retry: 0,
     },
   );
+
+  // Pre-split multi-day shifts for calendar views
+  const splitVolunteerShifts = useMemo(() => {
+    if (!volunteerShifts) return undefined;
+    return volunteerShifts.flatMap(splitMultiDayShift);
+  }, [volunteerShifts]);
 
   const { mutate: mutateCreateVolunteerShift, isPending: isCreateLoading } =
     usePostCompetitionVolunteersShifts();
@@ -147,6 +209,7 @@ export const useVolunteerShifts = () => {
 
   return {
     volunteerShifts,
+    splitVolunteerShifts,
     isLoading,
     refetchVolunteerShifts,
     createVolunteerShift,

@@ -103,7 +103,6 @@ const Calendar = ({
 }: CalendarProps) => {
   const [view, setView] = useState<View>(_defaultMode);
   const [date, setDate] = useState(defaultDate);
-  const [events, setEvents] = useState<CalendarEvent[]>(defaultEvents);
 
   const changeView = (view: View) => {
     setView(view);
@@ -117,8 +116,8 @@ const Calendar = ({
         setView,
         date,
         setDate,
-        events,
-        setEvents,
+        events: defaultEvents,
+        setEvents: () => {},
         locale,
         enableHotkeys,
         onEventClick,
@@ -168,14 +167,18 @@ const EventGroup = ({
 }) => {
   const { onEventClick, onEmptySlotClick } = useCalendar();
 
-  // Only render events that START within this hour to avoid duplicates
+  // Only render events that START within this hour on the SAME day
   const hourEvents = events
     .filter((event) => {
       const hourStart = hour;
       const hourEnd = addHours(hour, 1);
 
-      // Only show events that start within this hour
-      return event.start >= hourStart && event.start < hourEnd;
+      // Only show events that start within this hour AND on the same day
+      return (
+        isSameDay(event.start, hour) &&
+        event.start >= hourStart &&
+        event.start < hourEnd
+      );
     })
     .map((event, index) => {
       const hourStart = hour;
@@ -284,7 +287,7 @@ const CalendarDayView = () => {
 
   if (view !== "day") return null;
 
-  const hours = [...Array(24)].map((_, i) => setHours(date, i));
+  const hours = [...Array(24)].map((_, i) => setHours(startOfDay(date), i));
 
   return (
     <div className="flex relative pt-2 h-full">

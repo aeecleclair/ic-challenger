@@ -22,47 +22,8 @@ import { useVolunteer } from "@/src/hooks/useVolunteer";
 import { generateLocationColor } from "@/src/utils/locationColors";
 import { VolunteerCalendarEventDetail } from "./VolunteerCalendarEventDetail";
 
-/**
- * Split a shift that spans across multiple days into per-day fragments.
- * E.g. a shift from 28/06 13:00 to 29/06 01:00 becomes two events:
- *   - 28/06 13:00 → 28/06 23:59
- *   - 29/06 00:00 → 29/06 01:00
- */
-function splitMultiDayEvent(event: CalendarEvent): CalendarEvent[] {
-  const { start, end } = event;
-  if (isSameDay(start, end)) return [event];
-
-  const fragments: CalendarEvent[] = [];
-  let current = start;
-  let index = 0;
-
-  while (!isSameDay(current, end)) {
-    const dayEnd = endOfDay(current);
-    fragments.push({
-      ...event,
-      id: `${event.id}-d${index}`,
-      title: index === 0 ? event.title : `${event.title} (suite)`,
-      start: current,
-      end: dayEnd,
-    });
-    current = startOfDay(new Date(dayEnd.getTime() + 1)); // next day 00:00
-    index++;
-  }
-
-  // Last day fragment
-  fragments.push({
-    ...event,
-    id: `${event.id}-d${index}`,
-    title: `${event.title} (suite)`,
-    start: startOfDay(end),
-    end,
-  });
-
-  return fragments;
-}
-
 export const VolunteerCalendar = () => {
-  const { volunteerShifts } = useVolunteerShifts();
+  const { splitVolunteerShifts } = useVolunteerShifts();
   const { volunteer } = useVolunteer();
 
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
@@ -75,8 +36,8 @@ export const VolunteerCalendar = () => {
   );
 
   const events: CalendarEvent[] = useMemo(() => {
-    if (!volunteerShifts) return [];
-    return volunteerShifts.flatMap((shift) => {
+    if (!splitVolunteerShifts) return [];
+    return splitVolunteerShifts.flatMap((shift) => {
       const isRegistered = registeredShiftIds.has(shift.id);
       const baseEvent: CalendarEvent = {
         id: `shift-${shift.id}`,
@@ -92,12 +53,21 @@ export const VolunteerCalendar = () => {
           location: shift.location,
         },
       };
-      return splitMultiDayEvent(baseEvent);
+      return baseEvent;
     });
-  }, [volunteerShifts, registeredShiftIds]);
+  }, [splitVolunteerShifts, registeredShiftIds]);
 
   const handleEventClick = (event: CalendarEvent) => {
-    setSelectedEvent(event);
+    // Strip -dN suffix from split fragment IDs to find the original shift
+    const originalShiftId = event.metadata?.shiftId?.replace(/-d\d+$/, "") || event.id.replace(/-d\d+$/, "").replace(/^shift-/, "");
+    
+    setSelectedEvent({
+      ...event,
+      metadata: {
+        ...event.metadata,
+        shiftId: originalShiftId,
+      }
+    });
   };
 
   return (
