@@ -5,10 +5,11 @@ import {
   useDeleteCompetitionVolunteersShiftsShiftId,
   useGetCompetitionVolunteersShifts,
   usePatchCompetitionVolunteersShiftsShiftId,
+  usePatchCompetitionVolunteersShiftsShiftIdUsersUserIdValidation,
   usePostCompetitionVolunteersShifts,
   usePostCompetitionVolunteersShiftsShiftIdRegister,
 } from "../api/hyperionComponents";
-import { VolunteerShiftBase, VolunteerShiftComplete } from "../api/hyperionSchemas";
+import { VolunteerShiftBase, VolunteerShiftCompleteWithVolunteers } from "../api/hyperionSchemas";
 import { useMemo } from "react";
 import { isSameDay, endOfDay, startOfDay } from "date-fns";
 
@@ -18,7 +19,7 @@ import { isSameDay, endOfDay, startOfDay } from "date-fns";
  *   - 28/06 13:00 → 28/06 23:59:59
  *   - 29/06 00:00 → 29/06 01:00 (named "... (suite)")
  */
-function splitMultiDayShift(shift: VolunteerShiftComplete): VolunteerShiftComplete[] {
+function splitMultiDayShift(shift: VolunteerShiftCompleteWithVolunteers): VolunteerShiftCompleteWithVolunteers[] {
   const start = new Date(shift.start_time);
   const end = new Date(shift.end_time);
 
@@ -32,7 +33,7 @@ function splitMultiDayShift(shift: VolunteerShiftComplete): VolunteerShiftComple
     return [shift];
   }
 
-  const fragments: VolunteerShiftComplete[] = [];
+  const fragments: VolunteerShiftCompleteWithVolunteers[] = [];
   let current = start;
   let index = 0;
 
@@ -207,6 +208,43 @@ export const useVolunteerShifts = () => {
     );
   };
 
+
+  const { mutate: mutateValidation, isPending: isValidating } =
+    usePatchCompetitionVolunteersShiftsShiftIdUsersUserIdValidation();
+
+  const validateParticipation = (
+    shiftId: string,
+    userId: string,
+    validated: boolean,
+  ) => {
+    return mutateValidation(
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        pathParams: { shiftId, userId },
+        body: { validated },
+      },
+      {
+        onSettled: (_data, error) => {
+          if (error) {
+            toast({
+              title: "Erreur",
+              description: "Impossible de mettre à jour la participation.",
+              variant: "destructive",
+            });
+          } else {
+            refetchVolunteerShifts();
+            toast({
+              title: validated ? "Participation validée" : "Validation annulée",
+              description: validated
+                ? "La participation a été confirmée."
+                : "La validation a été annulée.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   return {
     volunteerShifts,
     splitVolunteerShifts,
@@ -218,5 +256,7 @@ export const useVolunteerShifts = () => {
     isUpdateLoading,
     deleteVolunteerShift,
     isDeleteLoading,
+    validateParticipation,
+    isValidating,
   };
 };

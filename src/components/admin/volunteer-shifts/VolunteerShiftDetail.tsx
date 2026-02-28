@@ -1,41 +1,27 @@
 "use client";
 
 import {
-  X,
   Edit,
-  Calendar,
-  Clock,
-  MapPin,
   Users,
   User,
-  Award,
   Info,
-  CheckCircle,
   AlertCircle,
-  ExternalLink,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { Badge } from "../../ui/badge";
-import { Separator } from "../../ui/separator";
 import { Progress } from "../../ui/progress";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
-import { useLocations } from "../../../hooks/useLocations";
 import { LoadingButton } from "../../custom/LoadingButton";
-import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
-import {
-  getLocationName,
-  getLocationDetails,
-  openLocationMap,
-} from "../../../utils/locationColors";
 
 interface VolunteerShiftDetailProps {
   shiftId: string;
@@ -48,12 +34,19 @@ export default function VolunteerShiftDetail({
   onClose,
   onEdit,
 }: VolunteerShiftDetailProps) {
-  const { volunteerShifts, deleteVolunteerShift, isDeleteLoading } =
-    useVolunteerShifts();
+  const {
+    splitVolunteerShifts,
+    deleteVolunteerShift,
+    isDeleteLoading,
+    validateParticipation,
+    isValidating,
+  } = useVolunteerShifts();
 
-  const shift = volunteerShifts?.find(
-    (s: VolunteerShiftComplete) => s.id === shiftId,
-  );
+  const shift = splitVolunteerShifts?.find((s) => s.id === shiftId);
+
+  const registeredUsers = shift?.registrations || [];
+  const registeredCount = registeredUsers.length;
+  const validatedCount = registeredUsers.filter((r) => r.validated).length;
 
   if (!shift) {
     return (
@@ -72,17 +65,16 @@ export default function VolunteerShiftDetail({
   const now = new Date();
   const isUpcoming = startDate > now;
   const isPast = endDate < now;
-  const isActive = !isUpcoming && !isPast;
 
   const durationHours = Math.round(
     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60),
   );
 
   // Calculate registration statistics
-  // Note: Registration data not available in current schema
-  const registeredCount = 0; // Placeholder - registration functionality disabled
-  const validatedCount = 0; // Placeholder - validation functionality disabled
-  const fillPercentage = 0; // (registeredCount / shift.max_volunteers) * 100;
+  const fillPercentage =
+    shift.max_volunteers > 0
+      ? (registeredCount / shift.max_volunteers) * 100
+      : 0;
 
   // Calculate time until/since shift
   const timeDiff = Math.abs(startDate.getTime() - now.getTime());
@@ -121,19 +113,13 @@ export default function VolunteerShiftDetail({
   };
 
   const getFillStatus = () => {
-    // Registration functionality currently disabled
-    return {
-      color: "secondary",
-      text: "Inscriptions non disponibles",
-    } as const;
-    // Original logic (disabled):
-    // if (registeredCount === 0)
-    //   return { color: "destructive", text: "Aucune inscription" } as const;
-    // if (registeredCount < shift.max_volunteers * 0.5)
-    //   return { color: "destructive", text: "Peu d'inscrits" } as const;
-    // if (registeredCount < shift.max_volunteers)
-    //   return { color: "default", text: "Partiellement rempli" } as const;
-    // return { color: "default", text: "Complet" } as const;
+    if (registeredCount === 0)
+      return { color: "destructive", text: "Aucune inscription" } as const;
+    if (registeredCount < shift.max_volunteers * 0.5)
+      return { color: "destructive", text: "Peu d'inscrits" } as const;
+    if (registeredCount < shift.max_volunteers)
+      return { color: "default", text: "Partiellement rempli" } as const;
+    return { color: "default", text: "Complet" } as const;
   };
 
   const handleDelete = () => {
@@ -293,20 +279,85 @@ export default function VolunteerShiftDetail({
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  Bénévoles inscrits
+                  Bénévoles inscrits ({registeredCount} / {shift.max_volunteers}
+                  )
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  <Users className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg font-semibold mb-2">
-                    Fonctionnalité non disponible
-                  </p>
-                  <p>
-                    Les inscriptions aux créneaux ne sont pas encore disponibles
-                    dans cette interface d&apos;administration.
-                  </p>
-                </div>
+                {registeredUsers.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Users className="h-12 w-12 mx-auto mb-4" />
+                    <p>Aucun bénévole inscrit pour ce créneau.</p>
+                  </div>
+                ) : (
+                  <ul className="divide-y">
+                    {registeredUsers.map((registration) => {
+                      const user = registration.user;
+                      return (
+                      <li
+                        key={registration.user_id}
+                        className="flex items-center justify-between py-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-medium text-primary">
+                              {user
+                                ? `${user.firstname.charAt(0)}${user.name.charAt(0)}`
+                                : "?"}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">
+                              {user
+                                ? `${user.firstname} ${user.name}`
+                                : registration.user_id}
+                            </p>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {format(
+                              new Date(registration.registered_at),
+                              "dd/MM HH:mm",
+                              { locale: fr },
+                            )}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {registration.validated ? (
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-800 text-xs"
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Validé
+                            </Badge>
+                          ) : (
+                            <Badge variant="destructive" className="text-xs">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              En attente
+                            </Badge>
+                          )}
+                          <Button
+                            size="sm"
+                            variant={
+                              registration.validated ? "outline" : "default"
+                            }
+                            disabled={isValidating}
+                            onClick={() =>
+                              validateParticipation(
+                                registration.shift_id,
+                                registration.user_id,
+                                !registration.validated,
+                              )
+                            }
+                          >
+                            {registration.validated ? "Annuler" : "Valider"}
+                          </Button>
+                        </div>
+                      </li>
+                    )
+                  })}
+                  </ul>
+                )}
               </CardContent>
             </Card>
           </div>
