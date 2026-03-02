@@ -35,14 +35,14 @@ export default function VolunteerShiftDetail({
   onEdit,
 }: VolunteerShiftDetailProps) {
   const {
-    splitVolunteerShifts,
+    volunteerShifts,
     deleteVolunteerShift,
     isDeleteLoading,
     validateParticipation,
     isValidating,
   } = useVolunteerShifts();
 
-  const shift = splitVolunteerShifts?.find((s) => s.id === shiftId);
+  const shift = volunteerShifts?.find((s) => s.id === shiftId);
 
   const registeredUsers = shift?.registrations || [];
   const registeredCount = registeredUsers.length;
