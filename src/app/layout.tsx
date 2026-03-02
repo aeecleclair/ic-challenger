@@ -3,6 +3,7 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import {
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
@@ -11,20 +12,44 @@ import { Toaster } from "../components/ui/toaster";
 import { toast } from "../components/ui/use-toast";
 import { Suspense } from "react";
 import { ThemeProvider } from "../components/ui/theme";
+import { useTokenStore } from "../stores/token";
 import Script from "next/script";
 
 const inter = Outfit({ subsets: ["latin-ext"] });
 
+function handleGlobalQueryError(error: unknown) {
+  const status =
+    error && typeof error === "object" && "status" in error
+      ? (error as { status: number }).status
+      : null;
+
+  if (status === 401 || status === 403) {
+    // Clear tokens via Zustand store (works outside React components)
+    const { setToken, setRefreshToken } = useTokenStore.getState();
+    setToken(null);
+    setRefreshToken(null);
+    // Redirect to login — use window.location to hard-navigate
+    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+      window.location.href = "/login";
+    }
+    return;
+  }
+}
+
 const queryClient = new QueryClient({
-  // queryCache: new QueryCache({
-  //   onError: (error) => {
-  //     toast({
-  //       title: "Erreur",
-  //       description: "Une erreur est survenue, veuillez réessayer plus tard",
-  //       variant: "destructive",
-  //     });
-  //   },
-  // }),
+  queryCache: new QueryCache({
+    onError: handleGlobalQueryError,
+  }),
+  mutationCache: new MutationCache({
+    onError: handleGlobalQueryError,
+  }),
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+      staleTime: 30_000,
+    },
+  },
 });
 
 export default function RootLayout({
