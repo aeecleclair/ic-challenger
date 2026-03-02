@@ -23,12 +23,12 @@ function handleGlobalQueryError(error: unknown) {
       ? (error as { status: number }).status
       : null;
 
-  if (status === 401 || status === 403) {
-    // Clear tokens via Zustand store (works outside React components)
+  if (status === 401) {
+    // 401 = unauthenticated (token expired/invalid) → clear tokens and redirect
+    // Note: 403 = forbidden (valid token but insufficient permissions) → do NOT logout
     const { setToken, setRefreshToken } = useTokenStore.getState();
     setToken(null);
     setRefreshToken(null);
-    // Redirect to login — use window.location to hard-navigate
     if (
       typeof window !== "undefined" &&
       !window.location.pathname.startsWith("/login")
