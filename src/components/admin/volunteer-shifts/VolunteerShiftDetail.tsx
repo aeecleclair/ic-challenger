@@ -294,68 +294,68 @@ export default function VolunteerShiftDetail({
                     {registeredUsers.map((registration) => {
                       const user = registration.user;
                       return (
-                      <li
-                        key={registration.user_id}
-                        className="flex items-center justify-between py-3"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-medium text-primary">
-                              {user
-                                ? `${user.firstname.charAt(0)}${user.name.charAt(0)}`
-                                : "?"}
+                        <li
+                          key={registration.user_id}
+                          className="flex items-center justify-between py-3"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                              <span className="text-xs font-medium text-primary">
+                                {user
+                                  ? `${user.firstname.charAt(0)}${user.name.charAt(0)}`
+                                  : "?"}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">
+                                {user
+                                  ? `${user.firstname} ${user.name}`
+                                  : registration.user_id}
+                              </p>
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {format(
+                                new Date(registration.registered_at),
+                                "dd/MM HH:mm",
+                                { locale: fr },
+                              )}
                             </span>
                           </div>
-                          <div>
-                            <p className="font-medium text-sm">
-                              {user
-                                ? `${user.firstname} ${user.name}`
-                                : registration.user_id}
-                            </p>
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {format(
-                              new Date(registration.registered_at),
-                              "dd/MM HH:mm",
-                              { locale: fr },
+                          <div className="flex items-center gap-2">
+                            {registration.validated ? (
+                              <Badge
+                                variant="secondary"
+                                className="bg-green-100 text-green-800 text-xs"
+                              >
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Validé
+                              </Badge>
+                            ) : (
+                              <Badge variant="destructive" className="text-xs">
+                                <AlertCircle className="h-3 w-3 mr-1" />
+                                En attente
+                              </Badge>
                             )}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {registration.validated ? (
-                            <Badge
-                              variant="secondary"
-                              className="bg-green-100 text-green-800 text-xs"
+                            <Button
+                              size="sm"
+                              variant={
+                                registration.validated ? "outline" : "default"
+                              }
+                              disabled={isValidating}
+                              onClick={() =>
+                                validateParticipation(
+                                  registration.shift_id,
+                                  registration.user_id,
+                                  !registration.validated,
+                                )
+                              }
                             >
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Validé
-                            </Badge>
-                          ) : (
-                            <Badge variant="destructive" className="text-xs">
-                              <AlertCircle className="h-3 w-3 mr-1" />
-                              En attente
-                            </Badge>
-                          )}
-                          <Button
-                            size="sm"
-                            variant={
-                              registration.validated ? "outline" : "default"
-                            }
-                            disabled={isValidating}
-                            onClick={() =>
-                              validateParticipation(
-                                registration.shift_id,
-                                registration.user_id,
-                                !registration.validated,
-                              )
-                            }
-                          >
-                            {registration.validated ? "Annuler" : "Valider"}
-                          </Button>
-                        </div>
-                      </li>
-                    )
-                  })}
+                              {registration.validated ? "Annuler" : "Valider"}
+                            </Button>
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </CardContent>
