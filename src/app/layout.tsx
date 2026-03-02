@@ -29,7 +29,10 @@ function handleGlobalQueryError(error: unknown) {
     setToken(null);
     setRefreshToken(null);
     // Redirect to login — use window.location to hard-navigate
-    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+    if (
+      typeof window !== "undefined" &&
+      !window.location.pathname.startsWith("/login")
+    ) {
       window.location.href = "/login";
     }
     return;
