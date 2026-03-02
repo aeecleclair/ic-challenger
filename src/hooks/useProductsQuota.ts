@@ -32,7 +32,7 @@ export const useProductsQuota = ({ productId }: UseProductsQuotaProps) => {
     },
     {
       enabled: !isTokenExpired() && !!productId,
-      retry: 0,
+      retry: false,
       queryHash: "getProductsQuota",
     },
   );

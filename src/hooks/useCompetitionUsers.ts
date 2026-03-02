@@ -24,7 +24,7 @@ export const useCompetitionUsers = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
     },
   );
 

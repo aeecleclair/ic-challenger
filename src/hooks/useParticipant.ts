@@ -25,7 +25,7 @@ export const useParticipant = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getMeParticipant",
     },
   );

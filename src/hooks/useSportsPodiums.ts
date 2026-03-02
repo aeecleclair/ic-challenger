@@ -24,7 +24,7 @@ export const useSportPodiums = ({ sportIds }: useSportPodiumsProps) => {
           },
         }),
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
     })),
   });

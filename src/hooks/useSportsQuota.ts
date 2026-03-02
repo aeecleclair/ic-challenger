@@ -32,7 +32,7 @@ export const useSportsQuota = ({ sportId }: UseSportsQuotaProps) => {
     },
     {
       enabled: !isTokenExpired() && !!sportId,
-      retry: 0,
+      retry: false,
       queryHash: "getSportsQuota",
     },
   );

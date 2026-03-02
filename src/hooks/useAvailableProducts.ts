@@ -16,7 +16,7 @@ export const useAvailableProducts = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getProducts",
     },
   );

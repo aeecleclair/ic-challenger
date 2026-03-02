@@ -58,7 +58,7 @@ export default function SchoolAssignPage() {
     },
     {
       enabled: !isTokenExpired() && query.trim().length >= 1,
-      retry: 0,
+      retry: false,
       refetchOnWindowFocus: false,
     },
   );

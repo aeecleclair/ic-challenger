@@ -25,7 +25,7 @@ export const usePompomsPodiums = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getPompomsPodium",
     },
   );

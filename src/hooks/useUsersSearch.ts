@@ -26,7 +26,7 @@ export const useUserSearch = ({ query }: UseUserSearchProps) => {
     },
     {
       enabled: isAdmin() && !isTokenExpired() && query.trim().length >= 0,
-      retry: 0,
+      retry: false,
       refetchOnWindowFocus: false,
     },
   );

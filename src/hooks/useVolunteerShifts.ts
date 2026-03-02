@@ -9,7 +9,10 @@ import {
   usePostCompetitionVolunteersShifts,
   usePostCompetitionVolunteersShiftsShiftIdRegister,
 } from "../api/hyperionComponents";
-import { VolunteerShiftBase, VolunteerShiftCompleteWithVolunteers } from "../api/hyperionSchemas";
+import {
+  VolunteerShiftBase,
+  VolunteerShiftCompleteWithVolunteers,
+} from "../api/hyperionSchemas";
 import { useMemo } from "react";
 import { isSameDay, endOfDay, startOfDay } from "date-fns";
 
@@ -19,12 +22,20 @@ import { isSameDay, endOfDay, startOfDay } from "date-fns";
  *   - 28/06 13:00 → 28/06 23:59:59
  *   - 29/06 00:00 → 29/06 01:00 (named "... (suite)")
  */
-function splitMultiDayShift(shift: VolunteerShiftCompleteWithVolunteers): VolunteerShiftCompleteWithVolunteers[] {
+function splitMultiDayShift(
+  shift: VolunteerShiftCompleteWithVolunteers,
+): VolunteerShiftCompleteWithVolunteers[] {
   const start = new Date(shift.start_time);
   const end = new Date(shift.end_time);
 
   // If technically different days but end time is EXACTLY midnight, it's virtually the same day
-  if (!isSameDay(start, end) && end.getHours() === 0 && end.getMinutes() === 0 && end.getSeconds() === 0 && end.getTime() > start.getTime()) {
+  if (
+    !isSameDay(start, end) &&
+    end.getHours() === 0 &&
+    end.getMinutes() === 0 &&
+    end.getSeconds() === 0 &&
+    end.getTime() > start.getTime()
+  ) {
     const prevDayEnd = new Date(end.getTime() - 1);
     if (isSameDay(start, prevDayEnd)) {
       return [shift]; // No split needed
@@ -40,7 +51,7 @@ function splitMultiDayShift(shift: VolunteerShiftCompleteWithVolunteers): Volunt
   while (current.getTime() < end.getTime()) {
     let segmentEnd = endOfDay(current);
     let isLastSegment = false;
-    
+
     if (end.getTime() <= segmentEnd.getTime()) {
       segmentEnd = end;
       isLastSegment = true;
@@ -81,7 +92,7 @@ export const useVolunteerShifts = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
     },
   );
 
@@ -207,7 +218,6 @@ export const useVolunteerShifts = () => {
       },
     );
   };
-
 
   const { mutate: mutateValidation, isPending: isValidating } =
     usePatchCompetitionVolunteersShiftsShiftIdUsersUserIdValidation();

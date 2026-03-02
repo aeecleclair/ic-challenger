@@ -31,7 +31,7 @@ export const useGroups = ({ group }: UseGroupsProps) => {
     },
     {
       enabled: !isTokenExpired() && !!group,
-      retry: 0,
+      retry: false,
       queryHash: "getGroups",
     },
   );

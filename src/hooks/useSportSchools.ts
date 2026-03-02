@@ -29,7 +29,7 @@ export const useSportSchools = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getSportSchools",
     },
   );

@@ -23,7 +23,7 @@ export const useEditionStats = ({ editionId }: UseEditionStatsProps) => {
     },
     {
       enabled: !isTokenExpired() && !!editionId,
-      retry: 0,
+      retry: false,
       queryHash: "getEditionStats-" + editionId,
     },
   );

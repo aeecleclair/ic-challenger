@@ -36,7 +36,7 @@ export const useSchoolSportTeams = ({
     },
     {
       enabled: !isTokenExpired() && !!schoolId && !!sportId,
-      retry: 0,
+      retry: false,
       queryHash: "getSchoolSportTeams-" + schoolId + "-" + sportId,
     },
   );

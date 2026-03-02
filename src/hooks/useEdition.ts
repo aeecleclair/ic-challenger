@@ -28,7 +28,7 @@ export const useEdition = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getEdition",
     },
   );

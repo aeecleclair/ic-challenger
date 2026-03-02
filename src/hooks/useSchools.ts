@@ -26,7 +26,7 @@ export const useSchools = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getSchools",
     },
   );

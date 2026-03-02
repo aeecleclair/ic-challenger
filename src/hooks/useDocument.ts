@@ -67,7 +67,6 @@ export const useDocument = (userId: string | null) => {
       {
         enabled: !!userId && isAdmin,
         queryHash: "getDocument " + userId,
-        retry: 0,
       },
     );
 

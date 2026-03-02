@@ -26,7 +26,7 @@ export const useLocations = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getLocations",
     },
   );

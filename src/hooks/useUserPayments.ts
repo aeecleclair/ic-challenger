@@ -28,7 +28,7 @@ export const useUserPayments = () => {
     },
     {
       enabled: !!userId && !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getUserPayments",
     },
   );

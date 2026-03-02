@@ -34,7 +34,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
     },
     {
       enabled: !isTokenExpired() && !!userId,
-      retry: 0,
+      retry: false,
       queryHash: "getUserPurchases",
     },
   );
@@ -48,7 +48,7 @@ export const useUserPurchases = ({ userId }: UseUserPurchasesProps) => {
       },
       {
         enabled: !isTokenExpired(),
-        retry: 0,
+        retry: false,
         queryHash: "getUserMePurchases",
       },
     );

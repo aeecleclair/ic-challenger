@@ -25,7 +25,7 @@ export const useSports = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getSports",
     },
   );

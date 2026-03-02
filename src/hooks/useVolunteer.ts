@@ -21,7 +21,7 @@ export const useVolunteer = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
     },
   );
 

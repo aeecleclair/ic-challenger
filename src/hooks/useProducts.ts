@@ -33,7 +33,7 @@ export const useProducts = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getProducts",
     },
   );

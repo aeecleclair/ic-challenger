@@ -33,7 +33,7 @@ export const useSchoolsProductQuota = ({
     },
     {
       enabled: !isTokenExpired() && !!schoolId,
-      retry: 0,
+      retry: false,
       queryHash: "getSchoolsProductQuota",
     },
   );

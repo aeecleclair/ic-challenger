@@ -27,7 +27,7 @@ export const useEditions = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getEditions",
     },
   );
@@ -46,7 +46,7 @@ export const useEditions = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getActiveEdition",
     },
   );

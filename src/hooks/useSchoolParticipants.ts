@@ -26,7 +26,7 @@ export const useSchoolParticipants = ({ schoolId }: UseSchoolParticipants) => {
     },
     {
       enabled: !isTokenExpired() && !!schoolId,
-      retry: 0,
+      retry: false,
       queryHash: "getSchoolParticipants",
     },
   );

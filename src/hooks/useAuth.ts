@@ -192,7 +192,7 @@ export const useAuth = () => {
   useQuery({
     queryKey: ["lookToRefreshToken"],
     queryFn: () => lookToRefreshToken(),
-    retry: 0,
+    retry: false,
     enabled: token !== null,
     refetchOnMount: false,
   });
@@ -200,7 +200,7 @@ export const useAuth = () => {
   useQuery({
     queryKey: ["getTokenFromStorage"],
     queryFn: () => getTokenFromStorage(),
-    retry: 0,
+    retry: false,
     enabled: token === null,
     refetchOnMount: false,
   });

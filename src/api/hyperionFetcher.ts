@@ -5,8 +5,7 @@ const baseUrl =
 
 export type ErrorWrapper<TError> =
   | TError
-  | { status: "unknown"; payload: string }
-  | { status: number; payload: unknown };
+  | { status: "unknown"; payload: string };
 
 export type HyperionFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> =
   {
@@ -84,12 +83,7 @@ export async function hyperionFetch<
             : "Unexpected error";
       }
 
-      const error: ErrorWrapper<TError> = {
-        status: response.status,
-        payload,
-      };
-
-      throw error;
+      throw payload;
     }
     if (response.status === 204) {
       // No content
@@ -102,16 +96,6 @@ export async function hyperionFetch<
       return (await response.blob()) as unknown as TData;
     }
   } catch (e) {
-    // Re-throw HTTP errors with status preserved + backwards-compatible stack
-    if (e && typeof e === "object" && "status" in e && "payload" in e) {
-      const httpError = e as { status: number; payload: unknown };
-      throw {
-        status: httpError.status,
-        payload: httpError.payload,
-        // Backwards compat: mutation onError handlers use error.stack.detail
-        stack: httpError.payload,
-      };
-    }
     let errorObject: Error = {
       name: "unknown" as const,
       message:

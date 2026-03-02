@@ -28,7 +28,7 @@ export const useUser = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
     },
   );
   const { data: myCompetitionGroups } = useGetCompetitionUsersMeGroups(
@@ -39,7 +39,7 @@ export const useUser = () => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
     },
   );
 

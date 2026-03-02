@@ -23,7 +23,7 @@ export const useSportTeams = ({ sportId }: UseSportTeamsProps) => {
     },
     {
       enabled: !isTokenExpired() && !!sportId,
-      retry: 0,
+      retry: false,
       queryHash: "getSportTeams-" + sportId,
     },
   );

@@ -23,7 +23,7 @@ export const useSchoolsPayments = ({ schoolId }: UseSchoolsPaymentsProps) => {
     },
     {
       enabled: !isTokenExpired() && !!schoolId,
-      retry: 0,
+      retry: false,
       queryHash: "getSchoolsPayments",
     },
   );

@@ -23,7 +23,7 @@ export const useSchoolTeams = ({ schoolId }: UseSchoolTeamsProps) => {
     },
     {
       enabled: !isTokenExpired() && !!schoolId,
-      retry: 0,
+      retry: false,
       queryHash: "getSchoolTeams-" + schoolId,
     },
   );

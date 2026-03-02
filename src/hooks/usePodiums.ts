@@ -34,7 +34,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
     },
     {
       enabled: !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: "getGlobalPodium",
     },
   );
@@ -56,7 +56,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
     },
     {
       enabled: !!sportId && !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: `getSportPodium-${sportId}`,
     },
   );
@@ -78,7 +78,7 @@ export const usePodiums = (props?: UsePodiumsProps) => {
     },
     {
       enabled: !!schoolId && !isTokenExpired(),
-      retry: 0,
+      retry: false,
       queryHash: `getSchoolPodium-${schoolId}`,
     },
   );
