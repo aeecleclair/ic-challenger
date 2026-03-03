@@ -4,10 +4,12 @@ import {
   useGetCompetitionUsers,
   useDeleteCompetitionUsersUserId,
   usePatchCompetitionUsersUserIdCancel,
+  usePatchCompetitionUsersUserId,
 } from "@/src/api/hyperionComponents";
 import { useAuth } from "./useAuth";
 import { toast } from "../components/ui/use-toast";
 import { DetailedErrorType, ErrorType } from "../utils/errorTyping";
+import { CompetitionUserEdit } from "../api/hyperionSchemas";
 import { useMemo } from "react";
 
 export const useCompetitionUsers = () => {
@@ -187,6 +189,48 @@ export const useCompetitionUsers = () => {
     );
   };
 
+  const { mutate: mutateUpdateCompetitionUser, isPending: isUpdateLoading } =
+    usePatchCompetitionUsersUserId();
+
+  const updateCompetitionUser = (
+    userId: string,
+    body: CompetitionUserEdit,
+    callback: () => void,
+  ) => {
+    return mutateUpdateCompetitionUser(
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        pathParams: {
+          userId: userId,
+        },
+        body: body,
+      },
+      {
+        onSettled: (data, error) => {
+          if ((error as any).stack?.body || (error as any).stack?.detail) {
+            console.log(error);
+            toast({
+              title: "Erreur lors de la mise à jour",
+              description:
+                (error as any).stack?.body ||
+                (error as unknown as DetailedErrorType).stack?.detail,
+              variant: "destructive",
+            });
+          } else {
+            refetchCompetitionUsers();
+            callback();
+            toast({
+              title: "Participant mis à jour",
+              description: "Le participant a été mis à jour avec succès.",
+            });
+          }
+        },
+      },
+    );
+  };
+
   const volunteers = useMemo(
     () =>
       competitionUsers
@@ -214,5 +258,7 @@ export const useCompetitionUsers = () => {
     isDeleteLoading,
     cancelCompetitionUser,
     isCancelLoading,
+    updateCompetitionUser,
+    isUpdateLoading,
   };
 };

@@ -7,6 +7,7 @@ import { UserPurchases } from "@/src/components/admin/userDetails/UserPurchases"
 import { Button } from "@/src/components/ui/button";
 import { AddPaymentDialog } from "@/src/components/admin/validation/AddPaymentDialog";
 import { ConfirmActionDialog } from "@/src/components/admin/users/ConfirmActionDialog";
+import { EditCompetitionUserDialog } from "@/src/components/admin/users/EditCompetitionUserDialog";
 import { CancelCompetitionUserDialog } from "@/src/components/admin/users/CancelCompetitionUserDialog";
 import { ChangeUserSportDialog } from "@/src/components/admin/users/ChangeUserSportDialog";
 import { ChangeUserTeamDialog } from "@/src/components/admin/users/ChangeUserTeamDialog";
@@ -37,10 +38,14 @@ import {
   Shuffle,
   Users2,
   CreditCard,
+  Pencil,
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
-import { AppModulesSportCompetitionSchemasSportCompetitionPaymentBase } from "@/src/api/hyperionSchemas";
+import {
+  AppModulesSportCompetitionSchemasSportCompetitionPaymentBase,
+  CompetitionUserEdit,
+} from "@/src/api/hyperionSchemas";
 
 const UserDetailsPage = () => {
   const searchParam = useSearchParams();
@@ -57,6 +62,8 @@ const UserDetailsPage = () => {
     isDeleteLoading,
     cancelCompetitionUser,
     isCancelLoading,
+    updateCompetitionUser,
+    isUpdateLoading,
   } = useCompetitionUsers();
   const userCompetition = competitionUsers
     ? competitionUsers.find((cu) => cu.user_id === userId)
@@ -96,6 +103,7 @@ const UserDetailsPage = () => {
   const [changeSportOpen, setChangeSportOpen] = React.useState(false);
   const [changeTeamOpen, setChangeTeamOpen] = React.useState(false);
   const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false);
+  const [editUserOpen, setEditUserOpen] = React.useState(false);
 
   const {
     createPurchase,
@@ -121,6 +129,14 @@ const UserDetailsPage = () => {
   };
   const onCancel = () => {
     cancelCompetitionUser(userId!, () => {});
+  };
+  const onEditUser = (body: CompetitionUserEdit) => {
+    const finalBody = userCompetition?.cancelled
+      ? { ...body, cancelled: false }
+      : body;
+    updateCompetitionUser(userId!, finalBody, () => {
+      setEditUserOpen(false);
+    });
   };
   const handleAddPayment = async (amount: number) => {
     const body: AppModulesSportCompetitionSchemasSportCompetitionPaymentBase = {
@@ -189,6 +205,10 @@ const UserDetailsPage = () => {
                 <DropdownMenuItem onClick={() => setPaymentDialogOpen(true)}>
                   <CreditCard className="mr-2 h-4 w-4" />
                   Enregistrer un paiement
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setEditUserOpen(true)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Modifier
                 </DropdownMenuItem>
                 {userParticipant && (
                   <DropdownMenuItem onClick={() => setChangeSportOpen(true)}>
@@ -367,6 +387,15 @@ const UserDetailsPage = () => {
         participantName={userName}
         isLoading={isPostingPayment}
       />
+      {userCompetition && (
+        <EditCompetitionUserDialog
+          open={editUserOpen}
+          onClose={() => setEditUserOpen(false)}
+          onConfirm={onEditUser}
+          isLoading={isUpdateLoading}
+          user={userCompetition}
+        />
+      )}
     </div>
   );
 };

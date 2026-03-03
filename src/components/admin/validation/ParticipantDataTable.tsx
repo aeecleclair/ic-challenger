@@ -33,11 +33,13 @@ import {
   Ban,
   Shuffle,
   Users2,
+  Pencil,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/ui/badge";
@@ -56,15 +58,18 @@ import {
   AppModulesSportCompetitionSchemasSportCompetitionPaymentBase,
   AppModulesSportCompetitionSchemasSportCompetitionProductComplete,
   AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete,
+  CompetitionUserEdit,
 } from "@/src/api/hyperionSchemas";
 import { AddPaymentDialog } from "./AddPaymentDialog";
 import { ConfirmActionDialog } from "../../admin/users/ConfirmActionDialog";
 import { CancelCompetitionUserDialog } from "../../admin/users/CancelCompetitionUserDialog";
+import { EditCompetitionUserDialog } from "../../admin/users/EditCompetitionUserDialog";
 import { ChangeUserSportDialog } from "../../admin/users/ChangeUserSportDialog";
 import { ChangeUserTeamDialog } from "../../admin/users/ChangeUserTeamDialog";
 import { usePostCompetitionUsersUserIdPayments } from "@/src/api/hyperionComponents";
 import { useAuth } from "@/src/hooks/useAuth";
 import { CreditCard } from "lucide-react";
+import { useCompetitionUsers } from "@/src/hooks/useCompetitionUsers";
 import { useUser } from "@/src/hooks/useUser";
 import { useUserPayments } from "@/src/hooks/useUserPayments";
 import Link from "next/link";
@@ -144,7 +149,13 @@ export function ParticipantDataTable({
   const [changeTeamOpen, setChangeTeamOpen] = React.useState(false);
   const [changeTeamTarget, setChangeTeamTarget] =
     React.useState<ParticipantData | null>(null);
+  const [editUserOpen, setEditUserOpen] = React.useState(false);
+  const [editTarget, setEditTarget] = React.useState<ParticipantData | null>(
+    null,
+  );
 
+  const { competitionUsers, updateCompetitionUser, isUpdateLoading } =
+    useCompetitionUsers();
   const { products } = useProducts();
   const { makePayment, isPostingPayment } = useUserPayments();
 
@@ -640,36 +651,12 @@ export function ParticipantDataTable({
                 {isAdmin() && (
                   <DropdownMenuItem
                     onClick={() => {
-                      if (participant?.hasPaid) {
-                        toast({
-                          title: "Erreur",
-                          description:
-                            "Vous ne pouvez pas supprimer un utilisateur ayant payé",
-                          variant: "destructive",
-                        });
-                      } else {
-                        setDeleteTarget(participant);
-                        setDeleteDialogOpen(true);
-                      }
+                      setEditTarget(participant);
+                      setEditUserOpen(true);
                     }}
-                    disabled={isLoading}
-                    className="text-red-600 focus:text-red-600 focus:bg-red-50"
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Supprimer
-                  </DropdownMenuItem>
-                )}
-                {isAdmin() && onCancelParticipant && (
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setCancelTarget(participant);
-                      setCancelDialogOpen(true);
-                    }}
-                    disabled={isLoading}
-                    className="text-orange-600 focus:text-orange-600 focus:bg-orange-50"
-                  >
-                    <Ban className="mr-2 h-4 w-4" />
-                    Désinscrire
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Modifier
                   </DropdownMenuItem>
                 )}
                 {isAdmin() && participant.sportId && (
@@ -694,6 +681,42 @@ export function ParticipantDataTable({
                   >
                     <Users2 className="mr-2 h-4 w-4" />
                     Changer d&apos;équipe
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                {isAdmin() && onCancelParticipant && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setCancelTarget(participant);
+                      setCancelDialogOpen(true);
+                    }}
+                    disabled={isLoading}
+                    className="text-orange-600 focus:text-orange-600 focus:bg-orange-50"
+                  >
+                    <Ban className="mr-2 h-4 w-4" />
+                    Désinscrire
+                  </DropdownMenuItem>
+                )}
+                {isAdmin() && (
+                  <DropdownMenuItem
+                    onClick={() => {
+                      if (participant?.hasPaid) {
+                        toast({
+                          title: "Erreur",
+                          description:
+                            "Vous ne pouvez pas supprimer un utilisateur ayant payé",
+                          variant: "destructive",
+                        });
+                      } else {
+                        setDeleteTarget(participant);
+                        setDeleteDialogOpen(true);
+                      }
+                    }}
+                    disabled={isLoading}
+                    className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Supprimer
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -963,6 +986,34 @@ export function ParticipantDataTable({
           schoolId={schoolId}
         />
       )}
+      {editTarget &&
+        (() => {
+          const fullUser = competitionUsers?.find(
+            (cu) => cu.user_id === editTarget.userId,
+          );
+          if (!fullUser) return null;
+          const onEditUser = (body: CompetitionUserEdit) => {
+            const finalBody = fullUser.cancelled
+              ? { ...body, cancelled: false as const }
+              : body;
+            updateCompetitionUser(editTarget.userId, finalBody, () => {
+              setEditUserOpen(false);
+              setEditTarget(null);
+            });
+          };
+          return (
+            <EditCompetitionUserDialog
+              open={editUserOpen}
+              onClose={() => {
+                setEditUserOpen(false);
+                setEditTarget(null);
+              }}
+              onConfirm={onEditUser}
+              isLoading={isUpdateLoading}
+              user={fullUser}
+            />
+          );
+        })()}
     </div>
   );
 }
