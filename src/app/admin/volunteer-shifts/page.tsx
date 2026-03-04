@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Calendar } from "lucide-react";
+import { Plus, Calendar, Users } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import {
   Card,
@@ -8,6 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../components/ui/tabs";
 import { useVolunteerShifts } from "../../../hooks/useVolunteerShifts";
 import { LoadingButton } from "../../../components/custom/LoadingButton";
 import { useState, useMemo } from "react";
@@ -16,11 +22,13 @@ import {
   VolunteerShiftDetail,
   VolunteerShiftForm,
   VolunteerShiftCalendar,
+  VolunteerDataTable,
 } from "../../../components/admin/volunteer-shifts";
 import { VolunteerShiftComplete } from "../../../api/hyperionSchemas";
 
 export default function VolunteerShiftsPage() {
-  const { splitVolunteerShifts,volunteerShifts, isLoading } = useVolunteerShifts();
+  const { splitVolunteerShifts, volunteerShifts, isLoading } =
+    useVolunteerShifts();
 
   const [selectedShift, setSelectedShift] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -105,59 +113,92 @@ export default function VolunteerShiftsPage() {
         </div>
       </div>
 
-      {/* Content */}
-      {!splitVolunteerShifts || splitVolunteerShifts.length === 0 || !volunteerShifts || volunteerShifts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center bg-muted/30 rounded-lg border-2 border-dashed">
-          <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">
-            Aucun créneau de bénévolat
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4 max-w-sm">
-            Commencez par créer votre premier créneau de bénévolat pour
-            commencer à organiser vos équipes.
-          </p>
-          <Button onClick={() => handleCreateShift()}>
-            <Plus className="mr-2 h-4 w-4" />
-            Créer un créneau
-          </Button>
-        </div>
-      ) : (
-        <div>
-          <VolunteerShiftCalendar
-            key={`shifts-${splitVolunteerShifts?.length || 0}-${splitVolunteerShifts?.map((s) => s.id).join("-") || "empty"}`}
-            displayShifts={splitVolunteerShifts}
-            shifts={volunteerShifts}
-            onEventClick={(shift: VolunteerShiftComplete) =>
-              setSelectedShift(shift.id)
-            }
-            onEmptySlotClick={handleEmptySlotClick}
-          />
-        </div>
-      )}
+      {/* Tabs */}
+      <Tabs defaultValue="calendar">
+        <TabsList>
+          <TabsTrigger value="calendar" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Calendrier
+          </TabsTrigger>
+          <TabsTrigger value="volunteers" className="gap-2">
+            <Users className="h-4 w-4" />
+            Bénévoles
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Detail Modal */}
-      {selectedShift && (
-        <VolunteerShiftDetail
-          shiftId={selectedShift}
-          onClose={handleCloseDetail}
-          onEdit={() => {
-            handleEditShift(selectedShift);
-            setSelectedShift(null);
-          }}
-        />
-      )}
+        <TabsContent value="calendar" className="mt-4">
+          {!splitVolunteerShifts ||
+          splitVolunteerShifts.length === 0 ||
+          !volunteerShifts ||
+          volunteerShifts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center bg-muted/30 rounded-lg border-2 border-dashed">
+              <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                Aucun créneau de bénévolat
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                Commencez par créer votre premier créneau de bénévolat pour
+                commencer à organiser vos équipes.
+              </p>
+              <Button onClick={() => handleCreateShift()}>
+                <Plus className="mr-2 h-4 w-4" />
+                Créer un créneau
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <VolunteerShiftCalendar
+                key={`shifts-${splitVolunteerShifts?.length || 0}-${splitVolunteerShifts?.map((s) => s.id).join("-") || "empty"}`}
+                displayShifts={splitVolunteerShifts}
+                shifts={volunteerShifts}
+                onEventClick={(shift: VolunteerShiftComplete) =>
+                  setSelectedShift(shift.id)
+                }
+                onEmptySlotClick={handleEmptySlotClick}
+              />
+            </div>
+          )}
 
-      {/* Form Modal */}
-      {isFormOpen && (
-        <VolunteerShiftForm
-          shiftId={editingShift}
-          prefilledDate={prefilledDate}
-          onClose={handleCloseForm}
-          onSuccess={() => {
-            handleCloseForm();
-          }}
-        />
-      )}
+          {/* Detail Modal */}
+          {selectedShift && (
+            <VolunteerShiftDetail
+              shiftId={selectedShift}
+              onClose={handleCloseDetail}
+              onEdit={() => {
+                handleEditShift(selectedShift);
+                setSelectedShift(null);
+              }}
+            />
+          )}
+
+          {/* Form Modal */}
+          {isFormOpen && (
+            <VolunteerShiftForm
+              shiftId={editingShift}
+              prefilledDate={prefilledDate}
+              onClose={handleCloseForm}
+              onSuccess={() => {
+                handleCloseForm();
+              }}
+            />
+          )}
+        </TabsContent>
+
+        <TabsContent value="volunteers" className="mt-4">
+          {volunteerShifts && volunteerShifts.length > 0 ? (
+            <VolunteerDataTable volunteerShifts={volunteerShifts} />
+          ) : (
+            <div className="flex flex-col items-center justify-center py-24 text-center bg-muted/30 rounded-lg border-2 border-dashed">
+              <Users className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Aucun bénévole</h3>
+              <p className="text-sm text-muted-foreground mb-4 max-w-sm">
+                Créez des créneaux de bénévolat pour que les bénévoles puissent
+                s&apos;inscrire.
+              </p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
