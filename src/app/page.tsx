@@ -23,7 +23,7 @@ import {
   CalendarWeekView,
   CalendarYearView,
 } from "../components/custom/FullScreenCalendar";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { fr } from "date-fns/locale";
 import { useEdition } from "../hooks/useEdition";
 import { useCompetitionUser } from "../hooks/useCompetitionUser";
@@ -139,6 +139,18 @@ const Home = () => {
               !(isEditionStarted || isEditionEnded) && (
                 <UnregisteredCard edition={edition} />
               )}
+
+            {/* Quick access for mobile users */}
+            <div className="mt-6 flex justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-14 gap-3 hover:bg-pink-50 hover:border-pink-300 transition-colors w-full max-w-sm"
+                onClick={() => router.push("/volunteer-shifts")}
+              >
+                <span className="text-sm font-medium">Créneaux bénévoles</span>
+              </Button>
+            </div>
           </div>
         )}
       </SidebarInset>
