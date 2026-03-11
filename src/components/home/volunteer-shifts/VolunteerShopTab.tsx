@@ -54,7 +54,15 @@ export const VolunteerShopTab = () => {
   const getPurchasedVariant = (variantId: string) =>
     userMePurchases?.find((p) => p.product_variant_id === variantId);
 
-  const hasPurchasedAny = userMePurchases && userMePurchases.length > 0;
+  const needPayment =
+    userMePurchases &&
+    userMePurchases.length > 0 &&
+    userMePurchases.reduce((sum, p) => {
+      const variant = volunteerProducts?.find(
+        (v) => v.id === p.product_variant_id,
+      );
+      return sum + (variant?.price ?? 0) * p.quantity;
+    }, 0) > 0;
 
   const handlePayment = () => {
     getPaymentUrl((url) => {
@@ -88,7 +96,7 @@ export const VolunteerShopTab = () => {
             Produits réservés aux bénévoles de l&apos;édition
           </p>
         </div>
-        {hasPurchasedAny && (
+        {needPayment && (
           <LoadingButton
             onClick={handlePayment}
             isLoading={isPaymentLoading}
@@ -185,7 +193,7 @@ export const VolunteerShopTab = () => {
         })}
       </div>
 
-      {hasPurchasedAny && (
+      {needPayment && (
         <div className="flex justify-end pt-2">
           <LoadingButton onClick={handlePayment} isLoading={isPaymentLoading}>
             <CreditCard className="mr-2 h-4 w-4" />
