@@ -57,6 +57,12 @@ const Home = () => {
 
   const isFullyRegistered = meCompetition?.validated && hasPaid;
 
+  const isParticipant =
+    meCompetition?.is_athlete ||
+    meCompetition?.is_cameraman ||
+    meCompetition?.is_fanfare ||
+    meCompetition?.is_pompom;
+
   const userSportSchool = sportSchools?.find(
     (school) => school.school_id === user?.school_id,
   );
@@ -133,7 +139,7 @@ const Home = () => {
             {edition &&
               edition.inscription_enabled &&
               isSchoolInscriptionEnabled &&
-              !meCompetition &&
+              (!meCompetition || !isParticipant) &&
               !isLoading &&
               user &&
               !(isEditionStarted || isEditionEnded) && (
