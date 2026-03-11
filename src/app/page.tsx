@@ -117,8 +117,9 @@ const Home = () => {
             {edition &&
               edition.inscription_enabled &&
               isSchoolInscriptionEnabled &&
-              isFullyRegistered &&
               meCompetition &&
+              isParticipant &&
+              isFullyRegistered &&
               (!isEditionStarted || isEditionEnded) && (
                 <FullyRegisteredDashboard
                   edition={edition}
@@ -129,6 +130,7 @@ const Home = () => {
               edition.inscription_enabled &&
               isSchoolInscriptionEnabled &&
               meCompetition &&
+              isParticipant &&
               !isFullyRegistered && (
                 <IncompleteRegistrationCard
                   edition={edition}
