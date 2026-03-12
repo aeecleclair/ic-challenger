@@ -16,6 +16,7 @@ import {
   Minus,
 } from "lucide-react";
 import { AppModulesSportCompetitionSchemasSportCompetitionProductVariantComplete } from "@/src/api/hyperionSchemas";
+import { useCompetitionUser } from "@/src/hooks/useCompetitionUser";
 
 export const VolunteerShopTab = () => {
   const { availableProducts } = useAvailableProducts();
@@ -28,6 +29,7 @@ export const VolunteerShopTab = () => {
     refetchUserMePurchases,
   } = useUserPurchases({ userId: undefined });
   const { getPaymentUrl, isPaymentLoading } = usePayment();
+  const { meCompetition } = useCompetitionUser();
 
   // Filter only volunteer products
   const volunteerProducts = useMemo(
@@ -69,6 +71,21 @@ export const VolunteerShopTab = () => {
       window.open(url, "_blank");
     });
   };
+
+  if (!meCompetition?.is_volunteer)
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <ShoppingBag className="h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-semibold mb-2">Boutique bénévole</h3>
+          <p className="text-sm text-muted-foreground text-center">
+            Cette boutique est réservée aux bénévoles de l&apos;édition. Pour y
+            accéder, inscrivez-vous dans un créneau de bénévolat dans
+            l&apos;onglet &quot;Mes Créneaux&quot;.
+          </p>
+        </CardContent>
+      </Card>
+    );
 
   if (volunteerProducts.length === 0) {
     return (
