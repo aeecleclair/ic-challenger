@@ -4,6 +4,7 @@ import { Separator } from "../../ui/separator";
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { MatchCard } from "./MatchCard";
+import { useFavoriteMatches } from "../../../hooks/useFavoriteMatches";
 
 interface UpcomingMatchesProps {
   matches: MatchComplete[];
@@ -34,6 +35,7 @@ export const UpcomingMatches = ({
   teams = [],
 }: UpcomingMatchesProps) => {
   const [showAllMatches, setShowAllMatches] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavoriteMatches();
 
   if (matches.length === 0) {
     return (
@@ -109,6 +111,8 @@ export const UpcomingMatches = ({
                   sports={sports}
                   schools={schools}
                   teams={teams}
+                  onFavorite={(e) => { e.stopPropagation(); toggleFavorite(match.id); }}
+                  isFavorite={isFavorite(match.id)}
                 />
 
                 {index <

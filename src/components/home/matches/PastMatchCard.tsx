@@ -1,17 +1,16 @@
 import { Match, MatchComplete } from "../../../api/hyperionSchemas";
 import { Badge } from "../../ui/badge";
-import { Trophy, X, School, Users, Target } from "lucide-react";
+import { Trophy, X, School, Users, Target, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface PastMatchCardProps {
   match: MatchComplete;
   userTeamId?: string;
-  // New props for badges
   showSportBadge?: boolean;
   showSchoolBadges?: boolean;
-  showSportCategoryBadges?: boolean; // New: show sport category badges
-  showTeamBadges?: boolean; // New: show team badges
+  showSportCategoryBadges?: boolean;
+  showTeamBadges?: boolean;
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
   schools?: Array<{ school_id: string; school: { id: string; name: string } }>;
   teams?: Array<{
@@ -20,6 +19,8 @@ interface PastMatchCardProps {
     school_id: string;
     sport_id: string;
   }>;
+  onFavorite?: (e: React.MouseEvent) => void;
+  isFavorite?: boolean;
 }
 
 export const PastMatchCard = ({
@@ -27,11 +28,13 @@ export const PastMatchCard = ({
   userTeamId,
   showSportBadge = false,
   showSchoolBadges = false,
-  showSportCategoryBadges = false, // New prop
-  showTeamBadges = false, // New prop
+  showSportCategoryBadges = false,
+  showTeamBadges = false,
   sports = [],
   schools = [],
-  teams = [], // New prop
+  teams = [],
+  onFavorite,
+  isFavorite = false,
 }: PastMatchCardProps) => {
   const isUserMatch =
     match.team1_id === userTeamId || match.team2_id === userTeamId;
@@ -77,22 +80,35 @@ export const PastMatchCard = ({
         <div className="space-y-1">
           <h4 className="font-medium text-sm">{match.name}</h4>
         </div>
-        {isUserMatch && (
-          <Badge
-            variant={
-              isVictory ? "default" : isDefeat ? "destructive" : "secondary"
-            }
-            className={cn(
-              "text-xs",
-              isVictory && "bg-green-500 hover:bg-green-600",
-              isDraw && "bg-yellow-500 hover:bg-yellow-600",
-            )}
-          >
-            {isVictory && <Trophy className="h-3 w-3 mr-1" />}
-            {isDefeat && <X className="h-3 w-3 mr-1" />}
-            {isVictory ? "Victoire" : isDefeat ? "Défaite" : "Match nul"}
-          </Badge>
-        )}
+        <div className="flex items-center gap-1">
+          {isUserMatch && (
+            <Badge
+              variant={
+                isVictory ? "default" : isDefeat ? "destructive" : "secondary"
+              }
+              className={cn(
+                "text-xs",
+                isVictory && "bg-green-500 hover:bg-green-600",
+                isDraw && "bg-yellow-500 hover:bg-yellow-600",
+              )}
+            >
+              {isVictory && <Trophy className="h-3 w-3 mr-1" />}
+              {isDefeat && <X className="h-3 w-3 mr-1" />}
+              {isVictory ? "Victoire" : isDefeat ? "Défaite" : "Match nul"}
+            </Badge>
+          )}
+          {onFavorite && (
+            <button
+              className="p-1 rounded hover:bg-gray-100 transition-colors"
+              onClick={onFavorite}
+              title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+            >
+              <Star
+                className={`h-4 w-4 ${isFavorite ? "text-yellow-500 fill-yellow-500" : "text-gray-400"}`}
+              />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center justify-between">

@@ -11,6 +11,7 @@ import {
   School,
   Target,
   ExternalLink,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
@@ -20,11 +21,10 @@ interface MatchCardProps {
   userTeamId?: string;
   urgency: "urgent" | "soon" | "normal";
   timeUntil: string;
-  // New props for badges
   showSportBadge?: boolean;
   showSchoolBadges?: boolean;
-  showSportCategoryBadges?: boolean; // New: show sport category badges
-  showTeamBadges?: boolean; // New: show team badges when school+sport selected
+  showSportCategoryBadges?: boolean;
+  showTeamBadges?: boolean;
   sports?: Array<{ id: string; name: string; sport_category?: string | null }>;
   schools?: Array<{ school_id: string; school: { id: string; name: string } }>;
   teams?: Array<{
@@ -33,6 +33,8 @@ interface MatchCardProps {
     school_id: string;
     sport_id: string;
   }>;
+  onFavorite?: (e: React.MouseEvent) => void;
+  isFavorite?: boolean;
 }
 
 export const MatchCard = ({
@@ -42,11 +44,13 @@ export const MatchCard = ({
   timeUntil,
   showSportBadge = false,
   showSchoolBadges = false,
-  showSportCategoryBadges = false, // New prop
+  showSportCategoryBadges = false,
   showTeamBadges = false,
   sports = [],
   schools = [],
   teams = [],
+  onFavorite,
+  isFavorite = false,
 }: MatchCardProps) => {
   // Helper functions to get sport, school, and team names
   const getSportName = (sportId: string) => {
@@ -218,26 +222,39 @@ export const MatchCard = ({
               )}
             </div>
           </div>
-          <Badge
-            variant={
-              urgency === "urgent"
-                ? "destructive"
-                : urgency === "soon"
-                  ? "secondary"
-                  : "default"
-            }
-            className={cn(
-              "text-xs font-mono",
-              urgency === "urgent" && "bg-red-500 hover:bg-red-600 text-white",
-              urgency === "soon" &&
-                "bg-orange-500 hover:bg-orange-600 text-white",
-              urgency === "normal" &&
-                "bg-blue-500 hover:bg-blue-600 text-white",
+          <div className="flex items-center gap-1">
+            <Badge
+              variant={
+                urgency === "urgent"
+                  ? "destructive"
+                  : urgency === "soon"
+                    ? "secondary"
+                    : "default"
+              }
+              className={cn(
+                "text-xs font-mono",
+                urgency === "urgent" && "bg-red-500 hover:bg-red-600 text-white",
+                urgency === "soon" &&
+                  "bg-orange-500 hover:bg-orange-600 text-white",
+                urgency === "normal" &&
+                  "bg-blue-500 hover:bg-blue-600 text-white",
+              )}
+            >
+              <Clock className="h-3 w-3 mr-1" />
+              Dans {timeUntil}
+            </Badge>
+            {onFavorite && (
+              <button
+                className="p-1 rounded hover:bg-gray-100 transition-colors"
+                onClick={onFavorite}
+                title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+              >
+                <Star
+                  className={`h-4 w-4 ${isFavorite ? "text-yellow-500 fill-yellow-500" : "text-gray-400"}`}
+                />
+              </button>
             )}
-          >
-            <Clock className="h-3 w-3 mr-1" />
-            Dans {timeUntil}
-          </Badge>
+          </div>
         </div>
 
         <div className="flex items-center justify-between">

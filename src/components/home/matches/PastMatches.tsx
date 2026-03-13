@@ -4,6 +4,7 @@ import { Separator } from "../../ui/separator";
 import { Trophy, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { PastMatchCard } from "./PastMatchCard";
+import { useFavoriteMatches } from "../../../hooks/useFavoriteMatches";
 
 interface PastMatchesProps {
   matches: MatchComplete[];
@@ -35,6 +36,7 @@ export const PastMatches = ({
   teams = [],
 }: PastMatchesProps) => {
   const [showAllMatches, setShowAllMatches] = useState(false);
+  const { toggleFavorite, isFavorite } = useFavoriteMatches();
 
   if (matches.length === 0) {
     return (
@@ -77,6 +79,8 @@ export const PastMatches = ({
                   sports={sports}
                   schools={schools}
                   teams={teams}
+                  onFavorite={(e) => { e.stopPropagation(); toggleFavorite(match.id); }}
+                  isFavorite={isFavorite(match.id)}
                 />
 
                 {index <
