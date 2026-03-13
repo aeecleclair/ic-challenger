@@ -20,6 +20,7 @@ import { NavPodium } from "./NavPodium";
 import { useParticipant } from "@/src/hooks/useParticipant";
 import { Logo } from "../../custom/Logo";
 import { useUser } from "@/src/hooks/useUser";
+import { FlaskConical } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
@@ -28,7 +29,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { me } = useUser();
   const isVolunteer = me?.school_id == "d9772da7-1142-4002-8b86-b694b431dfed";
 
+  const isDevMode =
+    typeof document !== "undefined" &&
+    document.cookie.split("; ").some((c) => c === "dev_during_event=true");
+
   const handleLogoClick = () => {
+    router.push("/");
+  };
+
+  const exitDevMode = () => {
+    document.cookie =
+      "dev_during_event=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     router.push("/");
   };
 
@@ -65,6 +76,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {edition && <NavPodium />}
       </SidebarContent>
       <SidebarFooter>
+        {isDevMode && (
+          <button
+            onClick={exitDevMode}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 transition-colors border border-amber-200"
+          >
+            <FlaskConical className="h-3.5 w-3.5 flex-shrink-0" />
+            Quitter le mode prévisualisation
+          </button>
+        )}
         <NavUser />
       </SidebarFooter>
     </Sidebar>
