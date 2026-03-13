@@ -118,7 +118,7 @@ export default function UserVolunteerShiftDetail({
   };
 
   const locationDetails = getLocationDetails(shift.location, locations);
-  const locationColor = generateLocationColor(locationDetails.id);
+  const locationColor = generateLocationColor(shift.location);
 
   const openMap = () => {
     openLocationMap(shift.location, locations);
@@ -129,7 +129,7 @@ export default function UserVolunteerShiftDetail({
       <DialogContent className="max-w-lg p-0 overflow-hidden">
         {/* Coloured header strip */}
         <div
-          className="h-1.5 w-full"
+          className="h-2 w-full"
           style={{ backgroundColor: locationColor }}
         />
 
