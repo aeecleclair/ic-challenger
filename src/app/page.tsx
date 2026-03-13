@@ -1,30 +1,16 @@
 "use client";
 
 import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUser } from "../hooks/useUser";
 import { AppSidebar } from "../components/home/appSideBar/AppSidebar";
-import { Separator } from "../components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "../components/ui/sidebar";
 import { Button } from "../components/ui/button";
-import {
-  Calendar,
-  CalendarCurrentDate,
-  CalendarDayView,
-  CalendarMonthView,
-  CalendarNextTrigger,
-  CalendarPrevTrigger,
-  CalendarTodayTrigger,
-  CalendarViewTrigger,
-  CalendarWeekView,
-  CalendarYearView,
-} from "../components/custom/FullScreenCalendar";
-import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
-import { fr } from "date-fns/locale";
 import { useEdition } from "../hooks/useEdition";
 import { useCompetitionUser } from "../hooks/useCompetitionUser";
 import { EditionWaitingCard } from "../components/home/EditionWaitingCard";
@@ -38,7 +24,7 @@ import { useSchools } from "../hooks/useSchools";
 
 const Home = () => {
   const { isTokenQueried, token } = useAuth();
-  const { me: user, isAdmin } = useUser();
+  const { me: user } = useUser();
   const { meCompetition, isLoading } = useCompetitionUser();
   const { hasPaid } = useUserPurchases({ userId: user?.id });
   const searchParams = useSearchParams();
@@ -47,13 +33,26 @@ const Home = () => {
   const { sportSchools } = useSportSchools();
   const { NoSchoolId } = useSchools();
 
-  const isEditionStarted = edition?.start_date
-    ? new Date() >= new Date(edition.start_date)
-    : false;
+  const devParam = searchParams.get("dev_during_event");
 
-  const isEditionEnded = edition?.end_date
-    ? new Date() >= new Date(edition.end_date)
-    : false;
+  useEffect(() => {
+    if (devParam === "true") {
+      document.cookie = "dev_during_event=true; path=/";
+    }
+  }, [devParam]);
+
+  const devDuringEvent =
+    devParam === "true" ||
+    (typeof document !== "undefined" &&
+      document.cookie.split("; ").some((c) => c === "dev_during_event=true"));
+
+  const isEditionStarted =
+    devDuringEvent ||
+    (edition?.start_date ? new Date() >= new Date(edition.start_date) : false);
+
+  const isEditionEnded =
+    !devDuringEvent &&
+    (edition?.end_date ? new Date() >= new Date(edition.end_date) : false);
 
   const isFullyRegistered = meCompetition?.validated && hasPaid;
 
@@ -93,72 +92,91 @@ const Home = () => {
           </div>
         ) : (
           <div className="flex flex-col relative overflow-auto h-full m-6">
-            {!edition && (
-              <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
-                Veuillez patienter, l&apos;édition n&apos;est pas encore prête.
-              </span>
-            )}
-            {edition &&
-              (!edition.inscription_enabled || !isSchoolInscriptionEnabled) &&
-              !(isEditionStarted || isEditionEnded) && (
-                <EditionWaitingCard
-                  edition={{
-                    year: edition.year,
-                    name: edition.name,
-                    start_date: edition.start_date,
-                    inscription_enabled: edition.inscription_enabled || false,
-                  }}
-                  isSchoolInscriptionEnabled={!!isSchoolInscriptionEnabled}
-                />
-              )}
-            {edition && isEditionStarted && !isEditionEnded && (
-              <UserDashboard edition={edition} meCompetition={meCompetition} />
-            )}
-            {edition &&
-              edition.inscription_enabled &&
-              isSchoolInscriptionEnabled &&
-              meCompetition &&
-              isParticipant &&
-              isFullyRegistered &&
-              (!isEditionStarted || isEditionEnded) && (
-                <FullyRegisteredDashboard
+            {devDuringEvent ? (
+              edition && (
+                <UserDashboard
                   edition={edition}
                   meCompetition={meCompetition}
                 />
-              )}
-            {edition &&
-              edition.inscription_enabled &&
-              isSchoolInscriptionEnabled &&
-              meCompetition &&
-              isParticipant &&
-              !isFullyRegistered && (
-                <IncompleteRegistrationCard
-                  edition={edition}
-                  meCompetition={meCompetition}
-                  hasPaid={hasPaid}
-                />
-              )}
-            {edition &&
-              edition.inscription_enabled &&
-              isSchoolInscriptionEnabled &&
-              (!meCompetition || !isParticipant) &&
-              !isLoading &&
-              user &&
-              !(isEditionStarted || isEditionEnded) && (
-                <UnregisteredCard edition={edition} />
-              )}
+              )
+            ) : (
+              <>
+                {!edition && (
+                  <span className="text-sm text-muted-foreground px-4 justify-center items-center flex h-full">
+                    Veuillez patienter, l&apos;édition n&apos;est pas encore
+                    prête.
+                  </span>
+                )}
+                {edition &&
+                  (!edition.inscription_enabled ||
+                    !isSchoolInscriptionEnabled) &&
+                  !(isEditionStarted || isEditionEnded) && (
+                    <EditionWaitingCard
+                      edition={{
+                        year: edition.year,
+                        name: edition.name,
+                        start_date: edition.start_date,
+                        inscription_enabled:
+                          edition.inscription_enabled || false,
+                      }}
+                      isSchoolInscriptionEnabled={!!isSchoolInscriptionEnabled}
+                    />
+                  )}
+                {edition && isEditionStarted && !isEditionEnded && (
+                  <UserDashboard
+                    edition={edition}
+                    meCompetition={meCompetition}
+                  />
+                )}
+                {edition &&
+                  edition.inscription_enabled &&
+                  isSchoolInscriptionEnabled &&
+                  meCompetition &&
+                  isParticipant &&
+                  isFullyRegistered &&
+                  (!isEditionStarted || isEditionEnded) && (
+                    <FullyRegisteredDashboard
+                      edition={edition}
+                      meCompetition={meCompetition}
+                    />
+                  )}
+                {edition &&
+                  edition.inscription_enabled &&
+                  isSchoolInscriptionEnabled &&
+                  meCompetition &&
+                  isParticipant &&
+                  !isFullyRegistered && (
+                    <IncompleteRegistrationCard
+                      edition={edition}
+                      meCompetition={meCompetition}
+                      hasPaid={hasPaid}
+                    />
+                  )}
+                {edition &&
+                  edition.inscription_enabled &&
+                  isSchoolInscriptionEnabled &&
+                  (!meCompetition || !isParticipant) &&
+                  !isLoading &&
+                  user &&
+                  !(isEditionStarted || isEditionEnded) && (
+                    <UnregisteredCard edition={edition} />
+                  )}
 
-            {/* Quick access for mobile users */}
-            <div className="mt-6 flex justify-center">
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-14 gap-3 hover:bg-pink-50 hover:border-pink-300 transition-colors w-full max-w-sm"
-                onClick={() => router.push("/volunteer-shifts")}
-              >
-                <span className="text-sm font-medium">Créneaux bénévoles</span>
-              </Button>
-            </div>
+                {/* Quick access for mobile users */}
+                <div className="mt-6 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="h-14 gap-3 hover:bg-pink-50 hover:border-pink-300 transition-colors w-full max-w-sm"
+                    onClick={() => router.push("/volunteer-shifts")}
+                  >
+                    <span className="text-sm font-medium">
+                      Créneaux bénévoles
+                    </span>
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         )}
       </SidebarInset>
