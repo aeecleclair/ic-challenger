@@ -99,22 +99,31 @@
   }
 }
 
+/* Contain Leaflet's high internal z-indexes so maps stay behind the sidebar */
+.leaflet-container {
+  isolation: isolate !important;
+  z-index: 0 !important;
+}
+
 @layer utilities {
   @keyframes border-pulse {
     0% {
-      box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.6),
-                  0 0 0 0px rgba(239, 68, 68, 0.35),
-                  0 0 0 0px rgba(239, 68, 68, 0.15);
+      box-shadow:
+        0 0 0 0px rgba(239, 68, 68, 0.6),
+        0 0 0 0px rgba(239, 68, 68, 0.35),
+        0 0 0 0px rgba(239, 68, 68, 0.15);
     }
     70% {
-      box-shadow: 0 0 0 6px rgba(239, 68, 68, 0),
-                  0 0 0 11px rgba(239, 68, 68, 0),
-                  0 0 0 16px rgba(239, 68, 68, 0);
+      box-shadow:
+        0 0 0 6px rgba(239, 68, 68, 0),
+        0 0 0 11px rgba(239, 68, 68, 0),
+        0 0 0 16px rgba(239, 68, 68, 0);
     }
     100% {
-      box-shadow: 0 0 0 6px rgba(239, 68, 68, 0),
-                  0 0 0 11px rgba(239, 68, 68, 0),
-                  0 0 0 16px rgba(239, 68, 68, 0);
+      box-shadow:
+        0 0 0 6px rgba(239, 68, 68, 0),
+        0 0 0 11px rgba(239, 68, 68, 0),
+        0 0 0 16px rgba(239, 68, 68, 0);
     }
   }
   .animate-border-pulse {
