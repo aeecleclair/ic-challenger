@@ -16,22 +16,20 @@ import {
 } from "@/src/components/ui/sidebar";
 import { AppSidebar } from "@/src/components/home/appSideBar/AppSidebar";
 import { Match } from "../../api/hyperionSchemas";
+import { useAllMatches } from "@/src/hooks/useAllMatches";
 
 export default function LocationsPage() {
-  const { locations, isLoading } = useLocations();
-  const { meParticipant } = useParticipant();
-  const { sportMatches } = useSportMatches({
-    sportId: meParticipant?.sport_id,
-  });
+  const { locations } = useLocations();
+  const { allMatches } = useAllMatches();
   const { sports } = useSports();
 
   const locationsWithMatches = useMemo(() => {
-    if (!locations || !sportMatches) return [];
+    if (!locations || !allMatches) return [];
 
     const now = new Date();
 
     return locations.map((location) => {
-      const locationMatches = sportMatches.filter(
+      const locationMatches = allMatches.filter(
         (match: Match) => match.location_id === location.id,
       );
 
@@ -53,7 +51,7 @@ export default function LocationsPage() {
         upcomingMatches,
       };
     });
-  }, [locations, sportMatches]);
+  }, [locations, allMatches]);
 
   return (
     <SidebarProvider>
