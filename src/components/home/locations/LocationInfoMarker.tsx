@@ -91,7 +91,7 @@ export function LocationInfoMarker({
     for (const m of upcomingMatches) {
       counts.set(m.sport_id, (counts.get(m.sport_id) || 0) + 1);
     }
-    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+    const sorted = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
     const allSports = sorted
       .map(([id, count]) => ({
         sport: sports.find((s: any) => s.id === id),
