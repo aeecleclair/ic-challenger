@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {isAdmin() && (
                       <Badge
                         variant="secondary"
-                        className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-primary/10 text-primary border-primary/20"
+                        className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-foreground text-background border-transparent"
                       >
                         VP Tournois
                       </Badge>
@@ -95,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     {isAdmin() && (
                       <Badge
                         variant="secondary"
-                        className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-primary/10 text-primary border-primary/20"
+                        className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-foreground text-background border-transparent"
                       >
                         BDS
                       </Badge>
@@ -115,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     Administration
                     <Badge
                       variant="secondary"
-                      className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-primary/10 text-primary border-primary/20"
+                      className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-foreground text-background border-transparent"
                     >
                       Admin
                     </Badge>

@@ -24,6 +24,8 @@ import {
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useEditionStats } from "@/src/hooks/useEditionStats";
 import { useAllMatches } from "@/src/hooks/useAllMatches";
+import { useAllTeams } from "@/src/hooks/useAllTeams";
+import { useVolunteerShifts } from "@/src/hooks/useVolunteerShifts";
 
 const AdminPage = () => {
   const {
@@ -45,6 +47,8 @@ const AdminPage = () => {
     editionId: edition?.id,
   });
   const { allMatches } = useAllMatches();
+  const { allTeams } = useAllTeams();
+  const { volunteerShifts } = useVolunteerShifts();
 
   const matchCountBySport = useMemo(() => {
     const map = new Map<string, number>();
@@ -162,6 +166,8 @@ const AdminPage = () => {
                   locations={locations}
                   products={products}
                   matchCountBySport={matchCountBySport}
+                  allTeams={allTeams}
+                  volunteerShifts={volunteerShifts}
                   onOpenInscription={openEditionInscription}
                   onCloseInscription={closeEditionInscription}
                   isOpenInscriptionLoading={isOpenInscriptionLoading}

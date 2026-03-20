@@ -7,6 +7,7 @@ import { Input } from "@/src/components/ui/input";
 import { Badge } from "@/src/components/ui/badge";
 import { useSports } from "@/src/hooks/useSports";
 import { useAllMatches } from "@/src/hooks/useAllMatches";
+import { useAllTeams } from "@/src/hooks/useAllTeams";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import SportDetail from "@/src/components/admin/sports/SportDetail";
@@ -16,6 +17,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 
@@ -23,6 +26,7 @@ const Dashboard = () => {
   const router = useRouter();
   const { sports, deleteSport, isDeleteLoading } = useSports();
   const { allMatches } = useAllMatches();
+  const { allTeams } = useAllTeams();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<
     "all" | "active" | "inactive"
@@ -33,6 +37,9 @@ const Dashboard = () => {
   const [filterMatches, setFilterMatches] = useState<
     "all" | "with_matches" | "without_matches"
   >("all");
+  const [filterTeams, setFilterTeams] = useState<
+    "all" | "with_teams" | "without_teams"
+  >("all");
 
   const matchCountBySport = useMemo(() => {
     const map = new Map<string, number>();
@@ -42,6 +49,15 @@ const Dashboard = () => {
     }
     return map;
   }, [allMatches]);
+
+  const teamCountBySport = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!allTeams) return map;
+    for (const team of allTeams) {
+      map.set(team.sport_id, (map.get(team.sport_id) || 0) + 1);
+    }
+    return map;
+  }, [allTeams]);
   const [sportToDelete, setSportToDelete] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -72,13 +88,18 @@ const Dashboard = () => {
         filterMatches === "all" ||
         (filterMatches === "with_matches" && sportMatchCount > 0) ||
         (filterMatches === "without_matches" && sportMatchCount === 0);
+      const sportTeamCount = teamCountBySport.get(sport.id) || 0;
+      const matchesTeamFilter =
+        filterTeams === "all" ||
+        (filterTeams === "with_teams" && sportTeamCount > 0) ||
+        (filterTeams === "without_teams" && sportTeamCount === 0);
 
-      return matchesSearch && matchesStatus && matchesCategory && matchesMatchFilter;
+      return matchesSearch && matchesStatus && matchesCategory && matchesMatchFilter && matchesTeamFilter;
     });
-  }, [sports, searchQuery, filterStatus, filterCategory, filterMatches, matchCountBySport]);
+  }, [sports, searchQuery, filterStatus, filterCategory, filterMatches, matchCountBySport, filterTeams, teamCountBySport]);
 
   const stats = useMemo(() => {
-    if (!sports) return { total: 0, active: 0, masculine: 0, feminine: 0, withoutMatches: 0 };
+    if (!sports) return { total: 0, active: 0, masculine: 0, feminine: 0, withoutMatches: 0, withoutTeams: 0 };
 
     return {
       total: sports.length,
@@ -86,8 +107,9 @@ const Dashboard = () => {
       masculine: sports.filter((s) => s.sport_category === "masculine").length,
       feminine: sports.filter((s) => s.sport_category === "feminine").length,
       withoutMatches: sports.filter((s) => !matchCountBySport.get(s.id)).length,
+      withoutTeams: sports.filter((s) => !teamCountBySport.get(s.id)).length,
     };
-  }, [sports, matchCountBySport]);
+  }, [sports, matchCountBySport, teamCountBySport]);
 
   const handleDeleteSport = () => {
     if (sportToDelete) {
@@ -130,7 +152,7 @@ const Dashboard = () => {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-7 gap-4">
             <div className="bg-card border rounded-lg p-4">
               <div className="flex items-center gap-2">
                 <Trophy className="h-4 w-4 text-muted-foreground" />
@@ -179,14 +201,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div
-              className={`border rounded-lg p-4 cursor-pointer transition-colors ${stats.withoutMatches > 0 ? "bg-amber-50 border-amber-300" : "bg-card"}`}
-              onClick={() =>
-                setFilterMatches(
-                  filterMatches === "without_matches"
-                    ? "all"
-                    : "without_matches",
-                )
-              }
+              className={`border rounded-lg p-4 ${stats.withoutMatches > 0 ? "bg-amber-50 border-amber-300" : "bg-card"}`}
             >
               <div className="flex items-center gap-2">
                 <AlertTriangle
@@ -202,6 +217,25 @@ const Dashboard = () => {
                 className={`text-2xl font-bold ${stats.withoutMatches > 0 ? "text-amber-800" : ""}`}
               >
                 {stats.withoutMatches}
+              </div>
+            </div>
+            <div
+              className={`border rounded-lg p-4 ${stats.withoutTeams > 0 ? "bg-amber-50 border-amber-300" : "bg-card"}`}
+            >
+              <div className="flex items-center gap-2">
+                <AlertTriangle
+                  className={`h-4 w-4 ${stats.withoutTeams > 0 ? "text-amber-600" : "text-muted-foreground"}`}
+                />
+                <span
+                  className={`text-sm font-medium ${stats.withoutTeams > 0 ? "text-amber-800" : "text-muted-foreground"}`}
+                >
+                  Sans équipes
+                </span>
+              </div>
+              <div
+                className={`text-2xl font-bold ${stats.withoutTeams > 0 ? "text-amber-800" : ""}`}
+              >
+                {stats.withoutTeams}
               </div>
             </div>
           </div>
@@ -223,14 +257,35 @@ const Dashboard = () => {
                   <Button variant="outline" className="gap-2">
                     <Filter className="h-4 w-4" />
                     Statut
-                    {filterStatus !== "all" && (
+                    {(filterStatus !== "all" ||
+                      filterMatches !== "all" ||
+                      filterTeams !== "all") && (
                       <Badge variant="secondary" className="ml-1">
-                        {filterStatus === "active" ? "Actifs" : "Inactifs"}
+                        {[
+                          filterStatus === "active"
+                            ? "Actifs"
+                            : filterStatus === "inactive"
+                              ? "Inactifs"
+                              : null,
+                          filterMatches === "without_matches"
+                            ? "Sans matchs"
+                            : filterMatches === "with_matches"
+                              ? "Avec matchs"
+                              : null,
+                          filterTeams === "without_teams"
+                            ? "Sans équipes"
+                            : filterTeams === "with_teams"
+                              ? "Avec équipes"
+                              : null,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
                       </Badge>
                     )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                  <DropdownMenuLabel>Activation</DropdownMenuLabel>
                   <DropdownMenuItem onClick={() => setFilterStatus("all")}>
                     Tous
                   </DropdownMenuItem>
@@ -239,6 +294,36 @@ const Dashboard = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => setFilterStatus("inactive")}>
                     Inactifs uniquement
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Matchs</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setFilterMatches("all")}>
+                    Tous
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setFilterMatches("with_matches")}
+                  >
+                    Avec matchs
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setFilterMatches("without_matches")}
+                  >
+                    Sans matchs
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Équipes</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setFilterTeams("all")}>
+                    Toutes
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setFilterTeams("with_teams")}
+                  >
+                    Avec équipes
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => setFilterTeams("without_teams")}
+                  >
+                    Sans équipes
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -284,15 +369,17 @@ const Dashboard = () => {
           </div>
 
           {/* Results info */}
-          {searchQuery || filterStatus !== "all" || filterCategory !== "all" || filterMatches !== "all" ? (
+          {searchQuery || filterStatus !== "all" || filterCategory !== "all" || filterMatches !== "all" || filterTeams !== "all" ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>
                 {filteredSports.length} sport(s) trouvé(s)
                 {searchQuery && ` pour "${searchQuery}"`}
                 {filterMatches === "without_matches" && " sans matchs"}
                 {filterMatches === "with_matches" && " avec matchs"}
+                {filterTeams === "without_teams" && " sans équipes"}
+                {filterTeams === "with_teams" && " avec équipes"}
               </span>
-              {(filterStatus !== "all" || filterCategory !== "all" || filterMatches !== "all") && (
+              {(filterStatus !== "all" || filterCategory !== "all" || filterMatches !== "all" || filterTeams !== "all") && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -301,6 +388,7 @@ const Dashboard = () => {
                     setFilterStatus("all");
                     setFilterCategory("all");
                     setFilterMatches("all");
+                    setFilterTeams("all");
                   }}
                   className="h-auto p-1 text-xs"
                 >
@@ -320,6 +408,7 @@ const Dashboard = () => {
                     key={sport.id}
                     sport={sport}
                     matchCount={matchCountBySport.get(sport.id) ?? 0}
+                    teamCount={teamCountBySport.get(sport.id) ?? 0}
                     onClick={() => {
                       router.push(`/admin/sports?sport_id=${sport.id}`);
                     }}
