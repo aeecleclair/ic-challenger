@@ -9,6 +9,7 @@ import {
 } from "@/src/components/ui/card";
 import { Badge } from "@/src/components/ui/badge";
 import {
+  AlertTriangle,
   Users,
   Crown,
   Trophy,
@@ -35,14 +36,16 @@ const TeamCard = ({ team, onEdit, onDelete }: TeamCardProps) => {
   const { sports } = useSports();
   const { sportSchools } = useSportSchools();
 
-  const sportName =
-    sports?.find((sport) => sport.id === team.sport_id)?.name || team.sport_id;
+  const sport = sports?.find((s) => s.id === team.sport_id);
+  const sportName = sport?.name || team.sport_id;
   const schoolName =
     sportSchools?.find((school) => school.school_id === team.school_id)?.school
       .name || "";
+  const isIncomplete =
+    (team.participants?.length ?? 0) < (sport?.team_size ?? 0);
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+    <Card className={`hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group ${isIncomplete ? "border-amber-300 bg-amber-50/50" : ""}`}>
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2 flex items-center gap-2">
@@ -62,6 +65,15 @@ const TeamCard = ({ team, onEdit, onDelete }: TeamCardProps) => {
             >
               {schoolName ? formatSchoolName(schoolName) : "Non spécifiée"}
             </Badge>
+            {isIncomplete && (
+              <Badge
+                variant="outline"
+                className="gap-1 bg-amber-100 text-amber-800 border-amber-300"
+              >
+                <AlertTriangle className="h-3 w-3" />
+                {team.participants?.length ?? 0}/{sport?.team_size ?? "?"} joueurs
+              </Badge>
+            )}
           </div>
         </div>
       </CardHeader>

@@ -35,6 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
+import { AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import {
   Dialog,
@@ -68,7 +69,14 @@ const TeamsDashboard = () => {
     searchParams.get("school_id") || "all",
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterCompleteness, setFilterCompleteness] = useState<
+    "all" | "complete" | "incomplete"
+  >("all");
   const [showCreateForm, setShowCreateForm] = useState(false);
+
+  const teamSizeMap = useMemo(() => {
+    return new Map(sports?.map((s) => [s.id, s.team_size]) ?? []);
+  }, [sports]);
 
   const filteredSportSchools = useMemo(() => {
     return sportSchools?.filter((school) => school.school_id !== NoSchoolId);
@@ -158,13 +166,20 @@ const TeamsDashboard = () => {
 
     if (!teamsSource) return [];
 
-    // Apply search filter
+    // Apply search + completeness filters
     return teamsSource.filter((team) => {
       const matchesSearch = team.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
 
-      return matchesSearch;
+      const requiredSize = teamSizeMap.get(team.sport_id) ?? 0;
+      const isComplete = (team.participants?.length ?? 0) >= requiredSize;
+      const matchesCompleteness =
+        filterCompleteness === "all" ||
+        (filterCompleteness === "complete" && isComplete) ||
+        (filterCompleteness === "incomplete" && !isComplete);
+
+      return matchesSearch && matchesCompleteness;
     });
   }, [
     allTeams,
@@ -173,6 +188,8 @@ const TeamsDashboard = () => {
     searchQuery,
     selectedSchoolId,
     selectedSportId,
+    filterCompleteness,
+    teamSizeMap,
   ]);
 
   // Form for creating/editing teams
@@ -273,23 +290,67 @@ const TeamsDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              Gestion des Équipes
-            </h1>
-          </div>
-          <Button
-            onClick={() => setShowCreateForm(true)}
-            className="flex items-center gap-2"
-            disabled={selectedSportId === "all" || selectedSchoolId === "all"}
-          >
-            <Plus className="h-4 w-4" />
-            Nouvelle équipe
-          </Button>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Équipes</h1>
+          <p className="text-muted-foreground">Gestion des équipes</p>
         </div>
+        <Button
+          onClick={() => setShowCreateForm(true)}
+          className="flex items-center gap-2"
+          disabled={selectedSportId === "all" || selectedSchoolId === "all"}
+        >
+          <Plus className="h-4 w-4" />
+          Nouvelle équipe
+        </Button>
       </div>
+
+      {/* Stats */}
+      {(() => {
+        const total = allTeams?.length ?? 0;
+        const incomplete = allTeams?.filter(
+          (t) =>
+            (t.participants?.length ?? 0) <
+            (teamSizeMap.get(t.sport_id) ?? 0),
+        ).length ?? 0;
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-card border rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">Total</span>
+              </div>
+              <div className="text-2xl font-bold">{total}</div>
+            </div>
+            <div className="bg-card border rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">Complètes</span>
+              </div>
+              <div className="text-2xl font-bold">{total - incomplete}</div>
+            </div>
+            <div
+              className={`border rounded-lg p-4 ${incomplete > 0 ? "bg-amber-50 border-amber-300" : "bg-card"}`}
+            >
+              <div className="flex items-center gap-2">
+                <AlertTriangle
+                  className={`h-4 w-4 ${incomplete > 0 ? "text-amber-600" : "text-muted-foreground"}`}
+                />
+                <span
+                  className={`text-sm font-medium ${incomplete > 0 ? "text-amber-800" : "text-muted-foreground"}`}
+                >
+                  Incomplètes
+                </span>
+              </div>
+              <div
+                className={`text-2xl font-bold ${incomplete > 0 ? "text-amber-800" : ""}`}
+              >
+                {incomplete}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Filters */}
       <div className="flex flex-col gap-4 bg-white rounded-lg border p-4">
@@ -334,6 +395,39 @@ const TeamsDashboard = () => {
                 ))}
               </SelectContent>
             </Select>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="h-4 w-4" />
+                  Statut
+                  {filterCompleteness !== "all" && (
+                    <Badge variant="secondary" className="ml-1">
+                      {filterCompleteness === "complete"
+                        ? "Complètes"
+                        : "Incomplètes"}
+                    </Badge>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onClick={() => setFilterCompleteness("all")}
+                >
+                  Toutes
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setFilterCompleteness("complete")}
+                >
+                  Complètes uniquement
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setFilterCompleteness("incomplete")}
+                >
+                  Incomplètes uniquement
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
