@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { stringify } from "qs";
 import {
@@ -17,6 +17,10 @@ const redirectUrlHost: string = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/login`;
 const backUrl: string =
   process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr";
 const scopes: string[] = ["API"];
+
+// Module-level refresh lock shared across all useAuth instances
+let _isRefreshing = false;
+let _refreshPromise: Promise<string | null> | null = null;
 
 export const useAuth = () => {
   const pathname = usePathname();
@@ -79,44 +83,53 @@ export const useAuth = () => {
       setIsLoading(false);
       setToken(tokenResponse.access_token);
       setRefreshToken(tokenResponse.refresh_token);
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false);
-      if (isTokenExpired()) {
+      // Only logout if the server rejected the token (4xx), not on network errors
+      const status = error?.response?.status;
+      if (status && status >= 400 && status < 500) {
         logout();
       }
     }
   }
 
-  const isRefreshing = useRef(false);
-
   async function refreshTokens(): Promise<string | null> {
-    if (isRefreshing.current) return null;
-    isRefreshing.current = true;
-    try {
-      if (refreshToken) {
-        const params: BodyTokenAuthTokenPost = {
-          grant_type: "refresh_token",
-          client_id: clientId,
-          refresh_token: refreshToken,
-        };
-        await getToken(params);
-        return useTokenStore.getState().token;
+    // Use module-level lock so all component instances share it
+    if (_isRefreshing) return _refreshPromise;
+    _isRefreshing = true;
+    _refreshPromise = (async () => {
+      try {
+        // Read from store directly — closure value may be stale
+        const currentRefreshToken = useTokenStore.getState().refreshToken;
+        if (currentRefreshToken) {
+          const params: BodyTokenAuthTokenPost = {
+            grant_type: "refresh_token",
+            client_id: clientId,
+            refresh_token: currentRefreshToken,
+          };
+          await getToken(params);
+          return useTokenStore.getState().token;
+        }
+        logout();
+        return null;
+      } catch {
+        logout();
+        return null;
+      } finally {
+        _isRefreshing = false;
+        _refreshPromise = null;
       }
-      logout();
-      return null;
-    } catch {
-      logout();
-      return null;
-    } finally {
-      isRefreshing.current = false;
-    }
+    })();
+    return _refreshPromise;
   }
 
   function isTokenExpired() {
-    if (token === null) return true;
-    const access_token_expires = token
-      ? JSON.parse(atob(token.split(".")[1])).exp
-      : 0;
+    // Read from store directly — closure value may be stale
+    const currentToken = useTokenStore.getState().token;
+    if (currentToken === null) return true;
+    const access_token_expires = JSON.parse(
+      atob(currentToken.split(".")[1]),
+    ).exp;
     const now = Math.floor(Date.now() / 1000);
     return access_token_expires < now + 60;
   }
@@ -194,7 +207,25 @@ export const useAuth = () => {
       refreshTokens();
     }, timeToRefresh);
 
-    return () => clearTimeout(id);
+    // When the user returns to the tab after being away, the setTimeout
+    // may have been throttled/paused by the browser. Check immediately.
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        const now = Date.now();
+        const tokenExp =
+          JSON.parse(atob(useTokenStore.getState().token?.split(".")[1] || "e30=")).exp * 1000;
+        if (tokenExp - now < REFRESH_TOKEN_BUFFER * 1000) {
+          refreshTokens();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearTimeout(id);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 

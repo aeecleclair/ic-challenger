@@ -75,11 +75,14 @@ export async function hyperionFetch<
     );
     if (!response.ok) {
       if (response.status === 401) {
-        const { setToken, setRefreshToken } = useTokenStore.getState();
-        setToken(null);
-        setRefreshToken(null);
-        if (typeof window !== "undefined") {
-          window.location.href = "/login";
+        // Only force logout if there's no refresh token left to try
+        const { refreshToken, setToken, setRefreshToken } = useTokenStore.getState();
+        if (!refreshToken) {
+          setToken(null);
+          setRefreshToken(null);
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
         }
       }
 
