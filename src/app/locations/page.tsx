@@ -63,27 +63,22 @@ export default function LocationsPage() {
           </div>
         </header>
 
-        <div className="flex flex-col relative overflow-auto h-full m-6">
-          <div className="space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                  Lieux de Compétition
-                </h1>
-                <p className="text-muted-foreground">
-                  Découvrez tous les lieux où se déroulent les matchs avec accès
-                  direct aux cartes
-                </p>
-              </div>
-            </div>
-            <LocationsMap
-              locations={locations || []}
-              locationsWithMatches={locationsWithMatches}
-              sports={sports}
-              className="h-[700px] w-full"
-            />
+        <div className="flex flex-col h-[calc(100vh-4rem)] px-6 pb-6">
+          <div className="py-4 shrink-0">
+            <h1 className="text-3xl font-bold tracking-tight">
+              Lieux de Compétition
+            </h1>
+            <p className="text-muted-foreground">
+              Découvrez tous les lieux où se déroulent les matchs avec accès
+              direct aux cartes
+            </p>
           </div>
+          <LocationsMap
+            locations={locations || []}
+            locationsWithMatches={locationsWithMatches}
+            sports={sports}
+            className="flex-1 w-full"
+          />
         </div>
       </SidebarInset>
     </SidebarProvider>

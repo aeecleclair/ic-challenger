@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSports } from "@/src/hooks/useSports";
-import { MapPin, Calendar, Clock, Search, ChevronRight } from "lucide-react";
+import { MapPin, Calendar, Clock, Search, ChevronRight, Trophy } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -84,6 +84,28 @@ export function LocationInfoMarker({
     };
   };
 
+  // Compute sports breakdown for this location
+  const sportBreakdown = React.useMemo(() => {
+    if (!upcomingMatches.length || !Array.isArray(sports)) return null;
+    const counts = new Map<string, number>();
+    for (const m of upcomingMatches) {
+      counts.set(m.sport_id, (counts.get(m.sport_id) || 0) + 1);
+    }
+    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+    const allSports = sorted
+      .map(([id, count]) => ({
+        sport: sports.find((s: any) => s.id === id),
+        count,
+      }))
+      .filter((s) => s.sport);
+    return {
+      isSingleSport: allSports.length === 1,
+      allSports,
+      dominantSport: allSports[0]?.sport,
+      uniqueCount: allSports.length,
+    };
+  }, [upcomingMatches, sports]);
+
   const [isOpen, setIsOpen] = React.useState(false);
   const markerRef = React.useRef<HTMLDivElement>(null);
 
@@ -114,267 +136,218 @@ export function LocationInfoMarker({
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-10">
           {/* Bottom triangle for popup anchor */}
           <div className="absolute left-1/2 top-full transform -translate-x-1/2">
-            <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-white drop-shadow-sm" />
+            <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[7px] border-l-transparent border-r-transparent border-t-white drop-shadow-sm" />
           </div>
-          <div className="w-[300px] sm:w-[350px] bg-white rounded-lg shadow-lg p-4 border">
-            <div className="flex items-start gap-3">
-              <div className="bg-rose-500/10 p-2 rounded-full shrink-0">
-                <MapPin className="h-6 w-6 text-rose-500" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-1">
-                  <h3 className="font-medium text-base truncate">
+          <div className="w-[300px] bg-white rounded-2xl shadow-xl border overflow-hidden">
+            {/* Header — inspired by reference card */}
+            <div className="p-4 pb-3">
+              <div className="flex items-start gap-3">
+                <div className="bg-slate-100 p-2.5 rounded-xl shrink-0">
+                  <MapPin className="h-5 w-5 text-slate-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm leading-tight">
                     {location.name}
                   </h3>
-                  {hasMatches && (
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className="border-green-500 text-green-600 text-xs"
-                      >
-                        Actif
-                      </Badge>
-                      <Badge variant="destructive" className="text-xs px-2">
-                        {totalMatches} match{totalMatches !== 1 ? "s" : ""}
-                      </Badge>
-                    </div>
+                  {(location.address || location.description) && (
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
+                      {location.address || location.description}
+                    </p>
                   )}
                 </div>
-                {location.description && (
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {location.description}
-                  </p>
-                )}
-                {location.address && (
-                  <p className="text-sm text-muted-foreground truncate mt-1">
-                    <MapPin className="h-3 w-3 inline mr-1 opacity-70" />
-                    {location.address}
-                  </p>
-                )}
               </div>
+
+              {/* Sports + stats */}
+              {hasMatches && sportBreakdown && (
+                <div className="mt-3 pt-3 border-t space-y-1">
+                  {sportBreakdown.allSports.map(({ sport, count }) => (
+                    <div
+                      key={sport.id}
+                      className="flex items-center justify-between text-xs"
+                    >
+                      <span className="text-slate-700 font-medium">{sport.name}</span>
+                      <span className="text-muted-foreground">
+                        {count} match{count !== 1 ? "s" : ""}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Next match pretty display */}
-            {nextMatch && (
-              <div className="bg-muted rounded p-2 mt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="font-semibold text-xs">Prochain match</div>
-                  {nextMatch.date && (
-                    <Badge variant="default" className="text-xs font-mono">
-                      <Clock className="h-3 w-3 mr-1" />
-                      {(() => {
-                        const now = new Date();
-                        const matchDate = new Date(nextMatch.date);
-                        const diffMinutes = Math.round(
-                          (matchDate.getTime() - now.getTime()) / (1000 * 60),
-                        );
-                        if (diffMinutes < 0) return "Passé";
-                        if (diffMinutes < 60) return `${diffMinutes}min`;
-                        const hours = Math.floor(diffMinutes / 60);
-                        const minutes = diffMinutes % 60;
-                        if (minutes === 0) return `${hours}h`;
-                        return `${hours}h${minutes.toString().padStart(2, "0")}`;
-                      })()}
+            {/* Next match */}
+            {nextMatch && (() => {
+              const now = new Date();
+              const matchDate = new Date(nextMatch.date!);
+              const diffMinutes = Math.round(
+                (matchDate.getTime() - now.getTime()) / (1000 * 60),
+              );
+              const urgency =
+                diffMinutes <= 15 ? "urgent" : diffMinutes <= 60 ? "soon" : "normal";
+              const timeUntil =
+                diffMinutes < 0
+                  ? "Passé"
+                  : diffMinutes < 60
+                    ? `${diffMinutes}min`
+                    : (() => {
+                        const h = Math.floor(diffMinutes / 60);
+                        const m = diffMinutes % 60;
+                        return m === 0 ? `${h}h` : `${h}h${m.toString().padStart(2, "0")}`;
+                      })();
+              const sportObj = Array.isArray(sports)
+                ? sports.find((s: any) => s.id === nextMatch.sport_id)
+                : null;
+
+              return (
+                <div className="mx-4 mb-3 rounded-xl bg-slate-50 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                      Prochain match
+                    </span>
+                    <Badge
+                      className={`text-[10px] px-1.5 py-0 font-mono text-white ${
+                        urgency === "urgent"
+                          ? "bg-red-500"
+                          : urgency === "soon"
+                            ? "bg-orange-500"
+                            : "bg-blue-500"
+                      }`}
+                    >
+                      <Clock className="h-2.5 w-2.5 mr-0.5" />
+                      {timeUntil}
                     </Badge>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 flex-wrap mb-2">
-                  {nextMatch?.sport_id &&
-                    Array.isArray(sports) &&
-                    (() => {
-                      const sportObj = sports.find(
-                        (s: any) => s.id === nextMatch.sport_id,
-                      );
-                      return sportObj ? (
-                        <Badge
-                          variant="outline"
-                          className="text-xs flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
-                        >
-                          {sportObj.name}
-                        </Badge>
-                      ) : null;
-                    })()}
-                </div>
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  {nextMatch?.team1 && (
-                    <span className="transition-colors text-primary font-semibold">
-                      {nextMatch.team1.name}
-                    </span>
-                  )}
-                  <span className="text-muted-foreground font-medium">vs</span>
-                  {nextMatch?.team2 && (
-                    <span className="transition-colors text-primary font-semibold">
-                      {nextMatch.team2.name}
-                    </span>
-                  )}
-                </div>
-                {nextMatch.date && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>
-                      {new Date(nextMatch.date).toLocaleDateString("fr-FR", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <Clock className="h-3 w-3 ml-2" />
-                    <span>
-                      {new Date(nextMatch.date).toLocaleTimeString("fr-FR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <span className="font-semibold">{nextMatch.team1?.name}</span>
+                    <span className="text-muted-foreground text-xs">vs</span>
+                    <span className="font-semibold">{nextMatch.team2?.name}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {sportObj && !sportBreakdown?.isSingleSport && (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] px-1.5 py-0 bg-blue-50 border-blue-200 text-blue-700"
+                      >
+                        {sportObj.name}
+                      </Badge>
+                    )}
+                    <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                      {matchDate.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })}
+                      {" • "}
+                      {matchDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              );
+            })()}
 
             {/* Upcoming matches list */}
-            {upcomingMatches.length > 0 && (
-              <div className="mt-3">
-                <Separator className="mb-3" />
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-semibold text-sm flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Matchs à venir ({upcomingMatches.length})
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={navigateToSearchWithLocation}
-                    className="text-xs h-6 px-2"
-                  >
-                    <Search className="h-3 w-3 mr-1" />
-                    Voir tous
-                  </Button>
-                </div>
-                <div className="space-y-2 max-h-40 overflow-y-auto">
-                  {upcomingMatches.slice(0, 3).map((match) => {
+            {upcomingMatches.length > 1 && (
+              <div className="px-4 pb-3">
+                <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                  À venir ({upcomingMatches.length})
+                </span>
+                <div className="mt-1.5 space-y-0.5 max-h-24 overflow-y-auto">
+                  {upcomingMatches.slice(1, 4).map((match) => {
                     const matchDate = formatMatchDate(match.date!);
-                    const sport = sports?.find(
-                      (s: any) => s.id === match.sport_id,
-                    );
-
+                    const sport = sports?.find((s: any) => s.id === match.sport_id);
                     return (
                       <div
                         key={match.id}
-                        className="bg-muted/50 rounded p-2 text-xs"
+                        className="flex items-center gap-1.5 text-[11px] py-1.5 px-2 rounded-lg hover:bg-slate-50 transition-colors"
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3 text-muted-foreground" />
-                            <span className="text-muted-foreground">
-                              {matchDate.date}
-                            </span>
-                            <span className="text-muted-foreground">•</span>
-                            <span className="text-muted-foreground">
-                              {matchDate.time}
-                            </span>
-                          </div>
+                        <span className="text-muted-foreground whitespace-nowrap font-mono text-[10px]">
+                          {matchDate.time}
+                        </span>
+                        <span className="font-medium truncate">{match.team1?.name}</span>
+                        <span className="text-muted-foreground">vs</span>
+                        <span className="font-medium truncate">{match.team2?.name}</span>
+                        {sport && !sportBreakdown?.isSingleSport && (
                           <Badge
                             variant="outline"
-                            className="text-xs px-1 py-0"
-                          >
-                            {matchDate.timeUntil}
-                          </Badge>
-                        </div>
-                        {sport && (
-                          <Badge
-                            variant="secondary"
-                            className="text-xs mb-1 px-2 py-0"
+                            className="text-[9px] px-1 py-0 ml-auto shrink-0 bg-blue-50 border-blue-200 text-blue-700"
                           >
                             {sport.name}
                           </Badge>
                         )}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1 text-xs">
-                            <span className="font-medium">
-                              {match.team1?.name}
-                            </span>
-                            <span className="text-muted-foreground">vs</span>
-                            <span className="font-medium">
-                              {match.team2?.name}
-                            </span>
-                          </div>
-                        </div>
                       </div>
                     );
                   })}
-                  {upcomingMatches.length > 3 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={navigateToSearchWithLocation}
-                      className="w-full h-6 text-xs text-muted-foreground"
-                    >
-                      +{upcomingMatches.length - 3} matchs supplémentaires
-                      <ChevronRight className="h-3 w-3 ml-1" />
-                    </Button>
-                  )}
                 </div>
+                {upcomingMatches.length > 4 && (
+                  <button
+                    onClick={navigateToSearchWithLocation}
+                    className="w-full text-[10px] text-muted-foreground hover:text-primary transition-colors text-center pt-1"
+                  >
+                    +{upcomingMatches.length - 4} autres
+                  </button>
+                )}
               </div>
             )}
 
-            {/* Navigation buttons */}
-            <div className="mt-3">
-              <Separator className="mb-3" />
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={navigateToSearchWithLocation}
-                  className="flex items-center gap-2 text-xs flex-1"
-                >
-                  <Search className="h-3 w-3" />
-                  Voir les matchs
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    const query = location.address
-                      ? `${location.name}, ${location.address}`
-                      : location.name;
-                    window.open(
-                      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
-                      "_blank",
-                    );
-                  }}
-                  className="flex items-center gap-2 text-xs flex-1"
-                >
-                  <MapPin className="h-3 w-3" />
-                  Naviguer
-                </Button>
-              </div>
+            {/* Footer actions */}
+            <div className="flex gap-2 p-4 pt-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={navigateToSearchWithLocation}
+                className="flex-1 text-xs bg-slate-50 hover:bg-slate-100"
+              >
+                <Search className="h-3.5 w-3.5 mr-1.5" />
+                Voir les matchs
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const query = location.address
+                    ? `${location.name}, ${location.address}`
+                    : location.name;
+                  window.open(
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+                    "_blank",
+                  );
+                }}
+                className="flex-1 text-xs bg-slate-50 hover:bg-slate-100"
+              >
+                <MapPin className="h-3.5 w-3.5 mr-1.5" />
+                Naviguer
+              </Button>
             </div>
           </div>
         </div>
       )}
-      {/* The pin itself, always at the bottom center */}
+      {/* Pin */}
       <div
-        className="cursor-pointer"
-        style={{
-          position: "absolute",
-          left: "50%",
-          bottom: 0,
-          transform: "translateX(-50%)",
-          zIndex: 3,
-        }}
+        className="cursor-pointer absolute left-1/2 bottom-0 -translate-x-1/2 z-[3]"
         onClick={() => setIsOpen((open) => !open)}
       >
-        <MapPin
-          className={`w-8 h-8 ${hasMatches ? "text-rose-500" : "text-gray-700"} drop-shadow-lg`}
-          fill="currentColor"
-          style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))" }}
-        />
-        {hasMatches && (
-          <Badge
-            variant="destructive"
-            className="absolute -top-1 -right-1 min-w-[18px] h-4 flex items-center justify-center text-xs px-1"
-          >
-            {totalMatches}
-          </Badge>
+        {hasMatches ? (
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-1 bg-white rounded-full shadow-lg border pl-1.5 pr-2 py-1 hover:shadow-xl transition-shadow">
+              <span className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-bold">
+                {totalMatches}
+              </span>
+              {sportBreakdown && (
+                <span className="text-[10px] font-medium text-slate-700 whitespace-nowrap">
+                  {sportBreakdown.isSingleSport
+                    ? sportBreakdown.dominantSport?.name
+                    : `${sportBreakdown.uniqueCount} sports`}
+                </span>
+              )}
+            </div>
+            <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[7px] border-l-transparent border-r-transparent border-t-white drop-shadow-sm" />
+          </div>
+        ) : (
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-1 bg-white rounded-full shadow-lg border pl-1 pr-2 py-1">
+              <MapPin className="h-4 w-4 text-slate-400" />
+              <span className="text-[10px] font-medium text-slate-500 whitespace-nowrap">
+                Aucun match
+              </span>
+            </div>
+            <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[7px] border-l-transparent border-r-transparent border-t-white drop-shadow-sm" />
+          </div>
         )}
       </div>
     </div>

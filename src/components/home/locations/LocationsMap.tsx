@@ -71,6 +71,15 @@ export function LocationsMap({
 
       marker.on("click", (e: any) => {
         L.DomEvent.stopPropagation(e);
+        if (mapInstanceRef.current) {
+          const map = mapInstanceRef.current;
+          const latlng = marker.getLatLng();
+          // Offset upward so the popup (above the pin) is centered on screen
+          const targetPoint = map.latLngToContainerPoint(latlng);
+          const offsetPoint = L.point(targetPoint.x, targetPoint.y - 150);
+          const offsetLatLng = map.containerPointToLatLng(offsetPoint);
+          map.panTo(offsetLatLng, { animate: true });
+        }
       });
 
       (marker as any)._reactRoot = root;
@@ -209,12 +218,10 @@ export function LocationsMap({
   }, [locations, locationsWithMatches, sports, createLocationMarker]);
 
   return (
-    <div className="space-y-4">
-      <div
-        ref={mapRef}
-        className={`rounded-lg border shadow-sm ${className}`}
-        style={{ minHeight: "400px" }}
-      />
-    </div>
+    <div
+      ref={mapRef}
+      className={`rounded-lg border shadow-sm ${className}`}
+      style={{ minHeight: "400px" }}
+    />
   );
 }
