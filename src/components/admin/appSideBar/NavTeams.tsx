@@ -6,6 +6,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useAllTeams } from "@/src/hooks/useAllTeams";
 import { useSports } from "@/src/hooks/useSports";
+import { useUser } from "@/src/hooks/useUser";
 import { useMemo } from "react";
 import { Badge } from "../../ui/badge";
 
@@ -13,6 +14,7 @@ export function NavTeams() {
   const router = useRouter();
   const { allTeams } = useAllTeams();
   const { sports } = useSports();
+  const { isAdmin } = useUser();
 
   const incompleteCount = useMemo(() => {
     if (!allTeams || !sports) return 0;
@@ -32,7 +34,7 @@ export function NavTeams() {
         >
           Équipes{" "}
           {(allTeams?.length ?? 0) > 0 && `(${allTeams!.length})`}
-          {incompleteCount > 0 && (
+          {isAdmin() && incompleteCount > 0 && (
             <Badge
               variant="outline"
               className="text-[10px] px-1.5 py-0 bg-amber-100 text-amber-800 border-amber-300"
