@@ -270,73 +270,8 @@ const TeamsDashboard = () => {
     form.reset();
   };
 
-  if (selectedSportId === "all" && selectedSchoolId === "all") {
-    return (
-      <div className="space-y-6">
-        {/* Header with title and action */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Équipes</h1>
-            <p className="text-muted-foreground">Gestion des équipes</p>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-col gap-4 bg-white rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Select value={selectedSportId} onValueChange={handleSportChange}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Sélectionnez un sport" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les sports</SelectItem>
-                  {sports?.map((sport) => (
-                    <SelectItem key={sport.id} value={sport.id}>
-                      {sport.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select
-                value={selectedSchoolId}
-                onValueChange={handleSchoolChange}
-              >
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Sélectionnez une école" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les écoles</SelectItem>
-                  {filteredSportSchools?.map((school) => (
-                    <SelectItem key={school.school_id} value={school.school_id}>
-                      {school.school.name
-                        ? formatSchoolName(school.school.name)
-                        : school.school_id}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-          <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-          <p className="text-blue-600 text-lg font-medium mb-2">
-            Sélection requise
-          </p>
-          <p className="text-blue-600">
-            Veuillez sélectionner un sport ou une école pour voir les équipes
-            correspondantes.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center">
