@@ -1,4 +1,5 @@
 import { HyperionContext } from "./hyperionContext";
+import { useTokenStore } from "../stores/token";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL || "https://hyperion.myecl.fr"; // TODO add your baseUrl
@@ -73,6 +74,15 @@ export async function hyperionFetch<
       },
     );
     if (!response.ok) {
+      if (response.status === 401) {
+        const { setToken, setRefreshToken } = useTokenStore.getState();
+        setToken(null);
+        setRefreshToken(null);
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+      }
+
       let payload: unknown;
       try {
         payload = await response.json();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { stringify } from "qs";
 import {
@@ -9,7 +9,6 @@ import {
 } from "@/src/api/hyperionSchemas";
 import { useTokenStore } from "@/src/stores/token";
 import { usePathname, useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { useCodeVerifierStore } from "../stores/codeVerifier";
 import { toast } from "../components/ui/use-toast";
 
@@ -28,7 +27,6 @@ export const useAuth = () => {
   const router = useRouter();
   const { codeVerifier, setCodeVerifier, resetCodeVerifier } =
     useCodeVerifierStore();
-  const timer = useRef<NodeJS.Timeout | null>(null);
   const REFRESH_TOKEN_BUFFER = 60;
 
   function generateRandomString(length: number): string {
@@ -89,19 +87,29 @@ export const useAuth = () => {
     }
   }
 
+  const isRefreshing = useRef(false);
+
   async function refreshTokens(): Promise<string | null> {
-    if (isLoading) return null;
-    setIsLoading(true);
-    if (refreshToken) {
-      const params: BodyTokenAuthTokenPost = {
-        grant_type: "refresh_token",
-        client_id: clientId,
-        refresh_token: refreshToken,
-      };
-      await getToken(params);
-      return refreshToken;
+    if (isRefreshing.current) return null;
+    isRefreshing.current = true;
+    try {
+      if (refreshToken) {
+        const params: BodyTokenAuthTokenPost = {
+          grant_type: "refresh_token",
+          client_id: clientId,
+          refresh_token: refreshToken,
+        };
+        await getToken(params);
+        return useTokenStore.getState().token;
+      }
+      logout();
+      return null;
+    } catch {
+      logout();
+      return null;
+    } finally {
+      isRefreshing.current = false;
     }
-    return null;
   }
 
   function isTokenExpired() {
@@ -110,7 +118,7 @@ export const useAuth = () => {
       ? JSON.parse(atob(token.split(".")[1])).exp
       : 0;
     const now = Math.floor(Date.now() / 1000);
-    return access_token_expires < now - 60;
+    return access_token_expires < now + 60;
   }
 
   async function login(code: string, callback?: () => void) {
@@ -165,45 +173,30 @@ export const useAuth = () => {
     return token;
   }
 
-  function lookToRefreshToken() {
-    if (timer.current) {
-      clearTimeout(timer.current);
-    }
+  useEffect(() => {
     if (token === null) {
-      return null;
+      if (pathname !== "/login") {
+        getTokenFromStorage();
+      }
+      return;
     }
-    const timeToRefreshToken =
-      (token ? JSON.parse(atob(token.split(".")[1])).exp : 0) * 1000 -
-      Date.now() -
-      REFRESH_TOKEN_BUFFER * 1000;
 
-    if (timeToRefreshToken <= 0) {
-      // server call to update app state with new token and new expirationDate
+    const exp =
+      JSON.parse(atob(token.split(".")[1])).exp * 1000;
+    const timeToRefresh = exp - Date.now() - REFRESH_TOKEN_BUFFER * 1000;
+
+    if (timeToRefresh <= 0) {
       refreshTokens();
-    } else {
-      timer.current = setTimeout(() => {
-        refreshTokens();
-        timer.current = null;
-      }, timeToRefreshToken);
+      return;
     }
-    return token;
-  }
 
-  useQuery({
-    queryKey: ["lookToRefreshToken"],
-    queryFn: () => lookToRefreshToken(),
-    retry: false,
-    enabled: token !== null,
-    refetchOnMount: false,
-  });
+    const id = setTimeout(() => {
+      refreshTokens();
+    }, timeToRefresh);
 
-  useQuery({
-    queryKey: ["getTokenFromStorage"],
-    queryFn: () => getTokenFromStorage(),
-    retry: false,
-    enabled: token === null,
-    refetchOnMount: false,
-  });
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   return {
     getTokenFromRequest,
