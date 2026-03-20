@@ -10,6 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
 import { useEdition } from "@/src/hooks/useEdition";
@@ -29,6 +32,7 @@ import { useUser } from "@/src/hooks/useUser";
 import { Logo } from "../../custom/Logo";
 import { NavExport } from "./NavExport";
 import { NavSchoolAssign } from "./NavSchoolAssign";
+import { Badge } from "../../ui/badge";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { edition } = useEdition();
@@ -54,23 +58,80 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="[&_[data-sidebar=group]]:!py-0.5">
         {isAdmin() && <NavEditions />}
         {edition && (
           <>
-            {isAdmin() && <NavSchools />}
-            {isAdmin() && <NavSports />}
-            {(isAdmin() || isBDS()) && <NavValidation />}
-            {isAdmin() && <NavLicense />}
-            {isAdmin() && <NavLocations />}
-            {(isAdmin() || isSportManager()) && <NavMatches />}
-            {(isAdmin() || isSportManager()) && <NavTeams />}
-            {(isAdmin() || isSportManager()) && <NavPodiums />}
-            {isAdmin() && <NavGroups />}
-            {isAdmin() && <NavProducts />}
-            {isAdmin() && <NavVolunteerShifts />}
-            {isAdmin() && <NavSchoolAssign />}
-            {isAdmin() && <NavExport />}
+            {/* Competition section — sport managers & admin */}
+            {(isAdmin() || isSportManager()) && (
+              <>
+                <SidebarSeparator />
+                <SidebarGroup className="!py-0">
+                  <SidebarGroupLabel className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-2 px-3 pt-2 pb-1">
+                    Compétition
+                    {isAdmin() && (
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-primary/10 text-primary border-primary/20"
+                      >
+                        VP Tournois
+                      </Badge>
+                    )}
+                  </SidebarGroupLabel>
+                </SidebarGroup>
+                <NavMatches />
+                <NavTeams />
+                <NavPodiums />
+              </>
+            )}
+
+            {/* Validation section — BDS & admin */}
+            {(isAdmin() || isBDS()) && (
+              <>
+                <SidebarSeparator />
+                <SidebarGroup className="!py-0">
+                  <SidebarGroupLabel className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-2 px-3 pt-2 pb-1">
+                    Inscriptions
+                    {isAdmin() && (
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-primary/10 text-primary border-primary/20"
+                      >
+                        BDS
+                      </Badge>
+                    )}
+                  </SidebarGroupLabel>
+                </SidebarGroup>
+                <NavValidation />
+              </>
+            )}
+
+            {/* Admin-only section */}
+            {isAdmin() && (
+              <>
+                <SidebarSeparator />
+                <SidebarGroup className="!py-0">
+                  <SidebarGroupLabel className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-2 px-3 pt-2 pb-1">
+                    Administration
+                    <Badge
+                      variant="secondary"
+                      className="text-[10px] px-1.5 py-0.5 font-medium normal-case tracking-normal bg-primary/10 text-primary border-primary/20"
+                    >
+                      Admin
+                    </Badge>
+                  </SidebarGroupLabel>
+                </SidebarGroup>
+                <NavSchools />
+                <NavSports />
+                <NavLocations />
+                <NavGroups />
+                <NavProducts />
+                <NavLicense />
+                <NavVolunteerShifts />
+                <NavSchoolAssign />
+                <NavExport />
+              </>
+            )}
           </>
         )}
       </SidebarContent>

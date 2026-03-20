@@ -17,7 +17,6 @@ export const useAllMatches = () => {
     {
       enabled: !isTokenExpired(),
       retry: false,
-      queryHash: "getSportMatches",
     },
   );
 
