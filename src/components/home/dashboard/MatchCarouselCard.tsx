@@ -28,8 +28,8 @@ export const MatchCarouselCard = ({
   onToggleFavorite,
 }: MatchCarouselCardProps) => {
   const isLive =
-    !match.winner_id && !!match.date && new Date(match.date) <= currentTime;
-  const isPast = !!match.winner_id;
+    !match.ended && !!match.date && new Date(match.date) <= currentTime;
+  const isPast = match.ended;
   const location = match.location;
 
   return (
@@ -74,10 +74,10 @@ export const MatchCarouselCard = ({
         </div>
         <div className="flex items-center justify-between flex-1">
           <div className="flex-1 flex flex-col items-center gap-0.5">
-            <span className="font-semibold text-sm leading-tight text-center">
+            <span className={`font-semibold text-sm leading-tight text-center ${match.winner_id === match.team1_id ? "text-green-600" : ""}`}>
               {match.team1.name}
             </span>
-            <span className="text-2xl font-black tabular-nums text-gray-900">
+            <span className={`text-2xl font-black tabular-nums ${match.winner_id === match.team1_id ? "text-green-600" : "text-gray-900"}`}>
               {isLive || isPast ? match.score_team1 ?? "-" : "-"}
             </span>
           </div>
@@ -85,10 +85,10 @@ export const MatchCarouselCard = ({
             {isLive || isPast ? "–" : "vs"}
           </span>
           <div className="flex-1 flex flex-col items-center gap-0.5">
-            <span className="font-semibold text-sm leading-tight text-center">
+            <span className={`font-semibold text-sm leading-tight text-center ${match.winner_id === match.team2_id ? "text-green-600" : ""}`}>
               {match.team2.name}
             </span>
-            <span className="text-2xl font-black tabular-nums text-gray-900">
+            <span className={`text-2xl font-black tabular-nums ${match.winner_id === match.team2_id ? "text-green-600" : "text-gray-900"}`}>
               {isLive || isPast ? match.score_team2 ?? "-" : "-"}
             </span>
           </div>

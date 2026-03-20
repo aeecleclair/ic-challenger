@@ -15,6 +15,8 @@ import {
   Trophy,
   Edit,
   Trash,
+  CheckCircle2,
+  RotateCcw,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -35,9 +37,10 @@ interface MatchDetailProps {
 const MatchDetail = ({ match }: MatchDetailProps) => {
   const router = useRouter();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { deleteMatch, isDeleteLoading } = useSportMatches({
-    sportId: match.sport_id,
-  });
+  const { deleteMatch, isDeleteLoading, updateMatch, isUpdateLoading } =
+    useSportMatches({
+      sportId: match.sport_id,
+    });
   const { sports } = useSports();
 
   const sportName =
@@ -50,6 +53,10 @@ const MatchDetail = ({ match }: MatchDetailProps) => {
     setIsDeleteDialogOpen(false);
   };
 
+  const handleToggleEnded = () => {
+    updateMatch(match.id, { ended: !match.ended }, () => {});
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -59,6 +66,25 @@ const MatchDetail = ({ match }: MatchDetailProps) => {
         </div>
 
         <div className="flex gap-2">
+          <Button
+            variant={match.ended ? "outline" : "default"}
+            size="sm"
+            className="flex items-center"
+            onClick={handleToggleEnded}
+            disabled={isUpdateLoading}
+          >
+            {match.ended ? (
+              <>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Réouvrir
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Terminer le match
+              </>
+            )}
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -114,7 +140,7 @@ const MatchDetail = ({ match }: MatchDetailProps) => {
 
               <div>
                 <h3 className="font-medium mb-3">Statut</h3>
-                {match.winner_id ? (
+                {match.ended ? (
                   <Badge className="bg-green-100 text-green-800 border-green-200">
                     <Trophy className="w-4 h-4 mr-1" />
                     Match terminé

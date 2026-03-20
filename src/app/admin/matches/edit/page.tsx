@@ -57,6 +57,7 @@ const EditMatchPage = () => {
       score_team1: match?.score_team1 !== null ? match?.score_team1 : undefined,
       score_team2: match?.score_team2 !== null ? match?.score_team2 : undefined,
       winner_id: match?.winner_id || undefined,
+      ended: match?.ended ?? false,
       edition_id: match?.edition_id || "",
     },
     mode: "onChange",
@@ -74,6 +75,7 @@ const EditMatchPage = () => {
         score_team1: match.score_team1 !== null ? match.score_team1 : undefined,
         score_team2: match.score_team2 !== null ? match.score_team2 : undefined,
         winner_id: match.winner_id || undefined,
+        ended: match.ended ?? false,
         edition_id: match.edition_id,
       });
     }
@@ -92,6 +94,7 @@ const EditMatchPage = () => {
       score_team1: values.score_team1 !== undefined ? values.score_team1 : null,
       score_team2: values.score_team2 !== undefined ? values.score_team2 : null,
       winner_id: values.winner_id || null,
+      ended: values.ended ?? false,
     };
 
     updateMatch(matchId, matchData, () => {

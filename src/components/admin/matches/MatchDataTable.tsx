@@ -192,21 +192,29 @@ export function MatchDataTable({ data, onDelete }: MatchDataTableProps) {
       },
     },
     {
-      accessorKey: "winner_id",
+      accessorKey: "ended",
       header: "Statut",
       cell: ({ row }) => {
-        const winnerId = row.getValue("winner_id") as string;
+        const ended = row.getValue("ended") as boolean;
 
-        if (winnerId) {
-          const winnerName =
-            winnerId === row.original.team1_id
-              ? row.original.team1.name
-              : row.original.team2.name;
-
+        if (ended) {
+          const winnerId = row.original.winner_id;
+          if (winnerId) {
+            const winnerName =
+              winnerId === row.original.team1_id
+                ? row.original.team1.name
+                : row.original.team2.name;
+            return (
+              <Badge className="bg-green-100 text-green-800">
+                <Trophy className="h-3 w-3 mr-1" />
+                Terminé ({winnerName})
+              </Badge>
+            );
+          }
           return (
             <Badge className="bg-green-100 text-green-800">
               <Trophy className="h-3 w-3 mr-1" />
-              Terminé ({winnerName})
+              Terminé (match nul)
             </Badge>
           );
         }

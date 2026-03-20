@@ -52,12 +52,12 @@ export default function MatchDetailDialog({
   const sportName = sports?.find((s) => s.id === match.sport_id)?.name || "Sport";
   const now = new Date();
   const matchDate = match.date ? new Date(match.date) : null;
-  const isLive = matchDate && matchDate <= now && !match.winner_id;
-  const isPast = !!match.winner_id || (matchDate && matchDate < now && !!match.winner_id);
-  const isUpcoming = matchDate && matchDate > now;
+  const isLive = matchDate && matchDate <= now && !match.ended;
+  const isPast = match.ended;
+  const isUpcoming = !match.ended && matchDate && matchDate > now;
 
   const getStatusBadge = () => {
-    if (match.winner_id)
+    if (match.ended)
       return (
         <Badge variant="secondary" className="text-xs">
           Terminé
@@ -94,7 +94,7 @@ export default function MatchDetailDialog({
       <DialogContent className="max-w-lg p-0 overflow-hidden">
         {/* Coloured header strip */}
         <div
-          className={`h-1.5 w-full ${isLive ? "bg-red-500" : match.winner_id ? "bg-gray-400" : "bg-blue-500"}`}
+          className={`h-1.5 w-full ${isLive ? "bg-red-500" : match.ended ? "bg-gray-400" : "bg-blue-500"}`}
         />
 
         <div className="px-6 pt-4 pb-6 space-y-5">

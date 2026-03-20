@@ -70,7 +70,7 @@ const MatchCard = ({
             {match.name}
           </CardTitle>
           <div className="flex gap-1">
-            {match.winner_id && (
+            {match.ended ? (
               <Badge
                 variant="outline"
                 className="bg-emerald-100 text-emerald-800 border-emerald-200"
@@ -78,8 +78,7 @@ const MatchCard = ({
                 <Trophy className="h-3 w-3 mr-1" />
                 Terminé
               </Badge>
-            )}
-            {!match.score_team1 && !match.score_team2 && (
+            ) : (
               <Badge
                 variant="outline"
                 className="bg-blue-100 text-blue-800 border-blue-200"

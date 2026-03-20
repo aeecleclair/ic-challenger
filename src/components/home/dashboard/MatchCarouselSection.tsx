@@ -53,10 +53,10 @@ export const MatchCarouselSection = ({
 
   const items = sort
     ? matches.slice().sort((a, b) => {
-        const aLive = !a.winner_id && !!a.date && new Date(a.date) <= currentTime;
-        const bLive = !b.winner_id && !!b.date && new Date(b.date) <= currentTime;
-        const aPast = !!a.winner_id;
-        const bPast = !!b.winner_id;
+        const aLive = !a.ended && !!a.date && new Date(a.date) <= currentTime;
+        const bLive = !b.ended && !!b.date && new Date(b.date) <= currentTime;
+        const aPast = a.ended;
+        const bPast = b.ended;
         if (aLive && !bLive) return -1;
         if (!aLive && bLive) return 1;
         if (!aPast && bPast) return -1;

@@ -13,6 +13,7 @@ export const matchFormSchema = z.object({
   score_team1: z.number().int().optional(),
   score_team2: z.number().int().optional(),
   winner_id: z.string().optional(),
+  ended: z.boolean().optional(),
   edition_id: z.string().min(1, "L'édition est requise"),
 });
 

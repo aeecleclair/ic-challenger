@@ -78,7 +78,7 @@ export const TeamScoreDisplay = ({
       )}
       {score !== null && score !== undefined ? (
         <div
-          className={`"text-2xl font-bold ${isWinner === true ? "text-green-600" : isWinner === null ? "text-blue-600" : "text-primary"}"`}
+          className={`text-2xl font-bold ${isWinner ? "text-green-600" : ""}`}
         >
           {score}
         </div>

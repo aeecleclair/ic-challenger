@@ -40,8 +40,7 @@ export const PastMatchCard = ({
     match.team1_id === userTeamId || match.team2_id === userTeamId;
   const isVictory = match.winner_id === userTeamId;
   const isDefeat = match.winner_id && match.winner_id !== userTeamId;
-  const isDraw =
-    match.score_team1 === match.score_team2 && match.score_team1 !== null;
+  const isDraw = match.ended && !match.winner_id;
 
   // Determine winning team for score highlighting
   const team1Won = match.winner_id === match.team1_id;

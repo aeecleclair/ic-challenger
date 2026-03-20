@@ -46,7 +46,9 @@ import {
   School,
   Gamepad2,
   Flag,
+  CheckCircle2,
 } from "lucide-react";
+import { Switch } from "@/src/components/ui/switch";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface MatchesFormProps {
@@ -558,80 +560,105 @@ export const MatchesForm = ({
           </CardContent>
         </Card>
 
-        {/* Winner Selection Card - Only for editing with scores */}
-        {isEditing &&
-          form.getValues("score_team1") !== undefined &&
-          form.getValues("score_team2") !== undefined && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-amber-500" />
-                  Résultat du match
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="winner_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Flag className="h-4 w-4" />
-                        Équipe gagnante
+        {/* Match Result Card - Only for editing */}
+        {isEditing && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-amber-500" />
+                Résultat du match
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="ended"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="flex items-center gap-2 text-base">
+                        <CheckCircle2 className="h-4 w-4" />
+                        Match terminé
                       </FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(value === "none" ? undefined : value)
-                        }
-                        value={field.value || "none"}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="h-11">
-                            <SelectValue placeholder="Sélectionnez l'équipe gagnante" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">
-                            Aucune (match nul)
-                          </SelectItem>
-                          <SelectItem value={form.getValues("team1_id")}>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant="outline"
-                                className="bg-blue-50 text-blue-700"
-                              >
-                                Équipe 1
-                              </Badge>
-                              {team1Options?.find(
-                                (t) => t.id === form.getValues("team1_id"),
-                              )?.name || "Équipe 1"}
-                            </div>
-                          </SelectItem>
-                          <SelectItem value={form.getValues("team2_id")}>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant="outline"
-                                className="bg-red-50 text-red-700"
-                              >
-                                Équipe 2
-                              </Badge>
-                              {team2Options?.find(
-                                (t) => t.id === form.getValues("team2_id"),
-                              )?.name || "Équipe 2"}
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
                       <FormDescription>
-                        Sélectionnez l&apos;équipe qui a remporté le match
+                        Marquer ce match comme terminé
                       </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          )}
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value ?? false}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {form.getValues("score_team1") !== undefined &&
+                form.getValues("score_team2") !== undefined && (
+                  <FormField
+                    control={form.control}
+                    name="winner_id"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Flag className="h-4 w-4" />
+                          Équipe gagnante
+                        </FormLabel>
+                        <Select
+                          onValueChange={(value) =>
+                            field.onChange(value === "none" ? undefined : value)
+                          }
+                          value={field.value || "none"}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-11">
+                              <SelectValue placeholder="Sélectionnez l'équipe gagnante" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">
+                              Aucune (match nul)
+                            </SelectItem>
+                            <SelectItem value={form.getValues("team1_id")}>
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className="bg-blue-50 text-blue-700"
+                                >
+                                  Équipe 1
+                                </Badge>
+                                {team1Options?.find(
+                                  (t) => t.id === form.getValues("team1_id"),
+                                )?.name || "Équipe 1"}
+                              </div>
+                            </SelectItem>
+                            <SelectItem value={form.getValues("team2_id")}>
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className="bg-red-50 text-red-700"
+                                >
+                                  Équipe 2
+                                </Badge>
+                                {team2Options?.find(
+                                  (t) => t.id === form.getValues("team2_id"),
+                                )?.name || "Équipe 2"}
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Sélectionnez l&apos;équipe qui a remporté le match
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Submit Section */}
         <div className="flex justify-end pt-4">

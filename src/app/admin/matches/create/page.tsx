@@ -71,6 +71,7 @@ const CreateMatchPage = () => {
       score_team1: values.score_team1 || null,
       score_team2: values.score_team2 || null,
       winner_id: values.winner_id || null,
+      ended: false,
     };
 
     createMatch(matchData, () => {

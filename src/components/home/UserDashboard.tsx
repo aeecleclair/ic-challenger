@@ -77,7 +77,7 @@ export const UserDashboard = ({
     );
 
     const liveMatches = todaysMatches.filter(
-      (match) => !match.winner_id && match.date && new Date(match.date) <= now,
+      (match) => !match.ended && match.date && new Date(match.date) <= now,
     );
 
     const todayMatches = todaysMatches
