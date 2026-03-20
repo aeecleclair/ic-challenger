@@ -36,8 +36,8 @@ export const TeamScoreDisplay = ({
   };
 
   return (
-    <div className="col-span-1 flex flex-col items-center justify-center">
-      <div className="text-sm font-medium text-center mb-0.5">{teamName}</div>
+    <div className="col-span-1 flex flex-col items-center justify-center min-w-0 overflow-hidden">
+      <div className="text-sm font-medium text-center mb-0.5 truncate w-full">{teamName}</div>
       {schoolName && (
         <div className="text-xs text-muted-foreground text-center mb-0.5">
           {formatSchoolName(schoolName)}
@@ -57,7 +57,7 @@ export const TeamScoreDisplay = ({
                 title="Appeler"
               >
                 <Phone className="h-3 w-3" />
-                <span className="font-mono text-xs">{captain.user.phone}</span>
+                <span className="font-mono text-[10px]">{captain.user.phone}</span>
               </a>
               <Button
                 variant="ghost"

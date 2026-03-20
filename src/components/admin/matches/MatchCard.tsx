@@ -63,7 +63,7 @@ const MatchCard = ({
     sportSchools?.find((school) => school.school_id === match.team2?.school_id)
       ?.school.name || "";
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group">
+    <Card className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group overflow-hidden">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-semibold group-hover:text-primary transition-colors line-clamp-2">
@@ -122,28 +122,27 @@ const MatchCard = ({
         </div>
 
         {/* Match Details */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Flag className="h-4 w-4 mr-2 flex-shrink-0" />
-            <span className="truncate">{sportName}</span>
-          </div>
-
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <Badge variant="secondary" className="text-xs font-normal gap-1">
+            <Flag className="h-3 w-3" />
+            {sportName}
+          </Badge>
           {match.date && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span className="truncate">
-                {format(new Date(match.date), "dd/MM 'à' HH:mm", {
-                  locale: fr,
-                })}
-              </span>
-            </div>
+            <Badge variant="secondary" className="text-xs font-normal gap-1">
+              <CalendarIcon className="h-3 w-3" />
+              {format(new Date(match.date), "dd/MM 'à' HH:mm", {
+                locale: fr,
+              })}
+            </Badge>
           )}
-
           {match.location_id && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <MapPinIcon className="h-4 w-4 mr-2 flex-shrink-0" />
+            <Badge
+              variant="secondary"
+              className="text-xs font-normal gap-1 max-w-full"
+            >
+              <MapPinIcon className="h-3 w-3 flex-shrink-0" />
               <span className="truncate">{locationName}</span>
-            </div>
+            </Badge>
           )}
         </div>
       </CardContent>
