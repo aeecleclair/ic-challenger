@@ -12,7 +12,9 @@ import {
 } from "@/src/components/ui/card";
 import { sportCategories } from "@/src/forms/sport";
 import {
+  AlertTriangle,
   Eye,
+  Swords,
   Users,
   UserPlus,
   CheckCircle,
@@ -26,6 +28,7 @@ import { useRouter } from "next/navigation";
 
 interface SportCardProps {
   sport: Sport;
+  matchCount?: number;
   onClick?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -33,10 +36,12 @@ interface SportCardProps {
 
 export const SportCard = ({
   sport,
+  matchCount,
   onClick,
   onEdit,
   onDelete,
 }: SportCardProps) => {
+  const hasNoMatches = matchCount !== undefined && matchCount === 0;
   const router = useRouter();
   const categoryLabel =
     sportCategories.find((cat) => cat.value === sport.sport_category)?.label ||
@@ -55,7 +60,7 @@ export const SportCard = ({
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group"
+      className={`cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-1 group ${hasNoMatches ? "border-amber-300 bg-amber-50/50" : ""}`}
       onClick={onClick}
     >
       <CardHeader className="pb-3">
@@ -82,6 +87,21 @@ export const SportCard = ({
             )}
             {sport.active ? "Actif" : "Inactif"}
           </Badge>
+          {hasNoMatches && (
+            <Badge
+              variant="outline"
+              className="gap-1 bg-amber-100 text-amber-800 border-amber-300"
+            >
+              <AlertTriangle className="h-3 w-3" />
+              Aucun match
+            </Badge>
+          )}
+          {matchCount !== undefined && matchCount > 0 && (
+            <Badge variant="outline" className="gap-1">
+              <Swords className="h-3 w-3" />
+              {matchCount} match{matchCount > 1 ? "s" : ""}
+            </Badge>
+          )}
         </div>
       </CardHeader>
 

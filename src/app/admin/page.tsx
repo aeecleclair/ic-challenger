@@ -23,6 +23,7 @@ import {
 } from "@/src/components/admin/home";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 import { useEditionStats } from "@/src/hooks/useEditionStats";
+import { useAllMatches } from "@/src/hooks/useAllMatches";
 
 const AdminPage = () => {
   const {
@@ -43,6 +44,16 @@ const AdminPage = () => {
   const { stats: editionStats } = useEditionStats({
     editionId: edition?.id,
   });
+  const { allMatches } = useAllMatches();
+
+  const matchCountBySport = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!allMatches) return map;
+    for (const match of allMatches) {
+      map.set(match.sport_id, (map.get(match.sport_id) || 0) + 1);
+    }
+    return map;
+  }, [allMatches]);
 
   const form = useForm<EditionFormSchema>({
     resolver: zodResolver(editionFormSchema),
@@ -150,6 +161,7 @@ const AdminPage = () => {
                   schools={schools}
                   locations={locations}
                   products={products}
+                  matchCountBySport={matchCountBySport}
                   onOpenInscription={openEditionInscription}
                   onCloseInscription={closeEditionInscription}
                   isOpenInscriptionLoading={isOpenInscriptionLoading}

@@ -28,6 +28,7 @@ interface ConfigurationStatusCardProps {
   schools?: SchoolExtension[];
   locations?: Location[];
   products?: AppModulesSportCompetitionSchemasSportCompetitionProductComplete[];
+  matchCountBySport?: Map<string, number>;
   onOpenInscription: (editionId: string) => void;
   onCloseInscription: (editionId: string) => void;
   isOpenInscriptionLoading?: boolean;
@@ -41,6 +42,7 @@ export const ConfigurationStatusCard = ({
   schools = [],
   locations = [],
   products = [],
+  matchCountBySport,
   onOpenInscription,
   onCloseInscription,
   isOpenInscriptionLoading,
@@ -52,6 +54,9 @@ export const ConfigurationStatusCard = ({
   );
 
   const activeSports = sports.filter((sport) => sport.active !== false);
+  const sportsWithoutMatches = matchCountBySport
+    ? activeSports.filter((sport) => !matchCountBySport.get(sport.id))
+    : [];
   const enabledProducts = products.filter(
     (product) =>
       product.variants &&
@@ -94,13 +99,34 @@ export const ConfigurationStatusCard = ({
                   </p>
                 </TooltipContent>
               </Tooltip>
-              {getStatusBadge(
-                sports.length > 0,
-                sports.length === activeSports.length
-                  ? "Tous actifs"
-                  : "Partiellement configurés",
-                "Aucun sport",
-              )}
+              <div className="flex items-center gap-1.5">
+                {sportsWithoutMatches.length > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge
+                        variant="outline"
+                        className="bg-amber-100 text-amber-800 border-amber-300"
+                      >
+                        {sportsWithoutMatches.length} sans matchs
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {sportsWithoutMatches
+                          .map((s) => s.name)
+                          .join(", ")}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+                {getStatusBadge(
+                  sports.length > 0,
+                  sports.length === activeSports.length
+                    ? "Tous actifs"
+                    : "Partiellement configurés",
+                  "Aucun sport",
+                )}
+              </div>
             </div>
 
             <div className="flex items-center justify-between">
