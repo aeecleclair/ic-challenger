@@ -9,6 +9,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from "../../ui/sidebar";
 import { NavUser } from "../../custom/NavUser";
 import { useEdition } from "@/src/hooks/useEdition";
@@ -68,12 +71,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        {edition && meParticipant && <NavMatches />}
-        {edition && isVolunteer && <NavVolunteerShifts />}
-        {edition && <NavSearch />}
-        {edition && <NavLocations />}
-        {edition && <NavPodium />}
+      <SidebarContent className="[&_[data-sidebar=group]]:!py-0.5">
+        {edition && (meParticipant || isVolunteer) && (
+          <>
+            <SidebarGroup className="!py-0">
+              <SidebarGroupLabel className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-2 px-3 pt-2 pb-1">
+                Mon espace
+              </SidebarGroupLabel>
+            </SidebarGroup>
+            {meParticipant && <NavMatches />}
+            {isVolunteer && <NavVolunteerShifts />}
+          </>
+        )}
+        {edition && (
+          <>
+            <SidebarSeparator />
+            <SidebarGroup className="!py-0">
+              <SidebarGroupLabel className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest flex items-center gap-2 px-3 pt-2 pb-1">
+                Compétition
+              </SidebarGroupLabel>
+            </SidebarGroup>
+            <NavSearch />
+            <NavLocations />
+            <NavPodium />
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter>
         {isDevMode && (
