@@ -34,7 +34,7 @@ export default function LocationsPage() {
       );
 
       const upcomingMatches = locationMatches
-        .filter((match: Match) => match.date && new Date(match.date) > now)
+        .filter((match: Match) => !match.ended)
         .sort((a: Match, b: Match) => {
           const dateA = new Date(a.date!).getTime();
           const dateB = new Date(b.date!).getTime();
