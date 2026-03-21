@@ -2,7 +2,6 @@
 
 import {
   CompetitionUser,
-  Match,
   MatchComplete,
 } from "@/src/api/hyperionSchemas";
 import {
@@ -27,8 +26,6 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useLocations } from "@/src/hooks/useLocations";
 import { useSports } from "@/src/hooks/useSports";
-import { useSchools } from "@/src/hooks/useSchools";
-import { formatSchoolName } from "@/src/utils/schoolFormatting";
 import { TeamScoreDisplay } from "./TeamScoreDisplay";
 import { useSportSchools } from "@/src/hooks/useSportSchools";
 

@@ -147,6 +147,37 @@ const EditMatchPage = () => {
             isEditing={true}
             initialTeam1SchoolId={team1SchoolId}
             initialTeam2SchoolId={team2SchoolId}
+            onUpdateScore={(score1, score2) => {
+              if (!matchId) return;
+              updateMatch(
+                matchId,
+                {
+                  score_team1: score1,
+                  score_team2: score2,
+                },
+                () => {},
+              );
+            }}
+            onEndMatch={(winnerId) => {
+              if (!matchId) return;
+              updateMatch(
+                matchId,
+                {
+                  ended: true,
+                  winner_id: winnerId,
+                },
+                () => {
+                  const params = new URLSearchParams();
+                  if (match?.sport_id) {
+                    params.set("sport_id", match.sport_id);
+                  }
+                  const query = params.toString();
+                  router.push(
+                    query ? `/admin/matches?${query}` : "/admin/matches",
+                  );
+                },
+              );
+            }}
           />
         ) : (
           <div className="space-y-6">
