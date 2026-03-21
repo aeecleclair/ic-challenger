@@ -75,7 +75,7 @@ export const MatchCarouselSection = ({
       </CardHeader>
       <CardContent>
         <div className="px-0 sm:px-12">
-          <Carousel opts={{ align: "start", loop: false }}>
+          <Carousel opts={{ align: "start", loop: false, dragFree: true }}>
             <CarouselContent className="px-2 items-stretch">
               {items.map((match) => {
                 const sportName =
