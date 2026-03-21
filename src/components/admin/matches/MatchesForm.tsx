@@ -48,7 +48,8 @@ import {
   Flag,
   CheckCircle2,
 } from "lucide-react";
-import { Switch } from "@/src/components/ui/switch";
+import { EndMatchDialog } from "./EndMatchDialog";
+import { RotateCcw } from "lucide-react";
 import { formatSchoolName } from "@/src/utils/schoolFormatting";
 
 interface MatchesFormProps {
@@ -86,6 +87,7 @@ export const MatchesForm = ({
   >([]);
   const [team1SchoolId, setTeam1SchoolId] = useState<string | null>(null);
   const [team2SchoolId, setTeam2SchoolId] = useState<string | null>(null);
+  const [endDialogOpen, setEndDialogOpen] = useState(false);
 
   const { teams: team1Options } = useSchoolSportTeams({
     schoolId: team1SchoolId || undefined,
@@ -569,93 +571,83 @@ export const MatchesForm = ({
                 Résultat du match
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="ended"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="flex items-center gap-2 text-base">
-                        <CheckCircle2 className="h-4 w-4" />
-                        Match terminé
-                      </FormLabel>
-                      <FormDescription>
-                        Marquer ce match comme terminé
-                      </FormDescription>
+            <CardContent>
+              {form.watch("ended") ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between rounded-lg border p-4 bg-green-50 border-green-200">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-green-600" />
+                      <div>
+                        <p className="font-medium text-green-800">Match terminé</p>
+                        <p className="text-sm text-green-600">
+                          {form.watch("winner_id")
+                            ? `Vainqueur : ${
+                                team1Options?.find(
+                                  (t) => t.id === form.watch("winner_id"),
+                                )?.name ||
+                                team2Options?.find(
+                                  (t) => t.id === form.watch("winner_id"),
+                                )?.name ||
+                                "Équipe sélectionnée"
+                              }`
+                            : "Match nul"}
+                        </p>
+                      </div>
                     </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value ?? false}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              {form.getValues("score_team1") !== undefined &&
-                form.getValues("score_team2") !== undefined && (
-                  <FormField
-                    control={form.control}
-                    name="winner_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Flag className="h-4 w-4" />
-                          Équipe gagnante
-                        </FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(value === "none" ? undefined : value)
-                          }
-                          value={field.value || "none"}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="h-11">
-                              <SelectValue placeholder="Sélectionnez l'équipe gagnante" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">
-                              Aucune (match nul)
-                            </SelectItem>
-                            <SelectItem value={form.getValues("team1_id")}>
-                              <div className="flex items-center gap-2">
-                                <Badge
-                                  variant="outline"
-                                  className="bg-blue-50 text-blue-700"
-                                >
-                                  Équipe 1
-                                </Badge>
-                                {team1Options?.find(
-                                  (t) => t.id === form.getValues("team1_id"),
-                                )?.name || "Équipe 1"}
-                              </div>
-                            </SelectItem>
-                            <SelectItem value={form.getValues("team2_id")}>
-                              <div className="flex items-center gap-2">
-                                <Badge
-                                  variant="outline"
-                                  className="bg-red-50 text-red-700"
-                                >
-                                  Équipe 2
-                                </Badge>
-                                {team2Options?.find(
-                                  (t) => t.id === form.getValues("team2_id"),
-                                )?.name || "Équipe 2"}
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          Sélectionnez l&apos;équipe qui a remporté le match
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        form.setValue("ended", false);
+                        form.setValue("winner_id", undefined);
+                      }}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Réouvrir
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <p className="font-medium">Match en cours / à venir</p>
+                    <p className="text-sm text-muted-foreground">
+                      Terminez le match en sélectionnant le vainqueur
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => setEndDialogOpen(true)}
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-2" />
+                    Terminer le match
+                  </Button>
+                  <EndMatchDialog
+                    open={endDialogOpen}
+                    onOpenChange={setEndDialogOpen}
+                    team1Name={
+                      team1Options?.find(
+                        (t) => t.id === form.getValues("team1_id"),
+                      )?.name || "Équipe 1"
+                    }
+                    team2Name={
+                      team2Options?.find(
+                        (t) => t.id === form.getValues("team2_id"),
+                      )?.name || "Équipe 2"
+                    }
+                    team1Id={form.getValues("team1_id")}
+                    team2Id={form.getValues("team2_id")}
+                    scoreTeam1={form.getValues("score_team1")}
+                    scoreTeam2={form.getValues("score_team2")}
+                    onConfirm={(winnerId) => {
+                      form.setValue("ended", true);
+                      form.setValue("winner_id", winnerId ?? undefined);
+                    }}
                   />
-                )}
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
