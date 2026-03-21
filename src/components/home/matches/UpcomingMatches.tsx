@@ -9,6 +9,7 @@ import { useFavoriteMatches } from "../../../hooks/useFavoriteMatches";
 interface UpcomingMatchesProps {
   matches: MatchComplete[];
   userTeamId?: string;
+  title?: string;
   showSportBadge?: boolean;
   showSchoolBadges?: boolean;
   showSportCategoryBadges?: boolean;
@@ -26,6 +27,7 @@ interface UpcomingMatchesProps {
 export const UpcomingMatches = ({
   matches,
   userTeamId,
+  title = "Prochains Matchs",
   showSportBadge = false,
   showSchoolBadges = false,
   showSportCategoryBadges = false,
@@ -43,7 +45,7 @@ export const UpcomingMatches = ({
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Clock className="h-5 w-5" />
-            Prochains Matchs
+            {title}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -72,7 +74,7 @@ export const UpcomingMatches = ({
       (match.getTime() - now.getTime()) / (1000 * 60),
     );
 
-    if (diffMinutes < 0) return "Passé";
+    if (diffMinutes < 0) return undefined;
     if (diffMinutes < 60) return `${diffMinutes}min`;
 
     const hours = Math.floor(diffMinutes / 60);
@@ -86,7 +88,7 @@ export const UpcomingMatches = ({
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Clock className="h-5 w-5" />
-          Prochains Matchs
+          {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -111,7 +113,10 @@ export const UpcomingMatches = ({
                   sports={sports}
                   schools={schools}
                   teams={teams}
-                  onFavorite={(e) => { e.stopPropagation(); toggleFavorite(match.id); }}
+                  onFavorite={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(match.id);
+                  }}
                   isFavorite={isFavorite(match.id)}
                 />
 

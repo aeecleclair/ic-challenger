@@ -254,6 +254,19 @@ export default function SearchPage() {
 
   const currentDate = useMemo(() => new Date(), []);
 
+  const ongoingMatches = useMemo(() => {
+    return filteredMatches
+      .filter(
+        (match) =>
+          match.date &&
+          new Date(match.date) <= currentDate &&
+          !match.ended,
+      )
+      .sort(
+        (a, b) => new Date(a.date!).getTime() - new Date(b.date!).getTime(),
+      );
+  }, [filteredMatches, currentDate]);
+
   const upcomingMatches = useMemo(() => {
     return filteredMatches
       .filter((match) => match.date && new Date(match.date) > currentDate)
@@ -263,8 +276,13 @@ export default function SearchPage() {
   }, [filteredMatches, currentDate]);
 
   const pastMatches = useMemo(() => {
-    return filteredMatches
-      .filter((match) => match.date && new Date(match.date) <= currentDate)
+    return filteredMatches  
+      .filter(
+        (match) =>
+          match.date &&
+          new Date(match.date) <= currentDate &&
+          match.ended,
+      )
       .sort(
         (a, b) => new Date(b.date!).getTime() - new Date(a.date!).getTime(),
       );
@@ -582,7 +600,25 @@ export default function SearchPage() {
               </CardContent>
             </Card>
 
-            {/* Matches */}
+            {/* Ongoing Matches */}
+            {ongoingMatches.length > 0 && (
+              <div>
+                <UpcomingMatches
+                  matches={ongoingMatches}
+                  userTeamId={undefined}
+                  showSportBadge={badgeVisibility.sport}
+                  showSchoolBadges={badgeVisibility.school}
+                  showSportCategoryBadges={badgeVisibility.sportCategory}
+                  showTeamBadges={badgeVisibility.team}
+                  sports={sports}
+                  schools={schools}
+                  teams={teams}
+                  title="En cours"
+                />
+              </div>
+            )}
+
+            {/* Upcoming Matches */}
             <div>
               <UpcomingMatches
                 matches={upcomingMatches}

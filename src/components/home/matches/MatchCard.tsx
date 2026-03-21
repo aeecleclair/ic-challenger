@@ -20,7 +20,7 @@ interface MatchCardProps {
   match: MatchComplete;
   userTeamId?: string;
   urgency: "urgent" | "soon" | "normal";
-  timeUntil: string;
+  timeUntil?: string;
   showSportBadge?: boolean;
   showSchoolBadges?: boolean;
   showSportCategoryBadges?: boolean;
@@ -223,31 +223,36 @@ export const MatchCard = ({
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Badge
-              variant={
-                urgency === "urgent"
-                  ? "destructive"
-                  : urgency === "soon"
-                    ? "secondary"
-                    : "default"
-              }
-              className={cn(
-                "text-xs font-mono",
-                urgency === "urgent" && "bg-red-500 hover:bg-red-600 text-white",
-                urgency === "soon" &&
-                  "bg-orange-500 hover:bg-orange-600 text-white",
-                urgency === "normal" &&
-                  "bg-blue-500 hover:bg-blue-600 text-white",
-              )}
-            >
-              <Clock className="h-3 w-3 mr-1" />
-              Dans {timeUntil}
-            </Badge>
+            {timeUntil && (
+              <Badge
+                variant={
+                  urgency === "urgent"
+                    ? "destructive"
+                    : urgency === "soon"
+                      ? "secondary"
+                      : "default"
+                }
+                className={cn(
+                  "text-xs font-mono",
+                  urgency === "urgent" &&
+                    "bg-red-500 hover:bg-red-600 text-white",
+                  urgency === "soon" &&
+                    "bg-orange-500 hover:bg-orange-600 text-white",
+                  urgency === "normal" &&
+                    "bg-blue-500 hover:bg-blue-600 text-white",
+                )}
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                Dans {timeUntil}
+              </Badge>
+            )}
             {onFavorite && (
               <button
                 className="p-1 rounded hover:bg-gray-100 transition-colors"
                 onClick={onFavorite}
-                title={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                title={
+                  isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"
+                }
               >
                 <Star
                   className={`h-4 w-4 ${isFavorite ? "text-yellow-500 fill-yellow-500" : "text-gray-400"}`}
